@@ -709,20 +709,20 @@ void test_gpstime_serializer() {
     TEST_ASSERT_FALSE(result.is_set);
 
     // Serialization of initialized GPS time
-    gps_time_t input2(3,3,3);
+    gps_time_t input2(2300,3,3);
     gpstime_serializer->serialize(input2);
     gpstime_serializer->deserialize(&result);
     TEST_ASSERT(result == input2);
 
     // Deserialization from a string
-    gps_time_t input3(2,2,2);
-    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2,2", &result));
-    TEST_ASSERT(gpstime_serializer->deserialize("2,2,2", &result));
+    gps_time_t input3(2400,2,2);
+    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2400,2", &result));
+    TEST_ASSERT(gpstime_serializer->deserialize("2400,2,2", &result));
     TEST_ASSERT(result == input3);
 
     // Printing
-    gps_time_t input4(4,4,4);
-    TEST_ASSERT_EQUAL_STRING("4,4,4", gpstime_serializer->print(input4));
+    gps_time_t input4(2500,4,4);
+    TEST_ASSERT_EQUAL_STRING("2500,4,4", gpstime_serializer->print(input4));
 }
 
 void test_serializers() {

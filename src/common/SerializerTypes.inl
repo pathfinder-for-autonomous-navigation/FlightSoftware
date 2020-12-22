@@ -756,27 +756,39 @@ class Serializer<lin::Vector<T, 3>> : public LinVectorSerializer<T, 3>
 template <>
 class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
   public:
-    TRACKED_CONSTANT_SC(size_t, gps_time_sz, 68);
-
     TRACKED_CONSTANT_SC(size_t, print_size, 25); // wn: 5, tow: 10, ns: 7, 2 commas, 1 NULL character. 
 
+    mutable Serializer<unsigned int> wn_sz;
+    mutable Serializer<unsigned int> tow_sz;
+    mutable Serializer<signed int> ns_sz;
+
     Serializer()
-        : SerializerBase<gps_time_t>(gps_time_t(), gps_time_t(), gps_time_sz, print_size)
-    {}
+        : SerializerBase<gps_time_t>(gps_time_t(), gps_time_t(), 1, print_size),
+          wn_sz(2000, 3000),
+          tow_sz(NANOSECONDS_IN_WEEK / 1'000'000),
+          ns_sz(-1'000'000, 1'000'000)
+    {
+        unsigned int bitsize = 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize();
+        this->serialized_val.resize(bitsize);
+    }
 
     void serialize(const gps_time_t& src) override {
-        if (!src.is_set) {
-            serialized_val[0] = false;
-            return;
-        }
-        serialized_val[0] = true;
-        std::bitset<16> wn((unsigned short int)src.wn);
-        std::bitset<32> tow(src.tow);
-        std::bitset<20> ns(src.ns);
-        for (size_t i = 0; i < wn.size(); i++) serialized_val[i + 1] = wn[i];
-        for (size_t i = 0; i < tow.size(); i++) serialized_val[i + 1 + wn.size()] = tow[i];
-        for (size_t i = 0; i < ns.size(); i++)
-            serialized_val[i + 1 + wn.size() + tow.size()] = ns[i];
+        bit_array::iterator it = serialized_val.begin();
+
+        if (src.is_set) { *it = true; }
+        else { *it = false; return; }
+        it += 1;
+
+        wn_sz.serialize(src.wn);
+        tow_sz.serialize(src.tow);
+        ns_sz.serialize(src.ns);
+
+        const bit_array& wn_bits = wn_sz.get_bit_array();
+        const bit_array& tow_bits = tow_sz.get_bit_array();
+        const bit_array& ns_bits = ns_sz.get_bit_array();
+        std::copy(wn_bits.begin(), wn_bits.end(), it); it += wn_sz.bitsize();
+        std::copy(tow_bits.begin(), tow_bits.end(), it); it += tow_sz.bitsize();
+        std::copy(ns_bits.begin(), ns_bits.end(), it);
     }
 
     bool deserialize(const char* val, gps_time_t* dest) override {
@@ -789,22 +801,22 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
     }
 
     void deserialize(gps_time_t* dest) const override {
-        if (!serialized_val[0]) {
-            dest->is_set = false;
-            return;
-        }
-        else {
-            dest->is_set = true;
-        }
-        std::bitset<16> wn;
-        std::bitset<32> tow;
-        std::bitset<20> ns;
-        for (size_t i = 0; i < 16; i++) wn.set(i, serialized_val[i + 1]);
-        for (size_t i = 0; i < 32; i++) tow.set(i, serialized_val[wn.size() + i + 1]);
-        for (size_t i = 0; i < 20; i++) ns.set(i, serialized_val[wn.size() + tow.size() + i + 1]);
-        dest->wn = (unsigned int)wn.to_ulong();
-        dest->tow = (unsigned int)tow.to_ulong();
-        dest->ns = (unsigned int)ns.to_ulong();
+        bit_array::const_iterator it = serialized_val.begin();
+        if (*it) { dest->is_set = true; }
+        else { dest->is_set = false; return; }
+        it += 1;
+
+        bit_array& wn_bits = wn_sz.get_bit_array();
+        bit_array& tow_bits = tow_sz.get_bit_array();
+        bit_array& ns_bits = ns_sz.get_bit_array();
+        wn_bits.assign(it, it + wn_sz.bitsize()); it += wn_sz.bitsize();
+        tow_bits.assign(it, it + tow_sz.bitsize()); it += tow_sz.bitsize();
+        ns_bits.assign(it, it + ns_sz.bitsize());
+
+        unsigned int wn;
+        wn_sz.deserialize(&wn); dest->wn = static_cast<unsigned short>(wn);
+        tow_sz.deserialize(&(dest->tow));
+        ns_sz.deserialize(&(dest->ns));
     }
 
     const char* print(const gps_time_t& src) const override {
