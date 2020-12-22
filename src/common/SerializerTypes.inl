@@ -295,17 +295,6 @@ class Serializer<double> : public FloatDoubleSerializer<double> {
 };
 
 /**
- * Constants used in the construction specification of vector and quaternion
- * serializers.
- */
-namespace SerializerConstants {
-    static constexpr size_t f_quat_sz = 29;
-    static constexpr size_t f_quat_component_sz = 9;
-    static constexpr size_t d_quat_sz = 29;
-    static constexpr size_t d_quat_component_sz = 9;
-};
-
-/**
  * Common functions used by vector serializers.
  */
 namespace VectorSerializerFns
@@ -473,7 +462,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         serialized_position++;
         auto copy_bits = [&serialized_position](Serializer<T>& sr) {
             auto& bit_array = sr.get_bit_array();
-            for(size_t i = 0; i < bit_array.size(); i++)
+            for(int i = 0; i < bit_array.size(); i++)
             {
                 bit_array[i] = *serialized_position;
                 serialized_position++;
@@ -508,7 +497,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
  *   the largest component in the quaternion, and then we serialize the three smallest components
  *   in the bounds +/- 1 and with enough bitsize for angular resolution to be OK.
  */
-template <typename T, size_t quat_sz, size_t quat_component_sz>
+template <typename T>
 class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
   static_assert(std::is_floating_point<T>::value,
       "Quaternion serializers can only be constructed for floats or doubles.");
@@ -523,6 +512,8 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
      */
     std::array<std::shared_ptr<Serializer<T>>, 3> quaternion_element_serializers;
 
+    static constexpr size_t quat_component_sz() { return 10; }
+
     /**
      * @brief Default constructor, appropriate for quaternions.
      */
@@ -530,16 +521,16 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
         SerializerBase<std::array<T, 4>>(
             std::array<T, 4>(),
             std::array<T, 4>(),
-            quat_sz,
+            quat_component_sz() * 3 + 2,
         VectorSerializerFns::vector_print_size(4))
     {
         for (size_t i = 0; i < 3; i++) {
-            quaternion_element_serializers[i] = std::make_unique<Serializer<T>>(-1, 1, quat_component_sz);
+            quaternion_element_serializers[i] = std::make_unique<Serializer<T>>(-1, 1, quat_component_sz());
         }
     }
 
-    QuaternionSerializer<T, quat_sz, quat_component_sz>&
-    operator=(const QuaternionSerializer<T, quat_sz, quat_component_sz>& other)
+    QuaternionSerializer<T>&
+    operator=(const QuaternionSerializer<T>& other)
     {
         SerializerBase<std::array<T, 4>>::operator=(other);
         
@@ -666,22 +657,18 @@ class Serializer<std::array<double, 3>> : public VectorSerializer<double> {
 
 template<>
 class Serializer<std::array<float, 4>> :
-public QuaternionSerializer<float, SerializerConstants::f_quat_sz, SerializerConstants::f_quat_component_sz>
+public QuaternionSerializer<float>
 {
   public:
-    Serializer<std::array<float, 4>>() :
-    QuaternionSerializer<float, SerializerConstants::f_quat_sz, SerializerConstants::f_quat_component_sz>()
-    {}
+    Serializer<std::array<float, 4>>() : QuaternionSerializer<float>() {}
 };
 
 template<>
 class Serializer<std::array<double, 4>> :
-public QuaternionSerializer<double, SerializerConstants::d_quat_sz, SerializerConstants::d_quat_component_sz>
+public QuaternionSerializer<double>
 {
   public:
-    Serializer<std::array<double, 4>>() :
-    QuaternionSerializer<double, SerializerConstants::d_quat_sz, SerializerConstants::d_quat_component_sz>()
-    {}
+    Serializer<std::array<double, 4>>() : QuaternionSerializer<double>() {}
 };
 
 /**
