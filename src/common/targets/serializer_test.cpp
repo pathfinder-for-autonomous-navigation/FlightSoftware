@@ -199,7 +199,7 @@ void get_v_results(const std::string& outfile, T min, T max, unsigned int bitsiz
                 lin::Vector<T, 3> r_p;
                 s.deserialize(&r_p);
                 T dist = lin::norm(r - r_p);
-                radius_results << r(0) << "," << r(1) << "," << r(2) << "," << dist << std::endl;
+                radius_results << theta << "," << phi << "," << radius << "," << dist << std::endl;
             }
             return radius_results.str();
         };
@@ -231,7 +231,12 @@ int main(int argc, char* argv[])
     }
 
     std::string out = argv[1];
-    get_v_results<double>(out, 6841000, 6901000, 26);
+    
+    // get_q_results<float>(); // Float quaternions
+    // get_q_results<float>(); // Double quaternions
+
+    // get_v_results<double>(out, 6841000, 6901000, 26); // orbit.pos
+    get_v_results<double>(out, 7500, 7700, 18); // orbit.vel
 
     return 0;
 }
