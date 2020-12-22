@@ -473,7 +473,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         serialized_position++;
         auto copy_bits = [&serialized_position](Serializer<T>& sr) {
             auto& bit_array = sr.get_bit_array();
-            for(int i = 0; i < bit_array.size(); i++)
+            for(size_t i = 0; i < bit_array.size(); i++)
             {
                 bit_array[i] = *serialized_position;
                 serialized_position++;
