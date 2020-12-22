@@ -106,8 +106,6 @@ void get_q_results(const std::string& outfile)
 
     std::ofstream results(outfile, std::ofstream::out);
 
-    Serializer<std::array<T, 4>> s;
-
     for(int i = 0; i < ntheta; i++) {
         T theta = i * (gnc::constant::pi) / ntheta;
 
@@ -122,7 +120,7 @@ void get_q_results(const std::string& outfile)
         T phi = j * (2 * gnc::constant::pi) / nphi;
         // Parallelize computation of quaternion serializations.
 
-        auto compute_serializations = [theta, phi, nalpha, &s](int alpha_start, int alpha_end)
+        auto compute_serializations = [&](int alpha_start, int alpha_end)
         {
             std::stringstream alpha_results;
             for(int k = alpha_start; k < alpha_end; k++) {                
@@ -133,6 +131,8 @@ void get_q_results(const std::string& outfile)
 
                 std::array<T, 4> q{n(0), n(1), n(2), std::cos(alpha/2)};
                 normalize(q);
+
+                Serializer<std::array<T, 4>> s;
                 s.serialize(q);
                 std::array<T, 4> q_p;
                 s.deserialize(&q_p);
@@ -232,11 +232,11 @@ int main(int argc, char* argv[])
 
     std::string out = argv[1];
     
-    // get_q_results<float>(); // Float quaternions
-    // get_q_results<float>(); // Double quaternions
+    //get_q_results<float>(out); // Float quaternions
+    //get_q_results<double>(out); // Double quaternions
 
-    // get_v_results<double>(out, 6841000, 6901000, 26); // orbit.pos
-    get_v_results<double>(out, 7500, 7700, 18); // orbit.vel
+    //get_v_results<double>(out, 6841000, 6901000, 26); // orbit.pos
+    get_v_results<double>(out, 7500, 7700, 19); // orbit.vel
 
     return 0;
 }
