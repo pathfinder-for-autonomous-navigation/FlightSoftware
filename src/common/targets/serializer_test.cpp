@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
     //get_q_results<double>(out); // Double quaternions
 
     //get_v_results<double>(out, 6841000, 6901000, 26); // orbit.pos
-    get_v_results<double>(out, 7500, 7700, 19); // orbit.vel
+    get_v_results<double>(out, 7550, 7650, 18); // orbit.vel
 
     return 0;
 }
