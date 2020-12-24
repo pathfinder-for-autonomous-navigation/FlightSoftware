@@ -1808,7 +1808,7 @@
             "writable": false
         },
         "piksi.time": {
-            "bitsize": 68,
+            "bitsize": 62,
             "flow_id": 2,
             "type": "gps_time_t",
             "writable": false
