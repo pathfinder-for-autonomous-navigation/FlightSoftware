@@ -41,8 +41,8 @@ class PsimDebug(SingleSatOnlyCase):
     @property
     def sim_ic_map(self):
         ret = {}
-        ret["truth.t.ns"] = 420000000
-        ret["truth.leader.attitude.w"] = [1,2,3]
+        # ret["truth.t.ns"] = 420000000
+        # ret["truth.leader.attitude.w"] = [1,2,3]
         return ret
 
     def setup_post_bootsetup(self):
@@ -72,4 +72,9 @@ class PsimDebug(SingleSatOnlyCase):
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
         self.rs_psim("truth.leader.attitude.w")
+        self.rs_psim("truth.t.ns")
+        self.rs_psim("truth.dt.ns")
+
+        # self.rs_psim("truth.leader.m")
+
         self.data_logs()

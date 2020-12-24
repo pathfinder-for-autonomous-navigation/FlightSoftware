@@ -215,7 +215,7 @@ class CppSimulation(Simulation):
         initials = self.testcase.sim_ic_map
 
         # print("DEBUUUUUUUUUUUUUUUG")
-        # print(config['truth.t.ns'])
+        print(config['truth.t.ns'])
         # config['truth.t.ns'] = 5999
         # print(config['truth.t.ns'])
 

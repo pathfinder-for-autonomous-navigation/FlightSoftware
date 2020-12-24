@@ -330,16 +330,16 @@ class SingleSatOnlyCase(PTestCase):
         if(ret is None):
             raise NameError(f"ptest read failed: psim state field {name} does not exist!")
         
+        stripped = ret
         if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
             ret = list(ret)
-        
-        stripped = str(ret).strip("[]").replace(" ","")+","
+            stripped = str(ret).strip("[]").replace(" ","")+","
         
         packet = {}
         
         packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
         packet["field"] = name
-        packet["val"] = stripped
+        packet["val"] = str(stripped)
         packet["time"] = str(datetime.datetime.now())
 
         # log to datastore
