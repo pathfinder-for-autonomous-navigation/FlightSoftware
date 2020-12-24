@@ -213,7 +213,14 @@ class CppSimulation(Simulation):
 
         # given dictionary, write initials
         initials = self.testcase.sim_ic_map
-        
+
+        # print("DEBUUUUUUUUUUUUUUUG")
+        # print(config['truth.t.ns'])
+        # config['truth.t.ns'] = 5999
+        # print(config['truth.t.ns'])
+
+        # config['truth.leader.attitude.w'] = to_lin_vector([1,2,3])
+
         # mutate config
         for k,v in initials.items():
             self.add_to_log(f"[ sim ] Set {k} to {v}")            
