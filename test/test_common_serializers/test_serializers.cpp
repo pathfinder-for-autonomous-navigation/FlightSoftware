@@ -516,8 +516,8 @@ void test_vec_serializer() {
 
         // Generate random vector.
         const T r = 0.1 + 1.5 * rand() / T(RAND_MAX);
-        const T t = gnc::constant::pi * rand() / T(RAND_MAX);
-        const T p = 2*gnc::constant::pi * rand() / T(RAND_MAX);
+        const T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T p = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
         const T x = r * sin(t) * cos(p);
         const T y = r * sin(t) * sin(p);
         const T z = r * cos(t);

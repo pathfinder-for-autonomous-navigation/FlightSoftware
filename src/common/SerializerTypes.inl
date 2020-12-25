@@ -358,6 +358,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
   static_assert(std::is_floating_point<T>::value,
     "Vector serializers can only be constructed for floats or doubles.");
 
+  public:
+    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
+
   protected:
     /**
      * @brief Serializer for vector components
@@ -369,8 +372,6 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     mutable Serializer<T> magnitude_serializer;
     mutable Serializer<T> theta_serializer; // Using physics coordinates: this is angle w.r.t. z axis
     mutable Serializer<T> phi_serializer; // Using physics coordinates: this is xy angle
-
-    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
 
     /*
      * Let precision equal p. The meaning of the number is that
