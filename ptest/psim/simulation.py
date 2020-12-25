@@ -13,8 +13,7 @@ from ..gpstime import GPSTime
 import psim
 import lin 
 import json
-from ..cases.utils import is_lin_vector
-from ..cases.utils import to_lin_vector
+from ..cases.utils import is_lin_vector, to_lin_vector
 
 class Simulation(object):
     """
