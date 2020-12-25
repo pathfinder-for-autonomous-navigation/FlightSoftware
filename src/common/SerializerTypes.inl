@@ -9,7 +9,6 @@
 #include "types.hpp"
 #include "constant_tracker.hpp"
 
-#include <gnc/constants.hpp>
 #include <lin.hpp>
 
 /**
@@ -371,6 +370,8 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     mutable Serializer<T> theta_serializer; // Using physics coordinates: this is angle w.r.t. z axis
     mutable Serializer<T> phi_serializer; // Using physics coordinates: this is xy angle
 
+    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
+
     /*
      * Let precision equal p. The meaning of the number is that
      * the vector should be specified to within the Euclidean
@@ -418,8 +419,8 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
             VectorSerializerFns::vector_print_size(3)
         ),
         magnitude_serializer(min, max, b1(precision)),
-        theta_serializer(0, gnc::constant::pi, b2(min, max, precision)),
-        phi_serializer(-gnc::constant::pi/2, gnc::constant::pi/2, b2(min, max, precision))
+        theta_serializer(0, pi, b2(min, max, precision)),
+        phi_serializer(-pi/2, pi/2, b2(min, max, precision))
     {
         // Required for the logarithm in the computations of b1 and b2 to be defined.
         assert(max > 0); assert(max > min);
