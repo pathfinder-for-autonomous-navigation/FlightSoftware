@@ -62,6 +62,7 @@ class DownlinkTestFixture {
     const TelemetryInfoGenerator::TelemetryInfo& test_data;
 
     StateFieldRegistryMock registry;
+    std::unique_ptr<DownlinkProducer> downlink_producer;
     std::unique_ptr<DownlinkParser> downlink_parser;
 
     std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;

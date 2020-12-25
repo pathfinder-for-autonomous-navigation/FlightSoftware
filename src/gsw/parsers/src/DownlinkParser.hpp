@@ -17,8 +17,7 @@ class DownlinkParser {
     /**
      * @brief Construct a new Downlink Parser.
      */
-    DownlinkParser(StateFieldRegistry& r,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+    DownlinkParser(const StateFieldRegistry &r, const std::vector<DownlinkProducer::Flow>& f);
 
     struct EventData {
       unsigned int ccno = 0;
@@ -48,16 +47,10 @@ class DownlinkParser {
 
   protected:
     /**
-     * @brief Initialize flight software in order to initialize all of the
-     * state field serializers.
-     */
-    MainControlLoop fcp;
-
-    /**
      * @brief Statefield registry used to initialize main control loop and
      * check if events/fields exist in registry
      */
-    StateFieldRegistry registry;
+    const StateFieldRegistry& registry;
 
     /**
      * @brief Downlink flow data.

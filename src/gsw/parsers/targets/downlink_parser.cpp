@@ -7,7 +7,12 @@
 #ifndef UNIT_TEST
 int main() {
     StateFieldRegistry reg;
-    DownlinkParser dp(reg, PAN::flow_data);
+
+    // Populate flight software state fields into registry by instantiating flight software.
+    MainControlLoop fcp(reg, PAN::flow_data); 
+
+    DownlinkParser dp(reg, fcp.downlink_producer.get_flows());
+
     std::string filename;
     while(true) {
         std::getline(std::cin, filename);

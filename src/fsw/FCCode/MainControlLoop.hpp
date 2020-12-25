@@ -28,7 +28,7 @@
 #include "OrbitController.hpp"
 
 class MainControlLoop : public ControlTask<void> {
-   protected:
+  protected:
     FieldCreatorTask field_creator_task;
     ClockManager clock_manager;
 
@@ -50,8 +50,12 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
-
+  
+  public:
+    // Public in order to allow access from Downlink Parser
     DownlinkProducer downlink_producer;
+
+  protected:
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 

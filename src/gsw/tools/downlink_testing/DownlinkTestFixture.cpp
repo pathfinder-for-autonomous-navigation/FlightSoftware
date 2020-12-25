@@ -7,19 +7,18 @@
 DownlinkTestFixture::DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data) : test_data(data)
 {
     create_state_fields();
-    downlink_parser = std::make_unique<DownlinkParser>(registry, data.flow_data);
+    downlink_producer = std::make_unique<DownlinkProducer>(registry, 0);
+    downlink_producer->init_flows(data.flow_data);
+    downlink_parser = std::make_unique<DownlinkParser>(registry, downlink_producer->get_flows());
     snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
-    snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
-                                "downlink.snap_size");
+    snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>("downlink.snap_size");
 }
 
 void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
     DownlinkTestFixture::test_output_t& output)
 {
     apply_input(input);
-    auto cycle_start_fp = registry.find_writable_field_t<bool>("cycle.start");
-    cycle_start_fp->set(true);
-    downlink_parser->fcp.execute();
+    downlink_producer->execute();
 
     char* snapshot_chars = snapshot_ptr_fp->get();
     size_t snapshot_size = snapshot_size_bytes_fp->get();
@@ -208,7 +207,6 @@ void DownlinkTestFixture::create_state_fields()
 {
     for(auto const& field : test_data.field_data)
     {
-        if (field.first == "pan.cycle_no") continue;
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
         #define create_field(strtype, boundtype, fieldtype, create_field_fn, stdfn) \
