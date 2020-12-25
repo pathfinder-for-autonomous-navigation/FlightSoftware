@@ -423,6 +423,8 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     {
         // Required for the logarithm in the computations of b1 and b2 to be defined.
         assert(max > 0); assert(max > min);
+        this->_min[0] = min;
+        this->_max[0] = max;
     }
 
   public:
@@ -690,6 +692,12 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
         _arr_sr(s)
     {}
 
+    void set_telemetry_info() {
+        this->_min(0) = _arr_sr->min()[0];
+        this->_max(0) = _arr_sr->max()[0];
+        this->serialized_val.resize(_arr_sr->bitsize());
+    }
+
   public:
     LinVectorSerializer<T, N>&
     operator=(const LinVectorSerializer<T, N>& other) 
@@ -747,7 +755,9 @@ class Serializer<lin::Vector<T, 3>> : public LinVectorSerializer<T, 3>
     Serializer(T min, T max, size_t bitsize) :
         LinVectorSerializer<T, 3>(&arr_sr),
         arr_sr(min, max, bitsize)
-    {}
+    {
+        this->set_telemetry_info();
+    }
 };
 
 /**
