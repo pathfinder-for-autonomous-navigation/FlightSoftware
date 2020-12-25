@@ -9,10 +9,11 @@ constexpr float nan_f = gnc::constant::nan_f;
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
-    adcs_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100))
+    unit_vector_sr(1-1e-4, 1+1e-4, 0),
+    adcs_vec1_current_f("attitude.pointer_vec1_current", unit_vector_sr),
+    adcs_vec1_desired_f("attitude.pointer_vec1_desired", unit_vector_sr),
+    adcs_vec2_current_f("attitude.pointer_vec2_current", unit_vector_sr),
+    adcs_vec2_desired_f("attitude.pointer_vec2_desired", unit_vector_sr)
 {
     add_writable_field(adcs_vec1_current_f);
     add_writable_field(adcs_vec1_desired_f);

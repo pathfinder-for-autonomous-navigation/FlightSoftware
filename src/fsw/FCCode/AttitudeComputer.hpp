@@ -44,6 +44,7 @@ class AttitudeComputer : public TimedControlTask<void> {
      * @brief Fields used in control of attitude. These vectors are
      * all in the body frame.
      */
+    Serializer<lin::Vector3f> unit_vector_sr;
     WritableStateField<lin::Vector3f> adcs_vec1_current_f;
     WritableStateField<lin::Vector3f> adcs_vec1_desired_f;
     WritableStateField<lin::Vector3f> adcs_vec2_current_f;
