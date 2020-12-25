@@ -64,10 +64,6 @@ class DownlinkTestFixture {
     StateFieldRegistryMock registry;
     std::unique_ptr<DownlinkProducer> downlink_producer;
     std::unique_ptr<DownlinkParser> downlink_parser;
-
-    std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
-    InternalStateField<char*>* snapshot_ptr_fp;
-    InternalStateField<size_t>* snapshot_size_bytes_fp;
 };
 
 void to_json(nlohmann::json& j, const DownlinkTestFixture::test_error_t& e);

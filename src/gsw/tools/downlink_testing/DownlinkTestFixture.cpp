@@ -10,8 +10,6 @@ DownlinkTestFixture::DownlinkTestFixture(const TelemetryInfoGenerator::Telemetry
     downlink_producer = std::make_unique<DownlinkProducer>(registry, 0);
     downlink_producer->init_flows(data.flow_data);
     downlink_parser = std::make_unique<DownlinkParser>(registry, downlink_producer->get_flows());
-    snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
-    snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>("downlink.snap_size");
 }
 
 void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
@@ -20,8 +18,8 @@ void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
     apply_input(input);
     downlink_producer->execute();
 
-    char* snapshot_chars = snapshot_ptr_fp->get();
-    size_t snapshot_size = snapshot_size_bytes_fp->get();
+    char* snapshot_chars = registry.find_internal_field_t<char*>("downlink.ptr")->get();
+    size_t snapshot_size = registry.find_internal_field_t<size_t>("downlink.snap_size")->get();
     std::vector<char> snapshot(snapshot_size);
     for(size_t i = 0; i < snapshot_size; i++) snapshot[i] = snapshot_chars[i];
     
