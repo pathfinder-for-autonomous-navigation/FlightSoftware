@@ -192,9 +192,7 @@ void ADCSBoxMonitor::execute(){
     adcs_system.get_ssa_mode(&ssa_mode);
     if(ssa_mode == adcs::SSAMode::SSA_COMPLETE){
         adcs_system.get_ssa_vector(&ssa_vec);
-        lin::Vector3f ssa_vec_lin = to_linvector(ssa_vec);
-        ssa_vec_lin = ssa_vec_lin / lin::norm(ssa_vec_lin);
-        ssa_vec_f.set(ssa_vec_lin);
+        ssa_vec_f.set(to_linvector(ssa_vec));
     }
     else{
         ssa_vec_f.set(lin::nans<lin::Vector3f>());
