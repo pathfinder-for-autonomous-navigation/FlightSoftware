@@ -6,10 +6,8 @@ set -e # Exit on any error
 platformio test -e gsw_downlink_parser_ci -v
 
 # Compile and run functional test for environments
-#platformio run -e gsw_downlink_parser
-#python -m unittest test.test_downlink_parser
-# TEMPORARILY DISABLED DOWNLINK PARSER TESTING until we have better tools
-# for writing and updating this test when the flows change.
+platformio run -e gsw_downlink_tester
+.pio/build/gsw_downlink_tester/program /dev/null 1
 
 # Check that the telemetry info generator compiles, passes functional test, and Valgrind
 platformio run -e gsw_telem_info_generator
