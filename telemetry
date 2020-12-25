@@ -1776,7 +1776,7 @@
             "writable": true
         },
         "piksi.baseline_pos": {
-            "bitsize": 70,
+            "bitsize": 73,
             "flow_id": 19,
             "max": 0.0,
             "min": 0.0,
