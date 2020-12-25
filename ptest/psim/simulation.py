@@ -211,17 +211,8 @@ class CppSimulation(Simulation):
         
         self.add_to_log("[ sim ] Overwriting Initial Sim Conditions...")
 
-        # given dictionary, write initials
+        # get the mutation dict from test case
         initials = self.testcase.sim_ic_map
-
-        # print("DEBUUUUUUUUUUUUUUUG")
-        print(config['truth.t.ns'])
-        config['truth.t.ns'] = 59999999999
-        print(config['truth.t.ns'])
-        
-        print(config['truth.leader.attitude.w'])
-        config['truth.leader.attitude.w'] = to_lin_vector([1,2,3])
-        print(config['truth.leader.attitude.w'])
 
         # mutate config
         for k,v in initials.items():
@@ -230,6 +221,7 @@ class CppSimulation(Simulation):
                 v = to_lin_vector(v)
             config[k] = v
 
+        # construct sim
         self.mysim = psim.Simulation(self.sim_model, config)
         self.dt = self.mysim["truth.dt.ns"]/1e9
 
