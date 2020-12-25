@@ -148,7 +148,7 @@ void test_execute_ssa(){
     //see ADCS.cpp for mocking details
     lin::Vector3f ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
     lin::Vector3f ref_rwa_max_ramp_rd = {adcs::rwa::max_ramp_rd, adcs::rwa::max_ramp_rd, adcs::rwa::max_ramp_rd};
-    lin::Vector3f ref_three_unit = {1,1,1};
+    lin::Vector3f ref_three_unit = lin::Vector3f({1,1,1}) / std::sqrt(3);
     lin::Vector3f ref_mag1_vec = {adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag};
     lin::Vector3f ref_mag2_vec = {adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag};
     lin::Vector3f ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
