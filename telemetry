@@ -1690,10 +1690,10 @@
             "writable": true
         },
         "orbit.pos": {
-            "bitsize": 95,
+            "bitsize": 99,
             "flow_id": 2,
-            "max": 6971000.0,
-            "min": 6771000.0,
+            "max": 6901000.0,
+            "min": 6841000.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1706,10 +1706,10 @@
             "writable": false
         },
         "orbit.vel": {
-            "bitsize": 71,
+            "bitsize": 73,
             "flow_id": "undefined",
-            "max": 7700.0,
-            "min": 7500.0,
+            "max": 7650.0,
+            "min": 7550.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1792,10 +1792,10 @@
             "writable": false
         },
         "piksi.pos": {
-            "bitsize": 95,
+            "bitsize": 99,
             "flow_id": 19,
-            "max": 6971000.0,
-            "min": 6771000.0,
+            "max": 6901000.0,
+            "min": 6841000.0,
             "type": "std double vector",
             "writable": false
         },
@@ -1814,10 +1814,10 @@
             "writable": false
         },
         "piksi.vel": {
-            "bitsize": 71,
+            "bitsize": 73,
             "flow_id": 19,
-            "max": 7700.0,
-            "min": 7500.0,
+            "max": 7650.0,
+            "min": 7550.0,
             "type": "std double vector",
             "writable": false
         },
