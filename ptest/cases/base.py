@@ -82,7 +82,7 @@ class PTestCase(object):
         A dictionary of strings representing sim key names to
         values that should be overriding the sim initial conditions
         
-        Defaults to empty dict
+        Defaults to empty dict (nothing is mutated)
         """
         return {}
 
