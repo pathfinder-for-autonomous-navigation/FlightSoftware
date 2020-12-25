@@ -216,10 +216,12 @@ class CppSimulation(Simulation):
 
         # print("DEBUUUUUUUUUUUUUUUG")
         print(config['truth.t.ns'])
-        # config['truth.t.ns'] = 5999
-        # print(config['truth.t.ns'])
-
-        # config['truth.leader.attitude.w'] = to_lin_vector([1,2,3])
+        config['truth.t.ns'] = 59999999999
+        print(config['truth.t.ns'])
+        
+        print(config['truth.leader.attitude.w'])
+        config['truth.leader.attitude.w'] = to_lin_vector([1,2,3])
+        print(config['truth.leader.attitude.w'])
 
         # mutate config
         for k,v in initials.items():
