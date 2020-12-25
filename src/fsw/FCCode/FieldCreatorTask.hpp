@@ -25,10 +25,10 @@ class FieldCreatorTask : public ControlTask<void> {
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
-        pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000,6971000, 28 + 10)),
-        vel_f("orbit.vel", Serializer<lin::Vector3d>(7500, 7700, 18 + 10)),
-        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000, 21 + 10)),
-        vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,11,11 + 10)),
+        pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000,6971000,26)),
+        vel_f("orbit.vel", Serializer<lin::Vector3d>(7500,7700, 18)),
+        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000,21)),
+        vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,11,14)),
         bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
       {
           // For OrbitController

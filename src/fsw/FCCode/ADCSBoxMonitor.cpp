@@ -8,7 +8,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
-    dummy_vec_sr(0, 0, 1),
+    dummy_vec_sr(0, 1, 1),
     rwa_speed_rd_component_sr(adcs::rwa::min_speed_read,adcs::rwa::max_speed_read, 12),
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", dummy_vec_sr),
     rwa_speed_rd_x_f("adcs_monitor.rwa_speed_rd.x",rwa_speed_rd_component_sr),
