@@ -52,6 +52,9 @@ void AttitudeEstimator::execute(){
     lin::Vector3f s_body = ssa_vec_fp->get();
     lin::Vector3f w_body = gyr_vec_fp->get();
 
+    // Normalize
+    s_body = s_body / lin::norm(s_body);
+
     // Handle the special magnetometer case
     lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
     if (!lin::all(lin::isfinite(b_body)))

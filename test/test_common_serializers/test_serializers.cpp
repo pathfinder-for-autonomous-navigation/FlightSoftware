@@ -500,11 +500,12 @@ void test_vec_serializer() {
 
     // TODO write serialization initializations for edge cases.
     
-    const size_t vec_bitsize = 40;
+    const size_t vec_bitsize = 10; // Sufficient for 0.1% magnitude error
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: vector is within 0.5 degrees, and within 0.1% of magnitude
+    // Criterion for functionality: Euclidean distance between input and output vector
+    // is 0.1% of magnitude.
 
     srand(2);
     for(size_t i = 0; i < number_of_vec_test; i++) {
@@ -512,35 +513,26 @@ void test_vec_serializer() {
         
         //make the another serialier with same inputs
         auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
-        vector_t result;
-
-        // rand() returns the same thing every time
 
         // Generate random vector.
-        const T x = rand() / T(RAND_MAX) * 2;
-        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
-        const T y = cos(t) * std::sqrt(4 - x*x);
-        const T z = sin(t) * std::sqrt(4 - x*x);
+        const T r = 0.1 + 1.5 * rand() / T(RAND_MAX);
+        const T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T p = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T x = r * sin(t) * cos(p);
+        const T y = r * sin(t) * sin(p);
+        const T z = r * cos(t);
 
         vector_t vec({x, y, z});
-
         vec_serializer->serialize(vec);
-
-        // transfer bit array; analagous to reading in telemetry bit array
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
+        vector_t result;
         downlink_deserializer->deserialize(&result);
-
-        // normalize the vectors for angle calculation only
-        normalize<T, 3>(vec);
-        normalize<T, 3>(result);
-        T angle = angle_between(vec, result);
-
-        T mag_err = std::abs(magnitude_of(result)/magnitude_of(vec) - 1.0) ;
+        T mag_err = lin::norm(to_linvec(vec) - to_linvec(result));
 
         static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
-            "vector was {%f,%f,%f}; angle: %f; mag_err: %f";
+            "vector was {%f,%f,%f}; mag_err: %f";
         static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output"
-            "vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
+            "vector was {%lf,%lf,%lf}; mag_err: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
@@ -549,13 +541,10 @@ void test_vec_serializer() {
 
         std::array<T, 3> result_arr = to_stdarray(result);
         sprintf(err_str, err_fmt_str, i, x, y, z, result_arr[0], result_arr[1],
-            result_arr[2], angle, mag_err);
+            result_arr[2], mag_err);
 
-        // assert less than .1% magnitude error
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
-
-        // assert angle has error < 0.5 degrees
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.5, 0, angle, err_str);
+        // assert less than .1% magnitude of error vector
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.002, 0, mag_err, err_str);
 
         // Note no need to check if there are any sign flips,
         // angle_err < 0.5 deg if no sign flips, or if error is small (across an interval)
@@ -720,20 +709,20 @@ void test_gpstime_serializer() {
     TEST_ASSERT_FALSE(result.is_set);
 
     // Serialization of initialized GPS time
-    gps_time_t input2(3,3,3);
+    gps_time_t input2(2300,3,3);
     gpstime_serializer->serialize(input2);
     gpstime_serializer->deserialize(&result);
     TEST_ASSERT(result == input2);
 
     // Deserialization from a string
-    gps_time_t input3(2,2,2);
-    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2,2", &result));
-    TEST_ASSERT(gpstime_serializer->deserialize("2,2,2", &result));
+    gps_time_t input3(2400,2,2);
+    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2400,2", &result));
+    TEST_ASSERT(gpstime_serializer->deserialize("2400,2,2", &result));
     TEST_ASSERT(result == input3);
 
     // Printing
-    gps_time_t input4(4,4,4);
-    TEST_ASSERT_EQUAL_STRING("4,4,4", gpstime_serializer->print(input4));
+    gps_time_t input4(2500,4,4);
+    TEST_ASSERT_EQUAL_STRING("2500,4,4", gpstime_serializer->print(input4));
 }
 
 void test_serializers() {

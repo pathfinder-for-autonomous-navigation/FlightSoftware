@@ -27,31 +27,31 @@ void test_bitarray_constructors() {
     TEST_ASSERT_NOT_EQUAL(&arr4, &arr3);
 }
 
-void test_bitarray_set_int() {
+void test_bitarray_set_uint() {
     bit_array arr(3);
 
     // Set a "normal" integer value.
-    TEST_ASSERT(arr.set_int(6));
+    TEST_ASSERT(arr.set_uint(6));
     TEST_ASSERT_EQUAL(0, arr[0]);
     TEST_ASSERT_EQUAL(1, arr[1]);
     TEST_ASSERT_EQUAL(1, arr[2]);
 
     // Set to zero
-    TEST_ASSERT(arr.set_int(0));
+    TEST_ASSERT(arr.set_uint(0));
     TEST_ASSERT_EQUAL(0, arr[0]);
     TEST_ASSERT_EQUAL(0, arr[1]);
     TEST_ASSERT_EQUAL(0, arr[2]);
 
     // Set at the max.
-    TEST_ASSERT(arr.set_int(7));
+    TEST_ASSERT(arr.set_uint(7));
     TEST_ASSERT_EQUAL(1, arr[0]);
     TEST_ASSERT_EQUAL(1, arr[1]);
     TEST_ASSERT_EQUAL(1, arr[2]);
     
-    arr.set_int(0);
+    arr.set_uint(0);
     // Try to set a value beyond the bounds of what can be stored.
     // The same value as the previous one should be kept.
-    TEST_ASSERT_FALSE(arr.set_int(8));
+    TEST_ASSERT_FALSE(arr.set_uint(8));
     TEST_ASSERT_EQUAL(0, arr[0]);
     TEST_ASSERT_EQUAL(0, arr[1]);
     TEST_ASSERT_EQUAL(0, arr[2]);
@@ -60,13 +60,13 @@ void test_bitarray_set_int() {
 void test_bitarray_convert_to_integer() {
     bit_array arr(3);
 
-    arr.set_int(0);
+    arr.set_uint(0);
     TEST_ASSERT_EQUAL(0, arr.to_uint());
 
-    arr.set_int(6);
+    arr.set_uint(6);
     TEST_ASSERT_EQUAL(6, arr.to_uint());
 
-    arr.set_int(8);
+    arr.set_uint(8);
     // Setting the value equal to 8 fails, since
     // there is not enough space in the bitset.
     TEST_ASSERT_EQUAL(6, arr.to_uint());
@@ -74,7 +74,7 @@ void test_bitarray_convert_to_integer() {
 
 void test_bitarray_write_to_string() {
     bit_array arr(12);
-    arr.set_int(4095);  // arr = 111111111111
+    arr.set_uint(4095);  // arr = 111111111111
 
     /** Test writing to a buffer with zero offset **/
     char* buf = new char[2];
@@ -98,7 +98,7 @@ void test_bitarray_write_to_string() {
     /** Test writing to a buffer that already
         has some data in it **/
     bit_array arr2(4);
-    arr2.set_int(15); // arr = 1111
+    arr2.set_uint(15); // arr = 1111
     buf[0] = -128; buf[1] = 7;
     arr2.to_string(buf, 3);
     // Original string was:
@@ -124,7 +124,7 @@ void test_bitarray_write_to_string() {
 void test_bit_array() {
     UNITY_BEGIN();
     RUN_TEST(test_bitarray_constructors);
-    RUN_TEST(test_bitarray_set_int);
+    RUN_TEST(test_bitarray_set_uint);
     RUN_TEST(test_bitarray_convert_to_integer);
     RUN_TEST(test_bitarray_write_to_string);
     UNITY_END();
