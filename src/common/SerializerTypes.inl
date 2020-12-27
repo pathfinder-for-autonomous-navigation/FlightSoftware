@@ -6,7 +6,7 @@
 #include "Serializer.hpp"
 #include "types.hpp"
 #include "constant_tracker.hpp"
-#include <lin/core.hpp>
+#include <lin.hpp>
 
 /**
  * @brief Specialization of Serializer for booleans.
