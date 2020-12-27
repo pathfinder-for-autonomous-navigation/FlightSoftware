@@ -67,21 +67,12 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
     IntegerSerializer(T min, T max, size_t print_size)
-        : SerializerBase<T>(min, max, log2i(max - min), print_size)
+        : SerializerBase<T>(min, max, std::ceil(std::log(max - min) / std::log(2)), print_size)
     {
         assert(min <= max);
     }
 
   public:
-    static constexpr unsigned int log2i(unsigned int n) {
-        unsigned int i = 0;
-        while(n > 0) {
-            n = n >> 1;
-            i++;
-        }
-        return i;
-    }
-
     static unsigned int resolution(long max, long min, unsigned int num_bits) {
         unsigned int range = max - min;
         
@@ -419,7 +410,6 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         // 1 extra bit for ascertaining the xy-quadrant of the vector.
         return 1 + b1(precision) + 2 * b2(min, max, precision);
     }
-    static constexpr size_t 
 
     VectorSerializer(T min, T max, size_t precision) :
         SerializerBase<std::array<T, 3>>(

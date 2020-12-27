@@ -208,7 +208,7 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
         auto rng = std::default_random_engine{}; std::shuffle(flow_ids.begin(),flow_ids.end(), rng);
         for(int flow_id : flow_ids)
         {
-            size_t flow_size = Serializer<signed char>::log2i(num_flows);
+            size_t flow_size = std::ceil(std::log(num_flows) / std::log(2));
             for(const std::string& field : info.flow_data[flow_id - 1].field_list)
                 flow_size += info.field_data[field].bitsize;
 
