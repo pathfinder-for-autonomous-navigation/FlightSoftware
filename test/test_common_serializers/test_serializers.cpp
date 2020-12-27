@@ -11,84 +11,6 @@
 // number of vector tests to run
 constexpr static int number_of_vec_test = 100;
 
-template<typename T, size_t N>
-lin::Vector<T, N> to_linvec(const std::array<T, N>& src) {
-    lin::Vector<T, N> temp;
-    for(unsigned int i = 0; i < N; i++) temp(i) = src[i];
-    return temp;
-}
-
-/**
- * @brief Returns the magnitude of a vector
- */
-template <typename T, size_t N>
-T magnitude_of(const lin::Vector<T, N>& src){
-    return lin::norm(src);
-}
-template <typename T, size_t N>
-T magnitude_of(const std::array<T, N>& src){
-    return magnitude_of(to_linvec(src));
-}
-
-/**
- * @brief Normalizes a vector or quaternion
- * 
- */
-template <typename T, size_t N>
-void normalize(std::array<T, N>& src) {
-    T magnitude = magnitude_of(src);
-    for(size_t i = 0; i<N; i++){
-        src[i] = src[i] / magnitude;
-    }
-    return;
-}
-template <typename T, size_t N>
-void normalize(lin::Vector<T, N>& src) {
-    T magnitude = magnitude_of(src);
-    src = src / magnitude;
-    return;
-}
-
-/**
- * @brief Returns the angle between two quaternions or vectors, in degrees.
- */
-template <typename T, size_t N>
-T angle_between(lin::Vector<T, N>& a, lin::Vector<T, N>& b)
-{
-    static_assert(N == 3 || N == 4, "Can only compute angle between vectors and quaternions.");
-
-    T inner_product = lin::dot(a, b);
-    
-    T angle;
-    if(N == 4) {
-        // to account for quat could be flipped
-        inner_product = std::abs(inner_product);
-        angle = std::acos(inner_product)*2.0;
-    }
-    else
-        angle = std::acos(inner_product);
-
-    angle = angle * 360.0 / (2 * 3.14159265);
-
-    return angle;
-}
-template <typename T, size_t N>
-T angle_between(std::array<T, N>& a, std::array<T, N>& b){
-    lin::Vector<T, N> lin_a;
-    lin::Vector<T, N> lin_b;
-
-    if(N == 4){
-        lin_a = {a[0], a[1], a[2], a[3]};
-        lin_b = {b[0], b[1], b[2], b[3]};
-    }
-    else{
-        lin_a = {a[0], a[1], a[2]};
-        lin_b = {b[0], b[1], b[2]};
-    }
-
-    return angle_between<T, N>(lin_a, lin_b);
-}
-
 /**
  * @brief Convert lin::Vector object to std::array.
  */
@@ -527,7 +449,7 @@ void test_vec_serializer() {
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
         vector_t result;
         downlink_deserializer->deserialize(&result);
-        T mag_err = lin::norm(to_linvec(vec) - to_linvec(result));
+        T mag_err = lin::norm(lin::VectorView<T, 3>(vec.data()) - lin::VectorView<T, 3>(result.data()));
 
         static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
             "vector was {%f,%f,%f}; mag_err: %f";
@@ -545,9 +467,6 @@ void test_vec_serializer() {
 
         // assert less than .1% magnitude of error vector
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.002, 0, mag_err, err_str);
-
-        // Note no need to check if there are any sign flips,
-        // angle_err < 0.5 deg if no sign flips, or if error is small (across an interval)
     }
 
     // Test deserialization from a string
@@ -608,8 +527,6 @@ void test_quat_serializer() {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
 
-        quat_t result;
-
         // Generate random quaternion.
         const T t = rand() / T(RAND_MAX) * (2 * 3.14159265L);
         const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265L);
@@ -617,21 +534,19 @@ void test_quat_serializer() {
         const T uy = std::cos(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T s = std::cos(tt/2);
-        quat_t quat = {ux, uy, uz, s};
-        // please note that quat is not normalized at this point
-
-        // serialize will normalize a quaternion argument, but normalize now anyway
-        normalize<T, 4>(quat);
+        lin::Vector<T, 4> quat_lin = {ux, uy, uz, s};
+        quat_lin = quat_lin / lin::norm(quat_lin);
+        
+        quat_t quat = {quat_lin(0), quat_lin(1), quat_lin(2), quat_lin(3)};
         quat_serializer->serialize(quat);
-
-        //downlink_deserializer = quat_serializer;
         downlink_deserializer->set_bit_array(quat_serializer->get_bit_array());
 
+        quat_t result;
         downlink_deserializer->deserialize(&result);
+        lin::VectorView<T, 4> result_lin(result.data());
+        result_lin = result_lin / lin::norm(result_lin);
 
-        // normalize the result (though it should definitely be normalized, or atleast very close)
-        normalize<T, 4>(result);
-        T angle_err = angle_between<T, 4>(quat, result);
+        T angle_err = std::acos(std::abs(lin::dot(result_lin, quat_lin))) / 2;
 
         static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output"
             " quaternion was {%f,%f,%f,%f}; angle: %f";

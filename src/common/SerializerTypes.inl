@@ -2,13 +2,10 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
-#include <lin.hpp>
-#include <iostream>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
 #include "constant_tracker.hpp"
-
 #include <lin.hpp>
 
 /**
@@ -412,6 +409,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         return 1 + b1(precision) + 2 * b2(min, max, precision);
     }
 
+  public:
     VectorSerializer(T min, T max, size_t precision) :
         SerializerBase<std::array<T, 3>>(
             std::array<T, 3>(),
@@ -533,20 +531,6 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
         }
     }
 
-    QuaternionSerializer<T>&
-    operator=(const QuaternionSerializer<T>& other)
-    {
-        SerializerBase<std::array<T, 4>>::operator=(other);
-        
-        for(size_t i = 0; i < quaternion_element_serializers.size(); i++) {
-            this->quaternion_element_serializers[i] =
-                std::make_unique<Serializer<T>>(*other.quaternion_element_serializers[i]);
-        }
-        this->max_component = other.max_component;
-
-        return *this;
-    }
-
   public:
     void serialize(const std::array<T, 4>& src) override {
         lin::Vector<T, 4> normalized_quat {src[0], src[1], src[2], src[3]};
@@ -646,17 +630,13 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
 template<>
 class Serializer<std::array<float, 3>> : public VectorSerializer<float> {
   public:
-    Serializer<std::array<float, 3>>(float min, float max, size_t bitsize)
-        : VectorSerializer<float>(min, max, bitsize)
-    {}
+    using VectorSerializer<float>::VectorSerializer;
 };
 
 template<>
 class Serializer<std::array<double, 3>> : public VectorSerializer<double> {
   public:
-    Serializer<std::array<double, 3>>(double min, double max, size_t bitsize)
-        : VectorSerializer<double>(min, max, bitsize)
-    {}
+    using VectorSerializer<double>::VectorSerializer;
 };
 
 template<>
@@ -664,7 +644,7 @@ class Serializer<std::array<float, 4>> :
 public QuaternionSerializer<float>
 {
   public:
-    Serializer<std::array<float, 4>>() : QuaternionSerializer<float>() {}
+    using QuaternionSerializer<float>::QuaternionSerializer;
 };
 
 template<>
@@ -672,7 +652,7 @@ class Serializer<std::array<double, 4>> :
 public QuaternionSerializer<double>
 {
   public:
-    Serializer<std::array<double, 4>>() : QuaternionSerializer<double>() {}
+    using QuaternionSerializer<double>::QuaternionSerializer;
 };
 
 /**
