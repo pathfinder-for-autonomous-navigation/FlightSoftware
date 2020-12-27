@@ -6,7 +6,7 @@
 #include "Serializer.hpp"
 #include "types.hpp"
 #include "constant_tracker.hpp"
-#include <lin.hpp>
+#include <lin/core.hpp>
 
 /**
  * @brief Specialization of Serializer for booleans.
@@ -376,7 +376,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
      * distance given by dx = (max - min) / 2^p.
      * 
      * We can approximate
-     * dx = sqrt((r dtheta)^2 + (r dphi)^2 + dr^2)
+     * dx = sqrt((r dtheta)^2 + (r cos(theta) dphi)^2 + dr^2)
      *    = max (dtheta + dphi) + dr
      * 
      * We want to choose the angle and magnitude serializer bounds so that
