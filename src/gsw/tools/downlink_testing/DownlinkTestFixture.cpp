@@ -35,6 +35,27 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
     {
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
+        #define vector_gen(T, strfn) \
+        { \
+            T r = std::stod(f.min) + std::rand() * (strfn(f.max) - strfn(f.min)) / RAND_MAX; \
+            T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
+            T p = 2*VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
+            std::stringstream vector_str; \
+            vector_str << r * std::sin(t) * std::cos(p) << "," << r * std::sin(t) * std::sin(p) << "," << r * std::cos(t) << ","; \
+            val = vector_str.str(); \
+        }
+
+        #define quat_gen(T) \
+        { \
+            T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
+            T p = 2*VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
+            T a = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
+            std::stringstream quat_str; \
+            quat_str << std::sin(t) * std::cos(p) * std::sin(a/2) << "," << std::sin(t) * std::sin(p) * std::sin(a/2) \
+                << "," << std::cos(t) * std::sin(a/2) << "," << std::cos(a/2) << ","; \
+            val = quat_str.str(); \
+        }
+
         std::string val;
         if (f.type == "unsigned int" || f.type == "unsigned char")
             val = std::to_string(std::stoul(f.min) + ( std::rand() % ( std::stoul(f.max) - std::stoul(f.min) + 1 ) ));
@@ -54,12 +75,13 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
             gps_str << wn << "," << tow << "," << ns;
             val = gps_str.str();
         }
+        else if (f.type == "lin float vector" || f.type == "std float vector") { vector_gen(float, std::stof); }
+        else if (f.type == "lin double vector" || f.type == "std double vector") { vector_gen(double, std::stod); }
+        else if (f.type == "lin float quaternion" || f.type == "std float quaternion") { quat_gen(float); }
+        else if (f.type == "lin double quaternion" || f.type == "std double quaternion") { quat_gen(double); }
 
-        // TODO implement vector and quaternion autogenerators
-        else if (f.type == "lin float vector") continue;
-        else if (f.type == "lin double vector") continue;
-        else if (f.type == "lin float quaternion") continue;
-        else if (f.type == "lin double quaternion") continue;
+        #undef quat_gen
+        #undef vector_gen
 
         input.insert({f.name, val});
     }
@@ -103,7 +125,9 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
 
     // TODO add vector and quaternion types to this vector
     std::vector<std::string> datatypes = 
-        {"unsigned int", "signed int", "unsigned char", "signed char", "float", "double", "gps_time_t", "bool"}; 
+        {"unsigned int", "signed int", "unsigned char", "signed char", "float", "double", "gps_time_t", "bool",
+         "lin float vector", "lin double vector", "lin float quaternion", "lin double quaternion",
+         "std float vector", "std double vector", "std float quaternion", "std double quaternion"}; 
 
     info.field_data.insert({
         "pan.cycle_no",
@@ -148,28 +172,36 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
             generate_random_bounds<signed char>(randint, data);
             data.bitsize = 1 + std::rand() % 7;
         }
-        else if (data.type == "float")
+        else if (data.type == "float" || data.type == "lin float vector" || data.type == "std float vector")
         {
-            static constexpr float float_min = -1e9;
+            float float_min;
+            if (data.type == "float") float_min = -1e9; else float_min = 0;
             static constexpr float float_max = 1e9;
-            std::function<float()> randfloat = []() {
+            std::function<float()> randfloat = [&]() {
                 return float_min + static_cast<float>(rand()) /( static_cast<float>(RAND_MAX/(float_max-float_min)));
             };
             generate_random_bounds<float>(randfloat, data);
-            data.bitsize = 1 + std::rand() % 31;
+            if (data.type == "float") data.bitsize = 1 + std::rand() % 31;
+            else data.bitsize = VectorSerializer<float>::total_size(std::stof(data.min), std::stof(data.max), 1 + std::rand() % 31);
         }
-        else if (data.type == "double")
+        else if (data.type == "double" || data.type == "lin double vector" || data.type == "std double vector")
         {
-            static constexpr double double_min = -1e9;
+            double double_min;
+            if (data.type == "double") double_min = -1e9; else double_min = 0;
             static constexpr double double_max = 1e9;
-            std::function<double()> randdouble = []() {
+            std::function<double()> randdouble = [&]() {
                 return double_min + static_cast<double>(rand()) /( static_cast<double>(RAND_MAX/(double_max-double_min)));
             };
             generate_random_bounds<double>(randdouble, data);
-            data.bitsize = 1 + std::rand() % 63;
+            if (data.type == "double") data.bitsize = 1 + std::rand() % 63;
+            else data.bitsize = VectorSerializer<double>::total_size(std::stod(data.min), std::stod(data.max), 1 + std::rand() % 63);
         }
         else if (data.type == "bool") data.bitsize = 1;
-        else if (data.type == "gps_time_t") data.bitsize = 68;
+        else if (data.type == "gps_time_t") data.bitsize = 62;
+        else if (data.type == "lin float quaternion"
+                 || data.type == "std float quaternion"
+                 || data.type == "lin double quaternion"
+                 || data.type == "std double quaternion")  data.bitsize=32;
 
         // Assign a flow.
         std::vector<int> flow_ids; for(size_t i = 1; i <= num_flows; i++) flow_ids.push_back(i);
@@ -223,6 +255,8 @@ void DownlinkTestFixture::create_state_fields()
             create_field(strtype, boundtype, fieldtype, create_readable_field, stdfn)
         #define create_readable_lin_vector_field(strtype, boundtype, stdfn) \
             create_field(strtype, boundtype, boundtype, create_readable_lin_vector_field, stdfn)
+            #define create_readable_std_vector_field(strtype, boundtype, stdfn) \
+            create_field(strtype, boundtype, boundtype, create_readable_vector_field, stdfn)
         #define create_readable_field_boundless(strtype, fieldtype) \
             create_field_boundless(strtype, fieldtype, create_readable_field)
 
@@ -235,8 +269,12 @@ void DownlinkTestFixture::create_state_fields()
             create_##fieldtype##_field("double", double, double, std::stod); \
             create_##fieldtype##_lin_vector_field("lin float vector", double, std::stof); \
             create_##fieldtype##_lin_vector_field("lin double vector", double, std::stod); \
+            create_##fieldtype##_std_vector_field("std float vector", double, std::stof); \
+            create_##fieldtype##_std_vector_field("std double vector", double, std::stod); \
             create_##fieldtype##_field_boundless("lin float quaternion", lin::Vector4f); \
             create_##fieldtype##_field_boundless("lin double quaternion", lin::Vector4d); \
+            create_##fieldtype##_field_boundless("std float quaternion", f_quat_t); \
+            create_##fieldtype##_field_boundless("std double quaternion", d_quat_t); \
             create_##fieldtype##_field_boundless("bool", bool); \
             create_##fieldtype##_field_boundless("gps_time_t", gps_time_t);
 
@@ -244,6 +282,8 @@ void DownlinkTestFixture::create_state_fields()
         
         #undef create
         #undef create_readable_field_boundless
+        #undef create_readable_lin_vector_field
+        #undef create_readable_std_vector_field
         #undef create_readable_field
         #undef create_field_boundless
         #undef create_field
@@ -287,6 +327,27 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
         }
 
         const std::string& output_valstr = output.values.at(name);
+
+        #define compare_vec(T, strfn) \
+        { \
+            T min = strfn(data.min); \
+            T max = strfn(data.max); \
+            T tolerance = (max - min) / std::pow(2, data.bitsize); \
+            auto str_to_vec = [](const std::string& s) { \
+                std::vector<std::string> result; \
+                std::stringstream ss(s); \
+                while( ss.good() ) \
+                { \
+                    std::string substr; \
+                    getline( ss, substr, ',' ); \
+                    result.push_back( substr ); \
+                } \
+                if (result.size() != 3) throw std::exception(); \
+                return lin::Vector<T, 3>({strfn(result[0]), strfn(result[1]), strfn(result[2])}); \
+            }; \
+            T err = lin::norm(str_to_vec(input_valstr) - str_to_vec(output_valstr)); \
+            if (err >= tolerance) result.errors.insert({name, {input_valstr, output_valstr, tolerance}}); \
+        }
         
         /*
          * Check the input value of the field matches the output value of the
@@ -332,6 +393,37 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
             if (error)
                 result.errors.insert({name, {input_valstr, output_valstr, 1e-6}});
         }
+        else if (data.type == "lin float vector" || data.type == "std float vector")
+        {
+            compare_vec(float, std::stof);
+        }
+        else if (data.type == "lin double vector" || data.type == "std double vector")
+        {
+            compare_vec(double, std::stod);
+        }
+        else if (data.type == "lin float quaternion"
+                 || data.type == "std float quaternion"
+                 || data.type == "lin double quaternion"
+                 || data.type == "std double quaternion")
+        {
+            auto str_to_quat = [](const std::string& s) {
+                std::vector<std::string> result;
+                std::stringstream ss(s);
+                while( ss.good() )
+                {
+                    std::string substr;
+                    getline( ss, substr, ',' );
+                    result.push_back( substr );
+                }
+                if (result.size() != 4) throw std::exception();
+                return lin::Vector<double, 4>({std::stod(result[0]), std::stod(result[1]), std::stod(result[2]), std::stod(result[3])});
+            };
+            double err = std::acos(std::abs(lin::dot(str_to_quat(input_valstr), str_to_quat(output_valstr))))*2.0;
+            double tolerance = 1.0 * 2 * gnc::constant::pi / 360.0;
+            if (err >= tolerance) result.errors.insert({name, {input_valstr, output_valstr, tolerance}});
+        }
+
+        #undef compare_vec
     }
 
     /*

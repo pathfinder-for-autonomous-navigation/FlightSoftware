@@ -363,9 +363,6 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
   static_assert(std::is_floating_point<T>::value,
     "Vector serializers can only be constructed for floats or doubles.");
 
-  public:
-    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
-
   protected:
     /**
      * @brief Serializer for vector components
@@ -377,6 +374,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     mutable Serializer<T> magnitude_serializer;
     mutable Serializer<T> theta_serializer; // Using physics coordinates: this is angle w.r.t. z axis
     mutable Serializer<T> phi_serializer; // Using physics coordinates: this is xy angle
+
+  public:
+    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
 
     /*
      * Let precision equal p. The meaning of the number is that
@@ -407,6 +407,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     }
     static constexpr size_t b2(T min, T max, size_t precision)
     {
+        // Required for the logarithm in the computations of b1 and b2 to be defined.
+        assert(max > 0); assert(min > 0); assert(max > min);
+
         // 3 max / 2^(b2) < dx, dx = (max - min) / 2^p
         // => b2 > log_2(3 * max / (max - min)) + p
         return std::ceil(std::log(3 * max / (max - min)) / std::log(2)) + precision;
@@ -416,6 +419,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         // 1 extra bit for ascertaining the xy-quadrant of the vector.
         return 1 + b1(precision) + 2 * b2(min, max, precision);
     }
+    static constexpr size_t 
 
     VectorSerializer(T min, T max, size_t precision) :
         SerializerBase<std::array<T, 3>>(
@@ -428,13 +432,10 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         theta_serializer(0, pi, b2(min, max, precision)),
         phi_serializer(-pi/2, pi/2, b2(min, max, precision))
     {
-        // Required for the logarithm in the computations of b1 and b2 to be defined.
-        assert(max > 0); assert(max > min);
         this->_min[0] = min;
         this->_max[0] = max;
     }
 
-  public:
     void serialize(const std::array<T,3>& src) override {
         lin::Vector<T, 3> normalized_vec {src[0], src[1], src[2]};
         T magnitude = lin::norm(normalized_vec);
