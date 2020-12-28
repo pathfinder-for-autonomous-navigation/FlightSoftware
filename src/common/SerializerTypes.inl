@@ -423,6 +423,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     {
         // Required for the logarithm in the computations of b1 and b2 to be defined.
         assert(max > 0); assert(max > min);
+
+        // This line exists so that TelemetryInfoGenerator is able to determine the
+        // minimum and maximum radius.
         this->_min[0] = min;
         this->_max[0] = max;
     }
@@ -664,16 +667,19 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
   static_assert(std::is_floating_point<T>::value, "Serializers are only defined for float or double-valued tuples.");
 
   protected:
-    Serializer<std::array<T, N>>* _arr_sr;
-    
-    LinVectorSerializer(Serializer<std::array<T, N>>* s) : 
+    std::shared_ptr<Serializer<std::array<T, N>>> _arr_sr;
+
+    LinVectorSerializer(...) : 
         SerializerBase<lin::Vector<T, N>>(
             lin::zeros<T, N, 1>(),
             lin::zeros<T, N, 1>(),
-        0, 0),
-        _arr_sr(s)
+        0, 0)
     {}
 
+    /**
+     * Store min/max/bitsize information for use by the
+     * TelemtryInfoGenerator.
+     */
     void set_telemetry_info() {
         this->_min(0) = _arr_sr->min()[0];
         this->_max(0) = _arr_sr->max()[0];
@@ -681,14 +687,6 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
     }
 
   public:
-    LinVectorSerializer<T, N>&
-    operator=(const LinVectorSerializer<T, N>& other) 
-    {
-        SerializerBase<lin::Vector<T, 4>>::operator=(other);
-        *_arr_sr = other._arr_sr;
-        return *this;
-    }
-
     void serialize(const lin::Vector<T, N>& src) override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
@@ -719,25 +717,21 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
 template<typename T>
 class Serializer<lin::Vector<T, 4>> : public LinVectorSerializer<T, 4>
 {
-  private:
-    Serializer<std::array<T, 4>> arr_sr;
   public:
-    Serializer() :
-        LinVectorSerializer<T, 4>(&arr_sr),
-        arr_sr()
-    {}
+    Serializer() : LinVectorSerializer<T, 4>()
+    {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,4>>>();
+    }
 };
 
 template<typename T>
 class Serializer<lin::Vector<T, 3>> : public LinVectorSerializer<T, 3>
 {
-  private:
-    Serializer<std::array<T, 3>> arr_sr;
   public:
     Serializer(T min, T max, size_t bitsize) :
-        LinVectorSerializer<T, 3>(&arr_sr),
-        arr_sr(min, max, bitsize)
+        LinVectorSerializer<T, 3>(min, max, bitsize)
     {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,3>>>(min, max, bitsize);
         this->set_telemetry_info();
     }
 };
