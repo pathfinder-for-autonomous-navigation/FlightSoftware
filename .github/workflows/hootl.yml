@@ -48,7 +48,6 @@ jobs:
     - name: Install Psim
       run: |
         pip install -e lib/common/psim
-        pip install -e lib/common/lin
 
     - name: CI Checkout Case and Empty case
       run: |
