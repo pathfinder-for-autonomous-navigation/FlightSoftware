@@ -12,15 +12,12 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     TimedControlTask<void>(registry, "adcs_commander", offset),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
-    rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
-        adcs::rwa::min_speed_command, adcs::rwa::max_speed_command, 16*3)),
-    rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(
-        adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
+    rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(0,1,1)),
+    rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(0,1,1)),
     rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
     rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
     mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
-    mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(
-        adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
+    mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(0,1,1)),
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),

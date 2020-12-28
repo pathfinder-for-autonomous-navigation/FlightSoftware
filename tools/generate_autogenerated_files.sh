@@ -10,9 +10,6 @@ rm -f constants
 python tools/constant_reporter.py
 
 # Generate `telemetry` file
-rm -f telemetry
 pio run -e gsw_telem_info_generator
+rm -f telemetry
 .pio/build/gsw_telem_info_generator/program telemetry
-
-# Generate gsw_uplink_producer binaries
-pio run -e gsw_uplink_producer

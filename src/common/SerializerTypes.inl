@@ -396,7 +396,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     static constexpr size_t b2(T min, T max, size_t precision)
     {
         // Required for the logarithm in the computations of b1 and b2 to be defined.
-        assert(max > 0); assert(min > 0); assert(max > min);
+        assert(max > 0); assert(min >= 0); assert(max > min);
 
         // 3 max / 2^(b2) < dx, dx = (max - min) / 2^p
         // => b2 > log_2(3 * max / (max - min)) + p
