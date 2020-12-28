@@ -208,7 +208,9 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
         auto rng = std::default_random_engine{}; std::shuffle(flow_ids.begin(),flow_ids.end(), rng);
         for(int flow_id : flow_ids)
         {
-            size_t flow_size = std::ceil(std::log(num_flows) / std::log(2));
+            size_t flow_id_size = std::ceil(std::log(num_flows) / std::log(2)); // Number of bits required to represent flow ID
+
+            size_t flow_size = flow_id_size;
             for(const std::string& field : info.flow_data[flow_id - 1].field_list)
                 flow_size += info.field_data[field].bitsize;
 
@@ -244,7 +246,12 @@ void DownlinkTestFixture::create_state_fields()
             { \
                 boundtype min = stdfn(f.min); \
                 boundtype max = stdfn(f.max); \
-                registry.create_field_fn<fieldtype>(f.name, min, max, f.bitsize); \
+                unsigned int bitsize = f.bitsize; \
+                if (f.type.find("vector") != std::string::npos) \
+                { \
+                    bitsize = VectorSerializer<double>::get_precision(min, max, f.bitsize); \
+                } \
+                registry.create_field_fn<fieldtype>(f.name, min, max, bitsize); \
             }
         #define create_field_boundless(strtype, fieldtype, create_field_fn) \
             if(f.type == strtype) \
@@ -342,7 +349,6 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
                     getline( ss, substr, ',' ); \
                     result.push_back( substr ); \
                 } \
-                if (result.size() != 3) throw std::exception(); \
                 return lin::Vector<T, 3>({strfn(result[0]), strfn(result[1]), strfn(result[2])}); \
             }; \
             T err = lin::norm(str_to_vec(input_valstr) - str_to_vec(output_valstr)); \
@@ -415,7 +421,6 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
                     getline( ss, substr, ',' );
                     result.push_back( substr );
                 }
-                if (result.size() != 4) throw std::exception();
                 return lin::Vector<double, 4>({std::stod(result[0]), std::stod(result[1]), std::stod(result[2]), std::stod(result[3])});
             };
             double err = std::acos(std::abs(lin::dot(str_to_quat(input_valstr), str_to_quat(output_valstr))))*2.0;

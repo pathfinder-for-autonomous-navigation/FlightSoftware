@@ -408,6 +408,18 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         return 1 + b1(precision) + 2 * b2(min, max, precision);
     }
 
+    /**
+     * This function inverts the above logic to get back the original precision
+     * specification, given the total serialized bitsize and the bounds. It is
+     * used by DownlinkTestFixture.
+     */
+    static constexpr size_t get_precision(T min, T max, size_t total_size)
+    {
+        size_t x = std::ceil(std::log(3 * max / (max - min)) / std::log(2));
+        // 2x + 2 + 3 * precision = total_size
+        return (total_size - 2 - 2 * x) / 3;
+    }
+
   public:
     VectorSerializer(T min, T max, size_t precision) :
         SerializerBase<std::array<T, 3>>(
