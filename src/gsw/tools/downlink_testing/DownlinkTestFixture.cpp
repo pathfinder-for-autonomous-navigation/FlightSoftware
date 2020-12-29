@@ -4,6 +4,24 @@
 #include <algorithm>
 #include <random>
 
+#define loop_over_types(fn) \
+    fn("unsigned int", unsigned int) \
+    fn("signed int", signed int) \
+    fn("unsigned char", unsigned char) \
+    fn("signed char", signed char) \
+    fn("float", float) \
+    fn("double", double) \
+    fn("bool", bool) \
+    fn("gps_time_t", gps_time_t) \
+    fn("std float vector", f_vector_t) \
+    fn("std double vector", d_vector_t) \
+    fn("lin float vector", lin::Vector3f) \
+    fn("lin double vector", lin::Vector3d) \
+    fn("std float quaternion", f_quat_t) \
+    fn("std double quaternion", d_quat_t) \
+    fn("lin float quaternion", lin::Vector4f) \
+    fn("lin double quaternion", lin::Vector4d)
+
 DownlinkTestFixture::DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data) : test_data(data)
 {
     create_state_fields();
@@ -35,53 +53,12 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
     {
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
-        #define vector_gen(T, strfn) \
-        { \
-            T r = std::stod(f.min) + std::rand() * (strfn(f.max) - strfn(f.min)) / RAND_MAX; \
-            T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
-            T p = 2*VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
-            std::stringstream vector_str; \
-            vector_str << r * std::sin(t) * std::cos(p) << "," << r * std::sin(t) * std::sin(p) << "," << r * std::cos(t) << ","; \
-            val = vector_str.str(); \
-        }
-
-        #define quat_gen(T) \
-        { \
-            T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
-            T p = 2*VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
-            T a = VectorSerializer<T>::pi * rand() / T(RAND_MAX); \
-            std::stringstream quat_str; \
-            quat_str << std::sin(t) * std::cos(p) * std::sin(a/2) << "," << std::sin(t) * std::sin(p) * std::sin(a/2) \
-                << "," << std::cos(t) * std::sin(a/2) << "," << std::cos(a/2) << ","; \
-            val = quat_str.str(); \
-        }
-
         std::string val;
-        if (f.type == "unsigned int" || f.type == "unsigned char")
-            val = std::to_string(std::stoul(f.min) + ( std::rand() % ( std::stoul(f.max) - std::stoul(f.min) + 1 ) ));
-        if (f.type == "signed int" || f.type == "signed char")
-            val = std::to_string(std::stoi(f.min) + ( std::rand() % ( std::stoi(f.max) - std::stoi(f.min) + 1 ) ));
-        else if (f.type == "float")
-            val = std::to_string(std::stof(f.min) + std::rand() * (std::stof(f.max) - std::stof(f.min)) / RAND_MAX);
-        else if (f.type == "double")
-            val = std::to_string(std::stod(f.min) + std::rand() * (std::stod(f.max) - std::stod(f.min)) / RAND_MAX);
-        else if (f.type == "bool")
-            val = std::rand() % 2 == 0 ? "true" : "false";
-        else if (f.type == "gps_time_t") {
-            unsigned short int wn = 2000 + std::rand() % 1000;
-            unsigned int tow = std::rand();
-            unsigned int ns = std::rand();
-            std::stringstream gps_str;
-            gps_str << wn << "," << tow << "," << ns;
-            val = gps_str.str();
-        }
-        else if (f.type == "lin float vector" || f.type == "std float vector") { vector_gen(float, std::stof); }
-        else if (f.type == "lin double vector" || f.type == "std double vector") { vector_gen(double, std::stod); }
-        else if (f.type == "lin float quaternion" || f.type == "std float quaternion") { quat_gen(float); }
-        else if (f.type == "lin double quaternion" || f.type == "std double quaternion") { quat_gen(double); }
 
-        #undef quat_gen
-        #undef vector_gen
+        #define type_based_generation(strtype, realtype) \
+            if (f.type == strtype) generate_test_input<realtype>(f);
+        loop_over_types(type_based_generation);
+        #undef type_based_generation
 
         input.insert({f.name, val});
     }

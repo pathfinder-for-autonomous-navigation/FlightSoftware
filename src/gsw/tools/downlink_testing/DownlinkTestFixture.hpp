@@ -61,6 +61,17 @@ class DownlinkTestFixture {
   private:
     const TelemetryInfoGenerator::TelemetryInfo& test_data;
 
+    /**
+     * Helper methods implemented for each type. These methods are used
+     * in the larger methods above.
+     */
+    template <typename T>
+    static std::string generate_test_input(const TelemetryInfoGenerator::FieldData& f);
+    template <typename T>
+    static TelemetryInfoGenerator::FieldData generate_telemetry_info();
+    template <typename T>
+    static test_error_t compare(const std::string& input, const std::string output);
+
     StateFieldRegistryMock registry;
     std::unique_ptr<DownlinkProducer> downlink_producer;
     std::unique_ptr<DownlinkParser> downlink_parser;
@@ -70,5 +81,7 @@ void to_json(nlohmann::json& j, const DownlinkTestFixture::test_error_t& e);
 void from_json(const nlohmann::json& j, DownlinkTestFixture::test_error_t& e);
 void to_json(nlohmann::json& j, const DownlinkTestFixture::test_result_t& e);
 void from_json(const nlohmann::json& j, DownlinkTestFixture::test_result_t& e);
+
+#include "DownlinkTestFixture.inl"
 
 #endif
