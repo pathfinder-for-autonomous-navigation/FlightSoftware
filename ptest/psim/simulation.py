@@ -10,12 +10,17 @@ import os
 import datetime
 import os
 from ..gpstime import GPSTime
+import psim
+import lin 
+import json
+from ..cases.utils import is_lin_vector, to_lin_vector
 
 class Simulation(object):
     """
     Full mission simulation, including both spacecraft.
     """
-    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, sim_initial_state, is_single_sat_sim):
+    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name):
         """
         Initializes self
 
@@ -24,6 +29,9 @@ class Simulation(object):
             seed(int or None) random number generator seed or None
             print_log: If true, prints logging messages to the console rather than
                        just to a file.
+            _sim_configs = List of psim configs
+            _sim_modle = The desired psim model
+            _mappings_file_name = The json file containing the mappings of fc to psim statefields
         """
         self.is_interactive = is_interactive
         self.devices = devices
@@ -32,10 +40,10 @@ class Simulation(object):
         self.sim_duration = sim_duration
         self.sim_initial_state = sim_initial_state
         self.is_single_sat_sim = is_single_sat_sim
-
+        self.sim_configs = _sim_configs
+        self.sim_model = _sim_model
+        self.mapping_file_name = _mapping_file_name
         self.log = ""
-
-        self.sim_time = 0
 
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
@@ -52,7 +60,7 @@ class Simulation(object):
 
     def start(self):
         '''
-        Start the MATLAB simulation. This function is blocking until the simulation begins.
+        Start the PSim C++ simulation. This function is blocking until the simulation begins.
         '''
         self.add_to_log("Starting simulation loop...")
         if self.is_interactive:
@@ -96,7 +104,7 @@ class Simulation(object):
         """
         raise NotImplementedError
 
-    def send_actuations_to_simmed_satellites(self):
+    def read_actuators_send_to_sim(self):
         """
         Send actuator commands from the real flight computer to the
         simulation so that it can update dynamics.
@@ -112,16 +120,23 @@ class Simulation(object):
             num_steps = int(self.sim_duration / self.dt) 
         else:
             num_steps = float("inf")
+            
         step = 0
 
         start_time = time.time()
         while step < num_steps and self.running:
-            self.update_sensors()
+            # Step 1. Generate dynamics
             self.update_dynamics()
-            self.simulate_flight_computers()
 
+            # Step 2. Load sensor data into ptest
+            self.update_sensors()
+                        
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
+
+            # Step 3 Simulate Flight Computers if need be
+            self.simulate_flight_computers()
+
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
             self.testcase.run_case()
 
@@ -132,58 +147,36 @@ class Simulation(object):
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
-            self.send_actuations_to_simmed_satellites()
+            # Step 4. Read the actuators from the flight computer(s) and send to psim
+            self.read_actuators_send_to_sim()
 
             step += 1
-            time.sleep(self.dt - ((time.time() - start_time) % self.dt))
 
         self.running = False
         self.add_to_log("Simulation ended.")
-        self.eng.quit()
 
     def interact_fc(self):
         if self.is_single_sat_sim:
-            self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)
+            self.interact_fc_onesat(self.flight_controller)
         else:
-            self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
-            self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
+            self.interact_fc_onesat(self.flight_controller_follower)
+            self.interact_fc_onesat(self.flight_controller_leader)
 
-    def interact_fc_onesat(self, fc, sensor_readings):
+    def interact_fc_onesat(self, fc):
         """
         Exchange simulation state variables with the one of the flight controllers.
         """
-        # Step 3.2.2 Send inputs to Flight Controller
-        self.write_adcs_estimator_inputs(fc, sensor_readings)
-        # Step 3.2.3 Read outputs from previous control cycle
+        # Step 3.2.1 Send inputs to Flight Controller
+        self.write_adcs_estimator_inputs(fc)
+
+        # Step 3.2.2 Read outputs from previous control cycle
         self.read_adcs_estimator_outputs(fc)
-
-    def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
-        """Write the inputs required for ADCS state estimation."""
-
-        # Convert mission time to GPS time
-        current_gps_time = GPSTime(self.main_state['follower']['dynamics']['time'])
-
-        # Clean up sensor readings to be in a format usable by Flight Software
-        position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
-        sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
-        magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
-
-        # Send values to flight software
-        flight_controller.write_state("piksi.time", str(current_gps_time))
-        flight_controller.write_state("piksi.pos", position_ecef)
-        flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
-        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
-
-    def read_adcs_estimator_outputs(self, flight_controller):
-        """
-        Read and store estimates from the ADCS estimator onboard flight software.
-
-        The estimates are automatically stored in the Flight Controller telemetry log
-        by calling read_state.
-        """
-
-        flight_controller.read_state("attitude_estimator.q_body_eci")
-        flight_controller.read_state("attitude_estimator.w_body")
+        
+        # Step 3.2.3
+        self.read_actuators(fc)
+    
+    def read_actuators(self, fc):
+        raise NotImplementedError
 
     def stop(self, data_dir):
         """
@@ -196,48 +189,164 @@ class Simulation(object):
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
 
-class MatlabSimulation(Simulation):
-    def configure(self):
-        import matlab.engine
-
-        self.eng = matlab.engine.start_matlab()
-        path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../lib/common/psim/MATLAB")
-        self.eng.addpath(path, nargout=0)
-
-        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
-            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
-            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
-        ):
-            self.eng.install(nargout=0)
-        self.eng.config(nargout=0)
-        self.eng.generate_mex_code(nargout=0)
-        self.eng.eval("global const", nargout=0)
-
-        self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
-        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
-
-        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds
-
-    def update_sensors(self):
-        self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
-        self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
-
-    def update_dynamics(self):
-        self.main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
-
-    def simulate_flight_computers(self):
-        self.computer_state_follower, self.actuator_commands_follower = \
-            self.eng.update_FC_state(self.computer_state_follower,self.sensor_readings_follower, nargout=2)
-        self.computer_state_leader, self.actuator_commands_leader = \
-            self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
-
-    def send_actuations_to_simmed_satellites(self):
-        self.main_state = self.main_state_promise.result()
-        self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
-        self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
 
 class CppSimulation(Simulation):
-    # TODO implement
-    pass
+    # good god i hate matlab
+
+    def configure(self):
+        self.actuator_commands_follower = {}
+        prefix = "lib/common/psim/config/parameters/"
+        postfix = ".txt"
+
+        if self.sim_configs == []:
+            raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
+        if self.sim_model == None:
+            raise RuntimeError("No simulation models were provided! Please set the sim_model property")
+        if self.mapping_file_name == "":
+            raise RuntimeError("Error. Please set the json mapping file name property")
+
+        configs_list = [prefix + x + postfix for x in self.sim_configs]
+        config = psim.Configuration(configs_list)
+        
+        self.add_to_log("[ sim ] Overwriting Initial Sim Conditions...")
+
+        # get the mutation dict from test case
+        initials = self.testcase.sim_ic_map
+
+        # mutate config
+        for k,v in initials.items():
+            self.add_to_log(f"[ sim ] Set {k} to {v}")            
+            if type(v) == list:
+                v = to_lin_vector(v)
+            config[k] = v
+
+        # construct sim
+        self.mysim = psim.Simulation(self.sim_model, config)
+        self.dt = self.mysim["truth.dt.ns"]/1e9
+
+        self.sat_names = ['leader','follower']
+        if self.is_single_sat_sim:
+            self.sat_names = ['leader']
+
+        # Open the correct mapping config file. self.mapping_file_name is a property of the ptest case
+        self.mapping_file_name
+        fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
+        with open(fn) as json_file:
+            self.fc_vs_sim = json.load(json_file)
+
+        # Create sub dictionaries for sensors and actuators
+        self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
+        self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']
+
+        # Create a dictionary of satellite names to FC-to-psim state field mappings
+        self.sensors_map = {k:self.fc_vs_sim_s for k in self.sat_names}
+        self.actuators_map = {k:self.fc_vs_sim_a for k in self.sat_names}
+
+        # replace sat with the real satellite name in all the mappings
+        self.sensors_map =   {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.sensors_map.items()}
+        self.actuators_map = {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.actuators_map.items()}
+        
+        # Now the above is a dictionary as follows:
+        # sensors_map['leader']['fsw_sensor_sf_name'] = 'psim_leader_sensor_sf_name'
+        # actuators_map['leader']['fsw_act_sf_name'] = 'psim_leader_act_sf_name'
+
+        # Initialize sensor reading and actuator reading containers
+        self.sensor_readings = {k:{} for k in self.sat_names}
+        self.actuator_cmds = {k:{} for k in self.sat_names}
+
+        self.fc_to_role_map = {'FlightController':'leader', 'FlightControllerLeader':'leader', 
+                               'FlightControllerFollower':'follower'}
+
+    def update_sensors(self):
+        '''
+        For each active satelite in the sensors_map, get all the psim values from psim
+        '''
+        
+        # iterate across each satellite's mappings
+        for role,mappings in self.sensors_map.items():
+            # iterate across each fc_sf vs psim_sf pair
+            for fc_sf,psim_sf in mappings.items():
+                psim_val = self.mysim[psim_sf]
+                if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
+                    psim_val = list(psim_val)
+                self.sensor_readings[role][fc_sf] = psim_val
+
+    def write_adcs_estimator_inputs(self, fc):
+        """Write the inputs required for ADCS state estimation. Per satellite"""
+
+        role = self.fc_to_role_map[fc.device_name]
+
+        mappings = self.sensors_map[role]
+        # iterate across each fc_sf vs psim_sf pair
+        for fc_sf,psim_sf in mappings.items():
+            local = self.sensor_readings[role][fc_sf]
+            fc.write_state(fc_sf, local)
+
+    def read_adcs_estimator_outputs(self, flight_controller):
+        """
+        Read and store estimates from the ADCS estimator onboard flight software.
+
+        The estimates are automatically stored in the Flight Controller telemetry log
+        by calling read_state.
+        """
+
+        flight_controller.read_state("pan.state")
+        flight_controller.read_state("adcs.state")        
+        flight_controller.read_state("adcs_monitor.mag1_vec")
+        flight_controller.read_state("adcs_monitor.mag2_vec")
+        flight_controller.read_state("attitude_estimator.q_body_eci")
+        flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")
+
+    def update_dynamics(self):
+        """
+        Allow simulation to step forward in time and update its
+        truth.
+        """
+        self.mysim.step()
+
+    def simulate_flight_computers(self):
+        # we're all grown up now, don't need this
+        pass 
+
+    def read_actuators(self, fc):
+        role = self.fc_to_role_map[fc.device_name]
+        for fc_sf in self.actuators_map[role]:
+            self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
+
+        '''
+        Uncomment the below sections if you want to mutate the actuators coming out of the flight computer
+        for debugging purposes.
+
+        Adjusting the yeet factor (yf) is a direct multiplier to make actuators stronger than they actually are
+        Setting it to 0 mutes the actuator. It is useful to temporarily disable actuators for debugging purposes
+        to isolate parts of the controller. Largely increasing the strength of actuators is also great to check
+        that an actuator really is causing an effect on dynamics (on a much shorter time scale).
+        '''
+
+        # mtr_yf = 10
+        # self.actuator_cmds[role]["adcs_cmd.mtr_cmd"] = [x*mtr_yf for x in self.actuator_cmds[role]["adcs_cmd.mtr_cmd"]]
+        
+        # rwa_t_yf = 10
+        # self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"] = [x*rwa_t_yf for x in self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"]]
+
+    def read_actuators_send_to_sim(self):
+        
+        # send the outputs of the FC to psim        
+        # iterate across each satellite's mappings
+        for role,mappings in self.actuators_map.items():
+            # iterate across each fc_sf vs psim_sf pair
+            for fc_sf,psim_sf in mappings.items():
+                local = self.actuator_cmds[role][fc_sf]
+                if type(local) == list:
+                    _len = len(local)
+                    if _len == 2:
+                        local = lin.Vector2(local)
+                    elif _len == 3:
+                        local = lin.Vector3(local)
+                    elif _len == 4:
+                        local = lin.Vector4(local)
+                    else:
+                        raise RuntimeError("Unexpected List Length, can't change into lin Vector")
+
+                self.mysim[psim_sf] = local

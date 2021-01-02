@@ -1,5 +1,7 @@
 #include "AttitudeEstimator.hpp"
 
+#include <adcs/constants.hpp>
+
 #include <gnc/attitude_estimator.hpp>
 #include <gnc/constants.hpp>
 
@@ -20,8 +22,9 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
     b_body_f("attitude_estimator.b_body"),
     q_body_eci_est_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
-    w_body_est_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
-    fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 0.1, 16))
+    w_body_est_f("attitude_estimator.w_body", 
+    Serializer<lin::Vector3f>(adcs::imu::min_rd_omega, adcs::imu::max_rd_omega, 16*3)), //full res is 32*3;
+    fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 0.1, 32)) //max res 32
     {
         //Writable fields
         add_writable_field(mag_flag_f);
@@ -48,6 +51,9 @@ void AttitudeEstimator::execute(){
     lin::Vector3d r_ecef = pos_fp->get();
     lin::Vector3f s_body = ssa_vec_fp->get();
     lin::Vector3f w_body = gyr_vec_fp->get();
+
+    // Normalize
+    s_body = s_body / lin::norm(s_body);
 
     // Handle the special magnetometer case
     lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
