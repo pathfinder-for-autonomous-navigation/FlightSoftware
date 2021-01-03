@@ -122,63 +122,12 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
         data.name = "field" + std::to_string(i);
         data.type = datatypes[std::rand() % datatypes.size()];
 
-        if (data.type == "unsigned int")
-        {
-            std::function<unsigned int()> randint = []() { return std::rand(); };
-            generate_random_bounds<unsigned int>(randint, data);
-            data.bitsize = 1 + std::rand() % 31;
-        }
-        else if (data.type == "signed int")
-        {
-            std::function<signed int()> randint = []() {
-                int x = std::rand(); int y = std::rand();
-                return x * ((y % 2 == 0) ? (-1) : 1);
-            };
-            generate_random_bounds<signed int>(randint, data);
-            data.bitsize = 1 + std::rand() % 31;
-        }
-        else if (data.type == "unsigned char")
-        {
-            std::function<unsigned char()> randint = []() { return std::rand() % 256; };
-            generate_random_bounds<unsigned char>(randint, data);
-            data.bitsize = 1 + std::rand() % 7;
-        }
-        else if (data.type == "signed char")
-        {
-            std::function<signed char()> randint = []() { return -256 + std::rand() % 256; };
-            generate_random_bounds<signed char>(randint, data);
-            data.bitsize = 1 + std::rand() % 7;
-        }
-        else if (data.type == "float" || data.type == "lin float vector" || data.type == "std float vector")
-        {
-            float float_min;
-            if (data.type == "float") float_min = -1e9; else float_min = 0;
-            static constexpr float float_max = 1e9;
-            std::function<float()> randfloat = [&]() {
-                return float_min + static_cast<float>(rand()) /( static_cast<float>(RAND_MAX/(float_max-float_min)));
-            };
-            generate_random_bounds<float>(randfloat, data);
-            if (data.type == "float") data.bitsize = 1 + std::rand() % 31;
-            else data.bitsize = VectorSerializer<float>::total_size(std::stof(data.min), std::stof(data.max), 1 + std::rand() % 31);
-        }
-        else if (data.type == "double" || data.type == "lin double vector" || data.type == "std double vector")
-        {
-            double double_min;
-            if (data.type == "double") double_min = -1e9; else double_min = 0;
-            static constexpr double double_max = 1e9;
-            std::function<double()> randdouble = [&]() {
-                return double_min + static_cast<double>(rand()) /( static_cast<double>(RAND_MAX/(double_max-double_min)));
-            };
-            generate_random_bounds<double>(randdouble, data);
-            if (data.type == "double") data.bitsize = 1 + std::rand() % 63;
-            else data.bitsize = VectorSerializer<double>::total_size(std::stod(data.min), std::stod(data.max), 1 + std::rand() % 63);
-        }
-        else if (data.type == "bool") data.bitsize = 1;
-        else if (data.type == "gps_time_t") data.bitsize = 62;
-        else if (data.type == "lin float quaternion"
-                 || data.type == "std float quaternion"
-                 || data.type == "lin double quaternion"
-                 || data.type == "std double quaternion")  data.bitsize=32;
+        #define type_based_telem_info_generation(strtype, realtype) \
+            if (data.type == strtype) generate_telemetry_info<realtype>(data);
+        
+        loop_over_types(type_based_telem_info_generation)
+
+        #undef type_based_telem_info_generation
 
         // Assign a flow.
         std::vector<int> flow_ids; for(size_t i = 1; i <= num_flows; i++) flow_ids.push_back(i);
@@ -218,59 +167,12 @@ void DownlinkTestFixture::create_state_fields()
     {
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
-        #define create_field(strtype, boundtype, fieldtype, create_field_fn, stdfn) \
-            if(f.type == strtype) \
-            { \
-                boundtype min = stdfn(f.min); \
-                boundtype max = stdfn(f.max); \
-                unsigned int bitsize = f.bitsize; \
-                if (f.type.find("vector") != std::string::npos) \
-                { \
-                    bitsize = VectorSerializer<double>::get_precision(min, max, f.bitsize); \
-                } \
-                registry.create_field_fn<fieldtype>(f.name, min, max, bitsize); \
-            }
-        #define create_field_boundless(strtype, fieldtype, create_field_fn) \
-            if(f.type == strtype) \
-            { \
-                registry.create_field_fn<fieldtype>(f.name); \
-            }
-        #define create_readable_field(strtype, boundtype, fieldtype, stdfn) \
-            create_field(strtype, boundtype, fieldtype, create_readable_field, stdfn)
-        #define create_readable_lin_vector_field(strtype, boundtype, stdfn) \
-            create_field(strtype, boundtype, boundtype, create_readable_lin_vector_field, stdfn)
-            #define create_readable_std_vector_field(strtype, boundtype, stdfn) \
-            create_field(strtype, boundtype, boundtype, create_readable_vector_field, stdfn)
-        #define create_readable_field_boundless(strtype, fieldtype) \
-            create_field_boundless(strtype, fieldtype, create_readable_field)
-
-        #define create(fieldtype) \
-            create_##fieldtype##_field("unsigned int", unsigned int, unsigned int, std::stol); \
-            create_##fieldtype##_field("unsigned char", unsigned char, unsigned char, std::stol); \
-            create_##fieldtype##_field("signed int", signed int, signed int, std::stol); \
-            create_##fieldtype##_field("signed char", signed char, signed char, std::stol); \
-            create_##fieldtype##_field("float", float, float, std::stof); \
-            create_##fieldtype##_field("double", double, double, std::stod); \
-            create_##fieldtype##_lin_vector_field("lin float vector", double, std::stof); \
-            create_##fieldtype##_lin_vector_field("lin double vector", double, std::stod); \
-            create_##fieldtype##_std_vector_field("std float vector", double, std::stof); \
-            create_##fieldtype##_std_vector_field("std double vector", double, std::stod); \
-            create_##fieldtype##_field_boundless("lin float quaternion", lin::Vector4f); \
-            create_##fieldtype##_field_boundless("lin double quaternion", lin::Vector4d); \
-            create_##fieldtype##_field_boundless("std float quaternion", f_quat_t); \
-            create_##fieldtype##_field_boundless("std double quaternion", d_quat_t); \
-            create_##fieldtype##_field_boundless("bool", bool); \
-            create_##fieldtype##_field_boundless("gps_time_t", gps_time_t);
-
-        create(readable);
+        #define type_based_creation(strtype, realtype) \
+            if (f.type == strtype) create_state_field<realtype>(f, registry);
         
-        #undef create
-        #undef create_readable_field_boundless
-        #undef create_readable_lin_vector_field
-        #undef create_readable_std_vector_field
-        #undef create_readable_field
-        #undef create_field_boundless
-        #undef create_field
+        loop_over_types(type_based_creation)
+        
+        #undef type_based_creation
     }
 }
 

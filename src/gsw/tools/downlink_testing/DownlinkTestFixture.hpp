@@ -68,9 +68,11 @@ class DownlinkTestFixture {
     template <typename T>
     static std::string generate_test_input(const TelemetryInfoGenerator::FieldData& f);
     template <typename T>
-    static TelemetryInfoGenerator::FieldData generate_telemetry_info();
+    static void create_state_field(const TelemetryInfoGenerator::FieldData& f, StateFieldRegistryMock& r);
     template <typename T>
-    static test_error_t compare(const std::string& input, const std::string output);
+    static void generate_telemetry_info(TelemetryInfoGenerator::FieldData& f);
+    template <typename T>
+    static test_error_t compare(const TelemetryInfoGenerator::FieldData& f, const std::string& input, const std::string output);
 
     StateFieldRegistryMock registry;
     std::unique_ptr<DownlinkProducer> downlink_producer;

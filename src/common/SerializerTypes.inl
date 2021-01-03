@@ -386,6 +386,10 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
      * 
      * These three functions compute b1, b2, and b1 + b2 + b2 (the total 
      * bitsize of the array.)
+     * 
+     * OPERATIONALLY, it should be noted that the precision is limited to
+     * 8*sizeof(unsigned long long) bits on all platforms, because the values
+     * stored in the radial and angular serializers is limited.
      */
     static constexpr size_t b1(size_t precision)
     {
@@ -517,6 +521,10 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
   static_assert(std::is_floating_point<T>::value,
       "Quaternion serializers can only be constructed for floats or doubles.");
 
+  public:
+    static constexpr size_t quat_component_sz() { return 10; }
+    static constexpr size_t quat_sz() { return quat_component_sz() * 3 + 2; }
+
   protected:
     /**
      * @brief Serializer for quaternion components.
@@ -527,8 +535,6 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
      */
     std::array<std::shared_ptr<Serializer<T>>, 3> quaternion_element_serializers;
 
-    static constexpr size_t quat_component_sz() { return 10; }
-
     /**
      * @brief Default constructor, appropriate for quaternions.
      */
@@ -536,7 +542,7 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
         SerializerBase<std::array<T, 4>>(
             std::array<T, 4>(),
             std::array<T, 4>(),
-            quat_component_sz() * 3 + 2,
+            quat_sz(),
         VectorSerializerFns::vector_print_size(4))
     {
         for (size_t i = 0; i < 3; i++) {
@@ -757,6 +763,8 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
     mutable Serializer<unsigned int> wn_sz;
     mutable Serializer<unsigned int> tow_sz;
     mutable Serializer<signed int> ns_sz;
+
+    static constexpr size_t gps_time_sz() { return 62; }
 
     Serializer()
         : SerializerBase<gps_time_t>(gps_time_t(), gps_time_t(), 1, print_size),
