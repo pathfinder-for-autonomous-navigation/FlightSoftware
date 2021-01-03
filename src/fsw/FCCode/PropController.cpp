@@ -100,6 +100,7 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
+    check_faults();
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
@@ -126,14 +127,11 @@ void PropController::execute()
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
-
     // Read all the sensors -- check sensors here instead of earlier in order
     // to spoof sensor readings during HITL tests.
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
-
-    check_faults();
 }
 
 void PropController::check_faults()
