@@ -306,7 +306,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.cycle()
         self.check_prop_state("handling_fault")
         self.check_prop_fault("prop.overpressured", True)
-        
         # TODO: not sure why these are NOT both signalled
         # If we don't set tank2_pressure, then tank1_temp_high is signalled
         self.check_prop_fault("prop.tank1_temp_high", False)
