@@ -389,6 +389,24 @@ void test_vent_inner_tank()
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
 }
 
+void test_vent_both_tanks()
+{
+    TestFixture tf;
+    tf.simulate_pressurizing();
+    simulate_overpressured();
+    simulate_tank1_high();
+    tf.step(get_persistence(overpressure_fault_f) + 2);
+    assert_fault_state(true, tank1_temp_high_fault_f);
+    assert_fault_state(true, overpressure_fault_f);
+    check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
+    while(tf.pc->prop_state_f.get() == static_cast<unsigned int>(prop_state_t::venting))
+    {
+        tf.step();
+    }
+    check_state(prop_state_t::handling_fault);
+}
 
 //test state changes don't happen if not functional
 void test_non_functional_transitions()
@@ -468,6 +486,7 @@ int test_prop_controller()
     RUN_TEST(test_use_backup);
     RUN_TEST(test_vent_outer_tank);
     RUN_TEST(test_vent_inner_tank);
+    RUN_TEST(test_vent_both_tanks);
     RUN_TEST(test_temp_sensor_logic);
     RUN_TEST(test_pressure_sensor_logic);
     return UNITY_END();
