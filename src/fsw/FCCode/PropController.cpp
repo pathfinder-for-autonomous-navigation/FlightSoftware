@@ -1,7 +1,9 @@
 #include <fsw/FCCode/PropController.hpp>
 
-#if (defined(UNIT_TEST) && defined(DESKTOP))
-#define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
+// TODO
+// #if (defined(UNIT_TEST) && defined(DESKTOP))
+#if (defined(DESKTOP))
+#define DD(f_, ...) printf((f_), ##__VA_ARGS__)
 #else
 #define DD(f_, ...) \
     do              \
@@ -99,6 +101,7 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
+    DD("[*] Pre check_faults(): Current state: %u\n", static_cast<prop_state_t>(prop_state_f.get()));
     check_faults();
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
@@ -111,12 +114,14 @@ void PropController::execute()
 
     if (next_state != current_state)
     {
-        DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
+        DD("[*] Attempt transition to New state: %u\n", static_cast<unsigned int>(next_state));
         // sanity check
         if (get_state(next_state).can_enter())
         {
+            DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
             prop_state_f.set(static_cast<unsigned int>(next_state));
             get_state(next_state).enter();
+            DD("[*] Current state: %u\n", static_cast<prop_state_t>(prop_state_f.get()));
         }
         else
         {
@@ -531,6 +536,7 @@ void PropState_HandlingFault::enter()
 
 prop_state_t PropState_HandlingFault::evaluate()
 {
+    DD("[*] Evaluating HandlingFault\n %d", 0xa);
     // If we can vent, then vent
     if (controller->can_enter_state(prop_state_t::venting))
     {
@@ -542,7 +548,7 @@ prop_state_t PropState_HandlingFault::evaluate()
     {
         return this_state;
     }
-
+    DD("[*] PropState_HandlingFault has recommended idle %u\n", 1);
     // Otherwise, return to idle
     return prop_state_t::idle;
 }

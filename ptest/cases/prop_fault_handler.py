@@ -18,6 +18,10 @@ class PropFaultHandler(SingleSatOnlyCase):
         super().__init__(is_interactive, random_seed, data_dir)
 
     @property
+    def debug_to_console(self):
+        return True
+
+    @property
     def initial_state(self):
         return "leader"
 
@@ -144,22 +148,22 @@ class PropFaultHandler(SingleSatOnlyCase):
 # Test Case
 # --------------------------------------------------------------------------------------
     def run_case_singlesat(self):
-        self.fault_name = "prop.pressurize_fail"
-        self.test_pressurize_fail()
+        # self.fault_name = "prop.pressurize_fail"
+        # self.test_pressurize_fail()
 
         self.fault_name = "prop.overpressured"
         self.test_overpressured()
 
-        self.fault_name = "prop.tank2_temp_high"
-        self.test_tank2_high()
+        # self.fault_name = "prop.tank2_temp_high"
+        # self.test_tank2_high()
 
-        self.fault_name = "prop.tank1_temp_high"
-        self.test_tank1_high()
+        # self.fault_name = "prop.tank1_temp_high"
+        # self.test_tank1_high()
         
-        # set this to something weird to avoid using methods that depend on fault_name
-        #   since multiple faults occur in this test
-        self.fault_name = "prop.DOESNOTEXIST"
-        self.test_vent_both()
+        # # set this to something weird to avoid using methods that depend on fault_name
+        # #   since multiple faults occur in this test
+        # self.fault_name = "prop.DOESNOTEXIST"
+        # self.test_vent_both()
 
         self.finish()
 
@@ -233,12 +237,14 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_mission_state("leader")
 
         # Standby issued on the 12th cycle
+        self.logger.put("240: pre-12th cycle")
         self.cycle()
         self.check_prop_state("handling_fault")
         self.check_prop_fault(self.fault_name, True)
         self.check_mission_state("leader")
 
         # Venting is entered on the 13th cycle
+        self.logger.put("247: pre-13th cycle")
         self.cycle()
         self.check_prop_state("venting")
         self.check_mission_state("standby")

@@ -119,6 +119,13 @@ void test_underpressured_response()
         check_state(prop_state_t::handling_fault);
         TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     }
+    // TODO: ground will most likely unsignal instead of suppress and will lower the threshold
+    unsignal_fault(pressurize_fail_fault_f);
+    tf.step();
+    check_state(prop_state_t::idle);
+
+
+
     // If the ground suppresses the fault
     suppress_fault(pressurize_fail_fault_f);
     tf.step();
@@ -169,22 +176,15 @@ void test_overpressured_response()
 void test_overpressured_suppress()
 {
     TestFixture tf;
-    tf.simulate_pressurizing();
-    // tf.step for some random number of pressurizing cycles so that we
-    //  are in the middle of pressurizing
-    tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
-    // Check that the tank1 valve should be opened since we are pressurizing
-    TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
-
+    tf.set_state(prop_state_t::idle);
     simulate_overpressured();
-    tf.step(get_persistence(overpressure_fault_f) + 2);
+    tf.step(get_persistence(overpressure_fault_f) + 1);
+    check_state(prop_state_t::idle);
+    tf.step();
     check_state(prop_state_t::handling_fault);
-    TEST_ASSERT_FALSE(Tank1.is_valve_open(0)); // Tank1 valve should be closed immediately
     tf.step();
     check_state(prop_state_t::venting); // Check that we have entered the venting state
     tf.step();
-    // Tank2 should open valves and vent until pressure is below max safe pressure
-    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
     // Test that we go into disabled when we have failed too many times
     TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     tf.execute_until_state_change();
