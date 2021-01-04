@@ -123,17 +123,17 @@ public:
 
     inline bool is_tank2_overpressured() const
     {
-        return tank2_pressure_f.get() >= max_safe_pressure;
+        return tank2_pressure_f.get() > max_safe_pressure;
     }
 
     inline bool is_tank1_temp_high() const
     {
-        return tank1_temp_f.get() >= max_safe_temp;
+        return tank1_temp_f.get() > max_safe_temp;
     }
 
     inline bool is_tank2_temp_high() const
     {
-        return tank2_temp_f.get() >= max_safe_temp;
+        return tank2_temp_f.get() > max_safe_temp;
     }
 
     inline bool check_current_state(prop_state_t expected) const

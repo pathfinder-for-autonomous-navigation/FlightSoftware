@@ -37,7 +37,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       // We must trust the pressure sensor.
       pressurize_fail_fault_f("prop.pressurize_fail", 0),
       overpressure_fault_f("prop.overpressured", 10),
-
       tank2_temp_high_fault_f("prop.tank2_temp_high", 10),
       tank1_temp_high_fault_f("prop.tank1_temp_high", 10)
 {
@@ -100,6 +99,7 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
+    check_faults();
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
@@ -131,8 +131,6 @@ void PropController::execute()
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
-
-    check_faults();
 }
 
 void PropController::check_faults()

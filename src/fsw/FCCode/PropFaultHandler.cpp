@@ -81,7 +81,7 @@ void PropFaultHandler::handle_both_tanks_want_to_vent()
 
         ++num_cycles_both_venting;
     }
-    else if (prop_state_fp->get() == static_cast<unsigned char>(prop_state_t::handling_fault))
+    else if (prop_state_fp->get() == static_cast<unsigned int>(prop_state_t::handling_fault))
     {
         // Only increment when we are in handling_fault because that is when we
         // are switching
@@ -92,7 +92,7 @@ void PropFaultHandler::handle_both_tanks_want_to_vent()
         if (num_cycles_both_venting > saved_max_venting_cycles)
         {
             DD("Num_cycles_both_venting exceeded max_venting_cycles --> Going into disabled\n");
-            prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
+            prop_state_fp->set(static_cast<unsigned int>(prop_state_t::disabled));
             // Manually set this back
             handle_restore_values();
         }

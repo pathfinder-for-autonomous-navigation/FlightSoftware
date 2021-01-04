@@ -12,7 +12,7 @@ void test_respect_disabled()
     TestFixture tf;
     simulate_overpressured(); // we are about to blow up...
     // signal the fault to persistence times then detect it on the 11th
-    tf.step(get_persistence(overpressure_fault_f) + 1);
+    tf.step(get_persistence(overpressure_fault_f) + 2);
     assert_fault_state(true, overpressure_fault_f);
     // But we should not enter any fault handling state because we disabled
     for (size_t i = 0; i < 20; ++i)
@@ -36,7 +36,7 @@ void test_overpressured_detect()
 {
     TestFixture tf;
     simulate_overpressured();
-    tf.step(get_persistence(overpressure_fault_f) + 1);
+    tf.step(get_persistence(overpressure_fault_f) + 2);
     assert_fault_state(true, overpressure_fault_f);
 }
 
@@ -44,7 +44,7 @@ void test_tank1_temp_high_detect()
 {
     TestFixture tf;
     simulate_tank1_high();
-    tf.step(get_persistence(tank1_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
     assert_fault_state(true, tank1_temp_high_fault_f);
 }
 
@@ -52,7 +52,7 @@ void test_tank2_temp_high_detect()
 {
     TestFixture tf;
     simulate_tank2_high();
-    tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     assert_fault_state(true, tank2_temp_high_fault_f);
 }
 
@@ -61,10 +61,10 @@ void test_both_tanks_high_detect()
     TestFixture tf;
     // Test that when multiple fault events occur, both faults are detected
     simulate_tank2_high();
-    tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     assert_fault_state(true, tank2_temp_high_fault_f);
     simulate_tank1_high();
-    tf.step(get_persistence(tank1_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
     // Both faults should be signalled
     assert_fault_state(true, tank1_temp_high_fault_f);
     assert_fault_state(true, tank2_temp_high_fault_f);
@@ -78,7 +78,7 @@ void test_multiple_faults_detect()
     tf.step(get_persistence(overpressure_fault_f));
     simulate_tank1_high();
     // Tank1 high occurs before the overpressure_fault is faulted
-    tf.step();
+    tf.step(2);
     assert_fault_state(true, overpressure_fault_f);
     // Tank1 temp should have been detected on the cycle at which overpressure is faulted
     tf.step(get_persistence(tank1_temp_high_fault_f));
@@ -86,7 +86,7 @@ void test_multiple_faults_detect()
     assert_fault_state(true, overpressure_fault_f);
     assert_fault_state(true, tank1_temp_high_fault_f);
     simulate_tank2_high();
-    tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     // All three should be signalled
     assert_fault_state(true, overpressure_fault_f);
     assert_fault_state(true, tank1_temp_high_fault_f);
@@ -157,7 +157,7 @@ void test_overpressured_response()
     tf.execute_until_state_change();
     check_state(prop_state_t::disabled);
     simulate_ambient();
-    tf.step();
+    tf.step(2);
     assert_fault_state(false, overpressure_fault_f);
     // Since we are in disabled, it does not matter that the fault is no longer
     // a problem, we must remain in disabled
@@ -188,7 +188,7 @@ void test_tank1_temp_high_response()
     tf.step(3);
     // Now pretend that venting did fix the issue, the fault should be unsignalled
     simulate_ambient();
-    tf.step();
+    tf.step(2);
     assert_fault_state(false, tank1_temp_high_fault_f);
     tf.step();
     check_state(prop_state_t::idle); // We should go into idle
@@ -212,7 +212,7 @@ void test_tank2_temp_high_response()
     // Make sure this thing opens the next valve
     TEST_ASSERT_TRUE(Tank2.is_valve_open(1));
     simulate_ambient();
-    tf.step();
+    tf.step(2);
     assert_fault_state(false, tank2_temp_high_fault_f);
     tf.step();
     check_state(prop_state_t::idle);
@@ -248,13 +248,12 @@ void test_interrupt_firing()
     check_state(prop_state_t::firing);
     assert_fault_state(false, tank1_temp_high_fault_f);
     assert_fault_state(false, overpressure_fault_f);
-    tf.step();
+    check_state(prop_state_t::firing);
+    tf.step(2);
     // Make sure that prop does not happily keep firing once these are faulted
+    check_state(prop_state_t::handling_fault);
     assert_fault_state(true, tank1_temp_high_fault_f);
     assert_fault_state(true, overpressure_fault_f);
-    check_state(prop_state_t::firing);
-    tf.step();
-    check_state(prop_state_t::handling_fault);
 }
 
 // Tank1 is venting but Tank2 is suddenly faulted
@@ -276,7 +275,7 @@ void test_tank2_fault_while_tank1_vent()
 
     // Now simulate Tank2 temperature high event and step until faulted
     simulate_tank2_high();
-    tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     // Both should now be faulted
     assert_fault_state(true, tank2_temp_high_fault_f);
     assert_fault_state(true, tank1_temp_high_fault_f);
@@ -321,7 +320,7 @@ void test_tank2_fault_while_tank1_vent()
     // While Tank2 valve is opened... suppose Tank1 is no longer faulted
     simulate_ambient();
     simulate_tank2_high();
-    tf.step(2);
+    tf.step(3);
     assert_fault_state(false, tank1_temp_high_fault_f);
     assert_fault_state(true, tank2_temp_high_fault_f);
     // Upon seeing that both Tank faults are not faulted, PropFaultHandler
@@ -345,15 +344,17 @@ void test_all_faulted_sensors_broken_respect_disabled()
     simulate_tank1_high();
     simulate_tank2_high();
     simulate_overpressured();
-    tf.step(get_persistence(tank2_temp_high_fault_f) + 3);
-    check_state(prop_state_t::venting);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     assert_fault_state(true, tank1_temp_high_fault_f);
     assert_fault_state(true, tank2_temp_high_fault_f);
     assert_fault_state(true, overpressure_fault_f);
+    check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
+    tf.step();
     // Prop should do the procedure described in the test above since all faults are faulted
     // Use half the max_venting_cycles because technically one iteration of this
     // loop consits of 2 venting cycles
-    tf.step();
 
     for (size_t i = 0; i < saved_max_cycles / 2; ++i)
     {

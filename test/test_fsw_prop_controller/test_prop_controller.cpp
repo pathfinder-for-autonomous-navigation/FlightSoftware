@@ -349,9 +349,8 @@ void test_vent_outer_tank()
     tf.simulate_pressurizing();
     tf.step(4);
     simulate_overpressured();
-    tf.step(get_persistence(overpressure_fault_f) + 1);
+    tf.step(get_persistence(overpressure_fault_f) + 2);
     assert_fault_state(true, overpressure_fault_f);
-    tf.step();
     check_state(prop_state_t::handling_fault);
     tf.step();
     // Make sure that this thing cycles
