@@ -54,6 +54,12 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.tank2_pressure = tank2_press
         self.tank2_temp = tank2_temp
         self.tank1_temp = tank1_temp
+        self.write_sensors()
+
+    def write_sensors(self):
+        self.ws("prop.tank2.temp",  str(self.tank2_temp))
+        self.ws("prop.tank1.temp",  str(self.tank1_temp))
+        self.ws("prop.tank2.pressure", str(self.tank2_pressure))
 
     @property
     def ctrl_cycles_per_filling(self):
@@ -81,14 +87,8 @@ class PropFaultHandler(SingleSatOnlyCase):
 
 
     def cycle(self):
-        self.collect_diagnostic_data()
-        init = self.rs("pan.cycle_no")
-        self.flight_controller.write_state('cycle.start', 'true')
-        if self.rs("pan.cycle_no") != init + 1:
-            raise TestCaseFailure(f"FC did not step forward by one cycle")
-        self.ws("prop.tank2.temp",  str(self.tank2_temp))
-        self.ws("prop.tank1.temp",  str(self.tank1_temp))
-        self.ws("prop.tank2.pressure", str(self.tank2_pressure))
+        super().cycle()
+        self.write_sensors()
 
 # --------------------------------------------------------------------------------------
 # Helper methods for tests
@@ -199,10 +199,11 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_mission_state("standby")
 
     def init_test(self):
-        self.fake_sensors()                                 # set sensors to fake STP
+        # self.fake_sensors()                                 # set sensors to fake STP
         self.state = "idle"                                 # set state to idle
         self.mission_state = "leader"                       # set mission state to leader
         self.cycle()
+        self.check_prop_state("idle")
         self.cycle()                                        # cycle multiple times to make sure faults are not occuring
         self.check_all_faults()                             # make sure there are no faults high
         self.check_prop_state("idle")                       # make sure state is idle
@@ -224,20 +225,20 @@ class PropFaultHandler(SingleSatOnlyCase):
     def do_single_tank_venting(self):
         # Fault requires 1 more than the persistence value to be signalled
         for _ in range( self.rs("prop.overpressured.persistence") + 1):
-            self.cycle()
             self.check_prop_state("idle")
+            self.check_mission_state("leader")
+            self.cycle()
+        self.check_prop_state("idle")
+        self.check_prop_fault(self.fault_name, False)
+        self.check_mission_state("leader")
 
-        # Signaled on the 12th cycle because we check_faults() first
+        # Standby issued on the 12th cycle
         self.cycle()
         self.check_prop_state("handling_fault")
         self.check_prop_fault(self.fault_name, True)
+        self.check_mission_state("leader")
 
-        # Standby issued on the 13th cycle
-        self.cycle()
-        self.check_prop_state("handling_fault")
-        self.check_mission_state("standby")
-
-        # Venting is entered on the 14th cycle
+        # Venting is entered on the 13th cycle
         self.cycle()
         self.check_prop_state("venting")
         self.check_mission_state("standby")
@@ -251,10 +252,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         
         # Then we go to disable when we run out of cycles
         self.check_prop_state("disabled")
-
-        # TODO: Not sure why but can only command back into leader if sensor values are faked
-        self.fake_sensors()
-        self.cycle()
 
     def test_tank2_high(self):
         """prop.tank2_temp_high occurs when the tank2 temp is too high
@@ -273,30 +270,18 @@ class PropFaultHandler(SingleSatOnlyCase):
     def test_vent_both(self):
         self.init_test()
         self.tank2_pressure = self.MAX_SAFE_PRESS + 1
-        # self.tank1_temp = self.MAX_SAFE_TEMP + 1
-        self.tank2_temp = self.MAX_SAFE_TEMP + 1
+        self.tank1_temp = self.MAX_SAFE_TEMP + 1
 
         for _ in range(self.rs("prop.tank1_temp_high.persistence") + 1):
-            print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
+            # print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
             self.check_prop_state("idle")
             self.cycle()
 
+        self.check_prop_state("handling_fault")
         self.cycle()
         self.check_prop_state("handling_fault")
-
-        # TODO: Not sure why some faults take an extra cycle to be signaled
-        # when they occur at the same cycle
-        # if SIGNALED: overpressured + tank2_temp + tank1_temp
-        #   ==> tank2_temp and tank1_temp take an extra cycle to be signaled
-        # if SIGNALED: tank2_temp + tank1_temp
-        #   ==> tank1_temp takes an extra cycle to be signaled
-        # if SIGNALED: overpressured + tank2_temp
-        #   ==> tank2_temp takes an extra cycle to be signaled
-
         self.check_prop_fault("prop.overpressured", True)
-        # self.cycle()
-        self.check_prop_fault("prop.tank2_temp_high", True)
-        # self.check_prop_fault("prop.tank1_temp_high", True)
+        self.check_prop_fault("prop.tank1_temp_high", True)
 
         self.cycle()
         self.check_mission_state("standby")
