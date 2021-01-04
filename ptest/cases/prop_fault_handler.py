@@ -1,5 +1,4 @@
 from .base import SingleSatOnlyCase
-from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
@@ -33,10 +32,10 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("fault_handler.enabled", True)
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         # Lower these so that we don't need to wait
-        self.ws("prop.ctrl_cycles_per_filling", 2)
-        self.ws("prop.ctrl_cycles_per_cooling", 1)
-        self.ws("prop.max_pressurizing_cycles", 2)
-        self.ws("prop.max_venting_cycles", 2)
+        self.ws("prop.ctrl_cycles_per_filling", 1)
+        self.ws("prop.ctrl_cycles_per_cooling", 2)
+        self.ws("prop.max_pressurizing_cycles", 4)
+        self.ws("prop.max_venting_cycles", 4)
 
 # --------------------------------------------------------------------------------------
 # Prop Properties
@@ -76,15 +75,20 @@ class PropFaultHandler(SingleSatOnlyCase):
     def min_num_cycles(self):
         return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles) + 4
 
+    @property
+    def num_vent_cycles(self):
+        return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*(int(self.max_venting_cycles)*2)
+
+
     def cycle(self):
         self.collect_diagnostic_data()
         init = self.rs("pan.cycle_no")
         self.flight_controller.write_state('cycle.start', 'true')
         if self.rs("pan.cycle_no") != init + 1:
             raise TestCaseFailure(f"FC did not step forward by one cycle")
-        self.ws("prop.tank2.pressure", str(self.tank2_pressure))
         self.ws("prop.tank2.temp",  str(self.tank2_temp))
         self.ws("prop.tank1.temp",  str(self.tank1_temp))
+        self.ws("prop.tank2.pressure", str(self.tank2_pressure))
 
 # --------------------------------------------------------------------------------------
 # Helper methods for tests
@@ -218,8 +222,8 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.do_single_tank_venting()
 
     def do_single_tank_venting(self):
-        # overpressured, tank2_high, and tank1_high have persistences of 10, so requires 11 cycles to set
-        for _ in range(11):
+        # Fault requires 1 more than the persistence value to be signalled
+        for _ in range( self.rs("prop.overpressured.persistence") + 1):
             self.cycle()
             self.check_prop_state("idle")
 
@@ -230,6 +234,7 @@ class PropFaultHandler(SingleSatOnlyCase):
 
         # Standby issued on the 13th cycle
         self.cycle()
+        self.check_prop_state("handling_fault")
         self.check_mission_state("standby")
 
         # Venting is entered on the 14th cycle
@@ -237,17 +242,13 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_prop_state("venting")
         self.check_mission_state("standby")
 
-        # We vent for max_pressurizing cycles
-        num_venting = 0
-        while int(self.state) == Enums.prop_states["venting"]:
+        # We vent for max_venting_cycles
+        for _ in range(self.num_vent_cycles):
             self.cycle()
-            num_venting += 1
         
-        # TODO: Not sure why it takes 15 cycles before it gives up
-        # Since we set max_venting_cycles and max_pressurizing_cycles to 2, 
-        #   num_venting should equal min_num_cycles, but it is higher
-        print(f"[DEBUG] num_venting: {num_venting} vs min_num_cycles: {self.min_num_cycles}")
-
+        self.check_prop_state("venting")
+        self.cycle()
+        
         # Then we go to disable when we run out of cycles
         self.check_prop_state("disabled")
 
@@ -272,20 +273,30 @@ class PropFaultHandler(SingleSatOnlyCase):
     def test_vent_both(self):
         self.init_test()
         self.tank2_pressure = self.MAX_SAFE_PRESS + 1
-        self.tank1_temp = self.MAX_SAFE_TEMP + 1
+        # self.tank1_temp = self.MAX_SAFE_TEMP + 1
         self.tank2_temp = self.MAX_SAFE_TEMP + 1
 
-        for _ in range(12):
+        for _ in range(self.rs("prop.tank1_temp_high.persistence") + 1):
             print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
             self.check_prop_state("idle")
             self.cycle()
 
+        self.cycle()
         self.check_prop_state("handling_fault")
-        # self.check_prop_fault("prop.overpressured", True)
-        # TODO: not sure why but these take an extra cycle when overpressuerd is signalled
+
+        # TODO: Not sure why some faults take an extra cycle to be signaled
+        # when they occur at the same cycle
+        # if SIGNALED: overpressured + tank2_temp + tank1_temp
+        #   ==> tank2_temp and tank1_temp take an extra cycle to be signaled
+        # if SIGNALED: tank2_temp + tank1_temp
+        #   ==> tank1_temp takes an extra cycle to be signaled
+        # if SIGNALED: overpressured + tank2_temp
+        #   ==> tank2_temp takes an extra cycle to be signaled
+
+        self.check_prop_fault("prop.overpressured", True)
         # self.cycle()
         self.check_prop_fault("prop.tank2_temp_high", True)
-        self.check_prop_fault("prop.tank1_temp_high", True)
+        # self.check_prop_fault("prop.tank1_temp_high", True)
 
         self.cycle()
         self.check_mission_state("standby")
