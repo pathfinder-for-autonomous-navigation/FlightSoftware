@@ -211,6 +211,9 @@ void test_overpressured_suppress()
     // Stay in idle this time because fault is suppressed
     check_state(prop_state_t::idle);
     TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+
+    // TODO: Since we decide pressure sensor is broken, we cannot tell when we have pressurized
+    // We should consider not allowing the satellite to fire if we believe the pressure sensor is broken
 }
 
 
