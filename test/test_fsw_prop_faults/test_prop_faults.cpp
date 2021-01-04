@@ -166,6 +166,54 @@ void test_overpressured_response()
     check_state(prop_state_t::disabled);
 }
 
+void test_overpressured_suppress()
+{
+    TestFixture tf;
+    tf.simulate_pressurizing();
+    // tf.step for some random number of pressurizing cycles so that we
+    //  are in the middle of pressurizing
+    tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
+    // Check that the tank1 valve should be opened since we are pressurizing
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
+
+    simulate_overpressured();
+    tf.step(get_persistence(overpressure_fault_f) + 2);
+    check_state(prop_state_t::handling_fault);
+    TEST_ASSERT_FALSE(Tank1.is_valve_open(0)); // Tank1 valve should be closed immediately
+    tf.step();
+    check_state(prop_state_t::venting); // Check that we have entered the venting state
+    tf.step();
+    // Tank2 should open valves and vent until pressure is below max safe pressure
+    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
+    // Test that we go into disabled when we have failed too many times
+    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::disabled);
+    // Check that once we are in disabled, fault is no longer signaled
+    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+
+    // Command prop back into idle without suppressing
+    tf.set_state(prop_state_t::idle);
+    // Prop should be upset and attempt to vent again
+    tf.step();
+    check_state(prop_state_t::handling_fault);
+    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
+    tf.step();
+    check_state(prop_state_t::venting);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::disabled);
+
+    // Ground tells us to suppress overpressured
+    suppress_fault(overpressure_fault_f);
+    tf.set_state(prop_state_t::idle);
+    tf.step();
+    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+    // Stay in idle this time because fault is suppressed
+    check_state(prop_state_t::idle);
+    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+}
+
+
 // Test that we can detect high temp event while firing and respond accordingly
 void test_tank1_temp_high_response()
 {
@@ -413,6 +461,7 @@ void run_fault_response_tests()
     RUN_TEST(test_tank2_fault_while_tank1_vent);
     RUN_TEST(test_interrupt_firing);
     RUN_TEST(test_all_faulted_sensors_broken_respect_disabled);
+    RUN_TEST(test_overpressured_suppress);
 }
 
 #ifdef DESKTOP
