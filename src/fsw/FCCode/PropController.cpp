@@ -1,7 +1,7 @@
 #include <fsw/FCCode/PropController.hpp>
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))
-#define DD(f_, ...) printf((f_), ##__VA_ARGS__)
+#define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
 #else
 #define DD(f_, ...) \
     do              \
