@@ -45,11 +45,11 @@ class PropFaultHandler(SingleSatOnlyCase):
 # Prop Properties
 # --------------------------------------------------------------------------------------
     @property
-    def state(self):
+    def prop_state(self):
         return self.rs("prop.state")
 
-    @state.setter
-    def state(self, val):
+    @prop_state.setter
+    def prop_state(self, val):
         self.ws("prop.state", Enums.prop_states[val])
 
     # Set fake sensor values on the prop
@@ -104,9 +104,9 @@ class PropFaultHandler(SingleSatOnlyCase):
                 f"Expected mission_state = {expected}, but mission_state = {self.mission_state}: {reason}")
     
     def check_prop_state(self, expected, reason=""):
-        if int(self.state) != Enums.prop_states[expected]:
+        if int(self.prop_state) != Enums.prop_states[expected]:
             raise TestCaseFailure(
-                f"Expected prop.state = {expected}, but prop.state = {Enums.prop_states[self.state]}: {reason}")
+                f"Expected prop.state = {expected}, but prop.state = {Enums.prop_states[self.prop_state]}: {reason}")
 
     def check_prop_fault(self, fault_name, expected, reason=""):
         if self.rs(f"{fault_name}.base") != expected:
@@ -151,8 +151,8 @@ class PropFaultHandler(SingleSatOnlyCase):
         # self.fault_name = "prop.pressurize_fail"
         # self.test_pressurize_fail()
 
-        self.fault_name = "prop.overpressured"
-        self.test_overpressured()
+        # self.fault_name = "prop.overpressured"
+        # self.test_overpressured()
 
         # self.fault_name = "prop.tank2_temp_high"
         # self.test_tank2_high()
@@ -160,10 +160,10 @@ class PropFaultHandler(SingleSatOnlyCase):
         # self.fault_name = "prop.tank1_temp_high"
         # self.test_tank1_high()
         
-        # # set this to something weird to avoid using methods that depend on fault_name
-        # #   since multiple faults occur in this test
-        # self.fault_name = "prop.DOESNOTEXIST"
-        # self.test_vent_both()
+        # set this to something weird to avoid using methods that depend on fault_name
+        #   since multiple faults occur in this test
+        self.fault_name = "prop.DOESNOTEXIST"
+        self.test_vent_both()
 
         self.finish()
 
@@ -203,10 +203,12 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_mission_state("standby")
 
     def init_test(self):
-        # self.fake_sensors()                                 # set sensors to fake STP
-        self.state = "idle"                                 # set state to idle
+        self.fake_sensors()                                 # set sensors to fake STP
+        self.logger.put("[TEST] Starting test {}".format(self.fault_name))
+        self.prop_state = "idle"                            # set state to idle
         self.mission_state = "leader"                       # set mission state to leader
         self.cycle()
+        self.check_all_faults()
         self.check_prop_state("idle")
         self.cycle()                                        # cycle multiple times to make sure faults are not occuring
         self.check_all_faults()                             # make sure there are no faults high
@@ -245,7 +247,9 @@ class PropFaultHandler(SingleSatOnlyCase):
 
         # Venting is entered on the 13th cycle
         self.logger.put("247: pre-13th cycle")
+        self.print_rs("prop.state")
         self.cycle()
+        self.print_rs("prop.state")
         self.check_prop_state("venting")
         self.check_mission_state("standby")
 
@@ -279,23 +283,27 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.tank1_temp = self.MAX_SAFE_TEMP + 1
 
         for _ in range(self.rs("prop.tank1_temp_high.persistence") + 1):
-            # print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
+            print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
             self.check_prop_state("idle")
             self.cycle()
+        self.check_prop_state("idle")
+        self.check_prop_fault("prop.overpressured", False)
+        self.check_prop_fault("prop.tank1_temp_high", False)
 
-        self.check_prop_state("handling_fault")
         self.cycle()
+        self.check_mission_state("leader")
         self.check_prop_state("handling_fault")
         self.check_prop_fault("prop.overpressured", True)
         self.check_prop_fault("prop.tank1_temp_high", True)
 
         self.cycle()
         self.check_mission_state("standby")
-
-        self.cycle()
         self.check_prop_state("venting")
+        self.check_prop_fault("prop.overpressured", True)
+        self.check_prop_fault("prop.tank1_temp_high", True)
 
-        while int(self.state) == Enums.prop_states["venting"]:
+        # Venting tank2
+        for _ in range(int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling)):
             self.cycle()
 
         self.check_prop_state("handling_fault")
@@ -303,7 +311,8 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_prop_fault("prop.overpressured", True)
         self.check_prop_fault("prop.tank1_temp_high", True)
 
-        while int(self.state) == Enums.prop_states["venting"]:
+        # Venting tank1
+        for _ in range(int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling)):
             self.cycle()
 
         self.check_prop_state("handling_fault")
