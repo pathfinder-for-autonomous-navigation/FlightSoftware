@@ -522,11 +522,15 @@ bool PropState_HandlingFault::can_enter() const
     // Return true if any of the faults are actually faulted.
     //  This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
+    bool b_pressurize_fail = controller->pressurize_fail_fault_f.is_faulted();
+    bool b_overpressured = controller->overpressure_fault_f.is_faulted();
+    bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
+    bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
     return PropulsionSystem.is_functional() &&
-            (controller->pressurize_fail_fault_f.is_faulted() ||
-            controller->overpressure_fault_f.is_faulted() ||
-            controller->tank2_temp_high_fault_f.is_faulted() ||
-            controller->tank1_temp_high_fault_f.is_faulted());
+            (b_pressurize_fail ||
+            b_overpressured ||
+            b_tank2_temp ||
+            b_tank1_temp);
 }
 
 void PropState_HandlingFault::enter()
@@ -536,7 +540,6 @@ void PropState_HandlingFault::enter()
 
 prop_state_t PropState_HandlingFault::evaluate()
 {
-    DD("[*] Evaluating HandlingFault\n %d", 0xa);
     // If we can vent, then vent
     if (controller->can_enter_state(prop_state_t::venting))
     {
@@ -548,7 +551,6 @@ prop_state_t PropState_HandlingFault::evaluate()
     {
         return this_state;
     }
-    DD("[*] PropState_HandlingFault has recommended idle %u\n", 1);
     // Otherwise, return to idle
     return prop_state_t::idle;
 }
@@ -573,10 +575,13 @@ void PropState_Venting::enter()
 
 bool PropState_Venting::can_enter() const
 {
+    bool b_overpressured = controller->overpressure_fault_f.is_faulted();
+    bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
+    bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
     return PropulsionSystem.is_functional() &&
-           (controller->overpressure_fault_f.is_faulted() ||
-           controller->tank1_temp_high_fault_f.is_faulted() ||
-           controller->tank2_temp_high_fault_f.is_faulted());
+           (b_overpressured ||
+           b_tank2_temp ||
+           b_tank1_temp);
 }
 
 unsigned int PropState_Venting::determine_faulted_tank()
