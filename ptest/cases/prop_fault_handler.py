@@ -18,10 +18,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         super().__init__(is_interactive, random_seed, data_dir)
 
     @property
-    def debug_to_console(self):
-        return True
-
-    @property
     def initial_state(self):
         return "leader"
 
@@ -39,7 +35,7 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("prop.ctrl_cycles_per_filling", 1)
         self.ws("prop.ctrl_cycles_per_cooling", 2)
         self.ws("prop.max_pressurizing_cycles", 4)
-        self.ws("prop.max_venting_cycles", 4)
+        self.ws("prop.max_venting_cycles", 8)
 
 # --------------------------------------------------------------------------------------
 # Prop Properties
@@ -83,14 +79,26 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     @property
     def min_num_cycles(self):
+        """Minimum number of cycles needed to set the schedule in idle
+        """
         return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles) + 4
 
     @property
     def num_vent_cycles(self):
+        """Maximum number of control cycles spent venting
+        """
         return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*(int(self.max_venting_cycles)*2)
 
+    @property
+    def num_duel_vent(self):
+        """Number of control cycles spent venting one tank when we need to vank both tanks
+        """
+        return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*2 + 2
 
     def cycle(self):
+        """Overriden from base.py
+        Write sensors at the END because PropController updates sensor values at the end of execution cycle
+        """
         super().cycle()
         self.write_sensors()
 
@@ -148,21 +156,21 @@ class PropFaultHandler(SingleSatOnlyCase):
 # Test Case
 # --------------------------------------------------------------------------------------
     def run_case_singlesat(self):
-        # self.fault_name = "prop.pressurize_fail"
-        # self.test_pressurize_fail()
+        self.fault_name = "prop.pressurize_fail"
+        self.test_pressurize_fail()
 
-        # self.fault_name = "prop.overpressured"
-        # self.test_overpressured()
+        self.fault_name = "prop.overpressured"
+        self.test_overpressured()
 
-        # self.fault_name = "prop.tank2_temp_high"
-        # self.test_tank2_high()
+        self.fault_name = "prop.tank2_temp_high"
+        self.test_tank2_high()
 
-        # self.fault_name = "prop.tank1_temp_high"
-        # self.test_tank1_high()
+        self.fault_name = "prop.tank1_temp_high"
+        self.test_tank1_high()
         
         # set this to something weird to avoid using methods that depend on fault_name
         #   since multiple faults occur in this test
-        self.fault_name = "prop.DOESNOTEXIST"
+        self.fault_name = "Venting Both Tanks"
         self.test_vent_both()
 
         self.finish()
@@ -203,17 +211,16 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_mission_state("standby")
 
     def init_test(self):
-        self.fake_sensors()                                 # set sensors to fake STP
+        """Ran at the beginning of each subtest to "reset" HITL state
+        """
         self.logger.put("[TEST] Starting test {}".format(self.fault_name))
+        self.fake_sensors()                                 # set sensors to "good" values
         self.prop_state = "idle"                            # set state to idle
         self.mission_state = "leader"                       # set mission state to leader
         self.cycle()
-        self.check_all_faults()
-        self.check_prop_state("idle")
-        self.cycle()                                        # cycle multiple times to make sure faults are not occuring
         self.check_all_faults()                             # make sure there are no faults high
         self.check_prop_state("idle")                       # make sure state is idle
-        self.check_mission_state("leader")
+        self.check_mission_state("leader")                  # make sure mission is leader
 
     def resolve_via_suppress(self):
         self.ws("{}.suppress".format(self.fault_name), True)
@@ -238,18 +245,14 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_prop_fault(self.fault_name, False)
         self.check_mission_state("leader")
 
-        # Standby issued on the 12th cycle
-        self.logger.put("240: pre-12th cycle")
+        # Standby issued on the 12th cycle because PropFaultHandler executes BEFORE PropController
         self.cycle()
         self.check_prop_state("handling_fault")
         self.check_prop_fault(self.fault_name, True)
         self.check_mission_state("leader")
 
         # Venting is entered on the 13th cycle
-        self.logger.put("247: pre-13th cycle")
-        self.print_rs("prop.state")
         self.cycle()
-        self.print_rs("prop.state")
         self.check_prop_state("venting")
         self.check_mission_state("standby")
 
@@ -283,7 +286,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.tank1_temp = self.MAX_SAFE_TEMP + 1
 
         for _ in range(self.rs("prop.tank1_temp_high.persistence") + 1):
-            print("prop.tank2.pressure: {} prop.tank2.temp: {} prop.tank1.temp: {}".format(self.rs("prop.tank2.pressure"), self.rs("prop.tank2.temp"), self.rs("prop.tank1.temp")))
             self.check_prop_state("idle")
             self.cycle()
         self.check_prop_state("idle")
@@ -303,19 +305,39 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.check_prop_fault("prop.tank1_temp_high", True)
 
         # Venting tank2
-        for _ in range(int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling)):
+        for _ in range(self.num_duel_vent-1):
             self.cycle()
-
         self.check_prop_state("handling_fault")
-
         self.check_prop_fault("prop.overpressured", True)
         self.check_prop_fault("prop.tank1_temp_high", True)
 
         # Venting tank1
-        for _ in range(int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling)):
+        for _ in range(self.num_duel_vent):
             self.cycle()
-
         self.check_prop_state("handling_fault")
-
         self.check_prop_fault("prop.overpressured", True)
         self.check_prop_fault("prop.tank1_temp_high", True)
+
+        # Venting tank2
+        for _ in range(self.num_duel_vent-1):
+            self.cycle()
+
+        # Venting tank1
+        for _ in range(self.num_duel_vent):
+            self.cycle()
+
+        # Venting tank2
+        # Now pretend that tank1 conditions improve
+        for _ in range(self.num_duel_vent):
+            self.tank1_temp -= 5
+            self.cycle()
+
+        # Now instead of switching to tank1, we should continue venting tank2
+        self.check_prop_state("venting")
+        self.check_prop_fault("prop.overpressured", True)
+        self.check_prop_fault("prop.tank1_temp_high", False)
+        for _ in range(self.num_vent_cycles):
+            self.cycle()
+
+        # Unfortunately, tank2 conditions don't improve..., so we go into disabled
+        self.check_prop_state("disabled")

@@ -1,8 +1,6 @@
 #include <fsw/FCCode/PropController.hpp>
 
-// TODO
-// #if (defined(UNIT_TEST) && defined(DESKTOP))
-#if (defined(DESKTOP))
+#if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) printf((f_), ##__VA_ARGS__)
 #else
 #define DD(f_, ...) \
