@@ -103,7 +103,7 @@ void run_fault_detection_tests()
     RUN_TEST(test_multiple_faults_detect);
 }
 
-void test_underpressured_response()
+void test_underpressured_suppress_response()
 {
     TestFixture tf;
     // In the event that Prop fails to pressurize
@@ -119,12 +119,6 @@ void test_underpressured_response()
         check_state(prop_state_t::handling_fault);
         TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     }
-    // TODO: ground will most likely unsignal instead of suppress and will lower the threshold
-    unsignal_fault(pressurize_fail_fault_f);
-    tf.step();
-    check_state(prop_state_t::idle);
-
-
 
     // If the ground suppresses the fault
     suppress_fault(pressurize_fail_fault_f);
@@ -138,6 +132,35 @@ void test_underpressured_response()
     assert_fault_state(false, pressurize_fail_fault_f);
     // We should now be in firing since simulate_underpressured() executes the full
     // number of cycles_until_firing
+    check_state(prop_state_t::firing);
+}
+
+void test_underpressured_unsignal_response()
+{
+    TestFixture tf;
+    // In the event that Prop fails to pressurize
+    tf.simulate_underpressured();
+    // check that pressurize_fail_fault_f is faulted immediately and state enters handling_fault
+    assert_fault_state(true, pressurize_fail_fault_f);
+    check_state(prop_state_t::handling_fault);
+    // check that further executions of PropFaultHandler should still suggest standby response
+    for (size_t i = 0; i < 31; ++i)
+    {
+        tf.step();
+        assert_fault_state(true, pressurize_fail_fault_f);
+        check_state(prop_state_t::handling_fault);
+        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
+    }
+    // If the ground decides to unsignal and lower the pressure threshold
+    unsignal_fault(pressurize_fail_fault_f);
+    tf.pc->threshold_firing_pressure.set(14.0); // default fake pressure is 14.6 psi
+    tf.step();
+    // Check that the fault is no longer faulted
+    assert_fault_state(false, pressurize_fail_fault_f);
+    // Check that the state returns to idle
+    check_state(prop_state_t::idle);
+    // Check that the fault does not occur since we lower the threshold
+    tf.simulate_underpressured();
     check_state(prop_state_t::firing);
 }
 
@@ -212,8 +235,6 @@ void test_overpressured_suppress()
     check_state(prop_state_t::idle);
     TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
 
-    // TODO: Since we decide pressure sensor is broken, we cannot tell when we have pressurized
-    // We should consider not allowing the satellite to fire if we believe the pressure sensor is broken
 }
 
 
@@ -456,7 +477,8 @@ void test_all_faulted_sensors_broken_respect_disabled()
 
 void run_fault_response_tests()
 {
-    RUN_TEST(test_underpressured_response);
+    RUN_TEST(test_underpressured_unsignal_response);
+    RUN_TEST(test_underpressured_suppress_response);
     RUN_TEST(test_overpressured_response);
     RUN_TEST(test_tank1_temp_high_response);
     RUN_TEST(test_tank2_temp_high_response);

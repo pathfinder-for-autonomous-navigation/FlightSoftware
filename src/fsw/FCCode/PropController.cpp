@@ -99,7 +99,6 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
-    DD("[*] Pre check_faults(): Current state: %u\n", static_cast<prop_state_t>(prop_state_f.get()));
     check_faults();
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
@@ -119,7 +118,6 @@ void PropController::execute()
             DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
             prop_state_f.set(static_cast<unsigned int>(next_state));
             get_state(next_state).enter();
-            DD("[*] Current state: %u\n", static_cast<prop_state_t>(prop_state_f.get()));
         }
         else
         {
