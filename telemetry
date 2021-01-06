@@ -304,8 +304,8 @@
         "adcs_cmd.mtr_cmd": {
             "bitsize": 149,
             "flow_id": 13,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 0.056668501347303,
+            "min": -0.056668501347303,
             "type": "std float vector",
             "writable": true
         },
@@ -344,8 +344,8 @@
         "adcs_cmd.rwa_speed_cmd": {
             "bitsize": 149,
             "flow_id": 7,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 680.677978515625,
+            "min": -680.677978515625,
             "type": "std float vector",
             "writable": true
         },
@@ -360,8 +360,8 @@
         "adcs_cmd.rwa_torque_cmd": {
             "bitsize": 149,
             "flow_id": 7,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
             "type": "std float vector",
             "writable": true
         },
@@ -426,9 +426,9 @@
             "writable": false
         },
         "adcs_monitor.gyr_vec": {
-            "bitsize": 0,
+            "bitsize": 10,
             "flow_id": 24,
-            "max": 0.0,
+            "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -578,9 +578,9 @@
             "writable": false
         },
         "adcs_monitor.mag1_vec": {
-            "bitsize": 0,
+            "bitsize": 10,
             "flow_id": 24,
-            "max": 0.0,
+            "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -616,9 +616,9 @@
             "writable": false
         },
         "adcs_monitor.mag2_vec": {
-            "bitsize": 0,
+            "bitsize": 10,
             "flow_id": 24,
-            "max": 0.0,
+            "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -654,9 +654,9 @@
             "writable": false
         },
         "adcs_monitor.rwa_speed_rd": {
-            "bitsize": 0,
+            "bitsize": 10,
             "flow_id": 7,
-            "max": 0.0,
+            "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -686,9 +686,9 @@
             "writable": false
         },
         "adcs_monitor.rwa_torque_rd": {
-            "bitsize": 0,
+            "bitsize": 10,
             "flow_id": 7,
-            "max": 0.0,
+            "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -732,10 +732,10 @@
             "writable": false
         },
         "adcs_monitor.ssa_vec": {
-            "bitsize": 0,
+            "bitsize": 31,
             "flow_id": 24,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 1.000100016593933,
+            "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": false
         },
@@ -1034,34 +1034,34 @@
             "writable": true
         },
         "attitude.pointer_vec1_current": {
-            "bitsize": 0,
+            "bitsize": 31,
             "flow_id": 14,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 1.000100016593933,
+            "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": false
         },
         "attitude.pointer_vec1_desired": {
-            "bitsize": 0,
+            "bitsize": 31,
             "flow_id": 14,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 1.000100016593933,
+            "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": true
         },
         "attitude.pointer_vec2_current": {
-            "bitsize": 0,
+            "bitsize": 31,
             "flow_id": 14,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 1.000100016593933,
+            "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": false
         },
         "attitude.pointer_vec2_desired": {
-            "bitsize": 0,
+            "bitsize": 31,
             "flow_id": 14,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 1.000100016593933,
+            "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": true
         },
@@ -1086,10 +1086,10 @@
             "writable": false
         },
         "attitude_estimator.w_body": {
-            "bitsize": 0,
+            "bitsize": 149,
             "flow_id": 3,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 2.181661605834961,
+            "min": -2.181661605834961,
             "type": "lin float vector",
             "writable": false
         },
@@ -1642,17 +1642,17 @@
             "writable": false
         },
         "orbit.baseline_pos": {
-            "bitsize": 0,
+            "bitsize": 73,
             "flow_id": 2,
-            "max": 0.0,
+            "max": 2000.0,
             "min": 0.0,
             "type": "lin double vector",
             "writable": false
         },
         "orbit.baseline_vel": {
-            "bitsize": 0,
+            "bitsize": 49,
             "flow_id": "undefined",
-            "max": 0.0,
+            "max": 11.0,
             "min": 0.0,
             "type": "lin double vector",
             "writable": false
@@ -1690,10 +1690,10 @@
             "writable": true
         },
         "orbit.pos": {
-            "bitsize": 0,
+            "bitsize": 99,
             "flow_id": 2,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 6901000.0,
+            "min": 6841000.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1706,10 +1706,10 @@
             "writable": false
         },
         "orbit.vel": {
-            "bitsize": 0,
+            "bitsize": 73,
             "flow_id": "undefined",
-            "max": 0.0,
-            "min": 0.0,
+            "max": 7650.0,
+            "min": 7550.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1776,9 +1776,9 @@
             "writable": true
         },
         "piksi.baseline_pos": {
-            "bitsize": 70,
+            "bitsize": 73,
             "flow_id": 19,
-            "max": 0.0,
+            "max": 2000.0,
             "min": 0.0,
             "type": "std double vector",
             "writable": false
@@ -1792,10 +1792,10 @@
             "writable": false
         },
         "piksi.pos": {
-            "bitsize": 95,
+            "bitsize": 99,
             "flow_id": 19,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 6901000.0,
+            "min": 6841000.0,
             "type": "std double vector",
             "writable": false
         },
@@ -1814,10 +1814,10 @@
             "writable": false
         },
         "piksi.vel": {
-            "bitsize": 71,
+            "bitsize": 73,
             "flow_id": 19,
-            "max": 0.0,
-            "min": 0.0,
+            "max": 7650.0,
+            "min": 7550.0,
             "type": "std double vector",
             "writable": false
         },
@@ -1844,18 +1844,18 @@
             "writable": true
         },
         "pointer.mtr_cmd": {
-            "bitsize": 0,
+            "bitsize": 149,
             "flow_id": "undefined",
-            "max": 0.0,
-            "min": 0.0,
+            "max": 0.056668501347303,
+            "min": -0.056668501347303,
             "type": "lin float vector",
             "writable": true
         },
         "pointer.rwa_torque_cmd": {
-            "bitsize": 0,
+            "bitsize": 149,
             "flow_id": "undefined",
-            "max": 0.0,
-            "min": 0.0,
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
             "type": "lin float vector",
             "writable": true
         },

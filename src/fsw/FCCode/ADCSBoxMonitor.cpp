@@ -23,7 +23,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
     ssa_mode_rd(2),
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
-    ssa_vec_f("adcs_monitor.ssa_vec", dummy_vec_sr),
+    ssa_vec_f("adcs_monitor.ssa_vec", Serializer<lin::Vector3f>(1-1e-4,1+1e-4,0)),
     ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
     ssa_voltages_f(),
 

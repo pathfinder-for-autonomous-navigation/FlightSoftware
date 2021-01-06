@@ -43,6 +43,7 @@ class AttitudeController : public TimedControlTask<void> {
     ReadableStateField<lin::Vector3d> const *const vel_ecef_fp;
     ReadableStateField<lin::Vector3d> const *const pos_baseline_ecef_fp;
 
+    Serializer<lin::Vector3f> unit_vector_sr;
     // Inputs/intermediate pointing objective states
     ReadableStateField<lin::Vector3f> pointer_vec1_current_f;
     ReadableStateField<lin::Vector3f> pointer_vec2_current_f;

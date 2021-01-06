@@ -2,14 +2,10 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
-#include <lin.hpp>
-#include <iostream>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
 #include "constant_tracker.hpp"
-
-#include <gnc/constants.hpp>
 #include <lin.hpp>
 
 /**
@@ -359,6 +355,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
   static_assert(std::is_floating_point<T>::value,
     "Vector serializers can only be constructed for floats or doubles.");
 
+  public:
+    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
+
   protected:
     /**
      * @brief Serializer for vector components
@@ -377,7 +376,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
      * distance given by dx = (max - min) / 2^p.
      * 
      * We can approximate
-     * dx = sqrt((r dtheta)^2 + (r dphi)^2 + dr^2)
+     * dx = sqrt((r dtheta)^2 + (r cos(theta) dphi)^2 + dr^2)
      *    = max (dtheta + dphi) + dr
      * 
      * We want to choose the angle and magnitude serializer bounds so that
@@ -410,6 +409,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
         return 1 + b1(precision) + 2 * b2(min, max, precision);
     }
 
+  public:
     VectorSerializer(T min, T max, size_t precision) :
         SerializerBase<std::array<T, 3>>(
             std::array<T, 3>(),
@@ -418,11 +418,16 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
             VectorSerializerFns::vector_print_size(3)
         ),
         magnitude_serializer(min, max, b1(precision)),
-        theta_serializer(0, gnc::constant::pi, b2(min, max, precision)),
-        phi_serializer(-gnc::constant::pi/2, gnc::constant::pi/2, b2(min, max, precision))
+        theta_serializer(0, pi, b2(min, max, precision)),
+        phi_serializer(-pi/2, pi/2, b2(min, max, precision))
     {
         // Required for the logarithm in the computations of b1 and b2 to be defined.
         assert(max > 0); assert(max > min);
+
+        // This line exists so that TelemetryInfoGenerator is able to determine the
+        // minimum and maximum radius.
+        this->_min[0] = min;
+        this->_max[0] = max;
     }
 
   public:
@@ -529,20 +534,6 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
         }
     }
 
-    QuaternionSerializer<T>&
-    operator=(const QuaternionSerializer<T>& other)
-    {
-        SerializerBase<std::array<T, 4>>::operator=(other);
-        
-        for(size_t i = 0; i < quaternion_element_serializers.size(); i++) {
-            this->quaternion_element_serializers[i] =
-                std::make_unique<Serializer<T>>(*other.quaternion_element_serializers[i]);
-        }
-        this->max_component = other.max_component;
-
-        return *this;
-    }
-
   public:
     void serialize(const std::array<T, 4>& src) override {
         lin::Vector<T, 4> normalized_quat {src[0], src[1], src[2], src[3]};
@@ -642,17 +633,13 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
 template<>
 class Serializer<std::array<float, 3>> : public VectorSerializer<float> {
   public:
-    Serializer<std::array<float, 3>>(float min, float max, size_t bitsize)
-        : VectorSerializer<float>(min, max, bitsize)
-    {}
+    using VectorSerializer<float>::VectorSerializer;
 };
 
 template<>
 class Serializer<std::array<double, 3>> : public VectorSerializer<double> {
   public:
-    Serializer<std::array<double, 3>>(double min, double max, size_t bitsize)
-        : VectorSerializer<double>(min, max, bitsize)
-    {}
+    using VectorSerializer<double>::VectorSerializer;
 };
 
 template<>
@@ -660,7 +647,7 @@ class Serializer<std::array<float, 4>> :
 public QuaternionSerializer<float>
 {
   public:
-    Serializer<std::array<float, 4>>() : QuaternionSerializer<float>() {}
+    using QuaternionSerializer<float>::QuaternionSerializer;
 };
 
 template<>
@@ -668,7 +655,7 @@ class Serializer<std::array<double, 4>> :
 public QuaternionSerializer<double>
 {
   public:
-    Serializer<std::array<double, 4>>() : QuaternionSerializer<double>() {}
+    using QuaternionSerializer<double>::QuaternionSerializer;
 };
 
 /**
@@ -680,25 +667,26 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
   static_assert(std::is_floating_point<T>::value, "Serializers are only defined for float or double-valued tuples.");
 
   protected:
-    Serializer<std::array<T, N>>* _arr_sr;
-    
-    LinVectorSerializer(Serializer<std::array<T, N>>* s) : 
+    std::shared_ptr<Serializer<std::array<T, N>>> _arr_sr;
+
+    LinVectorSerializer(...) : 
         SerializerBase<lin::Vector<T, N>>(
             lin::zeros<T, N, 1>(),
             lin::zeros<T, N, 1>(),
-        0, 0),
-        _arr_sr(s)
+        0, 0)
     {}
 
-  public:
-    LinVectorSerializer<T, N>&
-    operator=(const LinVectorSerializer<T, N>& other) 
-    {
-        SerializerBase<lin::Vector<T, 4>>::operator=(other);
-        *_arr_sr = other._arr_sr;
-        return *this;
+    /**
+     * Store min/max/bitsize information for use by the
+     * TelemtryInfoGenerator.
+     */
+    void set_telemetry_info() {
+        this->_min(0) = _arr_sr->min()[0];
+        this->_max(0) = _arr_sr->max()[0];
+        this->serialized_val.resize(_arr_sr->bitsize());
     }
 
+  public:
     void serialize(const lin::Vector<T, N>& src) override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
@@ -729,25 +717,23 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
 template<typename T>
 class Serializer<lin::Vector<T, 4>> : public LinVectorSerializer<T, 4>
 {
-  private:
-    Serializer<std::array<T, 4>> arr_sr;
   public:
-    Serializer() :
-        LinVectorSerializer<T, 4>(&arr_sr),
-        arr_sr()
-    {}
+    Serializer() : LinVectorSerializer<T, 4>()
+    {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,4>>>();
+    }
 };
 
 template<typename T>
 class Serializer<lin::Vector<T, 3>> : public LinVectorSerializer<T, 3>
 {
-  private:
-    Serializer<std::array<T, 3>> arr_sr;
   public:
     Serializer(T min, T max, size_t bitsize) :
-        LinVectorSerializer<T, 3>(&arr_sr),
-        arr_sr(min, max, bitsize)
-    {}
+        LinVectorSerializer<T, 3>(min, max, bitsize)
+    {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,3>>>(min, max, bitsize);
+        this->set_telemetry_info();
+    }
 };
 
 /**
