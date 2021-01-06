@@ -235,10 +235,10 @@ int main(int argc, char* argv[])
     //get_q_results<float>(out); // Float quaternions
     //get_q_results<double>(out); // Double quaternions
 
-    //get_v_results<double>(out, 6841000, 6901000, 26); // orbit.pos
+    // get_v_results<double>(out, 6771000, 6921000, 28); // orbit.pos
     // get_v_results<double>(out, 0, 2000, 22); // orbit.baseline_pos
     // get_v_results<double>(out, 0, 11, 14); // orbit.baseline_vel
-    // get_v_results<double>(out, 7550, 7650, 18); // orbit.vel
+    // get_v_results<double>(out, 7570, 7685, 19); // orbit.vel
     // get_v_results<float>(out, 1-1e-4, 1+1e-4, 0); // Angular unit vectors: less than 0.1 degree error
 
     return 0;
