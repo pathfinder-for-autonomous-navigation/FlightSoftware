@@ -291,7 +291,7 @@ class Serializer<double> : public FloatDoubleSerializer<double> {
 };
 
 /**
- * Common functions used by vector serializers.
+ * Common functions used by vector and quaternion serializers.
  */
 namespace VectorSerializerFns
 {
@@ -376,7 +376,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
      * distance given by dx = (max - min) / 2^p.
      * 
      * We can approximate
-     * dx = sqrt((r dtheta)^2 + (r cos(theta) dphi)^2 + dr^2)
+     * dx = sqrt((r dtheta)^2 + (r sin(theta) dphi)^2 + dr^2)
      *    = max (dtheta + dphi) + dr
      * 
      * We want to choose the angle and magnitude serializer bounds so that
@@ -458,7 +458,9 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
     }
 
     bool deserialize(const char* val, std::array<T, 3>* dest) override {
-        return VectorSerializerFns::deserialize_vector_str<T, 3>(val, dest);
+        bool success = VectorSerializerFns::deserialize_vector_str<T, 3>(val, dest);
+        if (success) serialize(*dest);
+        return success;
     }
 
     void deserialize(std::array<T, 3>* dest) const override {
@@ -496,7 +498,7 @@ class VectorSerializer : public SerializerBase<std::array<T, 3>> {
 /**
  * @brief Base class for float/double quaternion specializations of serializer.
  * 
- * This class uses the method of "smallest component" serialization for quaternions.
+ * This class uses the serialization method of "smallest three" for quaternions.
  * - Since the quaternion has a magnitude of size 1, we only need the three smallest components
  *   to specify the direction of the unit vector. We allow two bits to store the index of
  *   the largest component in the quaternion, and then we serialize the three smallest components
@@ -517,6 +519,10 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
      */
     std::array<std::shared_ptr<Serializer<T>>, 3> quaternion_element_serializers;
 
+    /**
+     * Bitsize with which to serialize an individual component of the quaternion.
+     * The number 10 is determined experimentally.
+     */
     static constexpr size_t quat_component_sz() { return 10; }
 
     /**
@@ -581,9 +587,9 @@ class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
     }
 
     bool deserialize(const char* val, std::array<T, 4>* dest) override {
-        bool ret = VectorSerializerFns::deserialize_vector_str<T, 4>(val, dest);
-        serialize(*dest);
-        return ret;
+        bool success = VectorSerializerFns::deserialize_vector_str<T, 4>(val, dest);
+        if (success) serialize(*dest);
+        return success;
     }
 
     void deserialize(std::array<T, 4>* dest) const override {
