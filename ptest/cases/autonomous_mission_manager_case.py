@@ -36,10 +36,14 @@ class AutonomousMissionManagerCase(MissionCase):
         leader_time_since_comms = time.time() - self.leader_time_last_comms 
         if(leader_time_since_comms > self.comms_time_threshold):
             self.logger.put("Leader is experiencing comms blackout. Ending mission." + str(leader_time_since_comms))
+            self.leader.write_state("pan.state", 3)
+            self.follower.write_state("pan.state", 3)
             return False
         follower_time_since_comms = time.time() - self.follower_time_last_comms 
         if(follower_time_since_comms > self.comms_time_threshold):
             self.logger.put("Follower is experiencing comms blackout. Ending mission." + str(follower_time_since_comms))
+            self.leader.write_state("pan.state", 3)
+            self.follower.write_state("pan.state", 3)
             return False
 
 
