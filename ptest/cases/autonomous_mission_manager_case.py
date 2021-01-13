@@ -77,7 +77,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
         self.leader_time_last_comms = time.time()
         self.follower_time_last_comms = time.time()
-        self.comms_time_threshold = 60*5*1000000000 #currently 5 minutes for testing
+        self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
     def run_case_fullmission(self):
 
@@ -109,4 +109,3 @@ class AutonomousMissionManagerCase(MissionCase):
 
             self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
             self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
-
