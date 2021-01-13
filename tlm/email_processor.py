@@ -109,7 +109,6 @@ class IridiumEmailProcessor(object):
         mail_ids = data[0]
         id_list = mail_ids.split()
 
-        print(self.confirmation_mtmsn, self.mtmsn, self.send_uplinks)
 
         for num in id_list:
             #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
