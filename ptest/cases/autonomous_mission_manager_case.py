@@ -23,7 +23,7 @@ class AutonomousMissionManagerCase(MissionCase):
         if not leader_state_functional:
             if follower_state_functional:
                 self.follower.write_state("pan.state", 3)
-            else:
+            elif self.follower.read_state("pan.state") != "3":
                 self.follower.write_state("pan_state", 10)
             return False
 
