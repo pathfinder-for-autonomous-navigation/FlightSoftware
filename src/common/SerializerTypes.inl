@@ -98,10 +98,11 @@ class IntegerSerializer : public SerializerBase<T> {
         if (src_copy < this->_min) src_copy = this->_min;
 
         unsigned int resolution = _resolution();
-        if (resolution == 0)
-            this->serialized_val.set_ullong(0);  // Prevent divide-by-zero error
-        else
+        if (resolution != 0)
             this->serialized_val.set_ullong((src_copy - this->_min) / resolution);
+        else
+            // Can't divide by zero!
+            this->serialized_val.set_ullong(0);
     }
 
     bool deserialize(const char* val, T* dest) override {

@@ -436,10 +436,11 @@ void test_vec_serializer() {
         //make the another serialier with same inputs
         auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
 
-        // Generate random vector.
-        const T r = 0.1 + 1.5 * rand() / T(RAND_MAX);
+        // Generate random vector with magnitude between 0.1 and 2.0. (We don't want the magnitude
+        // to be too small; otherwise, there are serialization errors.)
+        const T r = 0.1 + 1.9 * rand() / T(RAND_MAX);
         const T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
-        const T p = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T p = 2 * VectorSerializer<T>::pi * rand() / T(RAND_MAX);
         const T x = r * sin(t) * cos(p);
         const T y = r * sin(t) * sin(p);
         const T z = r * cos(t);
@@ -546,7 +547,8 @@ void test_quat_serializer() {
         lin::VectorView<T, 4> result_lin(result.data());
         result_lin = result_lin / lin::norm(result_lin);
 
-        T angle_err = std::acos(std::abs(lin::dot(result_lin, quat_lin))) / 2;
+        T angle_err_rad = std::acos(std::abs(lin::dot(result_lin, quat_lin))) * 2;
+        T angle_err_deg = angle_err_rad * 360 / (2 * VectorSerializer<T>::pi);
 
         static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output"
             " quaternion was {%f,%f,%f,%f}; angle: %f";
@@ -561,9 +563,9 @@ void test_quat_serializer() {
         std::array<T, 4> quat_arr = to_stdarray(quat);
         std::array<T, 4> result_arr = to_stdarray(result);
         sprintf(err_str, err_fmt_str, i, quat_arr[0], quat_arr[1], quat_arr[2], quat_arr[3],
-            result_arr[0], result_arr[1], result_arr[2], result_arr[3], angle_err);
+            result_arr[0], result_arr[1], result_arr[2], result_arr[3], angle_err_deg);
 
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err, err_str);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err_deg, err_str);
 
     }
 
