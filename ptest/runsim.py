@@ -50,7 +50,6 @@ class PTest(object):
         self.set_up_radios()
         self.set_up_testcase()
 
-        testcase_error = False
         self.testcase.start()
 
         if self.is_interactive:
