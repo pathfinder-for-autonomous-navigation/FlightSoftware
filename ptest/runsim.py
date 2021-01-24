@@ -48,14 +48,23 @@ class PTest(object):
         self.is_running = True
         self.set_up_devices()
         self.set_up_radios()
-        self.set_up_testcase()
 
-        self.testcase.start()
+        _ = __import__("ptest.cases")
+        testcases = getattr(_, "cases")
+        try:
+            testcase = getattr(testcases, self.testcase_name)
+        except:
+            self.stop_all(f"Nonexistent test case: {self.testcase_name}")
+        print(f"Running mission testcase {self.testcase_name}.")
+
+        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.devices)
 
         if self.is_interactive:
             self.set_up_cmd_prompt()
         else:
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
+
+        self.testcase.start()
 
     def set_up_devices(self):
         # Set up test table by connecting to each device specified in the config.
@@ -134,22 +143,6 @@ class PTest(object):
                     self.simulation_run_dir,
                     self.tlm_config)
                 self.radios[radio_name] = radio_session
-
-    def set_up_testcase(self):
-        """
-        Starts up the test case and the MATLAB simulation if it is required by the testcase.
-        """
-
-        _ = __import__("ptest.cases")
-        testcases = getattr(_, "cases")
-        try:
-            testcase = getattr(testcases, self.testcase_name)
-        except:
-            self.stop_all(f"Nonexistent test case: {self.testcase_name}")
-        print(f"Running mission testcase {self.testcase_name}.")
-
-        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir)
-        self.testcase.setup_case(self.devices)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt

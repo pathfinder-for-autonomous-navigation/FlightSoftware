@@ -13,7 +13,7 @@ class PTestCase(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, is_interactive, random_seed, data_dir):
+    def __init__(self, is_interactive, random_seed, data_dir, devices):
         self._finished = False
         self.is_interactive = is_interactive
         self.random_seed = random_seed
@@ -23,6 +23,21 @@ class PTestCase(object):
         self.errored = False
         self.finished = False
         self.devices = None
+
+        self.populate_devices(devices)
+
+        for dev_name,device in devices.items():
+            device.case_interaction_setup(self.debug_to_console)
+
+        if self.sim_duration > 0:
+            from ..psim import CppSimulation # Lazy import
+            self.sim = CppSimulation(self.is_interactive, devices, 
+            self.random_seed, self, self.sim_duration, self.sim_initial_state, 
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
+            
+        self.logger.start()
+        self.logger.put("[TESTCASE] Starting testcase.")
+        self._setup_case()
 
     @property
     def sim_configs(self):
@@ -120,24 +135,6 @@ class PTestCase(object):
         for x in range(Enums.havt_length):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
-
-    def setup_case(self, devices):
-        '''
-        Entry point for simulation creation
-        '''
-        self.populate_devices(devices)
-
-        for dev_name,device in devices.items():
-            device.case_interaction_setup(self.debug_to_console)
-
-        if self.sim_duration > 0:
-            from ..psim import CppSimulation # Lazy import
-            self.sim = CppSimulation(self.is_interactive, devices, 
-            self.random_seed, self, self.sim_duration, self.sim_initial_state, 
-            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
-        self.logger.start()
-        self.logger.put("[TESTCASE] Starting testcase.")
-        self._setup_case()
 
     def start(self):
         if hasattr(self, "sim"):
