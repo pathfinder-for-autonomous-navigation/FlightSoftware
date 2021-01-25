@@ -139,7 +139,7 @@ class PTestCase(object):
     def start(self):
         if hasattr(self, "sim"):
             self.sim.start()
-        elif self.is_interactive:
+        if self.is_interactive:
             self.testcase_thread = threading.Thread(name="Testcase execution",
                                         target=self.run)
             self.testcase_thread.start()
