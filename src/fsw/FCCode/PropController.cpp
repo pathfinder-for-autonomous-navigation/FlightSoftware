@@ -84,6 +84,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     num_prop_firings_f.set(0);
 
     PropState::controller = this;
+
+    sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
 }
 
 PropController *PropState::controller = nullptr;
@@ -121,8 +123,7 @@ void PropController::execute()
         }
         else
         {
-            // This could happen if next_state is idle but is_functional returns false
-            // or if powercycling is happening 
+            // This could happen if next_state requires is_functional(), but is_functional is not set
             DD("[-] Could not enter state!!\n\n\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
@@ -136,9 +137,18 @@ void PropController::execute()
 
 void PropController::check_faults()
 {
+    // Do not check_faults when we are disabled
+    if (static_cast<prop_state_t>(prop_state_f.get()) == prop_state_t::disabled)
+        return;
     overpressure_fault_f.evaluate(is_tank2_overpressured());
     tank2_temp_high_fault_f.evaluate(is_tank2_temp_high());
     tank1_temp_high_fault_f.evaluate(is_tank1_temp_high());
+
+    // Turn on the dcdc pin when overpressure and tank2_temp_high are high for the first time
+    if ( (is_tank2_overpressured() || is_tank2_temp_high()) && sph_dcdc_fp->get() == false )
+    {
+        sph_dcdc_fp->set(true);
+    }
 }
 
 bool PropController::can_enter_state(prop_state_t desired_state) const
@@ -191,12 +201,16 @@ bool PropController::is_valid_schedule(unsigned int v1,
     return (v1 <= 1000 && v2 <= 1000 && v3 <= 1000 && v4 <= 1000 && ctrl_cycles_from_now > 1);
 }
 
-unsigned int PropController::min_cycles_needed() const
+unsigned int PropController::min_cycles_pressurizing_only() const
 {
     return max_pressurizing_cycles.get() *
                (ctrl_cycles_per_filling_period.get() +
-                ctrl_cycles_per_cooling_period.get()) +
-           4;
+                ctrl_cycles_per_cooling_period.get()) + 4;
+}
+
+unsigned int PropController::min_cycles_needed() const
+{
+    return min_cycles_pressurizing_only() + ctrl_cycles_per_filling_period.get(); // + ctrl_cycles_per_filling_period because we need 1s delay in await_pressurizing
 }
 
 // ------------------------------------------------------------------------
@@ -238,6 +252,8 @@ void PropState_Disabled::enter()
     DD("[*] ==> entered PropState_Disabled\n");
     // Stop Interval Timer, Turn off all valves, clear the schedule
     PropulsionSystem.reset();
+    // Set dcdc to false
+    controller->sph_dcdc_fp->set(false);
 }
 
 prop_state_t PropState_Disabled::evaluate()
@@ -254,24 +270,19 @@ prop_state_t PropState_Disabled::evaluate()
 
 bool PropState_Idle::can_enter() const
 {
-#ifndef DESKTOP
-    return PropulsionSystem.is_functional();
-#else
     return true;
-#endif
 }
 
 void PropState_Idle::enter()
 {
-    DD("[*] ==> entered PropState_Idle\n");
+    DD("[*] ==> entered PropState_Idle...setting DCDC to false\n");
+    controller->sph_dcdc_fp->set(false);
 }
 
 prop_state_t PropState_Idle::evaluate()
 {
     if (controller->can_enter_state(prop_state_t::handling_fault))
         return prop_state_t::handling_fault;
-    if (controller->can_enter_state(prop_state_t::pressurizing))
-        return prop_state_t::pressurizing;
     if (controller->can_enter_state(prop_state_t::await_pressurizing))
         return prop_state_t::await_pressurizing;
     return this_state;
@@ -285,25 +296,45 @@ bool PropState_AwaitPressurizing::can_enter() const
 {
     bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_schedule_valid = controller->validate_schedule();
-    // Enter Await Pressurizing rather than Pressurizing if we have MORE than enough time
-    bool more_than_enough_time =
-        controller->cycles_until_firing.get() >= controller->min_cycles_needed();
-    bool is_functional = PropulsionSystem.is_functional();
+    // Enter Await Pressurizing if schedule is valid and we have enough time
+    // -1 because of the one cycle in Idle after the cycle that the schedule was set
+    bool enough_time = controller->cycles_until_firing.get() >= controller->min_cycles_needed() - 1;
 
-    return (was_idle && is_schedule_valid && more_than_enough_time && is_functional);
+    return (was_idle && is_schedule_valid && enough_time);
 }
 
 void PropState_AwaitPressurizing::enter()
 {
-    DD("[*] ==> entered PropState_AwaitPressurizing\n");
+    DD("[*] ==> entered PropState_AwaitPressurizing, setting DCDC pin high\n");
+    controller->sph_dcdc_fp->set(true);
+    // reset the dcdc pin high counter
+    n_cycles_dcdc_high = 0;
 }
 
 prop_state_t PropState_AwaitPressurizing::evaluate()
 {
+    // Require that dcdc pin is consecutively high
+    if (PropulsionSystem.is_functional())
+        ++n_cycles_dcdc_high;
+    else
+        n_cycles_dcdc_high = 0;
+
     if (controller->can_enter_state(prop_state_t::handling_fault))
         return prop_state_t::handling_fault;
+
+    // If we will not have enough time to pressurize, then go back to idle
+    if (controller->cycles_until_firing.get() < controller->min_cycles_pressurizing_only() - 1)
+        return prop_state_t::idle;
+
+    // Block AwaitPressurizing from entering Pressurizing until n_cycles_dcdc_high is ~ 1 second
+    if (n_cycles_dcdc_high < controller->ctrl_cycles_per_filling_period.get())
+        return this_state;
+
     if (controller->can_enter_state(prop_state_t::pressurizing))
+    {
+        n_cycles_dcdc_high = 0; // reset this just in case
         return prop_state_t::pressurizing;
+    }
     return this_state;
 }
 
@@ -320,8 +351,11 @@ void ActionCycleOpenClose::enter()
 
 prop_state_t ActionCycleOpenClose::evaluate()
 {
+    // if (!PropulsionSystem.is_functional())
+    //     return prop_state_t::idle;
     // Tick the clock
     countdown.tick();
+
     if (has_succeeded())
     {
         DD("[+] ActionCycleOpenClose has achieved goal\n");
@@ -391,15 +425,15 @@ bool PropState_Pressurizing::can_enter() const
 {
     bool was_await_pressurizing = controller->check_current_state(prop_state_t::await_pressurizing);
     bool is_schedule_valid = controller->validate_schedule();
-    // Allow from idle because sometimes we can immediately pressurize
-    bool was_idle = controller->check_current_state(prop_state_t::idle);
+
+    // It is time to pressurize when we have min_cycles_pressurizing_only - 1 cycles left
+    bool is_time_to_pressurize =
+        controller->cycles_until_firing.get() == controller->min_cycles_pressurizing_only() - 1;
+    
+    // Can only enter if dcdc pin is high
     bool is_functional = PropulsionSystem.is_functional();
 
-    // It is time to pressurize when we have min_cycles_needed - 1 cycles left
-    bool is_time_to_pressurize =
-        controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
-
-    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
+    return (was_await_pressurizing && is_functional && is_time_to_pressurize && is_schedule_valid);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
@@ -522,8 +556,7 @@ bool PropState_HandlingFault::can_enter() const
     bool b_overpressured = controller->overpressure_fault_f.is_faulted();
     bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
     bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
-    return PropulsionSystem.is_functional() &&
-            (b_pressurize_fail ||
+    return (b_pressurize_fail ||
             b_overpressured ||
             b_tank2_temp ||
             b_tank1_temp);
@@ -574,8 +607,9 @@ bool PropState_Venting::can_enter() const
     bool b_overpressured = controller->overpressure_fault_f.is_faulted();
     bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
     bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
-    return PropulsionSystem.is_functional() &&
-           (b_overpressured ||
+    
+    return PropulsionSystem.is_functional() && 
+        (b_overpressured ||
            b_tank2_temp ||
            b_tank1_temp);
 }
@@ -605,11 +639,14 @@ unsigned int PropState_Venting::determine_faulted_tank()
 
 bool PropState_Venting::has_succeeded() const
 {
+    bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
+    bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
+    bool b_tank2_overpressured = controller->overpressure_fault_f.is_faulted();
+    
     if (tank_choice == 1)
-        return !controller->tank1_temp_high_fault_f.is_faulted();
+        return !b_tank1_temp;
     // tank == Tank2
-    return !controller->tank2_temp_high_fault_f.is_faulted() &&
-           !controller->overpressure_fault_f.is_faulted();
+    return !b_tank2_temp && !b_tank2_overpressured;
 }
 
 size_t PropState_Venting::select_valve_index()

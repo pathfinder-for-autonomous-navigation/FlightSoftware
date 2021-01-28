@@ -44,8 +44,6 @@ public:
   std::shared_ptr<Fault> pressurize_fail_fp;
   std::shared_ptr<Fault> overpressured_fp;
 
-  std::shared_ptr<WritableStateField<bool>> sph_dcdc_fp;
-
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
 

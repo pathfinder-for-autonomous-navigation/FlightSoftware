@@ -84,6 +84,11 @@ public:
     Fault tank2_temp_high_fault_f;
     Fault tank1_temp_high_fault_f;
 
+    /**
+     * @brief DCDC control flag for Spike and Hold and docking system.
+     */
+    WritableStateField<bool> *sph_dcdc_fp;
+
 
     // ------------------------------------------------------------------------
     // Public Interface
@@ -112,9 +117,9 @@ public:
                                   unsigned int ctrl_cycles_from_now);
 
     // Minimum of cycles needed to prepare for firing time
-    // If cycles_until_firing is set to to this value when we are in Idle,
-    // then we will transition directly to Pressurizing
     unsigned int min_cycles_needed() const;
+    
+    unsigned int min_cycles_pressurizing_only() const;
 
     inline bool is_at_threshold_pressure() const
     {
@@ -282,6 +287,8 @@ public:
     bool can_enter() const override;
     void enter() override;
     prop_state_t evaluate() override;
+
+    unsigned int n_cycles_dcdc_high = 0;
 };
 
 // ------------------------------------------------------------------------

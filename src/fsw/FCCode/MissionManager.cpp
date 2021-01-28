@@ -69,9 +69,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     wheel3_adc_fault_fp = find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__);
     wheel_pot_fault_fp = find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__);
     pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
-
-    sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
-
+    
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
     close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
@@ -384,16 +382,6 @@ void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state,
                                    prop_state_t prop_state)
 {
-    // TODO: why not docking? 
-    if (prop_state == prop_state_t::disabled && mission_state != mission_state_t::docking)
-    {
-        sph_dcdc_fp->set(false);
-    }
-    else
-    {
-        sph_dcdc_fp->set(true);
-    }
-
     set(mission_state);
     set(adcs_state);
     set(prop_state);

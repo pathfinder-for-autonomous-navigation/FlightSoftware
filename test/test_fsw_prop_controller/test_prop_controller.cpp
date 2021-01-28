@@ -44,125 +44,82 @@ void test_illegal_schedule()
     check_state(prop_state_t::idle);
 }
 
-// Test that a schedule with fire_cycle set to prop_controller->min_cycles_needed() and all valve
-// schedules less than 1000 should be considered valid
-// Test that we should go directly into pressurizing (as oppose to await_pressurizing)
-void test_idle_to_pressurizing_helper(bool functional = true)
-{
-    TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 400, 800, 999, tf.pc->min_cycles_needed());
-    tf.step();
-    // Go immediately into pressurizing
-    if(functional)
-        check_state(prop_state_t::pressurizing);
-    else check_state(prop_state_t::idle);
-}
-
-void test_idle_to_pressurizing()
-{
-    test_idle_to_pressurizing_helper();
-}
-
-// Test that a schedule with fire_cycle set to tf.pc->min_cycles_needed() + 1 will cause
+// Test that a schedule with fire_cycle set to tf.pc->min_cycles_needed() will cause
 // Prop to enter await_pressurizing for 1 cycle before entering pressurizing
-void test_idle_to_await_pressurize_helper(bool functional = true)
-{
-    TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() + 1);
-    tf.step();
-    // Go into await_pressurizing because we have more than enough time
-    if(functional){
-        check_state(prop_state_t::await_pressurizing);
-        tf.step();
-        check_state(prop_state_t::pressurizing);
-    }
-    else check_state(prop_state_t::idle);
-    
-}
-
 void test_idle_to_await_pressurize()
 {
-    test_idle_to_await_pressurize_helper();
+    PropulsionSystem.fake_is_functional = false;
+    // Make sure we can get into await_pressurizing with is_functional false
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed());
+    tf.check_sph_dcdc_on(false);
+    tf.step();
+    // Go into await_pressurizing because we have more than enough time
+    PropulsionSystem.fake_is_functional = true;
+    check_state(prop_state_t::await_pressurizing);
+    tf.step();
+    tf.check_sph_dcdc_on(true);
+    // We stuck in await pressurizing for one second
+    // -2 because we've been in await_pressurizing for 1 cycle already and expect
+    // to step until the LAST cycle where we are in await_pressurizing
+    tf.step(tf.pc->ctrl_cycles_per_filling_period.get()-2);
+    check_state(prop_state_t::await_pressurizing);
+    tf.step();
+    check_state(prop_state_t::pressurizing);
 }
 
 // Test that Prop waits in await_pressurizing if a schedule is set with fire_cycle exceeding
 // tf.pc->min_cycles_needed()
-void test_await_pressurize_to_pressurize_helper(bool functional = true)
-{
-    TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed() + 10);
-    tf.step();
-    if(functional)
-    {
-        check_state(prop_state_t::await_pressurizing);
-        tf.execute_until_state_change();
-        check_state(prop_state_t::pressurizing);
-    }
-    else check_state(prop_state_t::idle);
-}
-
 void test_await_pressurize_to_pressurize()
 {
-    test_await_pressurize_to_pressurize_helper();
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed() + 10);
+    tf.check_sph_dcdc_on(false);
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    tf.check_sph_dcdc_on(true);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::pressurizing);
 }
 
 // Test that we pressurize for 19 cycles before transitioning to await_firing
-void test_pressurize_to_await_firing_helper(bool functional = true)
-{
-    TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 200, 200, 200, tf.pc->min_cycles_needed());
-    tf.step();
-    if(functional)
-    {
-        check_state(prop_state_t::pressurizing);
-
-        tf.execute_step(do_nothing, 19 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
-        TEST_ASSERT_TRUE(Tank2.get_pressure() > tf.pc->threshold_firing_pressure.get());
-        tf.step();
-        TEST_ASSERT_TRUE(tf.pc->is_at_threshold_pressure());
-        check_state(prop_state_t::await_firing);
-    }
-    else check_state(prop_state_t::idle);
-}
-
 void test_pressurize_to_await_firing()
 {
-    test_pressurize_to_await_firing_helper();
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 200, 200, 200, tf.pc->min_cycles_needed());
+    tf.check_sph_dcdc_on(false);
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    tf.check_sph_dcdc_on(true);
+    tf.execute_until_state_change();
+    tf.execute_step(do_nothing, 19 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    TEST_ASSERT_TRUE(Tank2.get_pressure() > tf.pc->threshold_firing_pressure.get());
+    tf.step();
+    TEST_ASSERT_TRUE(tf.pc->is_at_threshold_pressure());
+    check_state(prop_state_t::await_firing);
 }
 
 // Test the case where we pressurize for the maximum 20 pressurizing cycles. Make sure that we still enter await_firing
-void test_pressurize_to_firing_helper(bool functional = true)
+void test_pressurize_to_firing()
 {
     // There is no going from pressurizing into firing
     TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed());
     tf.step();
-    if(functional)
-    {
-        check_state(prop_state_t::pressurizing);
-        // At threshold at the end of the 20 pressurizing cycles
-        tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
-        tf.step();
-        check_state(prop_state_t::await_firing);
-        tf.execute_until_state_change();
-        check_state(prop_state_t::firing);
-    }
-    else check_state(prop_state_t::idle);
-}
-
-void test_pressurize_to_firing()
-{
-    test_pressurize_to_firing_helper();
+    tf.check_sph_dcdc_on(true);
+    check_state(prop_state_t::await_pressurizing);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::pressurizing);
+    // At threshold at the end of the 20 pressurizing cycles
+    tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    tf.step();
+    check_state(prop_state_t::await_firing);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::firing);
 }
 
 // Test that when we are in pressurizing state, that Tank1 valve is opened and that Tank1 valve is closed when we
@@ -173,9 +130,13 @@ void test_pressurizing()
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = tf.pc->min_cycles_needed();
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
+    tf.check_sph_dcdc_on(false);
     tf.step(); // transitioned from idle -> pressurizing
-    check_state(prop_state_t::pressurizing);
-    tf.step();                                // first cycle of pressurizing
+    check_state(prop_state_t::await_pressurizing);
+    tf.check_sph_dcdc_on(true);
+    tf.execute_until_state_change();
+    check_state(prop_state_t::pressurizing); // first cycle of pressurizing
+    tf.step(); // valve is open after this
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0)); // Tank1 valve is opened
     simulate_at_threshold();
     tf.execute_until_state_change();
@@ -190,6 +151,7 @@ void test_pressurize_fail()
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed() * 2);
     tf.step();                       // now in await_pressurizing
+    tf.check_sph_dcdc_on(true);
     tf.execute_until_state_change(); // now in pressurizing
     check_state(prop_state_t::pressurizing);
 
@@ -205,6 +167,7 @@ void test_pressurize_fail()
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
     assert_fault_state(false, pressurize_fail_fault_f);
     tf.step();
+    tf.check_sph_dcdc_on(false);
     check_state(prop_state_t::idle);
 }
 
@@ -215,6 +178,7 @@ void test_suppress_underpressure_fault()
     tf.set_schedule(700, 200, 200, 800, 2 * tf.pc->min_cycles_needed());
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
     tf.step();                       // enter await_pressurizing
+    tf.check_sph_dcdc_on(true);
     tf.execute_until_state_change(); // now in pressurizing
     check_state(prop_state_t::pressurizing);
     // Same setup as test_pressurize_fail
@@ -252,6 +216,7 @@ void test_await_firing()
     unsigned int cycles_until_fire = tf.pc->min_cycles_needed() + 4;
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
     tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    tf.check_sph_dcdc_on(true);
     tf.step();
     check_state(prop_state_t::await_firing);
     // valves should be closed
@@ -270,52 +235,49 @@ void test_firing()
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    tf.check_sph_dcdc_on(false);
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
     simulate_at_threshold();
     tf.step(tf.pc->min_cycles_needed());
+    tf.check_sph_dcdc_on(true);
     check_state(prop_state_t::firing);
     TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
     unsigned int expected_firing_cycles = (800 / PAN::control_cycle_time_ms) + 1; // roundup
     TEST_ASSERT_EQUAL(expected_firing_cycles, tf.execute_until_state_change());
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    tf.check_sph_dcdc_on(false);
     // can't really check valve states unless we want to make a fake interval timer
 }
 
 // Test that if we order Prop to fire at tf.pc->min_cycles_needed()
 // then Prop is definitely firing after this amount of cycles
-void test_firing_to_idle_helper(bool functional = true)
+void test_firing_to_idle()
 {
     TestFixture tf;
-    PropulsionSystem.set_is_functional(functional);
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
     simulate_at_threshold();
     // [cycles_until_fire] from now, this had better be firing.
     tf.step(tf.pc->min_cycles_needed() - 1);
-    if(functional)
-    {
-        check_state(prop_state_t::await_firing);
-        tf.step();
-        check_state(prop_state_t::firing);
-        // Test that PropulsionSystem is firing while we are in the firing state
-        // 800 is the biggest value
-        unsigned int cycles_firing = (800 / PAN::control_cycle_time_ms) + 1; // round up
-        for (size_t i = 0; i < cycles_firing; ++i)
-        {
-            check_state(prop_state_t::firing);
-            TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
-            tf.step();
-        }
-        // On the next control cycle, we should be back to idle
-        TEST_ASSERT_FALSE(PropulsionSystem.is_firing())
-        check_state(prop_state_t::idle);
-    }
-    else check_state(prop_state_t::idle);
-}
+    tf.check_sph_dcdc_on(true);
 
-void test_firing_to_idle()
-{
-    test_firing_to_idle_helper();
+    check_state(prop_state_t::await_firing);
+    tf.step();
+    check_state(prop_state_t::firing);
+    // Test that PropulsionSystem is firing while we are in the firing state
+    // 800 is the biggest value
+    unsigned int cycles_firing = (800 / PAN::control_cycle_time_ms) + 1; // round up
+    for (size_t i = 0; i < cycles_firing; ++i)
+    {
+        check_state(prop_state_t::firing);
+        TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
+        tf.step();
+    }
+    // On the next control cycle, we should be back to idle
+    tf.check_sph_dcdc_on(false);
+    TEST_ASSERT_FALSE(PropulsionSystem.is_firing())
+    check_state(prop_state_t::idle);
+
 }
 
 // Test that we use the backup valve when it is requested
@@ -336,6 +298,7 @@ void test_use_backup()
     tf.pc->tank1_valve.set(1); // set the valve to the backup valve
                                // Go back to pressurizing
     tf.simulate_pressurizing();
+    tf.check_sph_dcdc_on(true);
     check_state(prop_state_t::pressurizing);
     tf.step();
     TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
@@ -407,17 +370,126 @@ void test_vent_both_tanks()
     check_state(prop_state_t::handling_fault);
 }
 
-//test state changes don't happen if not functional
-void test_non_functional_transitions()
+// Test the requirement that DCDC pin failing to be high will cause us to be delayed one cycle
+// so we fail since we only set min_cycles_needed
+void test_not_enough_cycles_for_dcdc_high()
 {
-    test_idle_to_pressurizing_helper(false);
-    test_idle_to_await_pressurize_helper(false);
-    test_await_pressurize_to_pressurize_helper(false);
-    test_pressurize_to_await_firing_helper(false);
-    test_pressurize_to_firing_helper(false);
-    test_firing_to_idle_helper(false);
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed());
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    // Kill the dcdc pin for one cycle to make dcdc counter reset on the first cycle
+    PropulsionSystem.fake_is_functional = false;
+    tf.step();
+    // We don't care that sph_dcdc is still on
+    tf.check_sph_dcdc_on(true);
+    PropulsionSystem.fake_is_functional = true;
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::idle);
 }
 
+// Test the requirement that DCDC pin failing to be high will cause us to be delayed one cycle
+// so we recover since we set min_cycles_needed + 1
+void test_enough_cycles_for_dcdc_high()
+{
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed()+1);
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    // Kill the dcdc pin for one cycle to make dcdc counter reset on the first cycle
+    PropulsionSystem.fake_is_functional = false;
+    tf.step();
+    // Turn dcdc pin back on
+    PropulsionSystem.fake_is_functional = true;
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::pressurizing);
+}
+
+// Test the requirement that DCDC pin must be consecutively high for 1 second in await_pressurizing
+void test_require_consecutive_dcdc_high()
+{
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed()+1);
+    tf.step();
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    // Kill the dcdc pin for one cycle to make us fail on the second cycle
+    PropulsionSystem.fake_is_functional = false;
+    tf.step();
+    // Turn dcdc pin back on, but we cannot recover because we require consecutive highs
+    PropulsionSystem.fake_is_functional = true;
+    tf.step();
+    check_state(prop_state_t::await_pressurizing);
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::idle);
+}
+
+void test_powerloss_in_await_firing()
+{
+    TestFixture tf;
+    tf.simulate_await_firing();
+    check_state(prop_state_t::await_firing);
+    // Powerloss
+    PropulsionSystem.fake_is_functional = false;
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::disabled);
+    // Since this param is global, set it back to true
+    PropulsionSystem.fake_is_functional = true;
+}
+
+void test_powerloss_in_firing()
+{
+    TestFixture tf;
+    tf.simulate_firing();
+    check_state(prop_state_t::firing);
+    // Powerloss
+    PropulsionSystem.fake_is_functional = false;
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::idle);
+    // Since this param is global, set it back to true
+    PropulsionSystem.fake_is_functional = true;
+}
+
+void test_powerloss_in_pressurizing()
+{
+    TestFixture tf;
+    tf.simulate_pressurizing();
+    check_state(prop_state_t::pressurizing);
+    // Powerloss
+    PropulsionSystem.fake_is_functional = false;
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    check_state(prop_state_t::handling_fault);
+    PropulsionSystem.fake_is_functional = true; 
+}
+
+void test_powerloss_in_venting()
+{
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.step();
+    simulate_overpressured();
+    tf.step(get_persistence(overpressure_fault_f) + 2);
+    assert_fault_state(true, overpressure_fault_f);
+    check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
+    tf.check_sph_dcdc_on(true);
+    // Powerloss
+    PropulsionSystem.fake_is_functional = false;
+    // Venting sends Prop back into idle because of powerloss
+    TEST_ASSERT(6969696969 != tf.execute_until_state_change());
+    PropulsionSystem.fake_is_functional = true; 
+    check_state(prop_state_t::disabled);
+    // Check that upon going into disabled, dcdc pin is off
+    tf.check_sph_dcdc_on(false);
+}
 
 // These two tests are manually checked, so the for loop is conditionally compiled
 // in order to not lag everything
@@ -461,6 +533,7 @@ void test_pressure_sensor_logic()
     }
 #endif
 }
+
 int test_prop_controller()
 {
     // generated the following with:
@@ -468,9 +541,7 @@ int test_prop_controller()
     UNITY_BEGIN();
     RUN_TEST(test_initialization);
     RUN_TEST(test_disable);
-    RUN_TEST(test_non_functional_transitions);
     RUN_TEST(test_illegal_schedule);
-    RUN_TEST(test_idle_to_pressurizing);
     RUN_TEST(test_idle_to_await_pressurize);
     RUN_TEST(test_await_pressurize_to_pressurize);
     RUN_TEST(test_pressurize_to_await_firing);
@@ -488,6 +559,17 @@ int test_prop_controller()
     RUN_TEST(test_vent_both_tanks);
     RUN_TEST(test_temp_sensor_logic);
     RUN_TEST(test_pressure_sensor_logic);
+    RUN_TEST(test_not_enough_cycles_for_dcdc_high);
+    RUN_TEST(test_enough_cycles_for_dcdc_high);
+    RUN_TEST(test_require_consecutive_dcdc_high);
+    RUN_TEST(test_powerloss_in_await_firing);
+    RUN_TEST(test_powerloss_in_await_firing);
+    RUN_TEST(test_powerloss_in_firing);
+    RUN_TEST(test_powerloss_in_firing);
+    RUN_TEST(test_powerloss_in_pressurizing);
+    RUN_TEST(test_powerloss_in_pressurizing);
+    RUN_TEST(test_powerloss_in_venting);
+    RUN_TEST(test_powerloss_in_venting);
     return UNITY_END();
 }
 

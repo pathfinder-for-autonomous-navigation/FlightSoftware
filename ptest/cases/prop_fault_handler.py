@@ -30,7 +30,6 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
-        self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         # Lower these so that we don't need to wait
         self.ws("prop.ctrl_cycles_per_filling", 1)
         self.ws("prop.ctrl_cycles_per_cooling", 2)
@@ -79,6 +78,12 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     @property
     def min_num_cycles(self):
+        """Minimum number of cycles needed to set the schedule in idle
+        """
+        return int(self.min_num_cycles_pressurizing) + int(self.ctrl_cycles_per_filling)
+
+    @property
+    def min_num_cycles_pressurizing(self):
         """Minimum number of cycles needed to set the schedule in idle
         """
         return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles) + 4
@@ -183,11 +188,14 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("prop.sched_valve1", 800)
         self.ws("prop.cycles_until_firing", self.min_num_cycles)
         self.cycle()
-        self.check_prop_state("pressurizing")   
+        self.check_prop_state("await_pressurizing")   
+        for _ in range(int(self.ctrl_cycles_per_filling)):
+            self.cycle()
+        self.check_prop_state("pressurizing")
 
         # Cause the fault to happen:
         #   Keep cycling but don't change the pressure
-        for _ in range(self.min_num_cycles-4):
+        for _ in range(int(self.min_num_cycles_pressurizing)-4):
             self.cycle()
         
         # One cycle before the fault will be triggered:

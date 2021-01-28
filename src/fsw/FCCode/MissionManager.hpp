@@ -154,11 +154,6 @@ protected:
     Fault *pressurize_fail_fp;
 
     /**
-     * @brief DCDC control flag for Spike and Hold and docking system.
-     */
-    WritableStateField<bool> *sph_dcdc_fp;
-
-    /**
      * @brief Radio's mode.
      **/
     ReadableStateField<unsigned char> *radio_state_fp;

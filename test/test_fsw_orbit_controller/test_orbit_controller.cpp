@@ -35,6 +35,9 @@ class TestFixture {
                 baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 100);
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
+                // Prop needs this
+                registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
+
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
                 prop_controller = std::make_unique<PropController>(registry, 0);
 

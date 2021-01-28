@@ -75,14 +75,22 @@ public:
 
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
+    std::shared_ptr<WritableStateField<bool>> sph_dcdc_fp;
 
     TestFixture()
     {
+        PropulsionSystem.reset();
+        sph_dcdc_fp = registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry, 0);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
+    }
+
+    inline void check_sph_dcdc_on(bool on) const
+    {
+        TEST_ASSERT(sph_dcdc_fp->get() == on);
     }
 
     inline int ctrl_cycles_per_pressurizing_cycle()
@@ -115,11 +123,12 @@ public:
     }
 
     // Step forward the state machine by num control cycle.
-    inline void step(size_t num = 1)
+    inline fault_response_t step(size_t num = 1)
     {
+        fault_response_t recommendation;
         for (size_t i = 0; i < num; ++i)
         {
-            pfh->execute();
+            recommendation = pfh->execute();
             pc->execute();
         }
 
@@ -134,6 +143,7 @@ public:
                     Tank2.schedule[i] = 0;
             }
         }
+        return recommendation;
     }
 
     // Keep stepping until the state changes (or until we have step max_cycles steps)
@@ -186,25 +196,21 @@ public:
     inline void simulate_await_pressurizing()
     {
         set_state(prop_state_t::idle);
-        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed());
         step(); // we should now be in await_pressurizing
         TEST_ASSERT_EQUAL(prop_state_t::await_pressurizing, pc->prop_state_f.get());
     }
 
     inline void simulate_pressurizing()
     {
-        set_state(prop_state_t::idle);
-        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
-        step(); // we should now be in await_pressurizing
-        step(); // we should now be in pressurizing
+        simulate_await_pressurizing();
+        execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::pressurizing, pc->prop_state_f.get());
     }
 
     inline void simulate_await_firing()
     {
-        set_state(prop_state_t::idle);
-        set_schedule(200, 800, 900, 800, pc->min_cycles_needed());
-        step();
+        simulate_pressurizing();
         simulate_at_threshold();
         execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::await_firing, pc->prop_state_f.get());
@@ -212,12 +218,7 @@ public:
 
     inline void simulate_firing()
     {
-        set_state(prop_state_t::idle);
-        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
-        step();
-        step();
-        simulate_at_threshold();
-        execute_until_state_change();
+        simulate_await_firing();
         execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::firing, pc->prop_state_f.get());
     }

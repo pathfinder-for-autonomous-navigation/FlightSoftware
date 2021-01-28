@@ -189,5 +189,5 @@ unsigned int OrbitController::prop_min_cycles_needed() {
     return max_pressurizing_cycles_fp->get() *
                (ctrl_cycles_per_filling_period_fp->get() +
                 ctrl_cycles_per_cooling_period_fp->get()) +
-           4;
+           4 + ctrl_cycles_per_filling_period_fp->get();
 }

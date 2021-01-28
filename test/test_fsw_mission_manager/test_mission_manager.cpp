@@ -39,7 +39,6 @@ void test_dispatch_startup() {
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
-    tf.check_sph_dcdc_on(true);
     TEST_ASSERT(tf.is_deployed_fp->get());
 }
 
@@ -69,8 +68,6 @@ void test_dispatch_empty_states() {
 void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
     tf.set(adcs_state_t::detumble);
-    // TODO
-    tf.sph_dcdc_fp->set(true);
 
     // Be aware, we assume here that J_sat is diagonal and that the set_ang_rate
     // function sets omega = rate x_hat.
@@ -90,8 +87,6 @@ void test_dispatch_detumble() {
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);
-    // TODO
-    tf.check_sph_dcdc_on(true);
 }
 
 void test_dispatch_standby() {
@@ -141,14 +136,12 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
     {
         TestFixture tf(mission_state);
         tf.set(prop_state_t::idle);
-        tf.sph_dcdc_fp->set(true);
         tf.set_sat_distance(sat_distance);
         tf.step();
         if (in_close_approach) {
             tf.check(mission_state_t::docking);
             tf.check(adcs_state_t::zero_torque);
             tf.check(prop_state_t::idle);
-            tf.check_sph_dcdc_on(true);
         }
         else {
             if (mission_state == mission_state_t::follower) {
@@ -159,7 +152,6 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
                 tf.check(mission_state_t::leader_close_approach);
                 tf.check(prop_state_t::idle);
             }
-            tf.check_sph_dcdc_on(true);
             tf.check(adcs_state_t::point_docking);
         }
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
@@ -231,14 +223,12 @@ void test_dispatch_docking() {
     tf3.step();
 
     tf3.check(mission_state_t::docked);
-    tf3.check_sph_dcdc_on(false);
 }
 
 void test_dispatch_safehold() {
     // Test that a satellite reboot is correctly triggered.
     {
         TestFixture tf(mission_state_t::safehold);
-        tf.check_sph_dcdc_on(false);
 
         // Below one day's worth of cycle counts, safe hold should
         // not trigger a satellite reboot.

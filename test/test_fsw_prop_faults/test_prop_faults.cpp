@@ -8,18 +8,18 @@ unsigned int &cc_count = TimedControlTaskBase::control_cycle_count;
 
 void test_respect_disabled()
 {
-    // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
+    // Faults cannot be signaled in disabled
     TestFixture tf;
     simulate_overpressured(); // we are about to blow up...
+    tf.check_sph_dcdc_on(false);
     // signal the fault to persistence times then detect it on the 11th
     tf.step(get_persistence(overpressure_fault_f) + 2);
-    assert_fault_state(true, overpressure_fault_f);
+    assert_fault_state(false, overpressure_fault_f);
     // But we should not enter any fault handling state because we disabled
     for (size_t i = 0; i < 20; ++i)
     {
-        tf.step();
+        TEST_ASSERT_EQUAL(tf.step(), fault_response_t::none);
         check_state(prop_state_t::disabled);
-        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
     }
 }
 
@@ -28,6 +28,7 @@ void test_underpressured_detect()
 {
     TestFixture tf;
     tf.simulate_underpressured();
+    tf.check_sph_dcdc_on(true);
     tf.step(get_persistence(pressurize_fail_fault_f) + 1);
     assert_fault_state(true, pressurize_fail_fault_f);
 }
@@ -35,6 +36,7 @@ void test_underpressured_detect()
 void test_overpressured_detect()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
     simulate_overpressured();
     tf.step(get_persistence(overpressure_fault_f) + 2);
     assert_fault_state(true, overpressure_fault_f);
@@ -43,6 +45,7 @@ void test_overpressured_detect()
 void test_tank1_temp_high_detect()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
     simulate_tank1_high();
     tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
     assert_fault_state(true, tank1_temp_high_fault_f);
@@ -51,6 +54,7 @@ void test_tank1_temp_high_detect()
 void test_tank2_temp_high_detect()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
     simulate_tank2_high();
     tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
     assert_fault_state(true, tank2_temp_high_fault_f);
@@ -59,6 +63,7 @@ void test_tank2_temp_high_detect()
 void test_both_tanks_high_detect()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
     // Test that when multiple fault events occur, both faults are detected
     simulate_tank2_high();
     tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
@@ -73,6 +78,7 @@ void test_both_tanks_high_detect()
 void test_multiple_faults_detect()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
     // Test that when multiple fault events occur, both faults are detected
     simulate_overpressured();
     tf.step(get_persistence(overpressure_fault_f));
@@ -108,16 +114,16 @@ void test_underpressured_suppress_response()
     TestFixture tf;
     // In the event that Prop fails to pressurize
     tf.simulate_underpressured();
+    tf.check_sph_dcdc_on(true);
     // check that pressurize_fail_fault_f is faulted immediately and state enters handling_fault
     assert_fault_state(true, pressurize_fail_fault_f);
     check_state(prop_state_t::handling_fault);
     // check that further executions of PropFaultHandler should still suggest standby response
     for (size_t i = 0; i < 31; ++i)
     {
-        tf.step();
+        TEST_ASSERT_EQUAL(tf.step(), fault_response_t::standby);
         assert_fault_state(true, pressurize_fail_fault_f);
         check_state(prop_state_t::handling_fault);
-        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     }
 
     // If the ground suppresses the fault
@@ -140,16 +146,16 @@ void test_underpressured_unsignal_response()
     TestFixture tf;
     // In the event that Prop fails to pressurize
     tf.simulate_underpressured();
+    tf.check_sph_dcdc_on(true);
     // check that pressurize_fail_fault_f is faulted immediately and state enters handling_fault
     assert_fault_state(true, pressurize_fail_fault_f);
     check_state(prop_state_t::handling_fault);
     // check that further executions of PropFaultHandler should still suggest standby response
     for (size_t i = 0; i < 31; ++i)
     {
-        tf.step();
+        TEST_ASSERT_EQUAL(tf.step(), fault_response_t::standby);
         assert_fault_state(true, pressurize_fail_fault_f);
         check_state(prop_state_t::handling_fault);
-        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     }
     // If the ground decides to unsignal and lower the pressure threshold
     unsignal_fault(pressurize_fail_fault_f);
@@ -168,6 +174,7 @@ void test_overpressured_response()
 {
     TestFixture tf;
     tf.simulate_pressurizing();
+    tf.check_sph_dcdc_on(true);
     // tf.step for some random number of pressurizing cycles so that we
     //  are in the middle of pressurizing
     tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
@@ -188,12 +195,16 @@ void test_overpressured_response()
     check_state(prop_state_t::disabled);
     simulate_ambient();
     tf.step(2);
+    // Fault remains faulted even when we are in disabled and sensors have good values
+    assert_fault_state(true, overpressure_fault_f);
+    check_state(prop_state_t::disabled);
+    // Command the prop back into idle
+    tf.set_state(prop_state_t::idle);
+    tf.step();
+    // Fault should now no longer be faulted
     assert_fault_state(false, overpressure_fault_f);
-    // Since we are in disabled, it does not matter that the fault is no longer
-    // a problem, we must remain in disabled
-    check_state(prop_state_t::disabled);
     tf.step(50);
-    check_state(prop_state_t::disabled);
+    check_state(prop_state_t::idle);
 }
 
 void test_overpressured_suppress()
@@ -201,40 +212,39 @@ void test_overpressured_suppress()
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     simulate_overpressured();
+    tf.check_sph_dcdc_on(false);
     tf.step(get_persistence(overpressure_fault_f) + 1);
+    tf.check_sph_dcdc_on(true);
     check_state(prop_state_t::idle);
     tf.step();
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting); // Check that we have entered the venting state
-    tf.step();
+    TEST_ASSERT_EQUAL(tf.step(), fault_response_t::standby);
     // Test that we go into disabled when we have failed too many times
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
     tf.execute_until_state_change();
     check_state(prop_state_t::disabled);
     // Check that once we are in disabled, fault is no longer signaled
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+    TEST_ASSERT_EQUAL(tf.step(), fault_response_t::none);
 
     // Command prop back into idle without suppressing
     tf.set_state(prop_state_t::idle);
+    TEST_ASSERT_EQUAL(tf.step(), fault_response_t::none);
     // Prop should be upset and attempt to vent again
-    tf.step();
     check_state(prop_state_t::handling_fault);
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
-    tf.step();
+     TEST_ASSERT_EQUAL(tf.step(), fault_response_t::standby);
     check_state(prop_state_t::venting);
+    tf.check_sph_dcdc_on(true);
     tf.execute_until_state_change();
     check_state(prop_state_t::disabled);
 
     // Ground tells us to suppress overpressured
     suppress_fault(overpressure_fault_f);
     tf.set_state(prop_state_t::idle);
-    tf.step();
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
+    TEST_ASSERT_EQUAL(tf.step(), fault_response_t::none);
     // Stay in idle this time because fault is suppressed
     check_state(prop_state_t::idle);
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
-
+    TEST_ASSERT_EQUAL(tf.step(), fault_response_t::none);
 }
 
 
@@ -243,6 +253,7 @@ void test_tank1_temp_high_response()
 {
     TestFixture tf;
     tf.simulate_firing();
+    tf.check_sph_dcdc_on(true);
     tf.step(2); // start firing a little bit
     simulate_tank1_high();
     tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
@@ -263,6 +274,7 @@ void test_tank1_temp_high_response()
     tf.step(2);
     assert_fault_state(false, tank1_temp_high_fault_f);
     tf.step();
+    tf.check_sph_dcdc_on(false);
     check_state(prop_state_t::idle); // We should go into idle
 }
 
@@ -271,8 +283,10 @@ void test_tank2_temp_high_response()
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.step(3);
+    tf.check_sph_dcdc_on(false);
     simulate_tank2_high();
     tf.step(get_persistence(tank2_temp_high_fault_f) + 2);
+    tf.check_sph_dcdc_on(true);
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting);
@@ -287,6 +301,7 @@ void test_tank2_temp_high_response()
     tf.step(2);
     assert_fault_state(false, tank2_temp_high_fault_f);
     tf.step();
+    tf.check_sph_dcdc_on(false);
     check_state(prop_state_t::idle);
 }
 
@@ -298,8 +313,10 @@ void test_tank2temphigh_undepressured_response()
     simulate_tank2_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
+    tf.check_sph_dcdc_on(true);
     assert_fault_state(true, pressurize_fail_fault_f);
     tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
+    tf.check_sph_dcdc_on(true);
     assert_fault_state(true, tank2_temp_high_fault_f);
     tf.step();
     check_state(prop_state_t::venting);
@@ -313,6 +330,7 @@ void test_interrupt_firing()
     TestFixture tf;
     // Test that prop does not ignore faults when it is firing
     tf.simulate_pressurizing();
+    tf.check_sph_dcdc_on(true);
     tf.step(tf.pc->min_cycles_needed() - get_persistence(tank1_temp_high_fault_f));
     simulate_tank1_high();
     simulate_overpressured();
@@ -335,6 +353,7 @@ void test_tank2_fault_while_tank1_vent()
     auto saved_max_cycles = tf.pc->max_venting_cycles.get();
 
     tf.simulate_await_firing();
+    tf.check_sph_dcdc_on(true);
     // Simulate Tank1 high fault and detect it
     simulate_tank1_high();
     tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
@@ -413,6 +432,7 @@ void test_all_faulted_sensors_broken_respect_disabled()
     auto saved_max_cycles = tf.pc->max_venting_cycles.get();
     TEST_ASSERT_EQUAL(20, saved_max_cycles);
     tf.simulate_pressurizing();
+    tf.check_sph_dcdc_on(true);
     simulate_tank1_high();
     simulate_tank2_high();
     simulate_overpressured();

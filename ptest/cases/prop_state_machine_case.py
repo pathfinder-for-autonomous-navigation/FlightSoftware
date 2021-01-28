@@ -3,7 +3,7 @@ from .utils import Enums, TestCaseFailure
 import time
 
 # pio run -e fsw_native_leader
-# python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
+# python -m ptest runsim -c ptest/configs/ci.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatOnlyCase):
     @property
     def initial_state(self):
@@ -14,7 +14,6 @@ class PropStateMachineCase(SingleSatOnlyCase):
         return True
 
     def setup_post_bootsetup(self):
-        self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])
         self.cycle()
@@ -179,7 +178,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     @property
     def min_num_cycles(self):
-        return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles) + 4
+        return (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles) + 4 + int(self.ctrl_cycles_per_filling)
 
     # Note: It takes 1202 cycles to pressurize 20 cycles
     def fake_pressure(self, i):
@@ -216,8 +215,6 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     def test_disabled_to_idle(self):
         print("[TESTCASE] test_disabled_to_idle: manually setting prop to idle")
-        if not self.read_state("dcdc.SpikeDock") == "true":
-            raise TestCaseFailure("Spike and Hold DCDC is not enabled.")
         self.state = Enums.prop_states["idle"]
         self.cycle()
         if not self.state == str(Enums.prop_states["idle"]):
@@ -233,8 +230,11 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.sched_valve2 = 700
         self.sched_valve3 = 800
         self.sched_valve4 = 400
-        self.cycles_until_firing = int(self.min_num_cycles) + 2
+        self.cycles_until_firing = int(self.min_num_cycles)
         self.cycle()
+        # Spike and Hold DCDC should be true
+        if not self.read_state("dcdc.SpikeDock_cmd") == "true":
+            raise TestCaseFailure("Spike and Hold DCDC should be enabled.")
         if not self.state == str(Enums.prop_states["await_pressurizing"]):
             raise TestCaseFailure("state != await_pressurizing")
 
@@ -279,6 +279,8 @@ class PropStateMachineCase(SingleSatOnlyCase):
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         if not self.state == str(Enums.prop_states["idle"]):
             raise TestCaseFailure("state != idle")
+        if not self.read_state("dcdc.SpikeDock_cmd") == "false":
+            raise TestCaseFailure("Spike and Hold DCDC should be disabled upon transition to Idle.")
         return
 
     def run_case_singlesat(self):
