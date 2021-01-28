@@ -98,7 +98,7 @@ void MissionManager::execute()
     {
         if (fault_response == fault_response_t::safehold)
         {
-            transition_to(mission_state_t::safehold, adcs_state_t::startup);
+            transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             return;
         }
         else if (fault_response == fault_response_t::standby
@@ -165,8 +165,6 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
-    set(radio_state_t::disabled);
-
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
     if (bootcount_fp->get() == 1) { 
         if (deployment_wait_elapsed_f.get() < deployment_wait)
@@ -176,15 +174,19 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 2. Turn radio on, and check for hardware faults that would necessitate
+    // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
+    // Turn radio on, and check for hardware faults that would necessitate
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
-    set(radio_state_t::config);
+    if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
+    {
+        set(radio_state_t::config);
+    }
     if (check_adcs_hardware_faults())
     {
         transition_to(mission_state_t::initialization_hold,
                       adcs_state_t::detumble,
-                      prop_state_t::disabled);
+                        prop_state_t::idle);
     }
     else
     {
@@ -384,8 +386,7 @@ void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state,
                                    prop_state_t prop_state)
 {
-    // TODO: why not docking? 
-    if (prop_state == prop_state_t::disabled && mission_state != mission_state_t::docking)
+    if (prop_state == prop_state_t::disabled)
     {
         sph_dcdc_fp->set(false);
     }
