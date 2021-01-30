@@ -403,17 +403,17 @@ class MissionCase(PTestCase):
 
     @property
     def initial_state_leader(self):
-        return "leader"
+        raise NotImplementedError
     @property
     def initial_state_follower(self):
-        return "follower"
+        raise NotImplementedError
 
     @property
     def fast_boot_leader(self):
-        return True
+        raise NotImplementedError
     @property
     def fast_boot_follower(self):
-        return True
+        raise NotImplementedError
 
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()

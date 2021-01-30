@@ -2,53 +2,49 @@ from .base import MissionCase
 import time
 from psim.sims import DualAttitudeOrbitGnc
 import lin
-from .utils import str_to_val
+from .utils import str_to_val, Enums
 
 class AutonomousMissionManagerCase(MissionCase):
 
     def state_check(self, satellite, designaton):
         satellite_state = satellite.read_state("pan.state")
-        if(satellite_state == "3"):
+        if(satellite_state == str(Enums.mission_states["standby"])):
             self.logger.put(designaton + " is in standby. Ending mission." )
             return False
-        elif(satellite_state == "10"):
-            self.logger.put(designaton + " is in state safehold. Ending mission.")
+        elif(satellite_state == str(Enums.mission_states["safehold"])):
+            self.logger.put(designaton + " is in safehold. Ending mission.")
             return False
         return True
     
-    def mission_conditions_met(self):
+    def continue_mission(self):
         #check for operating leader state
         leader_state_functional = self.state_check(self.leader, "Leader")
         follower_state_functional = self.state_check(self.follower, "Follower")
         if not leader_state_functional:
             if follower_state_functional:
-                self.follower.write_state("pan.state", 3)
-            elif self.follower.read_state("pan.state") != "3":
-                self.follower.write_state("pan_state", 10)
+                self.follower.write_state("pan.state", Enums.mission_states["standby"])
+            elif self.follower.read_state("pan.state") != str(Enums.mission_states["standby"]):
+                self.follower.write_state("pan_state", Enums.mission_states["safehold"])
             return False
 
         #check faulting state for follower state
         if not follower_state_functional:
-            self.leader.write_state("pan.state", 3)
+            self.leader.write_state("pan.state", Enums.mission_states["standby"])
             return False
 
         #check time since last comms
         leader_time_since_comms = time.time() - self.leader_time_last_comms 
         if(leader_time_since_comms > self.comms_time_threshold):
             self.logger.put("Leader is experiencing comms blackout. Ending mission." + str(leader_time_since_comms))
-            self.leader.write_state("pan.state", 3)
-            self.follower.write_state("pan.state", 3)
+            self.leader.write_state("pan.state", Enums.mission_states["standby"])
+            self.follower.write_state("pan.state", Enums.mission_states["standby"])
             return False
         follower_time_since_comms = time.time() - self.follower_time_last_comms 
         if(follower_time_since_comms > self.comms_time_threshold):
             self.logger.put("Follower is experiencing comms blackout. Ending mission." + str(follower_time_since_comms))
-            self.leader.write_state("pan.state", 3)
-            self.follower.write_state("pan.state", 3)
+            self.leader.write_state("pan.state", Enums.mission_states["standby"])
+            self.follower.write_state("pan.state", Enums.mission_states["standby"])
             return False
-
-
-        #TODO notify if close to docking
-        #TODO exit gracefully if mission ended
 
         return True
     
@@ -74,7 +70,24 @@ class AutonomousMissionManagerCase(MissionCase):
     def sim_duration(self):
         return float("inf")
 
-    def setup_post_bootsetup_follower(self):
+    @property
+    def initial_state_leader(self):
+        return "leader"
+    @property
+    def initial_state_follower(self):
+        return "follower"
+
+    @property
+    def fast_boot_leader(self):
+        return True
+    @property
+    def fast_boot_follower(self):
+        return True
+        
+
+    def run_case_fullmission(self):
+
+        #setup
         self.using_radios = self.radio_follower != None #assumes only using one physical radio
         self.leader = self.flight_controller_leader
         self.follower = self.radio_follower if self.using_radios else self.flight_controller_follower
@@ -83,9 +96,7 @@ class AutonomousMissionManagerCase(MissionCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
-    def run_case_fullmission(self):
-
-        if(self.mission_conditions_met()): 
+        while(self.continue_mission()): 
 
             #Pass telemetry between spacecraft 
 
@@ -113,3 +124,6 @@ class AutonomousMissionManagerCase(MissionCase):
 
             self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
             self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
+
+        self.logger.put("EXITING AMC")
+        self.finish()
