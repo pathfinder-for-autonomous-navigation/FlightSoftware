@@ -304,16 +304,16 @@
         "adcs_cmd.mtr_cmd": {
             "bitsize": 48,
             "flow_id": 13,
-            "max": 0.05666850134730339,
-            "min": -0.05666850134730339,
+            "max": 0.056668501347303,
+            "min": -0.056668501347303,
             "type": "std float vector",
             "writable": true
         },
         "adcs_cmd.mtr_limit": {
             "bitsize": 16,
             "flow_id": 23,
-            "max": 0.05666850134730339,
-            "min": -0.05666850134730339,
+            "max": 0.056668501347303,
+            "min": -0.056668501347303,
             "type": "float",
             "writable": true
         },
@@ -360,8 +360,8 @@
         "adcs_cmd.rwa_torque_cmd": {
             "bitsize": 48,
             "flow_id": 7,
-            "max": 0.004187500569969416,
-            "min": -0.004187500569969416,
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
             "type": "std float vector",
             "writable": true
         },
@@ -412,7 +412,7 @@
             "writable": true
         },
         "adcs_monitor.gyr_temp": {
-            "bitsize": 8,
+            "bitsize": 16,
             "flow_id": 24,
             "max": 153.0,
             "min": -103.0,
@@ -426,11 +426,35 @@
             "writable": false
         },
         "adcs_monitor.gyr_vec": {
-            "bitsize": 48,
+            "bitsize": 21,
             "flow_id": 24,
+            "max": 0.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "adcs_monitor.gyr_vec.x": {
+            "bitsize": 16,
+            "flow_id": "undefined",
             "max": 2.181661605834961,
             "min": -2.181661605834961,
-            "type": "lin float vector",
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.gyr_vec.y": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 2.181661605834961,
+            "min": -2.181661605834961,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.gyr_vec.z": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 2.181661605834961,
+            "min": -2.181661605834961,
+            "type": "float",
             "writable": false
         },
         "adcs_monitor.gyr_vec_flag": {
@@ -554,11 +578,35 @@
             "writable": false
         },
         "adcs_monitor.mag1_vec": {
-            "bitsize": 24,
+            "bitsize": 21,
             "flow_id": 24,
-            "max": 0.004999999888241291,
-            "min": -0.004999999888241291,
+            "max": 0.0,
+            "min": 0.0,
             "type": "lin float vector",
+            "writable": false
+        },
+        "adcs_monitor.mag1_vec.x": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.004999999888241,
+            "min": -0.004999999888241,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.mag1_vec.y": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.004999999888241,
+            "min": -0.004999999888241,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.mag1_vec.z": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.004999999888241,
+            "min": -0.004999999888241,
+            "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec_flag": {
@@ -568,11 +616,35 @@
             "writable": false
         },
         "adcs_monitor.mag2_vec": {
-            "bitsize": 24,
+            "bitsize": 21,
             "flow_id": 24,
-            "max": 0.0031999999191612005,
-            "min": -0.0031999999191612005,
+            "max": 0.0,
+            "min": 0.0,
             "type": "lin float vector",
+            "writable": false
+        },
+        "adcs_monitor.mag2_vec.x": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.003199999919161,
+            "min": -0.003199999919161,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.mag2_vec.y": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.003199999919161,
+            "min": -0.003199999919161,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.mag2_vec.z": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.003199999919161,
+            "min": -0.003199999919161,
+            "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec_flag": {
@@ -582,19 +654,67 @@
             "writable": false
         },
         "adcs_monitor.rwa_speed_rd": {
-            "bitsize": 24,
+            "bitsize": 21,
             "flow_id": 7,
-            "max": 1047.199951171875,
-            "min": -1047.199951171875,
+            "max": 0.0,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": false
         },
+        "adcs_monitor.rwa_speed_rd.x": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 1047.199951171875,
+            "min": -1047.199951171875,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.rwa_speed_rd.y": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 1047.199951171875,
+            "min": -1047.199951171875,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.rwa_speed_rd.z": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 1047.199951171875,
+            "min": -1047.199951171875,
+            "type": "float",
+            "writable": false
+        },
         "adcs_monitor.rwa_torque_rd": {
-            "bitsize": 24,
+            "bitsize": 21,
             "flow_id": 7,
-            "max": 0.004187500569969416,
-            "min": -0.004187500569969416,
+            "max": 0.0,
+            "min": 0.0,
             "type": "lin float vector",
+            "writable": false
+        },
+        "adcs_monitor.rwa_torque_rd.x": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.rwa_torque_rd.y": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
+            "type": "float",
+            "writable": false
+        },
+        "adcs_monitor.rwa_torque_rd.z": {
+            "bitsize": 12,
+            "flow_id": "undefined",
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
+            "type": "float",
             "writable": false
         },
         "adcs_monitor.speed_rd_flag": {
@@ -614,13 +734,13 @@
         "adcs_monitor.ssa_vec": {
             "bitsize": 21,
             "flow_id": 24,
-            "max": 1.0,
+            "max": 0.0,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
         },
         "adcs_monitor.ssa_voltage0": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -628,7 +748,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage1": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -636,7 +756,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage10": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -644,7 +764,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage11": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -652,7 +772,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage12": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -660,7 +780,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage13": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -668,7 +788,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage14": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -676,7 +796,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage15": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -684,7 +804,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage16": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -692,7 +812,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage17": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -700,7 +820,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage18": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -708,7 +828,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage19": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -716,7 +836,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage2": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -724,7 +844,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage3": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -732,7 +852,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage4": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -740,7 +860,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage5": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -748,7 +868,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage6": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -756,7 +876,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage7": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -764,7 +884,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage8": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -772,7 +892,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage9": {
-            "bitsize": 12,
+            "bitsize": 8,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -948,7 +1068,7 @@
         "attitude_estimator.fro_P": {
             "bitsize": 32,
             "flow_id": "undefined",
-            "max": 0.10000000149011612,
+            "max": 0.100000001490116,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -1726,16 +1846,16 @@
         "pointer.mtr_cmd": {
             "bitsize": 48,
             "flow_id": "undefined",
-            "max": 0.05666850134730339,
-            "min": -0.05666850134730339,
+            "max": 0.056668501347303,
+            "min": -0.056668501347303,
             "type": "lin float vector",
             "writable": true
         },
         "pointer.rwa_torque_cmd": {
             "bitsize": 48,
             "flow_id": "undefined",
-            "max": 0.004187500569969416,
-            "min": -0.004187500569969416,
+            "max": 0.004187500569969,
+            "min": -0.004187500569969,
             "type": "lin float vector",
             "writable": true
         },
@@ -2386,7 +2506,7 @@
             "writable": true
         }
     },
-    "flows": [
+    "flow_data": [
         {
             "active": true,
             "fields": [

@@ -4,6 +4,26 @@ import math
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""
 
+def is_lin_vector(var):
+    import lin
+    return type(var) in {lin.Vector2, lin.Vector3, lin.Vector4}
+
+def to_lin_vector(var):
+    import lin
+    if type(var) == list:
+        _len = len(var)
+        if _len == 2:
+            var = lin.Vector2(var)
+        elif _len == 3:
+            var = lin.Vector3(var)
+        elif _len == 4:
+            var = lin.Vector4(var)
+        else:
+            raise RuntimeError("Unexpected List Length, can't change into lin Vector")
+    else:
+        raise RuntimeError("Expected list, can't change into lin Vector")
+    return var
+
 def mag_of(vals):
         """
         Returns the magnitude of a list of vals 

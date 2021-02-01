@@ -42,4 +42,12 @@
     } \
 }
 
+#define PAN_TEST_ASSERT_NOT_NAN_DOUBLE_LIN_VEC(actual) { \
+    char err_str[25]; \
+    for(size_t i = 0; i < 3; i++) { \
+        sprintf(err_str, "Fail on element %d", (int) i); \
+        TEST_ASSERT_DOUBLE_IS_NOT_NAN_MESSAGE(actual(i), err_str); \
+    } \
+}
+
 #endif
