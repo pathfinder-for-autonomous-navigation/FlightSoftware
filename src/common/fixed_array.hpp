@@ -169,19 +169,10 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      * @param val Value to initialize bitset to.
      * @return Whether or not it was possible to store the integer into this bitset.
      */
-    bool set_int(unsigned int val) {
-        size_t val_num_bits = 32;
-        for (size_t i = 0; i < 32; i++) {
-            if (pow(2, i) > val) {
-                val_num_bits = i;
-                break;
-            }
-        }
-        if (val_num_bits > size()) return false;
+    bool set_ullong(unsigned long long val) {
+        if (!num_val_bits_ok<unsigned long long>(val)) return false;
 
-        for (size_t i = 0; i < size(); i++) {
-            (*this)[i] = 0;
-        }
+        for (size_t i = 0; i < size(); i++) (*this)[i] = 0;
 
         int i = 0;
         while (val > 0) {
@@ -190,6 +181,20 @@ class fixed_array<bool> : public fixed_array_base<bool> {
             i++;
         }
 
+        return true;
+    }
+
+    bool set_ulong(unsigned long val)
+    {
+        if (!num_val_bits_ok<unsigned long>(val)) return false;
+        set_ullong(val);
+        return true;
+    }
+
+    bool set_uint(unsigned int val)
+    {
+        if (!num_val_bits_ok<unsigned int>(val)) return false;
+        set_ullong(val);
         return true;
     }
 
@@ -205,7 +210,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      *
      * @return unsigned long
      */
-    unsigned long long to_ulong() const { return static_cast<unsigned long long>(to_ullong()); }
+    unsigned long long to_ulong() const { return static_cast<unsigned long>(to_ullong()); }
 
     /**
      * @brief Converts bitset to integer.
@@ -250,6 +255,26 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     }
     void to_string(char*& str, size_t offset) const {
         to_string(str, offset, 0, size());
+    }
+
+  private:
+    /**
+     * Checks if the number of bits required to specify the value
+     * fits within the specified type.
+     */
+    template<typename T>
+    bool num_val_bits_ok(unsigned long long val)
+    {
+        size_t bitsize = sizeof(T)*8;
+        size_t val_num_bits = bitsize;
+        for (size_t i = 0; i < bitsize; i++) {
+            if (pow(2, i) > val) {
+                val_num_bits = i;
+                break;
+            }
+        }
+        if (val_num_bits > size()) return false;
+        return true;
     }
 };
 
