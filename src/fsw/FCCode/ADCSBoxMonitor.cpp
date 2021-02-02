@@ -8,7 +8,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
-    dummy_vec_sr(0, 0, 1 + SerializerConstants::min_fvsz),
+    dummy_vec_sr(0, 1, 1),
     rwa_speed_rd_component_sr(adcs::rwa::min_speed_read,adcs::rwa::max_speed_read, 12),
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", dummy_vec_sr),
     rwa_speed_rd_x_f("adcs_monitor.rwa_speed_rd.x",rwa_speed_rd_component_sr),
@@ -23,7 +23,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
     ssa_mode_rd(2),
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
-    ssa_vec_f("adcs_monitor.ssa_vec", dummy_vec_sr),
+    ssa_vec_f("adcs_monitor.ssa_vec", Serializer<lin::Vector3f>(1-1e-4,1+1e-4,0)),
     ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
     ssa_voltages_f(),
 

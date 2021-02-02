@@ -13,15 +13,6 @@
 #include "fixed_array.hpp"
 
 /**
- * @brief Set of constants defining fixed and minimum bitsizes for compressed
- * objects.
- */
-class SerializerType {
-   public:
-    static const std::vector<std::string> serializable_types;
-};
-
-/**
  * @brief Base class that manages memory for a serializer. Specifically, it ensures that the
  * bit array used to store the results of serialization is allocated at most once.
  *
@@ -31,7 +22,7 @@ class SerializerType {
  * @tparam T Type of stored value.
  */
 template <typename T>
-class SerializerBase : public SerializerType {
+class SerializerBase {
    private:
      /**
       * @brief Length of string returned by print().
@@ -62,10 +53,6 @@ class SerializerBase : public SerializerType {
     /**
      * @brief Argumented constructor. This is protected to prevent construction of this
      * implementation-less base class.
-     *
-     * If the provided size is less than 0 (which could happen if you're constructing the magnitude
-     * serializer for a vector serializer), return from the constructor and do not resize the
-     * serialized bit array.
      */
     SerializerBase(T min, T max, size_t compressed_size, size_t _strlength) :
         strlength(_strlength),
@@ -73,7 +60,6 @@ class SerializerBase : public SerializerType {
         _max(max),
         serialized_val()
     {
-        if (static_cast<signed int>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
 
         this->printed_val = new char[strlength];
