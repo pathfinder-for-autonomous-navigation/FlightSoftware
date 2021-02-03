@@ -107,7 +107,7 @@ void MissionManager::execute()
             && state != mission_state_t::detumble
             && state != mission_state_t::standby)
         {
-            transition_to(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
+            transition_to(mission_state_t::standby, adcs_state_t::point_standby);
             return;
         }
     }
@@ -153,7 +153,7 @@ void MissionManager::execute()
         break;
     default:
         printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
-        transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+        transition_to(mission_state_t::safehold, adcs_state_t::startup);
         break;
     }
 }
@@ -165,8 +165,6 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
-    set(radio_state_t::disabled);
-
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
     if (bootcount_fp->get() == 1) { 
         if (deployment_wait_elapsed_f.get() < deployment_wait)
@@ -176,22 +174,26 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 2. Turn radio on, and check for hardware faults that would necessitate
+    // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
+    // Turn radio on, and check for hardware faults that would necessitate
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
-    set(radio_state_t::config);
+    if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
+    {
+        set(radio_state_t::config);
+    }
     if (check_adcs_hardware_faults())
     {
         transition_to(mission_state_t::initialization_hold,
                       adcs_state_t::detumble,
-                      prop_state_t::disabled);
+                        prop_state_t::idle);
     }
     else
     {
         is_deployed_f.set(true);
         transition_to(mission_state_t::detumble,
                       adcs_state_t::detumble,
-                      prop_state_t::disabled);
+                      prop_state_t::idle);
     }
 }
 
@@ -204,8 +206,7 @@ void MissionManager::dispatch_detumble()
     if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
         transition_to(mission_state_t::standby,
-                      adcs_state_t::point_standby,
-                      prop_state_t::idle);
+                      adcs_state_t::point_standby);
     }
 }
 
@@ -223,14 +224,12 @@ void MissionManager::dispatch_standby()
     if (sat_designation == sat_designation_t::follower)
     {
         transition_to(mission_state_t::follower,
-                      adcs_state_t::point_standby,
-                      prop_state_t::idle);
+                      adcs_state_t::point_standby);
     }
     else if (sat_designation == sat_designation_t::leader)
     {
         transition_to(mission_state_t::leader,
-                      adcs_state_t::point_standby,
-                      prop_state_t::idle);
+                      adcs_state_t::point_standby);
     }
     else
     {
@@ -252,8 +251,7 @@ void MissionManager::dispatch_leader()
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get())
     {
         transition_to(mission_state_t::leader_close_approach,
-                      adcs_state_t::point_docking,
-                      prop_state_t::disabled);
+                      adcs_state_t::point_docking);
     }
 }
 
@@ -264,8 +262,7 @@ void MissionManager::dispatch_follower_close_approach()
     if (distance_to_other_sat() < docking_trigger_dist_f.get())
     {
         transition_to(mission_state_t::docking,
-                      adcs_state_t::zero_torque,
-                      prop_state_t::disabled);
+                      adcs_state_t::zero_torque);
     }
 }
 
@@ -276,8 +273,7 @@ void MissionManager::dispatch_leader_close_approach()
     if (distance_to_other_sat() < docking_trigger_dist_f.get())
     {
         transition_to(mission_state_t::docking,
-                      adcs_state_t::zero_torque,
-                      prop_state_t::disabled);
+                      adcs_state_t::zero_torque);
     }
 }
 
@@ -302,8 +298,7 @@ void MissionManager::dispatch_docking()
     {
         have_set_docking_entry_ccno = false;
         transition_to(mission_state_t::docked,
-                      adcs_state_t::zero_torque,
-                      prop_state_t::disabled);
+                      adcs_state_t::zero_torque);
 
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
@@ -312,8 +307,7 @@ void MissionManager::dispatch_docking()
     {
         have_set_docking_entry_ccno = false;
         transition_to(mission_state_t::standby,
-                      adcs_state_t::startup,
-                      prop_state_t::disabled);
+                      adcs_state_t::startup);
     }
 }
 
@@ -392,7 +386,7 @@ void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state,
                                    prop_state_t prop_state)
 {
-    if (prop_state == prop_state_t::disabled && mission_state != mission_state_t::docking)
+    if (prop_state == prop_state_t::disabled)
     {
         sph_dcdc_fp->set(false);
     }

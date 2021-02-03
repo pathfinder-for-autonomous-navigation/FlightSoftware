@@ -30,6 +30,11 @@ void Fault::signal() {
         num_consecutive_signals++;
         last_fault_time = *cc;
     }
+    if (num_consecutive_signals > persistence_f.get()) {
+        set(true);
+    }
+    else
+        set(false);
 }
 
 void Fault::unsignal() {
