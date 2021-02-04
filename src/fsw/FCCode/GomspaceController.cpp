@@ -259,6 +259,12 @@ void GomspaceController::execute() {
     if (gs_reboot_cmd_f.get()==true) {
         gs.reboot();
         gs_reboot_cmd_f.set(false);
+        while(true){
+            // this is an intentional dead end
+            // the flight computer will be stuck here until the watchdog timer reboots the Gomspace
+            // prop interrupts will still occur
+            delay(100);
+        }
     }
 
     //set data-in statefields to respective data from hk struct 
