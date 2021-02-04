@@ -261,7 +261,9 @@ void GomspaceController::execute() {
             // this is an intentional dead end
             // the flight computer will be stuck here until the watchdog timer reboots the Gomspace
             // prop interrupts will still occur
-            delay(100);
+            #ifndef DESKTOP
+            delay(1);
+            #endif
         }
     }
 
