@@ -211,8 +211,6 @@ void GomspaceController::execute() {
         pv2_output_cmd_f.set(gs.hk->vboost[1]);
         pv3_output_cmd_f.set(gs.hk->vboost[2]);
 
-        ppt_mode_cmd_f.set(gs.hk->pptmode);
-
         heater_cmd_f.set(gs.get_heater());
 
         counter_reset_cmd_f.set(false);
