@@ -11,84 +11,6 @@
 // number of vector tests to run
 constexpr static int number_of_vec_test = 100;
 
-template<typename T, size_t N>
-lin::Vector<T, N> to_linvec(const std::array<T, N>& src) {
-    lin::Vector<T, N> temp;
-    for(unsigned int i = 0; i < N; i++) temp(i) = src[i];
-    return temp;
-}
-
-/**
- * @brief Returns the magnitude of a vector
- */
-template <typename T, size_t N>
-T magnitude_of(const lin::Vector<T, N>& src){
-    return lin::norm(src);
-}
-template <typename T, size_t N>
-T magnitude_of(const std::array<T, N>& src){
-    return magnitude_of(to_linvec(src));
-}
-
-/**
- * @brief Normalizes a vector or quaternion
- * 
- */
-template <typename T, size_t N>
-void normalize(std::array<T, N>& src) {
-    T magnitude = magnitude_of(src);
-    for(size_t i = 0; i<N; i++){
-        src[i] = src[i] / magnitude;
-    }
-    return;
-}
-template <typename T, size_t N>
-void normalize(lin::Vector<T, N>& src) {
-    T magnitude = magnitude_of(src);
-    src = src / magnitude;
-    return;
-}
-
-/**
- * @brief Returns the angle between two quaternions or vectors, in degrees.
- */
-template <typename T, size_t N>
-T angle_between(lin::Vector<T, N>& a, lin::Vector<T, N>& b)
-{
-    static_assert(N == 3 || N == 4, "Can only compute angle between vectors and quaternions.");
-
-    T inner_product = lin::dot(a, b);
-    
-    T angle;
-    if(N == 4) {
-        // to account for quat could be flipped
-        inner_product = std::abs(inner_product);
-        angle = std::acos(inner_product)*2.0;
-    }
-    else
-        angle = std::acos(inner_product);
-
-    angle = angle * 360.0 / (2 * 3.14159265);
-
-    return angle;
-}
-template <typename T, size_t N>
-T angle_between(std::array<T, N>& a, std::array<T, N>& b){
-    lin::Vector<T, N> lin_a;
-    lin::Vector<T, N> lin_b;
-
-    if(N == 4){
-        lin_a = {a[0], a[1], a[2], a[3]};
-        lin_b = {b[0], b[1], b[2], b[3]};
-    }
-    else{
-        lin_a = {a[0], a[1], a[2]};
-        lin_b = {b[0], b[1], b[2]};
-    }
-
-    return angle_between<T, N>(lin_a, lin_b);
-}
-
 /**
  * @brief Convert lin::Vector object to std::array.
  */
@@ -500,11 +422,12 @@ void test_vec_serializer() {
 
     // TODO write serialization initializations for edge cases.
     
-    const size_t vec_bitsize = 40;
+    const size_t vec_bitsize = 10; // Sufficient for 0.1% magnitude error
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: vector is within 0.5 degrees, and within 0.1% of magnitude
+    // Criterion for functionality: Euclidean distance between input and output vector
+    // is 0.1% of magnitude.
 
     srand(2);
     for(size_t i = 0; i < number_of_vec_test; i++) {
@@ -512,35 +435,27 @@ void test_vec_serializer() {
         
         //make the another serialier with same inputs
         auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
-        vector_t result;
 
-        // rand() returns the same thing every time
-
-        // Generate random vector.
-        const T x = rand() / T(RAND_MAX) * 2;
-        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
-        const T y = cos(t) * std::sqrt(4 - x*x);
-        const T z = sin(t) * std::sqrt(4 - x*x);
+        // Generate random vector with magnitude between 0.1 and 2.0. (We don't want the magnitude
+        // to be too small; otherwise, there are serialization errors.)
+        const T r = 0.1 + 1.9 * rand() / T(RAND_MAX);
+        const T t = VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T p = 2 * VectorSerializer<T>::pi * rand() / T(RAND_MAX);
+        const T x = r * sin(t) * cos(p);
+        const T y = r * sin(t) * sin(p);
+        const T z = r * cos(t);
 
         vector_t vec({x, y, z});
-
         vec_serializer->serialize(vec);
-
-        // transfer bit array; analagous to reading in telemetry bit array
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
+        vector_t result;
         downlink_deserializer->deserialize(&result);
-
-        // normalize the vectors for angle calculation only
-        normalize<T, 3>(vec);
-        normalize<T, 3>(result);
-        T angle = angle_between(vec, result);
-
-        T mag_err = std::abs(magnitude_of(result)/magnitude_of(vec) - 1.0) ;
+        T mag_err = lin::norm(lin::VectorView<T, 3>(vec.data()) - lin::VectorView<T, 3>(result.data()));
 
         static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
-            "vector was {%f,%f,%f}; angle: %f; mag_err: %f";
+            "vector was {%f,%f,%f}; mag_err: %f";
         static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output"
-            "vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
+            "vector was {%lf,%lf,%lf}; mag_err: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
@@ -549,16 +464,10 @@ void test_vec_serializer() {
 
         std::array<T, 3> result_arr = to_stdarray(result);
         sprintf(err_str, err_fmt_str, i, x, y, z, result_arr[0], result_arr[1],
-            result_arr[2], angle, mag_err);
+            result_arr[2], mag_err);
 
-        // assert less than .1% magnitude error
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
-
-        // assert angle has error < 0.5 degrees
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.5, 0, angle, err_str);
-
-        // Note no need to check if there are any sign flips,
-        // angle_err < 0.5 deg if no sign flips, or if error is small (across an interval)
+        // assert less than .1% magnitude of error vector
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.002, 0, mag_err, err_str);
     }
 
     // Test deserialization from a string
@@ -619,8 +528,6 @@ void test_quat_serializer() {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
 
-        quat_t result;
-
         // Generate random quaternion.
         const T t = rand() / T(RAND_MAX) * (2 * 3.14159265L);
         const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265L);
@@ -628,21 +535,20 @@ void test_quat_serializer() {
         const T uy = std::cos(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T s = std::cos(tt/2);
-        quat_t quat = {ux, uy, uz, s};
-        // please note that quat is not normalized at this point
-
-        // serialize will normalize a quaternion argument, but normalize now anyway
-        normalize<T, 4>(quat);
+        lin::Vector<T, 4> quat_lin = {ux, uy, uz, s};
+        quat_lin = quat_lin / lin::norm(quat_lin);
+        
+        quat_t quat = {quat_lin(0), quat_lin(1), quat_lin(2), quat_lin(3)};
         quat_serializer->serialize(quat);
-
-        //downlink_deserializer = quat_serializer;
         downlink_deserializer->set_bit_array(quat_serializer->get_bit_array());
 
+        quat_t result;
         downlink_deserializer->deserialize(&result);
+        lin::VectorView<T, 4> result_lin(result.data());
+        result_lin = result_lin / lin::norm(result_lin);
 
-        // normalize the result (though it should definitely be normalized, or atleast very close)
-        normalize<T, 4>(result);
-        T angle_err = angle_between<T, 4>(quat, result);
+        T angle_err_rad = std::acos(std::abs(lin::dot(result_lin, quat_lin))) * 2;
+        T angle_err_deg = angle_err_rad * 360 / (2 * VectorSerializer<T>::pi);
 
         static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output"
             " quaternion was {%f,%f,%f,%f}; angle: %f";
@@ -657,9 +563,9 @@ void test_quat_serializer() {
         std::array<T, 4> quat_arr = to_stdarray(quat);
         std::array<T, 4> result_arr = to_stdarray(result);
         sprintf(err_str, err_fmt_str, i, quat_arr[0], quat_arr[1], quat_arr[2], quat_arr[3],
-            result_arr[0], result_arr[1], result_arr[2], result_arr[3], angle_err);
+            result_arr[0], result_arr[1], result_arr[2], result_arr[3], angle_err_deg);
 
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err, err_str);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err_deg, err_str);
 
     }
 
@@ -720,20 +626,20 @@ void test_gpstime_serializer() {
     TEST_ASSERT_FALSE(result.is_set);
 
     // Serialization of initialized GPS time
-    gps_time_t input2(3,3,3);
+    gps_time_t input2(2300,3,3);
     gpstime_serializer->serialize(input2);
     gpstime_serializer->deserialize(&result);
     TEST_ASSERT(result == input2);
 
     // Deserialization from a string
-    gps_time_t input3(2,2,2);
-    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2,2", &result));
-    TEST_ASSERT(gpstime_serializer->deserialize("2,2,2", &result));
+    gps_time_t input3(2400,2,2);
+    TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2400,2", &result));
+    TEST_ASSERT(gpstime_serializer->deserialize("2400,2,2", &result));
     TEST_ASSERT(result == input3);
 
     // Printing
-    gps_time_t input4(4,4,4);
-    TEST_ASSERT_EQUAL_STRING("4,4,4", gpstime_serializer->print(input4));
+    gps_time_t input4(2500,4,4);
+    TEST_ASSERT_EQUAL_STRING("2500,4,4", gpstime_serializer->print(input4));
 }
 
 void test_serializers() {

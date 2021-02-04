@@ -53,6 +53,7 @@ void MainFaultHandler::init()
 
     fault_handler_machines.push_back(std::make_unique<QuakeFaultHandler>(_registry));
     fault_handler_machines.push_back(std::make_unique<PiksiFaultHandler>(_registry));
+    fault_handler_machines.push_back(std::make_unique<PropFaultHandler>(_registry));
 }
 
 fault_response_t MainFaultHandler::execute()

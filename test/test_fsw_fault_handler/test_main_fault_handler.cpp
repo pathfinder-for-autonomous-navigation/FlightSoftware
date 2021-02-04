@@ -4,7 +4,7 @@
 #include <numeric>
 #include "cartesian_product.hpp"
 
-static constexpr unsigned int num_fault_machines = 8;
+static constexpr unsigned int num_fault_machines = 9;
 
 /**
  * @brief The main fault handler should initially be enabled and
@@ -29,7 +29,7 @@ void test_main_fh_no_fault() {
     {
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none
+        fault_response_t::none, fault_response_t::none, fault_response_t::none
     };
 
     fault_response_t response = tf.step<num_fault_machines>(null_fault_responses);
@@ -107,6 +107,7 @@ void test_main_fh_toggle_handling() {
         fault_response_t::none,     fault_response_t::none,
         fault_response_t::none,     fault_response_t::none,
         fault_response_t::standby,  fault_response_t::safehold,
+        fault_response_t::none
     };
 
     // If some fault machines recommend safehold, the main fault handler

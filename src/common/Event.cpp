@@ -28,7 +28,7 @@ void Event::serialize() {
     unsigned int field_data_ptr = 0;
 
     std::bitset<32> ccno_serialized(ccno->get());
-    for(int i = 0; i < 32; i++) {
+    for(size_t i = 0; i < 32; i++) {
         (*field_data)[i] = ccno_serialized[i];
     }
     field_data_ptr += 32;

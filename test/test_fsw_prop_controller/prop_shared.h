@@ -10,6 +10,8 @@
 
 #define suppress_fault(fault) tf.pc->fault.suppress_f.set(true)
 
+#define unsignal_fault(fault) tf.pc->fault.unsignal_f.set(true)
+
 #define override_fault(fault) tf.pc->fault.override_f.set(true)
 
 #define get_persistence(fault) tf.pc->fault.persistence_f.get()

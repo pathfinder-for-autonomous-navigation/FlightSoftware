@@ -37,7 +37,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       // We must trust the pressure sensor.
       pressurize_fail_fault_f("prop.pressurize_fail", 0),
       overpressure_fault_f("prop.overpressured", 10),
-
       tank2_temp_high_fault_f("prop.tank2_temp_high", 10),
       tank1_temp_high_fault_f("prop.tank1_temp_high", 10)
 {
@@ -100,6 +99,7 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
+    check_faults();
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
@@ -111,10 +111,11 @@ void PropController::execute()
 
     if (next_state != current_state)
     {
-        DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
+        DD("[*] Attempt transition to New state: %u\n", static_cast<unsigned int>(next_state));
         // sanity check
         if (get_state(next_state).can_enter())
         {
+            DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
             prop_state_f.set(static_cast<unsigned int>(next_state));
             get_state(next_state).enter();
         }
@@ -126,14 +127,11 @@ void PropController::execute()
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
-
     // Read all the sensors -- check sensors here instead of earlier in order
     // to spoof sensor readings during HITL tests.
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
-
-    check_faults();
 }
 
 void PropController::check_faults()
@@ -520,11 +518,15 @@ bool PropState_HandlingFault::can_enter() const
     // Return true if any of the faults are actually faulted.
     //  This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
+    bool b_pressurize_fail = controller->pressurize_fail_fault_f.is_faulted();
+    bool b_overpressured = controller->overpressure_fault_f.is_faulted();
+    bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
+    bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
     return PropulsionSystem.is_functional() &&
-            (controller->pressurize_fail_fault_f.is_faulted() ||
-            controller->overpressure_fault_f.is_faulted() ||
-            controller->tank2_temp_high_fault_f.is_faulted() ||
-            controller->tank1_temp_high_fault_f.is_faulted());
+            (b_pressurize_fail ||
+            b_overpressured ||
+            b_tank2_temp ||
+            b_tank1_temp);
 }
 
 void PropState_HandlingFault::enter()
@@ -545,7 +547,6 @@ prop_state_t PropState_HandlingFault::evaluate()
     {
         return this_state;
     }
-
     // Otherwise, return to idle
     return prop_state_t::idle;
 }
@@ -570,10 +571,13 @@ void PropState_Venting::enter()
 
 bool PropState_Venting::can_enter() const
 {
+    bool b_overpressured = controller->overpressure_fault_f.is_faulted();
+    bool b_tank2_temp = controller->tank2_temp_high_fault_f.is_faulted();
+    bool b_tank1_temp = controller->tank1_temp_high_fault_f.is_faulted();
     return PropulsionSystem.is_functional() &&
-           (controller->overpressure_fault_f.is_faulted() ||
-           controller->tank1_temp_high_fault_f.is_faulted() ||
-           controller->tank2_temp_high_fault_f.is_faulted());
+           (b_overpressured ||
+           b_tank2_temp ||
+           b_tank1_temp);
 }
 
 unsigned int PropState_Venting::determine_faulted_tank()
