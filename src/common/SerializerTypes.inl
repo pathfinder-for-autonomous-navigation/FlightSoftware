@@ -2,13 +2,11 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
-#include <lin.hpp>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
 #include "constant_tracker.hpp"
-
-#include <lin.hpp> // for norm
+#include <lin.hpp>
 
 /**
  * @brief Specialization of Serializer for booleans.
@@ -100,10 +98,11 @@ class IntegerSerializer : public SerializerBase<T> {
         if (src_copy < this->_min) src_copy = this->_min;
 
         unsigned int resolution = _resolution();
-        if (resolution == 0)
-            this->serialized_val.set_int(0);  // Prevent divide-by-zero error
+        if (resolution != 0)
+            this->serialized_val.set_ullong((src_copy - this->_min) / resolution);
         else
-            this->serialized_val.set_int((src_copy - this->_min) / resolution);
+            // Can't divide by zero!
+            this->serialized_val.set_ullong(0);
     }
 
     bool deserialize(const char* val, T* dest) override {
@@ -212,8 +211,6 @@ class FloatDoubleSerializer : public SerializerBase<T> {
                 "Must use double or float type when constructing a float-double serializer.");
 
   protected:
-    template<typename U, size_t N, size_t qsz, size_t vcsz, size_t qcsz>
-    friend class VectorSerializer;
 
     TRACKED_CONSTANT_SC(size_t, print_size, 14); // 6 digits before and after the decimal point, and a NULL character.
 
@@ -226,7 +223,7 @@ class FloatDoubleSerializer : public SerializerBase<T> {
 
   public:
     void serialize(const T& src) override {
-        const unsigned int num_intervals = (0b1 << this->serialized_val.size()) - 1;
+        const unsigned long long num_intervals = std::pow(2, this->serialized_val.size()) - 1;
 
         T src_copy = src;
         if (src_copy > this->_max) src_copy = this->_max;
@@ -235,8 +232,9 @@ class FloatDoubleSerializer : public SerializerBase<T> {
         T resolution = 0;
         if (num_intervals > 0) resolution = (this->_max - this->_min) / num_intervals;
 
-        const unsigned int result_int = static_cast<unsigned int>((src_copy - this->_min) / resolution);
-        this->serialized_val.set_int(result_int);
+        const unsigned long long result_int = (src_copy - this->_min) / resolution;
+
+        this->serialized_val.set_ullong(result_int);
     }
 
     bool deserialize(const char* val, T* dest) override {
@@ -255,9 +253,9 @@ class FloatDoubleSerializer : public SerializerBase<T> {
     }
 
     void deserialize(T* dest) const override {
-        const unsigned int num_intervals = (0b1 << this->serialized_val.size()) - 1;
+        const unsigned long long num_intervals = std::pow(2, this->serialized_val.size()) - 1;
 
-        const unsigned int f_bits = this->serialized_val.to_uint();
+        const unsigned long long f_bits = this->serialized_val.to_ullong();
         T resolution;
         if (num_intervals > 0)
             resolution = (this->_max - this->_min) / num_intervals;
@@ -294,260 +292,40 @@ class Serializer<double> : public FloatDoubleSerializer<double> {
 };
 
 /**
- * @brief Base class for float/double vector/quaternion specializations of serializer.
- * 
- * This class uses the method of "smallest component" serialization.
- * 
- * For vectors:
- * - For a vector v, it collects the magnitude and serializes it separately--this is
- *   what the min, max, and size values are for. 
- * - Since the unit vector has a magnitude of size 1, we only need the two smallest components
- *   to specify the direction of the unit vector. We allow two bits to store the index of
- *   the largest component in the unit vector, and then we serialize the two smallest components
- *   in the bounds +/- sqrt(2) and with bitsize 9.
- * 
- * For quaternions:
- * - Since the quaternion has a magnitude of size 1, we only need the three smallest components
- *   to specify the direction of the unit vector. We allow two bits to store the index of
- *   the largest component in the quaternion, and then we serialize the three smallest components
- *   in the bounds +/- sqrt(2)/2 and with bitsize 9.
- * 
+ * Common functions used by vector and quaternion serializers.
  */
-template <typename T,
-          size_t N,
-          size_t quat_sz,
-          size_t vec_component_sz,
-          size_t quat_component_sz>
-class VectorSerializer : public SerializerBase<std::array<T, N>> {
-  static_assert(std::is_floating_point<T>::value,
-      "Vector serializers can only be constructed for floats or doubles.");
-  static_assert(N == 3 || N == 4,
-      "Serializers for float arrays can only be used for arrays of size 3 or 4.");
-
-  private:
-    void construct_vector_serializer(T min, T max, T size) {
-        size_t magnitude_bitsize;
-        if (N == 3) magnitude_bitsize = size - vec_min_sz;
-        else magnitude_bitsize = quat_magnitude_sz;
-        magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize);
-
-        max_component.resize(2);
-
-        //needs to be intialized or else compiler warning-error
-        max_component.set_int(0);
-
-        sign_of_max_comp.resize(1);
-
-        size_t component_sz = 0;
-        if (N == 3) { component_sz = vec_component_sz; }
-        else { component_sz = quat_component_sz; }
-
-        for (size_t i = 0; i < N - 1; i++) {
-            component_scaled_values[i].resize(component_sz);
-            vector_element_serializers[i] = std::make_unique<Serializer<T>>(
-                // components must be able to be negative, thus range from -sqrt(2)/2 to sqrt(2)/2
-                -sqrtf(2.0f) / 2, sqrtf(2.0f) / 2 , component_sz);
-
-        }
-    }
-
+namespace VectorSerializerFns
+{
     /**
-     * @brief Do the vector-specific parts of copying one serializer from another. We need
-     * this in order to prevent duplication of code across the asisgnment operator and the
-     * copy constructor.
-     * 
-     * @param other Serializer to copy from.
+     * Print vector to a string.
      */
-    void copy_vector_values(const Serializer<std::array<T, N>>& other) {
-        this->magnitude_min = other.magnitude_min;
-        this->magnitude_max = other.magnitude_max;
-        this->magnitude_serializer = std::make_unique<Serializer<T>>(*other.magnitude_serializer);
-        for(size_t i = 0; i < vector_element_serializers.size(); i++) {
-            this->vector_element_serializers[i] =
-                std::make_unique<Serializer<T>>(*other.vector_element_serializers[i]);
-        }
-        this->max_component = other.max_component;
-        this->component_scaled_values = other.component_scaled_values;
-        this->sign_of_max_comp = other.sign_of_max_comp;
-    }
+    template<typename T, size_t N>
+    const char* vector_print(const std::array<T, N>& src, char* dest) {
+        static_assert(std::is_floating_point<T>::value, "");
 
-  protected:
-    /**
-     * We need these variables, since we don't want to use the base-class provided vectors for
-     * storing the minimum and maximum magnitude. We also need a dummy value to feed into the
-     * base class, as well.
-     */
-    T magnitude_min;
-    T magnitude_max;
-    static std::array<T, N> dummy_vector;
-
-    /**
-     * @brief Serializer for vector magnitude.
-     */
-    std::shared_ptr<Serializer<T>> magnitude_serializer;
-
-    /**
-     * @brief Serializer for vector components.
-     */
-    std::array<std::shared_ptr<Serializer<T>>, N - 1> vector_element_serializers;
-
-    /**
-     * @brief Bit array that stores which element of the vector is maximal.
-     */
-    bit_array max_component;
-
-    /**
-     * @brief Bit array that stores sign of max. component of a vector
-     * 
-     * Only has bitsize() == 1;
-     */
-    bit_array sign_of_max_comp;
-
-    /**
-     * @brief Bit arrays that store the scaled-down representations of each vector component.
-     */
-    std::array<bit_array, N - 1> component_scaled_values;
-
-    TRACKED_CONSTANT_SC(size_t, quat_magnitude_sz, (quat_sz - 3 * quat_component_sz));
-    TRACKED_CONSTANT_SC(size_t, vec_min_sz, 2 + 2 * vec_component_sz + 1); // + 1 for the sign serializer
-
-    TRACKED_CONSTANT_SC(size_t, print_size, 13 * N + (N - 1) + 1); // 13 characters per value in the array,
-                                                                   // N - 1 commas, 1 null character
-
-    /**
-     * @brief Construct a new Serializer object.
-     *
-     * @param min Minimum magnitude of float/double vector
-     * @param max Maximum value of float/double vector
-     * @param size Number of bits to compress the vector into. If this is less
-     *             than the minimum possible size for float/double vectors, construction will fail.
-     */
-    VectorSerializer(T min, T max, T size)
-        : SerializerBase<std::array<T, N>>(dummy_vector, dummy_vector, size, print_size),
-          magnitude_min(min),
-          magnitude_max(max)
-    {
-        static_assert(N == 3, "An argumented constructor can only be used for a vector.");
-        // Store min and max information for access by the telemetry info generator
-        this->_min[0] = min;
-        this->_max[0] = max;
-        construct_vector_serializer(min, max, size);
-    }
-
-    /**
-     * @brief Default constructor, appropriate for quaternions.
-     */
-    VectorSerializer() : SerializerBase<std::array<T, N>>(dummy_vector, dummy_vector, quat_sz, print_size),
-        magnitude_min(0),
-        magnitude_max(1)
-    {
-        static_assert(N == 4, "Default constructor may only be used for quaternions.");
-        construct_vector_serializer(0, 1, quat_sz);
-    }
-
-    VectorSerializer<T, N, quat_sz, vec_component_sz, quat_component_sz>& 
-    operator=(const VectorSerializer<T, N, quat_sz, vec_component_sz, quat_component_sz>& other) {
-        SerializerBase<std::array<T, N>>::operator=(other);
-        copy_vector_values(other);
-        return *this;
-    }
-
-  public:
-    void serialize(const std::array<T, N>& src) override {
-        bit_array::iterator serialized_position = this->serialized_val.begin();
-
-        lin::Vector<T, N> normd; // short for normalized; normd = normalized
-        std::array<T, N> src_norm(src);
-
-        // src should already be normalized, but normalize again just in case
-        // this block of code normalizes iff N == 4
-        // otherwise, when N == 3, src_norm is not normalized
-        if(N == 4) {
-            normd = {src[0], src[1], src[2], src[3]};
-        
-            normd = normd / lin::norm(normd);
-            
-            for(unsigned int i = 0; i<N; i++){
-                src_norm[i] = normd(i);
-            }
-        }
-        
-        // Get and store index of maximum-valued component
-        std::array<T, N> v_mags;
-        T max_element_mag = 0;
-        unsigned int max_component_idx = 0;
+        size_t str_idx = 0;
         for (size_t i = 0; i < N; i++) {
-            v_mags[i] = std::abs(src_norm[i]);
-            if (max_element_mag < v_mags[i]) {
-                max_element_mag = v_mags[i];
-                max_component_idx = i;
-            }
+            str_idx += sprintf(dest + str_idx, "%6.6f,", src[i]);
         }
-
-        max_component.set_int(max_component_idx);
-        std::copy(max_component.begin(), max_component.end(), serialized_position);
-        std::advance(serialized_position, max_component.size());
-        
-        // Store serialized magnitude
-        T mag = 0.0f;
-        if (N == 4)
-            mag = 1.0f;
-        else {
-            for (size_t i = 0; i < 3; i++) {
-                mag += src_norm[i] * src_norm[i];
-            }
-        }
-
-        // actually turns mag^2 to mag
-        mag = std::sqrt(mag);
-
-        // only serialize the magnitude if N == 3
-        if(N == 3){
-            magnitude_serializer->serialize(mag);
-            std::copy(magnitude_serializer->get_bit_array().begin(), 
-                    magnitude_serializer->get_bit_array().end(),
-                    serialized_position);
-            std::advance(serialized_position, magnitude_serializer->bitsize());
-        }
-
-        // will only ever be true for N == 4 and max_comp being negative
-        bool flip_vals = false;
-        if(N == 4 && src[max_component_idx] < 0)
-            flip_vals = true;
-
-        // Store serialized non-maximal components
-        size_t component_number = 0;
-        for (size_t i = 0; i < N; i++) {
-            if (i != max_component_idx) {
-                T element_scaled = src_norm[i] / mag;
-
-                // the negative of a quaternion is the same quaternion
-                // thus to indicate sign of the largest component, negate all other components
-                if(flip_vals)
-                    element_scaled *= -1;
-
-                vector_element_serializers[component_number]->serialize(element_scaled);
-
-                std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
-                          vector_element_serializers[component_number]->get_bit_array().end(),
-                          serialized_position);
-                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize());
-                component_number++;
-            }
-        }
-
-        // if it's a vector, you must use an additional bit 
-        // to determine the sign of the largest component
-        if(N == 3){
-            if(src_norm[max_component_idx] < 0){
-                sign_of_max_comp.set_int(1);
-            }
-            std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
-            std::advance(serialized_position, sign_of_max_comp.size());
-        }        
+        return dest;
     }
 
-    bool deserialize(const char* val, std::array<T, N>* dest) override {
+    /**
+     * Return the number of characters required to print an N-dimensional vector
+     * to a string.
+     */
+    constexpr size_t vector_print_size(int N)
+    {
+        return 13 * N + (N - 1) + 1; // 13 characters per value in the array, N-1 commas, 1 null character
+    }
+
+    /**
+     * Convert a string representation of a vector to an std::array.
+     */
+    template<typename T, size_t N>
+    bool deserialize_vector_str(const char* val, std::array<T, N>* dest) {
+        static_assert(std::is_floating_point<T>::value, "");
+
         size_t i = 0;
         std::array<T, N> temp_dest;
         char temp_val[150];
@@ -563,243 +341,368 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
             tok = strtok(NULL, ",");
         }
-        if (i < N) return false;
+        if (i != N) return false;
         *dest = temp_dest;
-        serialize(*dest);
         return true;
     }
+};
 
-    void deserialize(std::array<T, N>* dest) const override {
-        // a counter to keep track of the current serialized val index to process
-        unsigned int idx_pointer = 0;
+/**
+ * Vector serializer. Works best with vectors whose values are confined
+ * to a shell subspace.
+ */
+template <typename T>
+class VectorSerializer : public SerializerBase<std::array<T, 3>> {
+  static_assert(std::is_floating_point<T>::value,
+    "Vector serializers can only be constructed for floats or doubles.");
+
+  public:
+    TRACKED_CONSTANT_SC(T, pi, 3.141592653589793);
+
+  protected:
+    /**
+     * @brief Serializer for vector components
+     * 
+     * These are only used as temporary objects within the serialize and
+     * deserialize objects, but to prevent de-allocation and re-allocation
+     * of memory these objects are made member objects.
+     */
+    mutable Serializer<T> magnitude_serializer;
+    mutable Serializer<T> theta_serializer; // Using physics coordinates: this is angle w.r.t. z axis
+    mutable Serializer<T> phi_serializer; // Using physics coordinates: this is xy angle
+
+    /*
+     * Let precision equal p. The meaning of the number is that
+     * the vector should be specified to within the Euclidean
+     * distance given by dx = (max - min) / 2^p.
+     * 
+     * We can approximate
+     * dx = sqrt((r dtheta)^2 + (r sin(theta) dphi)^2 + dr^2)
+     *    = max (dtheta + dphi) + dr
+     * 
+     * We want to choose the angle and magnitude serializer bounds so that
+     * they use a small number of bits but satisfy this precision
+     * constraint. The solution to this puzzle is just to distribute
+     * the errors equally among the three serializers: choose bitsizes
+     * b1, b2 such that
+     * 
+     * (max - min) / 2^(b1) < dr < 1/3 dx
+     * max / 2^(b2) < max dtheta, max dphi < 1/3 dx
+     * 
+     * These three functions compute b1, b2, and b1 + b2 + b2 (the total 
+     * bitsize of the array.)
+     */
+    static constexpr size_t b1(size_t precision)
+    {
+        // 3 (max - min) / 2^(b1) < dx, dx = (max - min) / 2^p
+        // => b1 > log_2(3) + p
+        return 2 + precision;
+    }
+    static constexpr size_t b2(T min, T max, size_t precision)
+    {
+        // 3 max / 2^(b2) < dx, dx = (max - min) / 2^p
+        // => b2 > log_2(3 * max / (max - min)) + p
+        return std::ceil(std::log(3 * max / (max - min)) / std::log(2)) + precision;
+    }
+    static constexpr size_t total_size(T min, T max, size_t precision)
+    {
+        // 1 extra bit for ascertaining the xy-quadrant of the vector.
+        return 1 + b1(precision) + 2 * b2(min, max, precision);
+    }
+
+  public:
+    VectorSerializer(T min, T max, size_t precision) :
+        SerializerBase<std::array<T, 3>>(
+            std::array<T, 3>(),
+            std::array<T, 3>(),
+            total_size(min, max, precision),
+            VectorSerializerFns::vector_print_size(3)
+        ),
+        magnitude_serializer(min, max, b1(precision)),
+        theta_serializer(0, pi, b2(min, max, precision)),
+        phi_serializer(-pi/2, pi/2, b2(min, max, precision))
+    {
+        // Required for the logarithm in the computations of b1 and b2 to be defined.
+        assert(max > 0); assert(max > min);
+
+        // This line exists so that TelemetryInfoGenerator is able to determine the
+        // minimum and maximum radius.
+        this->_min[0] = min;
+        this->_max[0] = max;
+    }
+
+  public:
+    void serialize(const std::array<T,3>& src) override {
+        lin::Vector<T, 3> normalized_vec {src[0], src[1], src[2]};
+        T magnitude = lin::norm(normalized_vec);
+        normalized_vec = normalized_vec / magnitude;
+
+        T theta = std::acos(normalized_vec(2));
+        T phi = std::atan(normalized_vec(1) / normalized_vec(0));
+        bool xsign = normalized_vec(0) > 0;
+
+        magnitude_serializer.serialize(magnitude);
+        theta_serializer.serialize(theta);
+        phi_serializer.serialize(phi);
+
+        bit_array::iterator serialized_position = this->serialized_val.begin();
+        serialized_position[0] = xsign;
+        serialized_position++;
+        auto copy_bits = [&serialized_position](Serializer<T>& sr) {
+            auto const& bit_array = sr.get_bit_array();
+            std::copy(bit_array.begin(), bit_array.end(), serialized_position);
+            std::advance(serialized_position, bit_array.size());
+        };
+        copy_bits(magnitude_serializer);
+        copy_bits(theta_serializer);
+        copy_bits(phi_serializer);
+    }
+
+    bool deserialize(const char* val, std::array<T, 3>* dest) override {
+        bool success = VectorSerializerFns::deserialize_vector_str<T, 3>(val, dest);
+        if (success) serialize(*dest);
+        return success;
+    }
+
+    void deserialize(std::array<T, 3>* dest) const override {
+        bit_array::const_iterator serialized_position = this->serialized_val.begin();
+        bool xsign = serialized_position[0];
+        serialized_position++;
+        auto copy_bits = [&serialized_position](Serializer<T>& sr) {
+            auto& bit_array = sr.get_bit_array();
+            for(size_t i = 0; i < bit_array.size(); i++)
+            {
+                bit_array[i] = *serialized_position;
+                serialized_position++;
+            }
+        };
+        copy_bits(magnitude_serializer);
+        copy_bits(theta_serializer);
+        copy_bits(phi_serializer);
+
+        T magnitude, theta, phi;
+        magnitude_serializer.deserialize(&magnitude);
+        theta_serializer.deserialize(&theta);
+        phi_serializer.deserialize(&phi);
+        
+        int xfactor = xsign ? 1 : -1;
+        (*dest)[0] = xfactor * magnitude * std::sin(theta) * std::cos(phi);
+        (*dest)[1] = xfactor * magnitude * std::sin(theta) * std::sin(phi);
+        (*dest)[2] = magnitude * std::cos(theta);
+    }
+
+    const char* print(const std::array<T, 3>& src) const override {
+        return VectorSerializerFns::vector_print<T, 3>(src, this->printed_val);
+    }
+};
+
+/**
+ * @brief Base class for float/double quaternion specializations of serializer.
+ * 
+ * This class uses the serialization method of "smallest three" for quaternions.
+ * - Since the quaternion has a magnitude of size 1, we only need the three smallest components
+ *   to specify the direction of the unit vector. We allow two bits to store the index of
+ *   the largest component in the quaternion, and then we serialize the three smallest components
+ *   in the bounds +/- 1 and with enough bitsize for angular resolution to be OK.
+ */
+template <typename T>
+class QuaternionSerializer : public SerializerBase<std::array<T, 4>> {
+  static_assert(std::is_floating_point<T>::value,
+      "Quaternion serializers can only be constructed for floats or doubles.");
+
+  protected:
+    /**
+     * @brief Serializer for quaternion components.
+     * 
+     * These are only used as temporary objects within the serialize and
+     * deserialize objects, but to prevent de-allocation and re-allocation
+     * of memory these objects are made member objects.
+     */
+    std::array<std::shared_ptr<Serializer<T>>, 3> quaternion_element_serializers;
+
+    /**
+     * Bitsize with which to serialize an individual component of the quaternion.
+     * The number 10 is determined experimentally.
+     */
+    static constexpr size_t quat_component_sz() { return 10; }
+
+    /**
+     * @brief Default constructor, appropriate for quaternions.
+     */
+    QuaternionSerializer() :
+        SerializerBase<std::array<T, 4>>(
+            std::array<T, 4>(),
+            std::array<T, 4>(),
+            quat_component_sz() * 3 + 2,
+        VectorSerializerFns::vector_print_size(4))
+    {
+        for (size_t i = 0; i < 3; i++) {
+            quaternion_element_serializers[i] = std::make_unique<Serializer<T>>(-1, 1, quat_component_sz());
+        }
+    }
+
+  public:
+    void serialize(const std::array<T, 4>& src) override {
+        lin::Vector<T, 4> normalized_quat {src[0], src[1], src[2], src[3]};
+        normalized_quat = normalized_quat / lin::norm(normalized_quat);
+        std::array<T, 4> src_normalized(src);
+        for(unsigned int i = 0; i<4; i++) src_normalized[i] = normalized_quat(i);
+        
+        // Get and store index of maximum-valued component
+        T max_element_mag = 0;
+        unsigned int max_component_idx = 0;
+        for (size_t i = 0; i < 4; i++) {
+            T component_abs = std::abs(src_normalized[i]);
+            if (max_element_mag < component_abs) {
+                max_element_mag = component_abs;
+                max_component_idx = i;
+            }
+        }
+
+        std::bitset<2> max_component(max_component_idx);
+
+        bit_array::iterator serialized_position = this->serialized_val.begin();
+        this->serialized_val[0] = max_component[0];
+        this->serialized_val[1] = max_component[1];
+        std::advance(serialized_position, 2);
+
+        // Store serialized non-maximal components
+        size_t component_number = 0;
+        for (size_t i = 0; i < 4; i++) {
+            if (i != max_component_idx) {
+                // The negative of a quaternion is the same quaternion.
+                // Thus to indicate sign of the largest component, negate all other components.
+                if(src[max_component_idx] < 0) src_normalized[i] *= -1;
+
+                auto& element_sr = quaternion_element_serializers[component_number];
+
+                element_sr->serialize(src_normalized[i]);
+
+                std::copy(element_sr->get_bit_array().begin(),
+                          element_sr->get_bit_array().end(),
+                          serialized_position);
+                std::advance(serialized_position, element_sr->bitsize());
+                component_number++;
+            }
+        }      
+    }
+
+    bool deserialize(const char* val, std::array<T, 4>* dest) override {
+        bool success = VectorSerializerFns::deserialize_vector_str<T, 4>(val, dest);
+        if (success) serialize(*dest);
+        return success;
+    }
+
+    void deserialize(std::array<T, 4>* dest) const override {
+        bit_array::const_iterator serialized_position = this->serialized_val.begin();
 
         // read which component index is highest into a bitset for later use
-        std::bitset<2> max_comp_bitset(0);
+        std::bitset<2> max_component;
         for(size_t i = 0; i<max_component.size(); i++){
-            max_comp_bitset[i] = this->serialized_val[idx_pointer];
-            //max_component[i] = this->serialized_val[idx_pointer];
-            idx_pointer++;
+            max_component[i] = *serialized_position;
+            serialized_position++;
         }
-        
-        // if there's a magnitude serializer, save data into the member variable
-        if(N == 3) {
-            bit_array& local_arr_ref = magnitude_serializer->get_bit_array();
-            for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
-                local_arr_ref[i] = this->serialized_val[idx_pointer];
-                idx_pointer++;
-            }
-            magnitude_serializer->set_bit_array(local_arr_ref);
-        }
+        unsigned int max_idx = max_component.to_ulong();
+
+        if (std::is_same<T, float>::value) (*dest)[max_idx] = 1.0f;
+        else (*dest)[max_idx] = 1.0;
 
         // loop through each serializer
-        for(unsigned int i = 0; i<(N-1); i++){
-            bit_array& local_arr_ref = vector_element_serializers[i]->get_bit_array();
+        for(unsigned int i = 0; i<3; i++){
+            auto& element_sr = quaternion_element_serializers[i];
+            auto& element_bitarray = element_sr->get_bit_array();
+
             // loop through each bit belonging to the serializer
-            for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
-                local_arr_ref[j] = this->serialized_val[idx_pointer];
-                idx_pointer++;
+            for(size_t j = 0; j < element_sr->bitsize(); j++){       
+                element_bitarray[j] = *serialized_position;
+                serialized_position++;
             }
 
-            vector_element_serializers[i]->set_bit_array(local_arr_ref);
+            element_sr->set_bit_array(element_bitarray);
         }
 
-        // set to true if N == 3 and max. comp is negative
-        bool max_comp_is_negative = false;
-        if (N == 3){
-            max_comp_is_negative = this->serialized_val[idx_pointer];
-            idx_pointer++;
-        }    
-
-        T magnitude = 0.0;
-        if(N == 3)
-            magnitude_serializer->deserialize(&magnitude);
-        else
-            magnitude = 1.0;
-
-        // completely bypass member bit_array max_component;
-        unsigned int deser_max_idx = max_comp_bitset.to_ulong();
-
-        (*dest)[deser_max_idx] = 1.0;
-        int j = 0;  // Index of current component being processed
-        for (size_t i = 0; i < N; i++) {
-            if (i != deser_max_idx) {
-                vector_element_serializers[j]->deserialize(&(*dest)[i]);
-
-                // at this point in the code, (*dest)[i] contains x/r, y/r
-                // assuming z is largest magnitude
-
-                (*dest)[deser_max_idx] -= (*dest)[i] * (*dest)[i]; // subtract off; z^2/r^2 = 1 - x^2/r^2 ...
+        size_t j = 0; // Index of current component being processed
+        for (size_t i = 0; i < 4; i++) {
+            if (i != max_idx) {
+                quaternion_element_serializers[j]->deserialize(&(*dest)[i]);
+                (*dest)[max_idx] -= (*dest)[i] * (*dest)[i];
                 j++;
             }
         }
-        (*dest)[deser_max_idx] = sqrt((*dest)[deser_max_idx]);
-
-        // multiply by magnitude, only actually does anything for N == 3
-        for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
-
-        // flip sign of max comp of vector if necessary
-        if(N == 3){
-            if(max_comp_is_negative == 1){
-                (*dest)[deser_max_idx] *= -1;
-            }
-        }
+        (*dest)[max_idx] = sqrt((*dest)[max_idx]);
     }
 
-    const char* print(const std::array<T, N>& src) const override {
-        size_t str_idx = 0;
-        for (size_t i = 0; i < N; i++) {
-            str_idx += sprintf(this->printed_val + str_idx, "%6.6f,", src[i]);
-        }
-        return this->printed_val;
+    const char* print(const std::array<T, 4>& src) const override {
+        return VectorSerializerFns::vector_print<T, 4>(src, this->printed_val);
     }
 };
 
-template<typename T,
-         size_t N,
-         size_t qsz,
-         size_t vcsz,
-         size_t qcsz>
-std::array<T, N> VectorSerializer<T, N, qsz, vcsz, qcsz>::dummy_vector = {};
-
-namespace SerializerConstants {
-    /**
-     * @brief Specialization of Serializer for float vectors and quaternions.
-     */
-    TRACKED_CONSTANT_SC(size_t, fqsz, 29); // Compressed size for a float-based quaternion
-    TRACKED_CONSTANT_SC(size_t, fvcsz, 9); // Compressed size for a normalized component of a float-based vector
-    TRACKED_CONSTANT_SC(size_t, fqcsz, 9); // Compressed size for a normalized component of a float-based quaternion
-
-    // TODO FIX BITSIZE
-    TRACKED_CONSTANT_SC(size_t, min_fvsz, 2 + fvcsz * 2); // Minimum size for a float vector.
-}
-
-template <size_t N>
-class Serializer<std::array<float, N>> : public VectorSerializer<float, N,
-                                                    SerializerConstants::fqsz,
-                                                    SerializerConstants::fvcsz,
-                                                    SerializerConstants::fqcsz> {
+template<>
+class Serializer<std::array<float, 3>> : public VectorSerializer<float> {
   public:
-    /**
-     * @brief Construct a new serializer object for float vectors.
-     * 
-     * @param min Minimum magnitude of vector.
-     * @param max Maximum magnitude of vector.
-     * @param size Minimum compressed bitsize of vector. Should be larger than the minimum vector size.
-     */
-    Serializer<std::array<float, N>>(float min, float max, size_t size)
-        : VectorSerializer<float, N, SerializerConstants::fqsz,
-                                     SerializerConstants::fvcsz,
-                                     SerializerConstants::fqcsz>(min, max, size)
-    {
-        assert(size > SerializerConstants::min_fvsz);
-        static_assert(N == 3, "An argumented constructor can only be used for a vector.");
-    }
-
-    /**
-     * @brief Construct a new serializer for float quaternions.
-     */
-    Serializer<std::array<float, N>>() : VectorSerializer<float, N, 
-                                            SerializerConstants::fqsz,
-                                            SerializerConstants::fvcsz,
-                                            SerializerConstants::fqcsz>()
-    {
-        static_assert(N == 4, "A default constructor can only be used for a quaternion.");                                        
-    }
+    using VectorSerializer<float>::VectorSerializer;
 };
 
-namespace SerializerConstants {
-    /**
-     * @brief Specialization of Serializer for double vectors and quaternions.
-     */
-    TRACKED_CONSTANT_SC(size_t, dqsz, 29); // Compressed size for a double-based quaternion
-    TRACKED_CONSTANT_SC(size_t, dvcsz, 9); // Compressed size for a normalized component of a double-based vector
-    TRACKED_CONSTANT_SC(size_t, dqcsz, 9); // Compressed size for a normalized component of a double-based quaternion
-
-    TRACKED_CONSTANT_SC(size_t, min_dvsz, 2 + dvcsz * 2); // Minimum size for a double vector.
-}
-
-template <size_t N>
-class Serializer<std::array<double, N>> : public VectorSerializer<double, N, 
-                                                    SerializerConstants::dqsz, 
-                                                    SerializerConstants::dvcsz,
-                                                    SerializerConstants::dqcsz> {
+template<>
+class Serializer<std::array<double, 3>> : public VectorSerializer<double> {
   public:
-    /**
-     * @brief Construct a new serializer object for double vectors.
-     * 
-     * @param min Minimum magnitude of vector.
-     * @param max Maximum magnitude of vector.
-     * @param size Minimum compressed bitsize of vector. Should be larger than the minimum vector size.
-     */
-    Serializer<std::array<double, N>>(double min, double max, size_t size)
-        : VectorSerializer<double, N, SerializerConstants::dqsz,
-                                      SerializerConstants::dvcsz,
-                                      SerializerConstants::dqcsz>(min, max, size)
-    {
-        assert(size > SerializerConstants::min_dvsz);
-        static_assert(N == 3, "An argumented constructor can only be used for a vector.");
-    }
-
-    /**
-     * @brief Construct a new serializer for double quaternions.
-     */
-    Serializer<std::array<double, N>>() : VectorSerializer<double, N, 
-                                            SerializerConstants::dqsz,
-                                            SerializerConstants::dvcsz,
-                                            SerializerConstants::dqcsz>()
-    {
-        static_assert(N == 4, "A default constructor can only be used for a quaternion.");
-    }
+    using VectorSerializer<double>::VectorSerializer;
 };
 
+template<>
+class Serializer<std::array<float, 4>> :
+public QuaternionSerializer<float>
+{
+  public:
+    using QuaternionSerializer<float>::QuaternionSerializer;
+};
+
+template<>
+class Serializer<std::array<double, 4>> :
+public QuaternionSerializer<double>
+{
+  public:
+    using QuaternionSerializer<double>::QuaternionSerializer;
+};
+
+/**
+ * Helper functions for lin vector serialization.
+ */
 template<typename T, size_t N>
-class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
+class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
   static_assert(N == 3 || N == 4, "Serializers for float arrays can only be used for arrays of size 3 or 4.");
   static_assert(std::is_floating_point<T>::value, "Serializers are only defined for float or double-valued tuples.");
 
-  private:
-    Serializer<std::array<T, N>> _arr_sr;
+  protected:
+    std::shared_ptr<Serializer<std::array<T, N>>> _arr_sr;
+
+    LinVectorSerializer(...) : 
+        SerializerBase<lin::Vector<T, N>>(
+            lin::zeros<T, N, 1>(),
+            lin::zeros<T, N, 1>(),
+        0, 0)
+    {}
+
+    /**
+     * Store min/max/bitsize information for use by the
+     * TelemtryInfoGenerator.
+     */
+    void set_telemetry_info() {
+        this->_min(0) = _arr_sr->min()[0];
+        this->_max(0) = _arr_sr->max()[0];
+        this->serialized_val.resize(_arr_sr->bitsize());
+    }
 
   public:
-    Serializer(T min, T max, size_t size) :
-        SerializerBase<lin::Vector<T, N>>(
-            lin::zeros<T, N, 1>(),
-            lin::zeros<T, N, 1>(),
-            0, 0),
-        _arr_sr(min, max, size)
-    {
-        // Store min and max information for access by the telemetry info generator
-        this->_min(0) = min;
-        this->_max(0) = max;
-        static_assert(N == 3, "An argumented constructor can only be used for a vector.");
-    }
-
-    Serializer() :
-        SerializerBase<lin::Vector<T, N>>(
-            lin::zeros<T, N, 1>(),
-            lin::zeros<T, N, 1>(),
-            0, 0),
-        _arr_sr()
-    {
-        static_assert(N == 4, "A default constructor can only be used for a quaternion.");
-    }
-
-    Serializer<lin::Vector<T, N>>& 
-    operator=(const Serializer<lin::Vector<T, N>>& other) {
-        SerializerBase<lin::Vector<T, N>>::operator=(other);
-        _arr_sr = other._arr_sr;
-        return *this;
-    }
-
     void serialize(const lin::Vector<T, N>& src) override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
-        _arr_sr.serialize(src_cpy);
+        _arr_sr->serialize(src_cpy);
     }
 
     bool deserialize(const char* val, lin::Vector<T, N>* dest) override {
         std::array<T, N> dest_cpy;
-        bool ret = _arr_sr.deserialize(val, &dest_cpy);
+        bool ret = _arr_sr->deserialize(val, &dest_cpy);
         if (!ret) return false;
         for(unsigned int i = 0; i < N; i++) (*dest)(i) = dest_cpy[i];
         return true;
@@ -807,18 +710,36 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
 
     void deserialize(lin::Vector<T, N>* dest) const override {
         std::array<T, N> dest_cpy;
-        _arr_sr.deserialize(&dest_cpy);
+        _arr_sr->deserialize(&dest_cpy);
         for(unsigned int i = 0; i < N; i++) (*dest)(i) = dest_cpy[i];
     }
 
     const char* print(const lin::Vector<T, N>& src) const override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
-        return _arr_sr.print(src_cpy);
+        return _arr_sr->print(src_cpy);
     }
+};
 
-    unsigned int bitsize() const {
-        return _arr_sr.bitsize();
+template<typename T>
+class Serializer<lin::Vector<T, 4>> : public LinVectorSerializer<T, 4>
+{
+  public:
+    Serializer() : LinVectorSerializer<T, 4>()
+    {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,4>>>();
+    }
+};
+
+template<typename T>
+class Serializer<lin::Vector<T, 3>> : public LinVectorSerializer<T, 3>
+{
+  public:
+    Serializer(T min, T max, size_t bitsize) :
+        LinVectorSerializer<T, 3>(min, max, bitsize)
+    {
+        this->_arr_sr = std::make_shared<Serializer<std::array<T,3>>>(min, max, bitsize);
+        this->set_telemetry_info();
     }
 };
 
@@ -828,28 +749,39 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
 template <>
 class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
   public:
-    TRACKED_CONSTANT_SC(size_t, gps_time_sz, 68);
-    static const gps_time_t dummy_gpstime;
-
     TRACKED_CONSTANT_SC(size_t, print_size, 25); // wn: 5, tow: 10, ns: 7, 2 commas, 1 NULL character. 
 
+    mutable Serializer<unsigned int> wn_sz;
+    mutable Serializer<unsigned int> tow_sz;
+    mutable Serializer<signed int> ns_sz;
+
     Serializer()
-        : SerializerBase<gps_time_t>(dummy_gpstime, dummy_gpstime, gps_time_sz, print_size)
-    {}
+        : SerializerBase<gps_time_t>(gps_time_t(), gps_time_t(), 1, print_size),
+          wn_sz(2000, 3000),
+          tow_sz(NANOSECONDS_IN_WEEK / 1'000'000),
+          ns_sz(-1'000'000, 1'000'000)
+    {
+        unsigned int bitsize = 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize();
+        this->serialized_val.resize(bitsize);
+    }
 
     void serialize(const gps_time_t& src) override {
-        if (!src.is_set) {
-            serialized_val[0] = false;
-            return;
-        }
-        serialized_val[0] = true;
-        std::bitset<16> wn((unsigned short int)src.wn);
-        std::bitset<32> tow(src.tow);
-        std::bitset<20> ns(src.ns);
-        for (size_t i = 0; i < wn.size(); i++) serialized_val[i + 1] = wn[i];
-        for (size_t i = 0; i < tow.size(); i++) serialized_val[i + 1 + wn.size()] = tow[i];
-        for (size_t i = 0; i < ns.size(); i++)
-            serialized_val[i + 1 + wn.size() + tow.size()] = ns[i];
+        bit_array::iterator it = serialized_val.begin();
+
+        if (src.is_set) { *it = true; }
+        else { *it = false; return; }
+        it += 1;
+
+        wn_sz.serialize(src.wn);
+        tow_sz.serialize(src.tow);
+        ns_sz.serialize(src.ns);
+
+        const bit_array& wn_bits = wn_sz.get_bit_array();
+        const bit_array& tow_bits = tow_sz.get_bit_array();
+        const bit_array& ns_bits = ns_sz.get_bit_array();
+        std::copy(wn_bits.begin(), wn_bits.end(), it); it += wn_sz.bitsize();
+        std::copy(tow_bits.begin(), tow_bits.end(), it); it += tow_sz.bitsize();
+        std::copy(ns_bits.begin(), ns_bits.end(), it);
     }
 
     bool deserialize(const char* val, gps_time_t* dest) override {
@@ -862,22 +794,22 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
     }
 
     void deserialize(gps_time_t* dest) const override {
-        if (!serialized_val[0]) {
-            dest->is_set = false;
-            return;
-        }
-        else {
-            dest->is_set = true;
-        }
-        std::bitset<16> wn;
-        std::bitset<32> tow;
-        std::bitset<20> ns;
-        for (size_t i = 0; i < 16; i++) wn.set(i, serialized_val[i + 1]);
-        for (size_t i = 0; i < 32; i++) tow.set(i, serialized_val[wn.size() + i + 1]);
-        for (size_t i = 0; i < 20; i++) ns.set(i, serialized_val[wn.size() + tow.size() + i + 1]);
-        dest->wn = (unsigned int)wn.to_ulong();
-        dest->tow = (unsigned int)tow.to_ulong();
-        dest->ns = (unsigned int)ns.to_ulong();
+        bit_array::const_iterator it = serialized_val.begin();
+        if (*it) { dest->is_set = true; }
+        else { dest->is_set = false; return; }
+        it += 1;
+
+        bit_array& wn_bits = wn_sz.get_bit_array();
+        bit_array& tow_bits = tow_sz.get_bit_array();
+        bit_array& ns_bits = ns_sz.get_bit_array();
+        wn_bits.assign(it, it + wn_sz.bitsize()); it += wn_sz.bitsize();
+        tow_bits.assign(it, it + tow_sz.bitsize()); it += tow_sz.bitsize();
+        ns_bits.assign(it, it + ns_sz.bitsize());
+
+        unsigned int wn;
+        wn_sz.deserialize(&wn); dest->wn = static_cast<unsigned short>(wn);
+        tow_sz.deserialize(&(dest->tow));
+        ns_sz.deserialize(&(dest->ns));
     }
 
     const char* print(const gps_time_t& src) const override {

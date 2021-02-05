@@ -26,6 +26,7 @@ from .gyro_heater_diag_case import GyroHeaterDiagCase
 from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .prop_fault_handler import PropFaultHandler
 from .gomspace_long_duration_case import GomspaceLongDurationCheckoutCase
 from .hardware_stress_test_case import HardwareStressCheckoutCase
 from .torquer_rotate_case import MTorquerCase
