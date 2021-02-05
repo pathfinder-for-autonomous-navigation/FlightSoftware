@@ -336,6 +336,15 @@ class Piksi {
      */
     void clear_bytes();
 
+    //time serialEvent is called
+    int sendtime;
+
+    //serialEvent for capturing sendtime (time bytes first arrive in buffer
+    //Arduino function
+    void serialEvent();
+
+    int get_sendtime();
+
    protected:
    #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi

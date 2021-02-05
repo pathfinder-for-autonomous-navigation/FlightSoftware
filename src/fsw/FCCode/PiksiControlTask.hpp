@@ -22,12 +22,6 @@ public:
     */
     void execute() override;
 
-    /**
-     * @brief Called when bytes become available and records timestamp
-     *
-     */
-    void serialEvent();
-
     // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;
     ReadableStateField<d_vector_t> vel_f;
@@ -42,9 +36,11 @@ public:
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
 
-    //Serializer and StateField for time bits arrive in buffer
-    Serializer<gps_time_t> sendtime_sr;
-    ReadableStateField<gps_time_t> sendtime_f;
+    //Serializer and StateField for
+    // [difference between time of piksi data and current time]
+    // in microseconds
+    Serializer<unsigned int> microdelta_sr;
+    ReadableStateField<unsigned int> microdelta_f;
 
     // System time of last good Piksi reading
     InternalStateField<sys_time_t> last_fix_time_f;
