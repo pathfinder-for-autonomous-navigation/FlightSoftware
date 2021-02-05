@@ -6,13 +6,13 @@ from .utils import str_to_val, Enums
 
 class AutonomousMissionManagerCase(MissionCase):
 
-    def state_check(self, satellite, designaton):
+    def state_check(self, satellite, designation):
         satellite_state = satellite.read_state("pan.state")
         if(satellite_state == str(Enums.mission_states["standby"])):
-            self.logger.put(designaton + " is in standby. Ending mission." )
+            self.logger.put(designation + " is in standby. Ending mission." )
             return False
         elif(satellite_state == str(Enums.mission_states["safehold"])):
-            self.logger.put(designaton + " is in safehold. Ending mission.")
+            self.logger.put(designation + " is in safehold. Ending mission.")
             return False
         return True
     
