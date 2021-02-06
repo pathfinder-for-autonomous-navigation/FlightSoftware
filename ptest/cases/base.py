@@ -128,7 +128,7 @@ class PTestCase(object):
         '''
         self.populate_devices(devices, radios)
 
-        for dev_name,device in devices.items():
+        for _,device in devices.items():
             device.case_interaction_setup(self.debug_to_console)
 
         if self.sim_duration > 0:
@@ -474,11 +474,11 @@ class MissionCase(PTestCase):
 
     def write_state_leader(self, string_state, state_value):
         self.flight_controller_leader.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_leader.read_state(string_state)
 
     def read_state_follower(self, string_state):
         return self.flight_controller_follower.read_state(string_state)
 
     def write_state_follower(self, string_state, state_value):
         self.flight_controller_follower.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_follower.read_state(string_state)
