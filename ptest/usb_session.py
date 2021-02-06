@@ -336,6 +336,10 @@ class USBSession(object):
         Overwrite the value of the state field with the given state field name on the flight computer, and
         then verify that the state was actually set.
         '''
+        if(field == "cycle.auto"):
+            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print(field)
+            print(args)
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
     def send_uplink(self, filename):

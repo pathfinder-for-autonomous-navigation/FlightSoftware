@@ -7,10 +7,14 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
   add_writable_field(start_cycle_f);
   add_writable_field(auto_cycle_f);
   auto_cycle_f.set(false);
+  
   init();
+  printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(auto_cycle_f.get()));
 }
 
 void DebugTask::execute() {
+  printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(auto_cycle_f.get()));
+
 #ifndef FLIGHT
   start_cycle_f.set(false);
   if(auto_cycle_f.get()){

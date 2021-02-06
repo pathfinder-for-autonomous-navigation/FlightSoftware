@@ -42,7 +42,7 @@ class PsimDebug(SingleSatOnlyCase):
     def sim_ic_map(self):
         ret = {}
         ret["truth.t.ns"] = 420000000*10
-        ret["truth.leader.attitude.w"] = [1,2,3]
+        #ret["truth.leader.attitude.w"] = [1,2,3]
         return ret
 
     def setup_post_bootsetup(self):
