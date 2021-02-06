@@ -252,7 +252,10 @@ class BootUtil(object):
 
             # Prevent faults from mucking up the state machine.
             self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
+            self.logger.put("Suppressing gomspace.low_batt.suppress")
+            
             self.flight_controller.write_state("fault_handler.enabled", "false")
+            self.logger.put("Suppressing fault_handler.enabled")
 
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
