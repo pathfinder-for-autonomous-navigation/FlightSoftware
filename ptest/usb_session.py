@@ -457,13 +457,16 @@ class USBSession(object):
         self.check_msgs_thread.join()
         self.console.close()
         self.dp_console.close()
+        print('[PTEST] Consoles closed.')
 
         self.http_thread.terminate()
         self.http_thread.join()
 
         self.http_thread.terminate()
         self.http_thread.join()
+        print('[PTEST] http threads stopped.')
 
         self.datastore.stop()
         self.logger.stop()
         self.raw_logger.stop()
+        print('[PTEST] Loggers stoppped.')
