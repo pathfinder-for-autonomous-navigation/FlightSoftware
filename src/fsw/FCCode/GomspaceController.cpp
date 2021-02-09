@@ -192,7 +192,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
     // Prevent watchdog timer petting
-    if(gs_reset_cmd_f.get())
+    if(gs_reboot_cmd_f.get())
         return;
 
     //Check that we can get hk data
