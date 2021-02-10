@@ -258,10 +258,11 @@ void GomspaceController::execute() {
         gs_reset_cmd_f.set(false);
     }
 
-    if (gs_reboot_cmd_f.get()==true) {
-        gs.reboot();
-        gs_reboot_cmd_f.set(false);
-    }
+    // block unnecessary due to early return
+    // if (gs_reboot_cmd_f.get()==true) {
+    //     gs.reboot();
+    //     gs_reboot_cmd_f.set(false);
+    // }
 
     //set data-in statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);

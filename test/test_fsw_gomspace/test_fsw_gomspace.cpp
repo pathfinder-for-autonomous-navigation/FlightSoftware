@@ -393,7 +393,7 @@ void test_task_execute() {
     // Set the gs reboot command to true
     tf.gs_reboot_cmd_fp->set(true);
     tf.gs_controller->execute();
-
+    
     // assertion not critical as no longer using the reboot() command
     // TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
 
