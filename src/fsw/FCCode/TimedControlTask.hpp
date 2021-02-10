@@ -61,6 +61,37 @@ class TimedControlTaskBase {
     }
 
     /**
+     * @brief Convert a sys_time object into microseconds.
+     * 
+     * @param delta 
+     * @return sys_time_t 
+     */
+    static unsigned int systime_to_us(const sys_time_t delta) {
+      #ifdef DESKTOP
+        // return std::chrono::time_point_cast<std::chrono::microseconds>(delta).count();
+        //return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
+        return 0; // Fix later
+      #else
+        return delta;
+      #endif
+    }
+
+    /**
+     * @brief Convert microseconds into a sys_time object.
+     * 
+     * @param delta 
+     * @return sys_time_t
+     */
+    static sys_time_t us_to_systime(const unsigned int delta) {
+      #ifdef DESKTOP
+        //return std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
+        return std::chrono::steady_clock::now(); //fix later
+      #else
+        return delta;
+      #endif
+    }
+
+    /**
      * @brief Convert a duration object into microseconds.
      * 
      * @param delta 

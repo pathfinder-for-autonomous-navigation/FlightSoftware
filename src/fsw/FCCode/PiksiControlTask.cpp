@@ -46,9 +46,14 @@ void PiksiControlTask::execute()
 {
     int read_out = piksi.read_all();
 
-    int sendtime = piksi.get_sendtime();
-    int microdelta = sendtime - get_system_time();
+    int sendtime_i = piksi.get_sendtime();
+    
+    sys_time_t systime = get_system_time();
+
+    int microdelta = sendtime_i - systime_to_us(systime);
     microdelta_f.set(microdelta);
+    
+    sys_time_t sendtime = us_to_systime(sendtime_i);
 
     //4 means no bytes
     //3 means CRC error on serial
