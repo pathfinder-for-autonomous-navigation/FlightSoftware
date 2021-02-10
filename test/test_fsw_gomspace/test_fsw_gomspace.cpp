@@ -388,17 +388,15 @@ void test_task_execute() {
     // Test the gomspace reboot command
 
     // Current boot count
-    // unsigned int boot_count=tf.gs.hk->counter_boot;
+    unsigned int boot_count=tf.gs.hk->counter_boot;
 
     // Set the gs reboot command to true
     tf.gs_reboot_cmd_fp->set(true);
     tf.gs_controller->execute();
 
-    // assertion not critical as no longer using the reboot() command
-    // TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
+    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
 
     // Test the gomspace hard reset command
-    tf.gs_reboot_cmd_fp->set(false);
     tf.gs_reset_cmd_fp->set(true);
     tf.gs_controller->execute();
 
