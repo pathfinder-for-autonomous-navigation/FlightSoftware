@@ -31,3 +31,4 @@ from .hardware_stress_test_case import HardwareStressCheckoutCase
 from .torquer_rotate_case import MTorquerCase
 from .reset_for_flight import ResetforFlight
 from .prep_for_charging_case import PrepForCharging
+from .dcdc_safehold_case import DCDCWheelCase
