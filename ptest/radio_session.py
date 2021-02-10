@@ -183,7 +183,7 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true":
+        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json"):
             return False
         return True
 
