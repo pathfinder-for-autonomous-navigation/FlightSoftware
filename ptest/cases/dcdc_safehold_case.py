@@ -6,14 +6,16 @@ from .utils import Enums, mag_of, sum_of_differentials
 import time, threading
 
 
-
 class DCDCWheelCase(SingleSatOnlyCase):
+
+    #Bool fields so output is not spammed with what state spacecraft is in
     faultTriggered = False
     firstStandby = True
     firstSafehold = True
     firstDetumble = True
     firstStartup = True
     tempTime = 0
+    
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]
@@ -54,8 +56,8 @@ class DCDCWheelCase(SingleSatOnlyCase):
         ret["truth.t.ns"] = 420000000*10
         #ret["truth.leader.attitude.w"] = [1,2,3]
         return ret
-    def data_logs(self):
 
+    def data_logs(self):
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
         self.rs("pan.cycle_no")
@@ -77,15 +79,18 @@ class DCDCWheelCase(SingleSatOnlyCase):
     def dcdc_wheel_checkout(self, currState):
         self.ws("fault_handler.enabled", True)
         currCycle = self.rs("pan.cycle_no")
-        if currState == 0 :
+        #Case 0: Startup
+        if currState == 0 : 
           if self.firstStartup:
             self.logger.put("Starting Up")
             self.firstStartup = False
+        #Case 1: Detumble
         elif currState == 1 :
           self.firstStartup = True
           if self.firstDetumble:
             self.logger.put("Detumbling")
             self.firstDetumble = False
+        #Case 3: Standby
         elif currState == 3 :
           self.firstDetumble = True
           if(self.firstStandby):
@@ -112,10 +117,8 @@ class DCDCWheelCase(SingleSatOnlyCase):
                 #Finish test case (successfully returned to Standby)
                 self.finish()
               
-
-          
+        #Case 10: Safehold
         elif currState == 10:
-
           if(self.firstSafehold):
             self.logger.put("In Safehold")
             self.tempTime = currCycle
