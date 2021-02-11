@@ -1,0 +1,23 @@
+[2021-02-10 19:04:04.743970] [TESTCASE] Starting testcase.
+[2021-02-10 19:04:04.763208] [TESTCASE] Suppressing Faults!
+[2021-02-10 19:04:04.775106] Suppressing adcs_monitor.functional_fault
+[2021-02-10 19:04:04.780198] Suppressing adcs_monitor.wheel1_fault
+[2021-02-10 19:04:04.786571] Suppressing adcs_monitor.wheel2_fault
+[2021-02-10 19:04:04.792547] Suppressing adcs_monitor.wheel3_fault
+[2021-02-10 19:04:04.798776] Suppressing adcs_monitor.wheel_pot_fault
+[2021-02-10 19:04:04.798852] Waiting for the satellite to boot to startup.
+[2021-02-10 19:04:04.804893] [TESTCASE] Fast Boot: Setting MissionMode to startup state.
+[2021-02-10 19:04:04.971299] Starting Up
+[2021-02-10 19:20:36.319010] Detumbling
+[2021-02-10 19:21:56.335179] In Standby
+[2021-02-10 19:22:19.305934] tripping fault on wheel 2
+[2021-02-10 19:22:20.326853] adcs_monitor.wheel2_fault.override is True
+[2021-02-10 19:22:20.333165] adcs_monitor.wheel2_fault.suppress is False
+[2021-02-10 19:22:20.658893] In Safehold
+[2021-02-10 19:22:43.665636] supressing wheel 1 fault
+[2021-02-10 19:22:43.878546] pan.state is 10
+[2021-02-10 19:22:43.885242] adcs_monitor.rwa_speed_rd is [104.556297, -377.261475, -135.483704]
+[2021-02-10 19:22:43.885298] Resuppressing wheel 2 fault
+[2021-02-10 19:22:44.228720] Detumbling
+[2021-02-10 19:26:05.727605] In Standby
+[2021-02-10 19:26:28.770312] [TESTCASE] Finished testcase.
