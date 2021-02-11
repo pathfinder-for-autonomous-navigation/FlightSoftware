@@ -47,7 +47,7 @@ class Simulation(object):
 
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
-        else:
+        elif self.devices:
             self.flight_controller_leader = self.devices['FlightControllerLeader']
             self.flight_controller_follower = self.devices['FlightControllerFollower']
 
@@ -158,7 +158,7 @@ class Simulation(object):
     def interact_fc(self):
         if self.is_single_sat_sim:
             self.interact_fc_onesat(self.flight_controller)
-        else:
+        elif self.devices:
             self.interact_fc_onesat(self.flight_controller_follower)
             self.interact_fc_onesat(self.flight_controller_leader)
 
