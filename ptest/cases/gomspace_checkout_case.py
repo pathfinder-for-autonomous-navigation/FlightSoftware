@@ -168,15 +168,12 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
 
 class CheckBatteryLevel(SingleSatOnlyCase):
     def run_case_singlesat(self):
-        voltage_threshold = 7.8
-        voltage = float(self.read_state("gomspace.vbatt")) / 1000.0
+        voltage = float(self.read_state("gomspace.vbatt"))
 
         self.logger.put("                                 ")
         self.logger.put("=================================")
         self.logger.put("=================================")
-        self.logger.put(f"Satellite battery level: {voltage} V")
-        if voltage < voltage_threshold:
-            self.logger.put(f"This is below the threshold of {voltage_threshold} V; charging is recommended")
+        self.logger.put(f"Satellite battery level: {voltage / 1000.0} volts")
         self.logger.put("=================================")
         self.logger.put("=================================")
         self.logger.put("                                 ")
