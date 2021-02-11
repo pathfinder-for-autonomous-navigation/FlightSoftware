@@ -9,6 +9,11 @@ import time, threading
 
 class DCDCWheelCase(SingleSatOnlyCase):
     faultTriggered = False
+    firstStandby = True
+    firstSafehold = True
+    firstDetumble = True
+    firstStartup = True
+    tempTime = 0
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]
@@ -66,40 +71,67 @@ class DCDCWheelCase(SingleSatOnlyCase):
       self.rs_psim("truth.dt.ns")
       self.rs_psim("truth.leader.attitude.w")
       self.data_logs()
-      self.dcdc_wheel_checkout(self.rs("pan.state"))
-      
+      state = self.rs("pan.state")
+      self.dcdc_wheel_checkout(state)
 
     def dcdc_wheel_checkout(self, currState):
         self.ws("fault_handler.enabled", True)
-        
+        currCycle = self.rs("pan.cycle_no")
         if currState == 0 :
-          self.logger.put("Starting up")
+          if self.firstStartup:
+            self.logger.put("Starting Up")
+            self.firstStartup = False
         elif currState == 1 :
-          self.logger.put("Detumbling")
+          self.firstStartup = True
+          if self.firstDetumble:
+            self.logger.put("Detumbling")
+            self.firstDetumble = False
         elif currState == 3 :
-          self.logger.put("In Standby")
-          if not self.faultTriggered:
-            #trigger the fault 
-            self.faultTriggered = True
-            self.logger.put("tripping fault on wheel 2")
-            self.ws("adcs_monitor.wheel2_fault.suppress", False)
-            self.ws("adcs_monitor.wheel2_fault.override", True)
-            time.sleep(0.2)
-            self.print_rs("adcs_monitor.wheel2_fault.override")
-            self.print_rs("adcs_monitor.wheel2_fault.suppress")
+          self.firstDetumble = True
+          if(self.firstStandby):
+            self.logger.put("In Standby")
+            self.tempTime = currCycle
+            self.firstStandby = False
           else:
-            #Finish test case (successfully returned to Standby)
-            self.finish()
+            if currCycle - self.tempTime < 70:
+              #do nothing
+              pass
+            else:
+              self.firstStandby = True
+              if not self.faultTriggered:
+                #trigger the fault 
+                self.faultTriggered = True
+                self.logger.put("tripping fault on wheel 2")
+                self.ws("adcs_monitor.wheel2_fault.suppress", False)
+                self.ws("adcs_monitor.wheel2_fault.override", True)
+
+                time.sleep(1)
+                self.print_rs("adcs_monitor.wheel2_fault.override")
+                self.print_rs("adcs_monitor.wheel2_fault.suppress")
+              else:
+                #Finish test case (successfully returned to Standby)
+                self.finish()
+              
+
+          
         elif currState == 10:
-          self.logger.put("In Safehold")
 
-          self.logger.put("supressing wheel 1 fault")
-          self.ws("adcs_monitor.wheel1_fault.suppress", True)
-          time.sleep(.2)
-          self.print_rs("pan.state")
-          self.print_rs("adcs_monitor.rwa_speed_rd")
+          if(self.firstSafehold):
+            self.logger.put("In Safehold")
+            self.tempTime = currCycle
+            self.firstSafehold = False
+          else:
+            if currCycle - self.tempTime < 70:
+              #do nothing
+              pass
+            else:
+                self.logger.put("supressing wheel 1 fault")
+                self.ws("adcs_monitor.wheel1_fault.suppress", True)
+                time.sleep(.2)
+                self.print_rs("pan.state")
+                self.print_rs("adcs_monitor.rwa_speed_rd")
 
-          self.logger.put("Resuppressing wheel 2 fault")
-          self.ws("adcs_monitor.wheel2_fault.suppress", True)
-          self.ws("adcs_monitor.wheel2_fault.override", False)
-          self.ws("pan.state", 0)
+                self.logger.put("Resuppressing wheel 2 fault")
+                self.ws("adcs_monitor.wheel2_fault.suppress", True)
+                self.ws("adcs_monitor.wheel2_fault.override", False)
+                self.ws("pan.state", 0)
