@@ -26,15 +26,9 @@ class GomspaceLog(SingleSatOnlyCase):
       self.rs("gomspace.curin.output3")
 
       self.rs("gomspace.cursun")
-
       self.rs("gomspace.cursys")
-
       self.rs("gomspace.battmode")
-
       self.rs("gomspace.pptmode")
-
-
-
 
     def run_case_singlesat(self):
         
