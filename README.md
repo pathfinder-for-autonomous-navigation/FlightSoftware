@@ -8,7 +8,7 @@ PAN's simulation software lives in [psim](https://github.com/pathfinder-for-auto
 
 ## Building and compiling this repo
 
-1. Clone this repo:
+1. Clone the repository:
 
         git clone --recursive git@github.com:pathfinder-for-autonomous-navigation/FlightSoftware.git
         cd FlightSoftware
