@@ -219,7 +219,12 @@ class Gomspace : public I2CDevice {
      *  @return True if the Gomspace replied with the same code, false otherwise.
      */
     bool ping(unsigned char value);
-    /** @brief Reboot Gomspace. */
+
+    /** @brief Reboot Gomspace. This function works, however:
+     * 
+     * Testing on 02/04/21 shows that the Teensy3.6 has enough 
+     * capacitors to survive a Gomspace Reboot
+    */
     void reboot();
 
     // See struct documentation above for more information
