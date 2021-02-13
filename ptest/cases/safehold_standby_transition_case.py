@@ -121,6 +121,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
                 self.print_rs("adcs_monitor.wheel2_fault.suppress")
               else:
                 #Finish test case (successfully returned to Standby)
+                self.logger.put("[TESTCASE] Success")
                 self.finish()
               
         #Case 10: Safehold
