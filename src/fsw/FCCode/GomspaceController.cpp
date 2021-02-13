@@ -191,6 +191,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
      }
 
 void GomspaceController::execute() {
+
     //Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
@@ -210,8 +211,6 @@ void GomspaceController::execute() {
         pv1_output_cmd_f.set(gs.hk->vboost[0]);
         pv2_output_cmd_f.set(gs.hk->vboost[1]);
         pv3_output_cmd_f.set(gs.hk->vboost[2]);
-
-        ppt_mode_cmd_f.set(gs.hk->pptmode);
 
         heater_cmd_f.set(gs.get_heater());
 
