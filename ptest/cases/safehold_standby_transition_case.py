@@ -62,6 +62,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
         
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
+        self.logger.put("[TESTCASE] Fault handler enabled")
 
     def data_logs(self):
         self.rs("pan.deployment.elapsed")
