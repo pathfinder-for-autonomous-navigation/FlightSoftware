@@ -6,7 +6,7 @@ from .utils import Enums, mag_of, sum_of_differentials
 import time, threading
 
 
-class DCDCWheelCase(SingleSatOnlyCase):
+class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
 
     #Bool fields so output is not spammed with what state spacecraft is in
     faultTriggered = False
