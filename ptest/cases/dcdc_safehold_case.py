@@ -57,6 +57,9 @@ class DCDCWheelCase(SingleSatOnlyCase):
         #ret["truth.leader.attitude.w"] = [1,2,3]
         return ret
 
+    def setup_post_bootsetup(self):
+        self.ws("cycle.auto", False)
+        
     def data_logs(self):
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
