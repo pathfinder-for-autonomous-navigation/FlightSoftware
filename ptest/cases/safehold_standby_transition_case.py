@@ -54,7 +54,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
     def sim_ic_map(self):
         ret = {}
         ret["truth.t.ns"] = 420000000*10
-        #ret["truth.leader.attitude.w"] = [1,2,3]
+        ret["truth.leader.attitude.w"] = [0.01, 0.073, -0.01]
         return ret
 
     def setup_pre_bootsetup(self):
