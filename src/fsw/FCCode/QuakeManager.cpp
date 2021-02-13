@@ -240,6 +240,9 @@ void QuakeManager::copy_next_packet()
 {
     // load the current 70 bytes of the buffer
     qct.set_downlink_msg(mo_buffer_copy + (packet_size * mo_idx), packet_size);
+    #if !defined(FLIGHT) && defined(AUTOTELEM)
+    dump_debug_telemetry(mo_buffer_copy + (packet_size * mo_idx), packet_size);
+    #endif
     assert(max_snapshot_size / packet_size != 0);
     mo_idx = (mo_idx + 1) % (max_snapshot_size / packet_size);
 }
