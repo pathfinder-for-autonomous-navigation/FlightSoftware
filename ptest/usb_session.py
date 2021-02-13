@@ -10,6 +10,8 @@ import subprocess
 from multiprocessing import Process
 import glob
 from elasticsearch import Elasticsearch
+import email
+import imaplib
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_usb_session_endpoint
@@ -29,7 +31,7 @@ class USBSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, radio_imei = None):
         '''
         Initializes state session with a device.
         '''
@@ -38,6 +40,7 @@ class USBSession(object):
         self.device_name = device_name
         self.port = port
         self.is_teensy = is_teensy
+        self.radio_imei = radio_imei
 
         # Uplink console
         self.uplink_console = uplink_console
@@ -56,6 +59,11 @@ class USBSession(object):
 
         # Open a connection to elasticsearch
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
+
+        #connect to email
+        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        self.mail.login("pan.ssds.qlocate@gmail.com", "")
+        self.mail.select('Inbox')
         
         self.debug_to_console = None
 
@@ -88,6 +96,10 @@ class USBSession(object):
                 name=f"{self.device_name} logger thread",
                 target=self.check_console_msgs)
             self.check_msgs_thread.start()
+            self.scrape_uplinks_thread = threading.Thread(
+                name=f"{self.device_name} uplinks",
+                target=self.scrape_uplinks)
+            self.scrape_uplinks_thread.start()
 
             print(f"Opened connection to {self.device_name}.")
         except serial.SerialException:
@@ -427,6 +439,54 @@ class USBSession(object):
                 failed = True
         return not failed
 
+    def scrape_uplinks(self):
+        '''
+        For the AMC tests, we need the Flight Computer to read sent uplinks
+        without actually using Iridium. This method reads from the "sent"
+        box in the PAN email account (attempted uplinks) and passes the uplink packet
+        directly to the Flight computer.
+        '''
+        #look for all new emails from iridium
+        self.mail.select('Sent')
+        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")') #, '(UNSEEN)')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+
+        for num in id_list:
+            #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
+            # Message Access Protocol.
+            _, data = self.mail.fetch(num,'(RFC822)')
+
+            #go through each component of data
+            for response_part in data:
+                if isinstance(response_part, tuple):
+                    # converts message from byte literal to string removing b''
+                    msg = email.message_from_string(response_part[1].decode('utf-8'))
+                    email_subject = msg['subject']
+                    
+                    if email_subject.isdigit():
+                        # Get imei number of the radio that the uplink was sent to
+                        radio_imei = int(email_subject)
+
+                        if self.radio_imei != None and radio_imei == self.radio_imei:
+                            # Go through the email contents
+                            for part in msg.walk():
+                                            
+                                if part.get_content_maintype() == 'multipart':
+                                    continue
+
+                                if part.get('Content-Disposition') is None:
+                                    continue
+
+                                # Check if there is an email attachment
+                                if part.get_filename() is not None:
+                                    # Download uplink packet from email attachment and send it to the Flight Computer
+                                    fp = open("new_uplink.sbd", 'wb')
+                                    fp.write(part.get_payload(decode=True))
+                                    fp.close()
+                                    self.send_uplink("new_uplink.sbd")
+                        
+
     def disconnect(self):
         '''Quits the program and stores message log and field telemetry to file.'''
 
@@ -435,6 +495,7 @@ class USBSession(object):
         # End threads
         self.running_logger = False
         self.check_msgs_thread.join()
+        self.scrape_uplinks_thread.join()
         self.console.close()
         self.dp_console.close()
 

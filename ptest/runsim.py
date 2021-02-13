@@ -95,7 +95,16 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir)
+            # Look for the radio connected to the device
+            connected_radio = None
+            for radio in self.radios_config:
+                if radio["connected_device"] == device["name"]:
+                    connected_radio = radio["imei"]
+
+            if connected_radio is not None:
+                device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, connected_radio)
+            else:
+                device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
