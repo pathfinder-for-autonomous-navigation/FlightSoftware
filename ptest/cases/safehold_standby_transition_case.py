@@ -60,6 +60,9 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
     def setup_pre_bootsetup(self):
         self.ws("cycle.auto", False)
         
+    def setup_post_bootsetup(self):
+        self.ws("fault_handler.enabled", True)
+
     def data_logs(self):
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
@@ -80,7 +83,6 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
       self.dcdc_wheel_checkout(state)
 
     def dcdc_wheel_checkout(self, currState):
-        self.ws("fault_handler.enabled", True)
         currCycle = self.rs("pan.cycle_no")
         #Case 0: Startup
         if currState == 0 : 
