@@ -9,6 +9,7 @@ from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_case import AutonomousMissionManagerCase
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
+
 from .psim_debug import PsimDebug
 
 # Testcases that don't require simulation
@@ -31,4 +32,4 @@ from .gomspace_long_duration_case import GomspaceLongDurationCheckoutCase
 from .hardware_stress_test_case import HardwareStressCheckoutCase
 from .torquer_rotate_case import MTorquerCase
 from .reset_for_flight import ResetforFlight
-from .prep_for_charging_case import PrepForCharging
+from .gomspacelogger import GomspaceLog

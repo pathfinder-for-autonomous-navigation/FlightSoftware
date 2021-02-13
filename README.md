@@ -8,18 +8,21 @@ PAN's simulation software lives in [psim](https://github.com/pathfinder-for-auto
 
 ## Building and compiling this repo
 
-1. Create a virtual environment and install platformio
-    python -m venv venv
-    source venv/bin/activate
-    pip install platformio
-    
-2. Clone this repo
-    git clone git@github.com:pathfinder-for-autonomous-navigation/FlightSoftware.git
-    cd FlightSoftware
-    git submodule update --init --recursive
+1. Clone the repository:
 
+        git clone --recursive git@github.com:pathfinder-for-autonomous-navigation/FlightSoftware.git
+        cd FlightSoftware
+
+2. Create a virtual environment, install requirements, and install `psim`:
+
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip wheel
+        pip install -r requirements.txt
+        pip install -e lib/common/psim
 
 ## Locally running flight software unit tests (quickly)
+
     pio test -e fsw_native_leader
   
 You can modify the .ini files in configs/ to alter the pattern match against unit tests
