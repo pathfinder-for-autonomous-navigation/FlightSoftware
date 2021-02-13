@@ -68,7 +68,7 @@ class AutonomousMissionController(MissionCase):
         
     @property
     def sim_duration(self):
-        return float("inf")
+        return 0
         
 
     def run_case_fullmission(self):
