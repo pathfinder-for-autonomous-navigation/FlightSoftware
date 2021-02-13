@@ -81,7 +81,7 @@ QuakeManager::~QuakeManager()
 void QuakeManager::dump_debug_telemetry(char *buffer, size_t size){
     #ifdef DESKTOP
     std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"telem\":\"";
-    for (size_t i = 0; i < size->get(); i++)
+    for (size_t i = 0; i < size; i++)
     {
         std::ostringstream out;
         out << "\\\\x";
