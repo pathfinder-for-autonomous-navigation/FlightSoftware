@@ -225,9 +225,6 @@ class SingleSatOnlyCase(PTestCase):
     def _setup_case(self):
         self.setup_pre_bootsetup()
 
-        # Prevent faults from mucking up the state machine.
-        self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
-        self.flight_controller.write_state("fault_handler.enabled", "false")
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
         self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
