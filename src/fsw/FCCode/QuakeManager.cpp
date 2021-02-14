@@ -37,6 +37,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
       radio_state_f("radio.state", Serializer<unsigned char>()),
       last_checkin_cycle_f("radio.last_comms_ccno", Serializer<unsigned int>()), // Last communication control cycle #
       dump_telemetry_f("telem.dump", Serializer<bool>()),
+      telemetry_auth_f("telem.auth", Serializer<bool>()),
       qct(),
       mo_idx(0),
       unexpected_flag(false)
@@ -63,6 +64,10 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     last_checkin_cycle_f.set(control_cycle_count);
     radio_mt_packet_f.set(qct.get_MT_msg());
     radio_mt_len_f.set(0);
+
+    // always authorize, ptest can be false if wanted
+    telemetry_auth_f.set(true);
+
     // Radio initializes to the disabled state
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
     dump_telemetry_f.set(false);
@@ -274,7 +279,8 @@ void QuakeManager::dispatch_transceive()
     if (has_finished())
     {
         // Case 1: We have no comms --> try again until we run out of cycles
-        if (qct.get_MO_status() > 4)
+        // telem_auth should be 1 for flight, 0 for AUTOTELEM setup
+        if (qct.get_MO_status() > 4 && telemetry_auth_f.get())
         {
             return handle_no_comms();
         }

@@ -138,6 +138,10 @@ public:
      */
    WritableStateField<bool> dump_telemetry_f;
 
+   /**
+     * @brief This flag can be used by the sim to dump telemetry over the USB line.
+     */
+   WritableStateField<bool> telemetry_auth_f;
 protected:
    /**
      * @brief attempts to execute a step in the CONFIG command sequence. This command
