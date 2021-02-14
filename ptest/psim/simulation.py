@@ -147,7 +147,14 @@ class Simulation(object):
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
-            # Step 4. Read the actuators from the flight computer(s) and send to psim
+            # Step 4. Send telemetry to database
+            if self.is_single_sat_sim:
+                self.flight_controller.dbtelem()
+            else:
+                self.flight_controller_follower.dbtelem()
+                self.flight_controller_leader.dbtelem()
+
+            # Step 5. Read the actuators from the flight computer(s) and send to psim
             self.read_actuators_send_to_sim()
 
             step += 1
