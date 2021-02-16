@@ -441,3 +441,17 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
     memcpy((u8 *)(&(piksi->_user_data)), msg, sizeof(msg_user_data_t));
     piksi->_user_data_update = true;
 }
+
+int sendtime;
+
+void Piksi::serialEvent(){
+    #ifdef DESKTOP
+    #else
+    sendtime = micros();
+
+    #endif
+}
+
+int Piksi::get_sendtime(){
+    return sendtime;
+} 

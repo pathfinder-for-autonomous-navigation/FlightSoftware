@@ -89,6 +89,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.logger.put(f"POS MAG: {mag_of(p)}")
             b = self.print_rs("piksi.baseline_pos")
             self.logger.put(f"BASELINE MAG: {mag_of(b)}")
+            d = self.print_rs("piksi.microdelta")
             self.logger.put("")
 
         # Take N readings for actual analysis

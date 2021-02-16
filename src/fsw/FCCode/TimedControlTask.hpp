@@ -61,6 +61,37 @@ class TimedControlTaskBase {
     }
 
     /**
+     * @brief Convert a sys_time object into microseconds.
+     * 
+     * @param delta 
+     * @return sys_time_t 
+     */
+    static unsigned int systime_to_us(const sys_time_t delta) {
+      #ifdef DESKTOP
+        // return std::chrono::time_point_cast<std::chrono::microseconds>(delta).count();
+        //return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
+        return 0; // Fix later
+      #else
+        return delta;
+      #endif
+    }
+
+    /**
+     * @brief Convert microseconds into a sys_time object.
+     * 
+     * @param delta 
+     * @return sys_time_t
+     */
+    static sys_time_t us_to_systime(const unsigned int delta) {
+      #ifdef DESKTOP
+        //return std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
+        return std::chrono::steady_clock::now(); //fix later
+      #else
+        return delta;
+      #endif
+    }
+
+    /**
      * @brief Convert a duration object into microseconds.
      * 
      * @param delta 
@@ -178,8 +209,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
         num_lates_field_name("timing." + name + ".num_lates"),
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),
-
-        avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us, 18))
+        avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us,32))
     {
       this->add_readable_field(num_lates_f);
       this->add_readable_field(avg_wait_f);
