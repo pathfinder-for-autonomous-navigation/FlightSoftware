@@ -13,7 +13,7 @@ class PTestCase(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, is_interactive, random_seed, data_dir, devices):
+    def __init__(self, is_interactive, random_seed, data_dir, devices, radios):
         self._finished = False
         self.is_interactive = is_interactive
         self.random_seed = random_seed
@@ -24,7 +24,7 @@ class PTestCase(object):
         self.finished = False
         self.devices = None
 
-        self.populate_devices(devices)
+        self.populate_devices(devices, radios)
 
         for dev_name,device in devices.items():
             device.case_interaction_setup(self.debug_to_console)

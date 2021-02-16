@@ -57,7 +57,7 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.devices)
+        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.devices, self.radios)
 
         if self.is_interactive:
             self.set_up_cmd_prompt()
