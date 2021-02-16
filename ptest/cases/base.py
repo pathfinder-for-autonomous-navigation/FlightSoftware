@@ -150,7 +150,7 @@ class PTestCase(object):
         while not self.finished:
             self.run_case()
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         """
         Read the list of PTest-connected devices and
         pull in the ones that we care about.
@@ -206,7 +206,7 @@ class SingleSatOnlyCase(PTestCase):
         """
         return "manual"
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
         self.devices = [self.flight_controller]
 
@@ -393,9 +393,15 @@ class MissionCase(PTestCase):
     case.
     """
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
+        if "FlightControllerLeader" in radios:
+            self.radio_leader = radios["FlightControllerLeader"]
+            self.radio_follower = radios["FlightControllerFollower"]
+        else:
+            self.radio_leader = None
+            self.radio_follower = None
         self.devices = [self.flight_controller_leader, self.flight_controller_follower]
 
     @property
@@ -461,11 +467,11 @@ class MissionCase(PTestCase):
 
     def write_state_leader(self, string_state, state_value):
         self.flight_controller_leader.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_leader.read_state(string_state)
 
     def read_state_follower(self, string_state):
         return self.flight_controller_follower.read_state(string_state)
 
     def write_state_follower(self, string_state, state_value):
         self.flight_controller_follower.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_follower.read_state(string_state)

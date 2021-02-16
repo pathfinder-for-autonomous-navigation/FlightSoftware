@@ -25,7 +25,7 @@ class IridiumEmailProcessor(object):
         self.confirmation_mtmsn=-1
 
         #send_uplinks, keeps track of if the ground can send more uplinks. This allows us to make sure we are only sending one uplink at a time.
-        self.send_uplinks=False
+        self.send_uplinks=True
         self.recieved_uplink_confirmation=False
 
         #imei number of the radio that sent the most recent email
@@ -51,6 +51,7 @@ class IridiumEmailProcessor(object):
         check the PAN email and post reports to 
         elasticsearch 
         '''
+        self.create_iridium_report()
         self.check_email_thread = threading.Thread(target=self.post_to_es)
         self.run_email_thread = True
         self.check_email_thread.start()
@@ -108,6 +109,7 @@ class IridiumEmailProcessor(object):
         mail_ids = data[0]
         id_list = mail_ids.split()
 
+
         for num in id_list:
             #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
             # Message Access Protocol.
@@ -140,14 +142,8 @@ class IridiumEmailProcessor(object):
                                     if line.find("MTMSN")!=-1:
                                         self.mtmsn=int(line[line.find("MTMSN")+9:line.find("MTMSN")+11])
 
-                            #Set whether or not RadioSession can send uplinks
-                            if self.confirmation_mtmsn != self.mtmsn:
-                                #stop radio session from sending any more uplinks
-                                self.send_uplinks=False
-                            else:
-                                #allow radio session to send more uplinks
-                                self.send_uplinks=True
-                                    
+                            self.set_send_uplinks()
+
                         # Record that we just recieved an uplink confirmation
                         self.recieved_uplink_confirmation=True
                         
@@ -176,15 +172,11 @@ class IridiumEmailProcessor(object):
                                     if line.find("MOMSN")!=-1:
                                         self.momsn=int(line[7:])
                                     if line.find("MTMSN")!=-1:
-                                        self.confirmation_mtmsn=int(line[7:])
-                            
-                            #Set whether or not radioSession can send uplinks
-                            if self.confirmation_mtmsn != self.mtmsn:
-                                #stop radio session from sending any more uplinks
-                                self.send_uplinks=False
-                            else:
-                                #allow radio session to send more uplinks
-                                self.send_uplinks=True
+                                        mtmsn = int(line[7:])
+                                        if mtmsn != 0:
+                                            self.confirmation_mtmsn = mtmsn
+
+                            self.set_send_uplinks()
 
                             # Check if there is an email attachment
                             if part.get_filename() is not None:
@@ -194,6 +186,16 @@ class IridiumEmailProcessor(object):
                         
                     #if we have not recieved a downlink, return None
                     return None
+
+    def set_send_uplinks(self):
+        #Set whether or not radioSession can send uplinks
+
+        if self.confirmation_mtmsn < self.mtmsn:
+            #stop radio session from sending any more uplinks
+            self.send_uplinks=False
+        else:
+            #allow radio session to send more uplinks
+            self.send_uplinks=True
 
     def create_iridium_report(self):
         '''

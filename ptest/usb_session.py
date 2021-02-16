@@ -14,6 +14,8 @@ from elasticsearch import Elasticsearch
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_usb_session_endpoint
 from . import get_pio_asset
+from .cases.utils import str_to_val
+import lin
 
 class USBSession(object):
     '''
@@ -207,22 +209,6 @@ class USBSession(object):
 
         return self._wait_for_state(field)
 
-    def str_to_val(self, field):
-        '''
-        Automatically detects floats, ints and bools
-
-        Returns a float, int or bool
-        '''
-        if 'nan' in field:
-            return float("NAN")
-        elif '.' in field:
-            return float(field)
-        elif field == 'true':
-            return True
-        elif field == 'false':
-            return False
-        else:
-            return int(field)
 
     def smart_read(self, field, **kwargs):
         '''
@@ -237,15 +223,7 @@ class USBSession(object):
             raise NameError(f"State field: {field} not found.")
 
         # begin type inference
-
-        if ',' in ret:
-            # ret is a list
-            list_of_strings = ret.split(',')
-            list_of_strings = [x for x in list_of_strings if x is not '']
-            list_of_vals = [self.str_to_val(x) for x in list_of_strings]
-            return list_of_vals
-        else:
-            return self.str_to_val(ret)
+        return str_to_val(ret)
 
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
@@ -261,7 +239,7 @@ class USBSession(object):
             json_cmd = {
                 'mode': ord('w'),
                 'field': str(field),
-                'val': str(val)
+                'val': self._val_to_str(val)
             }
             json_cmd = json.dumps(json_cmd) + "\n"
             json_cmds += json_cmd
@@ -318,6 +296,8 @@ class USBSession(object):
         Currently, the supported types are integers, doubles, integer vectors,
         double vectors, and booleans.
         '''
+        if(type(val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
+            val = list(val)
         if type(val) not in (list, tuple):
             if type(val) is bool:
                 return 'true' if val else 'false'
