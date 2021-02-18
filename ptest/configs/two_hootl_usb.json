@@ -1,0 +1,26 @@
+{
+    "seed": 0,
+    "devices": [
+        {
+            "name": "FlightControllerLeader",
+            "run_mode": "native",
+            "pio_target": "fsw_native_leader",
+            "http_port" : 8000
+        },
+        {
+            "name": "FlightControllerFollower",
+            "run_mode": "native",
+            "pio_target": "fsw_native_leader",
+            "http_port" : 8001
+        }
+    ],
+    "radios": [],
+    "tlm": {
+        "webservice": {
+            "server": "127.0.0.1",
+            "port": 5000
+        },
+        "email_username": "johnsmith@gmail.com",
+        "email_password": "hunter2"
+    }
+}
