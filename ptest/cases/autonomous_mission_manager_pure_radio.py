@@ -81,8 +81,8 @@ class AutonomousMissionController(MissionCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
-        while(self.continue_mission()): 
-
+        #while(self.continue_mission()): 
+        while(1): #for testing
             #Pass telemetry between spacecraft 
 
             #wait for data from both spacecrafts to come down from Iridium
