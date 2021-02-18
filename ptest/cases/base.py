@@ -198,6 +198,39 @@ class PTestCase(object):
             self.logger.stop()
             time.sleep(1) # Allow time for logger to stop
 
+    def rs_psim(self, name):
+            '''
+            Read a psim state field with <name>, log to datastore, and return the python value
+            '''
+            ret = self.sim.mysim.get(name)
+            if(ret is None):
+                raise NameError(f"ptest read failed: psim state field {name} does not exist!")
+            
+            stripped = ret
+            if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
+                ret = list(ret)
+                stripped = str(ret).strip("[]").replace(" ","")+","
+            
+            packet = {}
+            
+            packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+            packet["field"] = name
+            packet["val"] = str(stripped)
+            packet["time"] = str(datetime.datetime.now())
+
+            # log to datastore
+            for d in self.devices:
+                d.datastore.put(packet)
+
+            return ret
+
+    def print_rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
+        '''
+        ret = self.rs_psim(name)
+        self.logger.put(f"{name} is {ret}")
+
 class SingleSatOnlyCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a single-satellite mission.
@@ -319,39 +352,6 @@ class SingleSatOnlyCase(PTestCase):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-
-    def rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, and return the python value
-        '''
-        ret = self.sim.mysim.get(name)
-        if(ret is None):
-            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
-        
-        stripped = ret
-        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
-            ret = list(ret)
-            stripped = str(ret).strip("[]").replace(" ","")+","
-        
-        packet = {}
-        
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
-        packet["field"] = name
-        packet["val"] = str(stripped)
-        packet["time"] = str(datetime.datetime.now())
-
-        # log to datastore
-        for d in self.devices:
-            d.datastore.put(packet)
-
-        return ret
-
-    def print_rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, print to console and return the python value
-        '''
-        ret = self.rs_psim(name)
-        self.logger.put(f"{name} is {ret}")
 
     def ws(self, name, val):
         """
