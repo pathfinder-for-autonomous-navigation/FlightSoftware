@@ -394,15 +394,17 @@ class MissionCase(PTestCase):
     """
 
     def populate_devices(self, devices, radios):
-        self.flight_controller_leader = devices["FlightControllerLeader"]
-        self.flight_controller_follower = devices["FlightControllerFollower"]
-        if "FlightControllerLeader" in radios:
-            self.radio_leader = radios["FlightControllerLeader"]
-            self.radio_follower = radios["FlightControllerFollower"]
+        if devices:
+            self.flight_controller_leader = devices["FlightControllerLeader"]
+            self.flight_controller_follower = devices["FlightControllerFollower"]
+            self.devices = [self.flight_controller_leader, self.flight_controller_follower]
+        if "FlightControllerLeaderRadio" in radios:
+            self.radio_leader = radios["FlightControllerLeaderRadio"]
+            self.radio_follower = radios["FlightControllerFollowerRadio"]
         else:
             self.radio_leader = None
             self.radio_follower = None
-        self.devices = [self.flight_controller_leader, self.flight_controller_follower]
+        
 
     @property
     def initial_state_leader(self):
@@ -419,21 +421,22 @@ class MissionCase(PTestCase):
         raise NotImplementedError
 
     def _setup_case(self):
-        self.setup_pre_bootsetup_leader()
-        self.setup_pre_bootsetup_follower()
-        self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
-        self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
+        if self.devices != None:
+            self.setup_pre_bootsetup_leader()
+            self.setup_pre_bootsetup_follower()
+            self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+            self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
 
-        self.boot_util_leader = BootUtil(
-            self.flight_controller_leader, self.logger, self.initial_state_leader, 
-            self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
-        self.boot_util_follower = BootUtil(
-            self.flight_controller_follower, self.logger, self.initial_state_follower, 
-            self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
-        self.boot_util_leader.setup_boot()
-        self.boot_util_follower.setup_boot()
-        self.setup_post_bootsetup_leader()
-        self.setup_post_bootsetup_follower()
+            self.boot_util_leader = BootUtil(
+                self.flight_controller_leader, self.logger, self.initial_state_leader, 
+                self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
+            self.boot_util_follower = BootUtil(
+                self.flight_controller_follower, self.logger, self.initial_state_follower, 
+                self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
+            self.boot_util_leader.setup_boot()
+            self.boot_util_follower.setup_boot()
+            self.setup_post_bootsetup_leader()
+            self.setup_post_bootsetup_follower()
 
     def setup_pre_bootsetup_leader(self): pass
     def setup_pre_bootsetup_follower(self): pass
@@ -441,8 +444,9 @@ class MissionCase(PTestCase):
     def setup_post_bootsetup_follower(self): pass
 
     def _run_case(self):
-        if not self.boot_util_follower.finished_boot(): return
-        if not self.boot_util_leader.finished_boot(): return
+        if self.devices != None:
+            if not self.boot_util_follower.finished_boot(): return
+            if not self.boot_util_leader.finished_boot(): return
         self.run_case_fullmission()
 
     def run_case_fullmission(self):
