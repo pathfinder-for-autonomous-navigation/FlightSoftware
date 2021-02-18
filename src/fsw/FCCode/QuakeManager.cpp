@@ -77,6 +77,30 @@ QuakeManager::~QuakeManager()
     delete[] mo_buffer_copy;
 }
 
+#ifndef FLIGHT
+void QuakeManager::dump_debug_telemetry(char *buffer, size_t size){
+    #ifdef DESKTOP
+    std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"telem\":\"";
+    for (size_t i = 0; i < size; i++)
+    {
+        std::ostringstream out;
+        out << "\\\\x";
+        out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & buffer[i]);
+        std::cout << out.str();
+    }
+    std::cout << "\"}\n";
+    #else
+    Serial.printf("{\"t\":%d,\"telem\":\"", debug_console::_get_elapsed_time());
+    for (size_t i = 0; i < size; i++)
+    {
+        Serial.print("\\\\x");
+        Serial.print((0xFF & buffer[i]), HEX);
+    }
+    Serial.print("\"}\n");
+    #endif
+}
+#endif
+
 void QuakeManager::execute()
 {
 #ifndef FLIGHT
@@ -85,25 +109,7 @@ void QuakeManager::execute()
         dump_telemetry_f.set(false);
         char *snapshot = radio_mo_packet_fp->get();
 
-#ifdef DESKTOP
-        std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"telem\":\"";
-        for (size_t i = 0; i < snapshot_size_fp->get(); i++)
-        {
-            std::ostringstream out;
-            out << "\\\\x";
-            out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & snapshot[i]);
-            std::cout << out.str();
-        }
-        std::cout << "\"}\n";
-#else
-        Serial.printf("{\"t\":%d,\"telem\":\"", debug_console::_get_elapsed_time());
-        for (size_t i = 0; i < snapshot_size_fp->get(); i++)
-        {
-            Serial.print("\\\\x");
-            Serial.print((0xFF & snapshot[i]), HEX);
-        }
-        Serial.print("\"}\n");
-#endif
+        dump_debug_telemetry(snapshot, snapshot_size_fp->get());
     }
 #endif
 
@@ -234,6 +240,9 @@ void QuakeManager::copy_next_packet()
 {
     // load the current 70 bytes of the buffer
     qct.set_downlink_msg(mo_buffer_copy + (packet_size * mo_idx), packet_size);
+    #if !defined(FLIGHT) && defined(AUTOTELEM)
+    dump_debug_telemetry(mo_buffer_copy + (packet_size * mo_idx), packet_size);
+    #endif
     assert(max_snapshot_size / packet_size != 0);
     mo_idx = (mo_idx + 1) % (max_snapshot_size / packet_size);
 }

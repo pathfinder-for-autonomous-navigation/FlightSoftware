@@ -37,6 +37,10 @@ public:
    QuakeManager(StateFieldRegistry &registry, unsigned int offset);
 
    ~QuakeManager();
+#ifndef FLIGHT
+
+   void dump_debug_telemetry(char *buffer, size_t size);
+#endif
 
    void execute() override;
 
