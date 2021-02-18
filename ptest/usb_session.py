@@ -198,7 +198,9 @@ class USBSession(object):
         
         Read the value of the state field associated with the given field name on the flight controller.
         '''
-        if not self.running_logger: return
+        if not self.running_logger: 
+            print("Logger not running!")
+            return
 
         json_cmd = {'mode': ord('r'), 'field': str(field)}
         json_cmd = json.dumps(json_cmd) + "\n"
