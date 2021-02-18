@@ -4,7 +4,7 @@ from psim.sims import DualAttitudeOrbitGnc
 import lin
 from .utils import str_to_val, Enums
 
-class AutonomousMissionManagerCase(MissionCase):
+class DualPsim(MissionCase):
 
     @property
     def sim_configs(self):
