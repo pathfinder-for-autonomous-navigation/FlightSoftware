@@ -96,10 +96,10 @@ class AutonomousMissionManagerCase(MissionCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
-        while(self.continue_mission()): 
-
+        #while(self.continue_mission()): 
+        while(1):
             #Pass telemetry between spacecraft 
-
+            self.logger.put("iterating")
             #wait for data from both spacecrafts to come down from Iridium
             orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while("Unable to find field" in self.leader.read_state("orbit.time") or 
