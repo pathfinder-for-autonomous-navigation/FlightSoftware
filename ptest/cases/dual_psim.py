@@ -65,6 +65,7 @@ class DualPsim(MissionCase):
         
         psim_states = [
         "truth.leader.attitude.w",
+        "truth.follower.attitude.w",
         "truth.t.ns",
         "truth.dt.ns"]
         
