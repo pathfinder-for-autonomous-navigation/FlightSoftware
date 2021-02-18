@@ -3,7 +3,7 @@ import time
 from psim.sims import DualAttitudeOrbitGnc
 import lin
 from .utils import str_to_val, Enums
-from .usb_sesion import USBSession
+from ..usb_session import USBSession
 
 class DualPsim(MissionCase):
 
