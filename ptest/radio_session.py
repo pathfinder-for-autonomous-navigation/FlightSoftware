@@ -52,11 +52,6 @@ class RadioSession(object):
         self.flask_app.config["uplink_console"] = uplink_console
         self.flask_app.config["imei"] = imei
 
-        #connect to email
-        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login("email", "password")
-        self.mail.select('"[Gmail]/Sent Mail"')
-
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={'host':'0.0.0.0', "port":self.port})
             self.http_thread.start()
@@ -78,9 +73,13 @@ class RadioSession(object):
         self.flask_server=tlm_config["webservice"]["server"]
         self.flask_port=tlm_config["webservice"]["port"]
 
-        #email
+        # Connect to email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
+
+        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        self.mail.login(self.username, self.password)
+        self.mail.select('"[Gmail]/Sent Mail"')
 
     def check_queue(self, queue):
         '''

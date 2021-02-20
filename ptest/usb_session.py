@@ -31,7 +31,7 @@ class USBSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, radio_imei = None):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei = None):
         '''
         Initializes state session with a device.
         '''
@@ -61,8 +61,11 @@ class USBSession(object):
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
         #connect to email
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
+
         self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login("email", "password")
+        self.mail.login(self.username, self.password)
         self.mail.select('"[Gmail]/Sent Mail"')
         
         self.debug_to_console = None
