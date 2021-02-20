@@ -85,6 +85,8 @@ bool Piksi::setup() {
                               &Piksi::_user_data_callback_node);
 
     return (registration_successful == 0);
+
+    start_interrupt();
 }
 
 bool Piksi::is_functional() {
@@ -309,7 +311,7 @@ unsigned char Piksi::read_all() {
         else
             //no relevant callbacks -> NO_FIX
             return 2;
-    }
+    }thrust_valve_loop_timer
     else
         //no bytes return condition
         return 4;
@@ -443,12 +445,22 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
 }
 
 int sendtime;
+int current_bytes;
 
-void Piksi::serialEvent(){
-    #ifdef DESKTOP
-    #else
-    sendtime = micros();
+#ifndef DESKTOP
+IntervalTimer check_buffer_timer = IntervalTimer();
+#endif
 
+void Piksi::check_bytes(){
+    int bytes = bytes_available();
+    // if bytes are entering the buffer, update the timestamp
+    if (bytes > current_bytes) sendtime = micros();
+    current_bytes = bytes;
+}
+
+void Piksi::start_interrupt(){
+    #ifndef DESKTOP
+    check_buffer_timer.begin(check_bytes, 3); //interrupts every 3 microseconds
     #endif
 }
 

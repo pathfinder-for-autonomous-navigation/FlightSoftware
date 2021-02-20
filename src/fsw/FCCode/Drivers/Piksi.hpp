@@ -2,6 +2,7 @@
 #define PIKSI_HPP_
 
 #ifndef DESKTOP
+#include <Arduino.h>
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
 #else
@@ -336,12 +337,17 @@ class Piksi {
      */
     void clear_bytes();
 
-    //time serialEvent is called
+    // time bytes last entered buffer
     int sendtime;
 
-    //serialEvent for capturing sendtime (time bytes first arrive in buffer
-    //Arduino function
-    void serialEvent();
+    // bytes in the buffer
+    int current_bytes;
+
+    // update sendtime if bytes are entering the buffer
+    void check_bytes();
+
+    // begin checking bytes in buffer at set interval
+    void start_interrupt();
 
     int get_sendtime();
 
