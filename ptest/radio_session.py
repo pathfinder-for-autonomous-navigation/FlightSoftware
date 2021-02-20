@@ -11,6 +11,9 @@ from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
 from .uplink_timer import UplinkTimer
 
+import email
+import imaplib
+
 class RadioSession(object):
     '''
     Represents a connection session with a Flight Computer's Quake radio.
@@ -48,6 +51,11 @@ class RadioSession(object):
         self.flask_app=create_radio_session_endpoint(self, q)
         self.flask_app.config["uplink_console"] = uplink_console
         self.flask_app.config["imei"] = imei
+
+        #connect to email
+        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        self.mail.login("email", "password")
+        self.mail.select('"[Gmail]/Sent Mail"')
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={'host':'0.0.0.0', "port":self.port})
@@ -218,6 +226,29 @@ class RadioSession(object):
         else:
             os.remove("uplink.json")
             return False
+
+    def mark_message_unseen(self):
+        '''
+        Mark most recent message in sent mail box and UNSEEN
+        '''
+        self.mail.select('"[Gmail]/Sent Mail"')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+        last_id = id_list[len(id_list)-1]
+        
+        _, data = self.mail.fetch(last_id, "(RFC822)")
+
+        for response_part in data:
+            if isinstance(response_part, tuple):
+                # converts message from byte literal to string removing b''
+                msg = email.message_from_string(response_part[1].decode('utf-8'))
+                email_subject = msg['subject']
+
+                if email_subject.isdigit() and int(self.imei) == int(email_subject):
+                    # mark message as unseen
+                    self.mail.store(last_id, '-FLAGS', '\SEEN')
+        
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

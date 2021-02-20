@@ -62,8 +62,8 @@ class USBSession(object):
 
         #connect to email
         self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login("pan.ssds.qlocate@gmail.com", "")
-        self.mail.select('Inbox')
+        self.mail.login("", "")
+        self.mail.select('"[Gmail]/Sent Mail"')
         
         self.debug_to_console = None
 
@@ -96,6 +96,7 @@ class USBSession(object):
                 name=f"{self.device_name} logger thread",
                 target=self.check_console_msgs)
             self.check_msgs_thread.start()
+            self.get_uplinks = True
             self.scrape_uplinks_thread = threading.Thread(
                 name=f"{self.device_name} uplinks",
                 target=self.scrape_uplinks)
@@ -446,45 +447,46 @@ class USBSession(object):
         box in the PAN email account (attempted uplinks) and passes the uplink packet
         directly to the Flight computer.
         '''
-        #look for all new emails from iridium
-        self.mail.select('Sent')
-        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")') #, '(UNSEEN)')
-        mail_ids = data[0]
-        id_list = mail_ids.split()
+        while self.get_uplinks == True:
+            #look for all new emails from iridium
+            self.mail.select('"[Gmail]/Sent Mail"')
+            _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
+            mail_ids = data[0]
+            id_list = mail_ids.split()
 
-        for num in id_list:
-            #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
-            # Message Access Protocol.
-            _, data = self.mail.fetch(num,'(RFC822)')
+            for num in id_list:
+                #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
+                # Message Access Protocol.
+                _, data = self.mail.fetch(num,'(RFC822)')
 
-            #go through each component of data
-            for response_part in data:
-                if isinstance(response_part, tuple):
-                    # converts message from byte literal to string removing b''
-                    msg = email.message_from_string(response_part[1].decode('utf-8'))
-                    email_subject = msg['subject']
-                    
-                    if email_subject.isdigit():
-                        # Get imei number of the radio that the uplink was sent to
-                        radio_imei = int(email_subject)
+                #go through each component of data
+                for response_part in data:
+                    if isinstance(response_part, tuple):
+                        # converts message from byte literal to string removing b''
+                        msg = email.message_from_string(response_part[1].decode('utf-8'))
+                        email_subject = msg['subject']
+                        
+                        if email_subject.isdigit():
+                            # Get imei number of the radio that the uplink was sent to
+                            radio_imei = int(email_subject)
 
-                        if self.radio_imei != None and radio_imei == self.radio_imei:
-                            # Go through the email contents
-                            for part in msg.walk():
-                                            
-                                if part.get_content_maintype() == 'multipart':
-                                    continue
+                            if self.radio_imei != None and radio_imei == int(self.radio_imei):
+                                # Go through the email contents
+                                for part in msg.walk():
+                                                
+                                    if part.get_content_maintype() == 'multipart':
+                                        continue
 
-                                if part.get('Content-Disposition') is None:
-                                    continue
+                                    if part.get('Content-Disposition') is None:
+                                        continue
 
-                                # Check if there is an email attachment
-                                if part.get_filename() is not None:
-                                    # Download uplink packet from email attachment and send it to the Flight Computer
-                                    fp = open("new_uplink.sbd", 'wb')
-                                    fp.write(part.get_payload(decode=True))
-                                    fp.close()
-                                    self.send_uplink("new_uplink.sbd")
+                                    # Check if there is an email attachment
+                                    if part.get_filename() is not None:
+                                        # Download uplink packet from email attachment and send it to the Flight Computer
+                                        fp = open("new_uplink.sbd", 'wb')
+                                        fp.write(part.get_payload(decode=True))
+                                        fp.close()
+                                        self.send_uplink("new_uplink.sbd")
                         
 
     def disconnect(self):
@@ -495,6 +497,7 @@ class USBSession(object):
         # End threads
         self.running_logger = False
         self.check_msgs_thread.join()
+        self.get_uplinks = False
         self.scrape_uplinks_thread.join()
         self.console.close()
         self.dp_console.close()

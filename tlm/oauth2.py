@@ -13,7 +13,7 @@ from email.mime.base import MIMEBase
 import email
 
 SCOPES = 'https://mail.google.com' 
-CLIENT_SECRET_FILE = 'tlm/client_secret.json'
+CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'TelemetryServer'
 
 def get_credentials():
@@ -66,6 +66,7 @@ def CreateMessageHtml(sender, to, subject, msgHtml, msgPlain):
     msg['Subject'] = subject
     msg['From'] = sender
     msg['To'] = to
+    
     msg.attach(MIMEText(msgPlain, 'plain'))
     msg.attach(MIMEText(msgHtml, 'html'))
     return {'raw': base64.urlsafe_b64encode(msg.as_string().encode()).decode()}
@@ -138,7 +139,7 @@ def main():
     SendMessage(sender, to, subject, msgHtml, msgPlain)
 
     # Send message with attachment: 
-    SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
+    #SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
 
 if __name__ == '__main__':
     main()
