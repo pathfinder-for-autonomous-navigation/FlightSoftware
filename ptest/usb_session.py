@@ -63,10 +63,12 @@ class USBSession(object):
         #connect to email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
+        self.mail = None
 
-        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login(self.username, self.password)
-        self.mail.select('"[Gmail]/Sent Mail"')
+        if self.username != "":
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
         
         self.debug_to_console = None
 
@@ -450,7 +452,7 @@ class USBSession(object):
         box in the PAN email account (attempted uplinks) and passes the uplink packet
         directly to the Flight computer.
         '''
-        while self.get_uplinks == True:
+        while self.get_uplinks == True and self.mail != None:
             #look for all new emails from iridium
             self.mail.select('"[Gmail]/Sent Mail"')
             _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
