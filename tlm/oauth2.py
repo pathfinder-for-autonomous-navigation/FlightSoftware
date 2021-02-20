@@ -65,8 +65,7 @@ def CreateMessageHtml(sender, to, subject, msgHtml, msgPlain):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
     msg['From'] = sender
-    msg['To'] = to
-    
+    msg['To'] = tos
     msg.attach(MIMEText(msgPlain, 'plain'))
     msg.attach(MIMEText(msgHtml, 'html'))
     return {'raw': base64.urlsafe_b64encode(msg.as_string().encode()).decode()}
@@ -139,7 +138,7 @@ def main():
     SendMessage(sender, to, subject, msgHtml, msgPlain)
 
     # Send message with attachment: 
-    #SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
+    SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
 
 if __name__ == '__main__':
     main()
