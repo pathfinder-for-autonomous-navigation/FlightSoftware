@@ -49,6 +49,7 @@ void PiksiControlTask::execute()
     int read_out = piksi.read_all();
 
     int sendtime_i = piksi.get_sendtime();
+    sendtime_f.set(sendtime_i);
     
     sys_time_t systime = get_system_time();
 

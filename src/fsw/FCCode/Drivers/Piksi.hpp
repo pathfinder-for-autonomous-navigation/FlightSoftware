@@ -338,10 +338,10 @@ class Piksi {
     void clear_bytes();
 
     // time bytes last entered buffer
-    static int sendtime;
+    static volatile int sendtime;
 
     // bytes in the buffer
-    static int current_bytes;
+    static volatile int current_bytes;
 
     // update sendtime if bytes are entering the buffer
     static void check_bytes();

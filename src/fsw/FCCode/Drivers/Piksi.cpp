@@ -33,8 +33,8 @@ Piksi::Piksi(const std::string &name) {
 }
 #endif
 
-static int sendtime;
-static int current_bytes;
+static volatile int sendtime;
+static volatile int current_bytes;
 
 bool Piksi::setup() {
     #ifndef DESKTOP
@@ -43,6 +43,7 @@ bool Piksi::setup() {
 
     sendtime = 0;
     current_bytes = 0;
+    check_bytes();
     start_interrupt();
 
     clear_log();
@@ -449,8 +450,8 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
     piksi->_user_data_update = true;
 }
 
-static void Piksi::check_bytes(){
-    int bytes = Serial4;
+void Piksi::check_bytes(){
+    int bytes = Serial4.available();
     // if bytes are entering the buffer, update the timestamp
     if (bytes > current_bytes) sendtime = micros();
     current_bytes = bytes;
