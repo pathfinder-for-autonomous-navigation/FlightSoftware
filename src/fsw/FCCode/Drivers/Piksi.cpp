@@ -26,17 +26,24 @@ sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 #ifndef DESKTOP
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
+IntervalTimer check_buffer_timer = IntervalTimer();
 #else
 Piksi::Piksi(const std::string &name) {
     _read_return = 2; // this is the no fix return condition
 }
 #endif
 
+static int sendtime;
+static int current_bytes;
 
 bool Piksi::setup() {
     #ifndef DESKTOP
     _serial_port.begin(BAUD_RATE);
     #endif
+
+    sendtime = 0;
+    current_bytes = 0;
+    start_interrupt();
 
     clear_log();
     _heartbeat.flags = 1;  // By default, let there be an error in the system.
@@ -85,8 +92,6 @@ bool Piksi::setup() {
                               &Piksi::_user_data_callback_node);
 
     return (registration_successful == 0);
-
-    start_interrupt();
 }
 
 bool Piksi::is_functional() {
@@ -311,7 +316,7 @@ unsigned char Piksi::read_all() {
         else
             //no relevant callbacks -> NO_FIX
             return 2;
-    }thrust_valve_loop_timer
+    }
     else
         //no bytes return condition
         return 4;
@@ -444,15 +449,8 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
     piksi->_user_data_update = true;
 }
 
-int sendtime;
-int current_bytes;
-
-#ifndef DESKTOP
-IntervalTimer check_buffer_timer = IntervalTimer();
-#endif
-
-void Piksi::check_bytes(){
-    int bytes = bytes_available();
+static void Piksi::check_bytes(){
+    int bytes = Serial4;
     // if bytes are entering the buffer, update the timestamp
     if (bytes > current_bytes) sendtime = micros();
     current_bytes = bytes;
@@ -460,7 +458,8 @@ void Piksi::check_bytes(){
 
 void Piksi::start_interrupt(){
     #ifndef DESKTOP
-    check_buffer_timer.begin(check_bytes, 3); //interrupts every 3 microseconds
+    int interval = 3;
+    check_buffer_timer.begin(check_bytes, interval); //interrupts every 3 microseconds
     #endif
 }
 
