@@ -131,7 +131,8 @@ def create_radio_session_endpoint(radio_session, queue):
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
 
         #### FOR AMC TESTING ONLY!!! #####
-        radio_session.mark_message_unseen()
+        if radio_session.username!="":
+            radio_session.mark_message_unseen()
 
          # Remove uplink files/cleanup
         os.remove("uplink.sbd")

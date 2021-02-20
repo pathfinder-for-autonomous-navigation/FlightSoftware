@@ -77,9 +77,10 @@ class RadioSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
 
-        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login(self.username, self.password)
-        self.mail.select('"[Gmail]/Sent Mail"')
+        if self.username != ""
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
 
     def check_queue(self, queue):
         '''
