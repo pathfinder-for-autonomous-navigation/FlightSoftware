@@ -99,7 +99,7 @@ class AutonomousMissionManagerCase(MissionCase):
         #while(self.continue_mission()): 
         while(1):
             #Pass telemetry between spacecraft 
-            self.logger.put("iterating")
+            
             #wait for data from both spacecrafts to come down from Iridium
             orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while("Unable to find field" in self.leader.read_state("orbit.time") or 
