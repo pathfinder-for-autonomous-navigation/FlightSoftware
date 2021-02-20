@@ -126,8 +126,8 @@ unsigned char calculate_sun_vector(lin::Vector3f &sun_vec) {
   // Prepare least squares problem
   std::size_t j = 0;
   for (std::size_t i = 0; i < voltages.size(); i++) { // TODO : Only include is_functional ADCs
-    if (voltages(i) > sensor_voltage_thresh * lin::norm(lin::ref_row(normals, i))) {
-      lin::ref_row(A, j) = lin::ref_row(normals, i);
+    if (voltages(i) > sensor_voltage_thresh * lin::norm(lin::row(normals, i))) {
+      lin::row(A, j) = lin::row(normals, i);
       b(j) = voltages(i);
       j++;
     }

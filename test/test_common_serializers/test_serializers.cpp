@@ -450,7 +450,7 @@ void test_vec_serializer() {
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
         vector_t result;
         downlink_deserializer->deserialize(&result);
-        T mag_err = lin::norm(lin::VectorView<T, 3>(vec.data()) - lin::VectorView<T, 3>(result.data()));
+        T mag_err = lin::norm(lin::view<lin::Vector<T, 3>>(vec.data()) - lin::view<lin::Vector<T, 3>>(result.data()));
 
         static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
             "vector was {%f,%f,%f}; mag_err: %f";
@@ -544,7 +544,7 @@ void test_quat_serializer() {
 
         quat_t result;
         downlink_deserializer->deserialize(&result);
-        lin::VectorView<T, 4> result_lin(result.data());
+        auto result_lin = lin::view<lin::Vector<T, 4>>(result.data());
         result_lin = result_lin / lin::norm(result_lin);
 
         T angle_err_rad = std::acos(std::abs(lin::dot(result_lin, quat_lin))) * 2;
