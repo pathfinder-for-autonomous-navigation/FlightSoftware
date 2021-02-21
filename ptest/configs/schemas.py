@@ -25,7 +25,8 @@ ptest_config_schema = {
                     "dependencies" : {"run_mode" : ["teensy"]},
                     "excludes" : "pio_target"
                 },
-                "http_port" : {"type" : "integer", "required" : True}
+                "http_port" : {"type" : "integer", "required" : True},
+                "imei" : {"type" : "string", "required" : False}
             }
         },
         "required" : True

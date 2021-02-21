@@ -37,6 +37,9 @@ class RadioSession(object):
         self.imei=imei
         self.port=port
 
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
+
         # Uplink timer
         self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
 
@@ -74,13 +77,12 @@ class RadioSession(object):
         self.flask_port=tlm_config["webservice"]["port"]
 
         # Connect to email
-        self.username=tlm_config["email_username"]
-        self.password=tlm_config["email_password"]
-
-        if self.username != "":
+        try:
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
             self.mail.login(self.username, self.password)
             self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print("Not connected to email")
 
     def check_queue(self, queue):
         '''
@@ -231,7 +233,12 @@ class RadioSession(object):
         '''
         Mark most recent message in sent mail box and UNSEEN
         '''
-        self.mail.select('"[Gmail]/Sent Mail"')
+        try:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print(e)
         _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")')
         mail_ids = data[0]
         id_list = mail_ids.split()
