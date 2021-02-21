@@ -55,7 +55,7 @@ class SafeholdFollowerTransitionCase(SingleSatOnlyCase):
   def sim_ic_map(self):
     ret = {}
     ret["truth.t.ns"] = 420000000*10
-    ret["truth.leader.attitude.w"] = [0.01, 0.073, -0.01]
+    ret["truth.leader.attitude.w"] = [0.01, 0.072, -0.01]
     return ret
 
   def setup_pre_bootsetup(self):
@@ -77,6 +77,7 @@ class SafeholdFollowerTransitionCase(SingleSatOnlyCase):
     self.rs("adcs_cmd.rwa_torque_cmd")
   
   def run_case_singlesat(self):
+    self.ws("cycle.auto", False)
     self.rs_psim("truth.t.ns")
     self.rs_psim("truth.dt.ns")
     self.rs_psim("truth.leader.attitude.w")
@@ -143,8 +144,9 @@ class SafeholdFollowerTransitionCase(SingleSatOnlyCase):
         self.tempTime = currCycle
         self.firstSafehold = False
       else:
-        if currCycle - self.tempTime < 70:
-          #do nothing
+        if currCycle - self.tempTime < 35:
+          self.print_rs("adcs_cmd.mtr_cmd")
+          self.print_rs("adcs_cmd.rwa_torque_cmd")
           pass
         else:
           self.logger.put("supressing wheel 1 fault")
@@ -152,7 +154,7 @@ class SafeholdFollowerTransitionCase(SingleSatOnlyCase):
           time.sleep(.2)
           self.print_rs("pan.state")
           self.print_rs("adcs_monitor.rwa_speed_rd")
-
+          
           self.logger.put("Resuppressing wheel 2 fault")
           self.ws("adcs_monitor.wheel2_fault.suppress", True)
           self.ws("adcs_monitor.wheel2_fault.override", False)
