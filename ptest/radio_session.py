@@ -44,6 +44,10 @@ class RadioSession(object):
         self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,), name="Uplink queue check thread")
         self.check_queue_thread.start()
 
+        # dictionary of statefields and values to uplink
+        self.statefield_dict = {}
+
+
         # HTTP Endpoints
         self.flask_app=create_radio_session_endpoint(self, q)
         self.flask_app.config["uplink_console"] = uplink_console
@@ -137,23 +141,15 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        if self.uplink_queued():
-            return False
-
-        # Create dictionary object with new fields and vals
-        updated_fields={}
         for i in range(len(fields)):
-            updated_fields[fields[i]]=self.uplink_console.get_val(vals[i])
-
-        # Create a JSON file to hold the uplink
-        with open('uplink.json', 'w') as telem_file:
-            json.dump(updated_fields, telem_file)
+            self.statefield_dict[fields[i]] = self.uplink_console.get_val(vals[i])
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.
         t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
         t.start()
 
+        print(self.statefield_dict)
         return True
 
     def write_state(self, field, val, timeout=None):
@@ -183,11 +179,15 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json"):
+        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json") and len(self.statefield_dict) == 0:
             return False
         return True
 
     def send_uplink(self):
+        # Create a JSON file to hold the uplink
+        with open('uplink.json', 'w') as telem_file:
+            json.dump(self.statefield_dict, telem_file)
+
         if not os.path.exists("uplink.json"):
             return False
 
