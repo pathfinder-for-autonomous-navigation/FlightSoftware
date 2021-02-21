@@ -27,16 +27,20 @@ class DualPsim(MissionCase):
 
     @property
     def initial_state_leader(self):
-        return "leader"
+        return "startup"
     @property
     def initial_state_follower(self):
-        return "follower"
+        return "startup"
 
     @property
     def fast_boot_leader(self):
         return True
     @property
     def fast_boot_follower(self):
+        return True
+
+    @property
+    def debug_to_console(self):
         return True
 
     def log_fc_data(self, usb_device: USBSession):
