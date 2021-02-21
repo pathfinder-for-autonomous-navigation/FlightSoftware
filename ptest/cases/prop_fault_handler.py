@@ -30,7 +30,16 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
-        self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
+        
+        self.ws("prop.overpressured.suppress", "false")
+        self.logger.put("Releasing overpressured suppress")
+
+        self.ws("prop.tank2_temp_high.suppress", "false")
+        self.logger.put("Releasing Tank2 temp high suppress")
+
+        self.ws("prop.tank1_temp_high.suppress", "false")
+        self.logger.put("Releasing Tank1 temp high suppress")
+
         # Lower these so that we don't need to wait
         self.ws("prop.ctrl_cycles_per_filling", 1)
         self.ws("prop.ctrl_cycles_per_cooling", 2)

@@ -282,10 +282,10 @@ class BootUtil(object):
 
             # Suppress Prop Faults
             self.flight_controller.write_state("prop.overpressured.suppress", "true")
-            self.logger.put("Turning off overpressued suppress")
+            self.logger.put("Suppressing turning off overpressued")
 
             self.flight_controller.write_state("prop.tank2_temp_high.suppress", "true")
-            self.logger.put("Tank2 temp high suppress")
+            self.logger.put("Suppressing Tank2 temp high ")
 
             self.flight_controller.write_state("prop.tank1_temp_high.suppress", "true")
             self.logger.put("Suppressing Tank1 temp high")
