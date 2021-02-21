@@ -146,8 +146,12 @@ class RadioSession(object):
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.
-        t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
-        t.start()
+        # make the uplink.json file so we know there is data to send and http_cmd
+        # can see it as well
+        if not os.path.exists("uplink.json"):   
+            with open('uplink.json', 'w'): pass    
+            t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
+            t.start()
 
         print(self.statefield_dict)
         return True
@@ -179,27 +183,30 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json") and len(self.statefield_dict) == 0:
+        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json") and not os.path.exists("http_uplink.json"):
             return False
         return True
 
     def send_uplink(self):
-        # Create a JSON file to hold the uplink
-        with open('uplink.json', 'w') as telem_file:
-            json.dump(self.statefield_dict, telem_file)
-
+        # Check there is an uplink to send
         if not os.path.exists("uplink.json"):
             return False
 
-        # Extract the json telemetry data from the queued uplink json file
-        with open("uplink.json", 'r') as uplink:
-            queued_uplink = json.load(uplink)
+        # Extract the json telemetry data from the queued http uplink json file
+        with open("http_uplink.json", 'r') as http_uplink:
+            queued_http_uplink = json.load(http_uplink)
 
-        # Get an updated list of the field and values
-        fields, vals = queued_uplink.keys(), queued_uplink.values()
+        # Get an updated list of the field and values from http endpoint and update the dictionary
+        for field in queued_http_uplink:
+            self.statefield_dict[field] = queued_http_uplink[field]
+
+        #merged and updated fields to send
+        fields, vals = self.statefield_dict.keys(), self.statefield_dict.values()
 
         # Create an uplink packet
         success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+
+        print(self.statefield_dict)
 
         if success:
             # Send the uplink to Iridium
@@ -213,10 +220,15 @@ class RadioSession(object):
             # Remove uplink files/cleanup
             os.remove("uplink.sbd")
             os.remove("uplink.json")
-
+            if os.path.exists("http_uplink.json"):
+                os.remove("http_uplink.json")
+            self.statefield_dict = {}
             return True
         else:
             os.remove("uplink.json")
+            if os.path.exists("http_uplink.json"):
+                os.remove("http_uplink.json")
+            self.statefield_dict = {}
             return False
 
     def disconnect(self):

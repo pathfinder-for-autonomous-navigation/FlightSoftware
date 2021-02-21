@@ -95,21 +95,31 @@ def create_radio_session_endpoint(radio_session, queue):
         uplink_console = app.config["uplink_console"]
         imei = app.config["imei"]
 
-        # Check if an uplink is queued
+        # Check if an uplink is queued by RadioSession,
+        # if so write fields to a file to merge and send
+        # when the timer runs out
         if os.path.exists("uplink.json"):
-            # Organize the requested telemetry into a json object
-            requested_telem = {}
-            for field_val in uplink:
-                requested_telem[field_val["field"]] = field_val["value"]
+            if os.path.exists("http_uplink.json"):
+                # Organize the requested telemetry into a json object
+                requested_telem = {}
+                for field_val in uplink:
+                    requested_telem[field_val["field"]] = field_val["value"]
 
-            # Get the queued uplink
-            with open('uplink.json', 'r') as telem_file:
-                queued_uplink = json.load(telem_file)
+                # Get the queued uplink
+                with open('http_uplink.json', 'r') as telem_file:
+                    queued_uplink = json.load(telem_file)
 
-            # Add the requested telemetry to the queued uplink
-            with open('uplink.json', 'w') as telem_file:
-                queued_uplink.update(requested_telem)
-                json.dump(queued_uplink, telem_file)
+                # Add the requested telemetry to the queued uplink
+                with open('http_uplink.json', 'w') as telem_file:
+                    queued_uplink.update(requested_telem)
+                    json.dump(queued_uplink, telem_file)
+            else:
+                # Make new uplink file with the requested telemetry to be queued
+                uplink_dict = {}
+                for field_val in uplink:
+                    uplink_dict[field_val["field"]] = field_val["value"]
+                with open('http_uplink.json', 'w') as telem_file:
+                    json.dump(uplink_dict, telem_file)
 
             return "Added telemetry"
 
