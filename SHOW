@@ -1,0 +1,4 @@
+Error:
+COLUMNS is not a valid DBURL
+
+sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]

@@ -413,7 +413,7 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print("Error parsing telemetry.")
+            print(f"Error parsing telemetry on {self.device_name}")
             return False
         failed = False
         for field in jsonObj:
