@@ -53,7 +53,7 @@ void PiksiControlTask::execute()
     
     sys_time_t systime = get_system_time();
 
-    int microdelta = sendtime_i - systime_to_us(systime);
+    int microdelta = systime_to_us(systime) - sendtime_i;
     microdelta_f.set(microdelta);
     
     sys_time_t sendtime = us_to_systime(sendtime_i);
