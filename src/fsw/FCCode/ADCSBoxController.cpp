@@ -11,7 +11,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
     {
         //find command statefields
         adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
-        adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
         rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_mode", __FILE__, __LINE__);
         rwa_speed_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_speed_cmd", __FILE__, __LINE__);

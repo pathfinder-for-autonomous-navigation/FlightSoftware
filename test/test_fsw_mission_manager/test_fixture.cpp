@@ -142,6 +142,11 @@ void TestFixture::check_sph_dcdc_on(bool on) const
     TEST_ASSERT(sph_dcdc_fp->get() == on);
 }
 
+void TestFixture::check_adcs_dcdc_on(bool on) const
+{
+    TEST_ASSERT(adcs_dcdc_fp->get() == on);
+}
+
 // Ensures that no state except the given state can be achieved.
 void TestFixture::assert_ground_uncommandability(adcs_state_t exception_state)
 {

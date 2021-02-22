@@ -239,6 +239,7 @@ void test_dispatch_safehold() {
     {
         TestFixture tf(mission_state_t::safehold);
         tf.check_sph_dcdc_on(false);
+        tf.check_adcs_dcdc_on(false);
 
         // Below one day's worth of cycle counts, safe hold should
         // not trigger a satellite reboot.
@@ -281,6 +282,7 @@ void test_dispatch_undefined() {
     tf.mission_state_fp->set(100); // Undefined
     tf.step();
     tf.check(mission_state_t::safehold);
+    tf.check_adcs_dcdc_on(false);
 }
 
 void test_fault_responses() {

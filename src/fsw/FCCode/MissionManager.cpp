@@ -71,6 +71,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
 
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
+    adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -99,6 +100,7 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            adcs_dcdc_fp->set(false);
             return;
         }
         else if (fault_response == fault_response_t::standby
@@ -154,6 +156,7 @@ void MissionManager::execute()
     default:
         printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
         transition_to(mission_state_t::safehold, adcs_state_t::startup);
+        adcs_dcdc_fp->set(false);
         break;
     }
 }
@@ -207,6 +210,7 @@ void MissionManager::dispatch_detumble()
     {
         transition_to(mission_state_t::standby,
                       adcs_state_t::point_standby);
+        adcs_dcdc_fp->set(true);
     }
 }
 

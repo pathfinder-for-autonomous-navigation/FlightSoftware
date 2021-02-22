@@ -82,6 +82,7 @@ public:
 
   // Check if the SpikeDoc DCDC pin is on or off.
   void check_sph_dcdc_on(bool on) const;
+  void check_adcs_dcdc_on(bool on) const;
 
   // Containers for enum possibilities
   static adcs_state_t adcs_states[9];
