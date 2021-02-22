@@ -110,6 +110,7 @@ void MissionManager::execute()
             && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            adcs_dcdc_fp->set(true);
             return;
         }
     }
@@ -311,7 +312,8 @@ void MissionManager::dispatch_docking()
     {
         have_set_docking_entry_ccno = false;
         transition_to(mission_state_t::standby,
-                      adcs_state_t::startup);
+                      adcs_state_t::point_standby);
+        adcs_dcdc_fp->set(true);
     }
 }
 
