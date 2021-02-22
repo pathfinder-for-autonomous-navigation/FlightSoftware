@@ -134,7 +134,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
         self.tempTime = currCycle
         self.firstSafehold = False
       else:
-        if currCycle - self.tempTime < 70:
+        if currCycle - self.tempTime < 20:
           #do nothing
           pass
         else:
