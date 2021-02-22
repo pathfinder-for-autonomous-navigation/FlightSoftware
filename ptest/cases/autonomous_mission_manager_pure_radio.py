@@ -82,33 +82,40 @@ class AutonomousMissionController(MissionCase):
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
         #while(self.continue_mission()): 
-        while(1): #for testing
+        # while(1): #for testing
             #Pass telemetry between spacecraft 
 
-            #wait for data from both spacecrafts to come down from Iridium
-            orbit_data_fields = ["orbit.pos", "orbit.vel"]
-            while("Unable to find field" in self.leader.read_state("orbit.time") or 
-                    "Unable to find field" in self.follower.read_state("orbit.time")): 
-                pass
+        #wait for data from both spacecrafts to come down from Iridium
+        orbit_data_fields = ["orbit.pos"]
+        # while("Unable to find field" in self.leader.read_state("orbit.time") or 
+        #         "Unable to find field" in self.follower.read_state("orbit.time")): 
+        #     pass
 
-            downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
-            downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]
-            propagated_data_vals_leader = self.propagate_orbits(downlinked_data_vals_leader)
-            propagated_data_vals_follower = self.propagate_orbits(downlinked_data_vals_follower)
+        downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
+        downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]
+        propagated_data_vals_leader = self.propagate_orbits(downlinked_data_vals_leader)
+        propagated_data_vals_follower = self.propagate_orbits(downlinked_data_vals_follower)
 
-            #uplink the leader's data to the follower and vice versa
-            baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
-            baseline_orbit_data_vals_follower = [propagated_data_vals_leader[i] - propagated_data_vals_follower[i] for i in range(len(baseline_orbit_data_fields))]
-            baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
+        print(downlinked_data_vals_follower)
+        print(downlinked_data_vals_leader)
 
-            baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
-            baseline_orbit_data_vals_leader = [val for val in baseline_orbit_data_vals_leader]
+        #uplink the leader's data to the follower and vice versa
+        baseline_orbit_data_fields = ["orbit.baseline_pos"]
+        baseline_orbit_data_vals_follower = [propagated_data_vals_leader[i] - propagated_data_vals_follower[i] for i in range(len(baseline_orbit_data_fields))]
+        baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
 
-            self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
-            self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
+        baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
+        baseline_orbit_data_vals_leader = [val for val in baseline_orbit_data_vals_leader]
 
-            self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
-            self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
+        # self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
+        # self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
+        
+        self.follower.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_follower[0])
+        self.leader.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_leader[0])
+                
+        time.sleep(1)
+        # self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
+        # self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
 
         self.logger.put("EXITING AMC")
-        self.finish()
+        # self.finish()
