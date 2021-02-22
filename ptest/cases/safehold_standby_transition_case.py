@@ -135,7 +135,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
         self.firstSafehold = False
       else:
         if currCycle - self.tempTime < 20:
-          #do nothing
+          # about 3.4 seconds with sped up FSW (170 ms cc)
           pass
         else:
           self.logger.put("supressing wheel 1 fault")
