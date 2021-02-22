@@ -284,7 +284,9 @@ bool _PropulsionSystem::open_valve(Tank &tank, size_t valve_idx)
 }
 
 void _PropulsionSystem::close_valve(Tank &tank, size_t valve_idx)
-{
+{if (bytes > past_bytes && past_bytes == 0) sendtime = micros();
+    past_bytes = bytes;if (bytes > past_bytes && past_bytes == 0) sendtime = micros();
+    past_bytes = bytes;
     if (valve_idx >= tank.num_valves)
         return;
     noInterrupts();

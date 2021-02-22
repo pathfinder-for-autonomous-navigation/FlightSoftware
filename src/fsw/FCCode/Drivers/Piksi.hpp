@@ -341,7 +341,7 @@ class Piksi {
     static volatile int sendtime;
 
     // bytes in the buffer
-    static volatile int current_bytes;
+    static volatile int past_bytes;
 
     // update sendtime if bytes are entering the buffer
     static void check_bytes();
