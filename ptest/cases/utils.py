@@ -280,6 +280,16 @@ class BootUtil(object):
             self.flight_controller.write_state("fault_handler.enabled", "false")
             self.logger.put("Turning off fault_handler")
 
+            # Suppress Prop Faults
+            self.flight_controller.write_state("prop.overpressured.suppress", "true")
+            self.logger.put("Suppressing turning off overpressued")
+
+            self.flight_controller.write_state("prop.tank2_temp_high.suppress", "true")
+            self.logger.put("Suppressing Tank2 temp high ")
+
+            self.flight_controller.write_state("prop.tank1_temp_high.suppress", "true")
+            self.logger.put("Suppressing Tank1 temp high")
+    
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
             self.logger.put("Suppressing adcs_monitor.functional_fault")
