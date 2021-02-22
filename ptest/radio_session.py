@@ -192,13 +192,14 @@ class RadioSession(object):
         if not os.path.exists("uplink.json"):
             return False
 
-        # Extract the json telemetry data from the queued http uplink json file
-        with open("http_uplink.json", 'r') as http_uplink:
-            queued_http_uplink = json.load(http_uplink)
+        if os.path.exists("http_uplink.json"):
+            # Extract the json telemetry data from the queued http uplink json file
+            with open("http_uplink.json", 'r') as http_uplink:
+                queued_http_uplink = json.load(http_uplink)
 
-        # Get an updated list of the field and values from http endpoint and update the dictionary
-        for field in queued_http_uplink:
-            self.statefield_dict[field] = queued_http_uplink[field]
+            # Get an updated list of the field and values from http endpoint and update the dictionary
+            for field in queued_http_uplink:
+                self.statefield_dict[field] = queued_http_uplink[field]
 
         #merged and updated fields to send
         fields, vals = self.statefield_dict.keys(), self.statefield_dict.values()
