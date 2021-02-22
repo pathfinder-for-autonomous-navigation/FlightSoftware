@@ -1,6 +1,6 @@
-summary: "Send telemetry data to the USB-connected satellite"
+summary: "Send telemetry data to the satellite"
 tags: 
-  - "Send telemetry data to USB-connected satellite"
+  - "Send telemetry data to satellite"
 description: "This endpoint can be used to send telemetry data to the satellite over Iridium.
               There is up to a 5-minute delay before the command may be sent."
 consumes:
