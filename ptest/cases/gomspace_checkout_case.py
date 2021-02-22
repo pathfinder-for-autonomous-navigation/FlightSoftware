@@ -97,6 +97,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
                       for i in range(1, 7)]
             self.write_state("pan.cycle_no", cycle_no + 1)
+            self.logger.put("output: "+ str(output))
             cycle_no = int(self.read_state("pan.cycle_no"))
             if cycle_no - cycle_no_init == 600:
                 self.logger.put(

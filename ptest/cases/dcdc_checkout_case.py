@@ -44,6 +44,9 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
     def reset_cmd(self, value): 
         assert(value == "true" or value == "false")
         self.flight_controller.write_state("dcdc.reset_cmd", value)
+        # Reset takes two control cycles to complete
+        self.cycle()
+        self.cycle()
 
     def run_case_singlesat(self):
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
@@ -56,6 +59,8 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.adcs_cmd="true"
         self.sph_cmd="true"
 
+        self.cycle()
+
         if self.adcs_rd=="true" and self.sph_rd=="true":
             self.logger.put("Passed")
         else:
@@ -65,10 +70,12 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
         self.adcs_cmd="true"
         self.sph_cmd="false"
+
+        self.cycle()
+
         if self.adcs_rd=="true" and self.sph_rd=="false":
             self.reset_cmd="true"
-            # Reset takes at least one control cycle to complete
-            self.cycle()
+            # Reset takes two control cycles to complete
             if (self.adcs_rd == "true" and self.sph_rd == "true"):
                 self.logger.put("Passed")
             else:
@@ -84,10 +91,12 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
         self.adcs_cmd="false"
         self.sph_cmd="true"
+
+        self.cycle()
+
         if self.adcs_rd=="false" and self.sph_rd=="true":
             self.reset_cmd="true"
             # Reset takes at least one control cycle to complete
-            self.cycle()
             if (self.adcs_rd == "true" and self.sph_rd == "true"):
                 self.logger.put("Passed")
             else:
@@ -102,10 +111,10 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Test Case 4: ADCS DCDC off, SPH + Prop DCDC off. Turn on all systems. ")
 
         self.disable_cmd="true"
+        self.cycle()
         if self.adcs_rd=="false" and self.sph_rd=="false":
             self.reset_cmd="true"
-            # Reset takes at least one control cycle to complete
-            self.cycle()
+            # Reset takes two control cycles to complete
             if (self.adcs_rd == "true" and self.sph_rd == "true"):
                 self.logger.put("Passed")
             else:
