@@ -100,7 +100,6 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
-            adcs_dcdc_fp->set(false);
             return;
         }
         else if (fault_response == fault_response_t::standby
@@ -110,7 +109,6 @@ void MissionManager::execute()
             && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
-            adcs_dcdc_fp->set(true);
             return;
         }
     }
@@ -157,7 +155,6 @@ void MissionManager::execute()
     default:
         printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
         transition_to(mission_state_t::safehold, adcs_state_t::startup);
-        adcs_dcdc_fp->set(false);
         break;
     }
 }
@@ -213,6 +210,7 @@ void MissionManager::dispatch_detumble()
             adcs_dcdc_fp->set(true);
         else
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            // dcdc will be reasserted to true but that's ok
     }
 }
 
@@ -385,6 +383,12 @@ void MissionManager::set(sat_designation_t designation)
 void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state)
 {
+    if (mission_state == mission_state_t::standby)
+        adcs_dcdc_fp->set(true);
+    else if(mission_state == mission_state_t::safehold)
+        adcs_dcdc_fp->set(false);
+    // all other transitions shall leave the DCDC's alone
+
     set(mission_state);
     set(adcs_state);
 }
@@ -401,6 +405,12 @@ void MissionManager::transition_to(mission_state_t mission_state,
     {
         sph_dcdc_fp->set(true);
     }
+
+    if (mission_state == mission_state_t::standby)
+        adcs_dcdc_fp->set(true);
+    else if(mission_state == mission_state_t::safehold)
+        adcs_dcdc_fp->set(false);
+    // all other transitions shall leave the DCDC's alone
 
     set(mission_state);
     set(adcs_state);
