@@ -131,7 +131,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
         if not self.adcs_command or not self.adcs or self.prop_command or self.prop:
             abort("Failed to enable only the ADCS DCDC.")
-        
+
         reset()
         self.logger.put("Success!")
         self.logger.put("")
@@ -144,7 +144,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
         if self.adcs_command or self.adcs or not self.prop or not self.prop_command:
             abort("Failed to enable only the Prop DCDC.")
-        
+
         reset()
         self.logger.put("Success!")
         self.logger.put("")
@@ -156,7 +156,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
         if self.adcs_command or self.adcs or self.prop_command or self.prop or self.disable_command:
             abort("Failed to disable the DCDCs.")
-        
+
         reset(False)
         self.logger.put("Success!")
         self.logger.put("")
