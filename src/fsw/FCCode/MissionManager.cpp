@@ -209,9 +209,10 @@ void MissionManager::dispatch_detumble()
 
     if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
-        transition_to(mission_state_t::standby,
-                      adcs_state_t::point_standby);
-        adcs_dcdc_fp->set(true);
+        if(!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
+            adcs_dcdc_fp->set(true);
+        else
+            transition_to(mission_state_t::standby, adcs_state_t::point_standby);
     }
 }
 
@@ -313,7 +314,7 @@ void MissionManager::dispatch_docking()
         have_set_docking_entry_ccno = false;
         transition_to(mission_state_t::standby,
                       adcs_state_t::point_standby);
-        adcs_dcdc_fp->set(true);
+        // ADCS dcdc should already be on, no need to re-assert
     }
 }
 
