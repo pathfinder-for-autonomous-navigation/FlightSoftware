@@ -111,7 +111,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Testcase initialized correctly.")
             self.logger.put("")
 
-        self.logger.put("Step 1: Set both DCDCs to on...")
+        self.logger.put("Step 1: Enable both DCDCs...")
 
         self.adcs_command = True
         self.prop_command = True
@@ -149,7 +149,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Success!")
         self.logger.put("")
 
-        self.logger.put("Step 4: Disabled both DCDCs and attempt a reset command...")
+        self.logger.put("Step 4: Disable both DCDCs and attempt a reset command...")
 
         self.disable_command = True
         self.cycle()
