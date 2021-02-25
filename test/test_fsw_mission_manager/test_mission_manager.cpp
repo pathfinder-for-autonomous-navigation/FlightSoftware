@@ -87,11 +87,20 @@ void test_dispatch_detumble() {
     // If satellite is no longer tumbling, spacecraft exits detumble mode
     // and starts pointing in the expected direction.
     tf.set_ang_rate(threshold - delta);
+    tf.check_adcs_dcdc_on(false);
+    
+    // check that the ADCS DCDC is turned on pre-emptively but mission mode stays in detumble
+    tf.step();
+    tf.check_adcs_dcdc_on(true);
+    tf.check(mission_state_t::detumble);
+
+    // check that the second time around the mission mode does transition
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);
     // TODO
     tf.check_sph_dcdc_on(true);
+    tf.check_adcs_dcdc_on(true);
 }
 
 void test_dispatch_standby() {
@@ -239,6 +248,7 @@ void test_dispatch_safehold() {
     {
         TestFixture tf(mission_state_t::safehold);
         tf.check_sph_dcdc_on(false);
+        tf.check_adcs_dcdc_on(false);
 
         // Below one day's worth of cycle counts, safe hold should
         // not trigger a satellite reboot.
@@ -281,6 +291,7 @@ void test_dispatch_undefined() {
     tf.mission_state_fp->set(100); // Undefined
     tf.step();
     tf.check(mission_state_t::safehold);
+    tf.check_adcs_dcdc_on(false);
 }
 
 void test_fault_responses() {
@@ -339,14 +350,18 @@ void test_fault_responses() {
                                          mission_state_t::docked})
     {
         TestFixture tf{initial_state};
+        tf.adcs_dcdc_fp->set(true);
         tf.set(fault_response_t::standby);
         tf.step();
         tf.check(mission_state_t::standby);
+        tf.check_adcs_dcdc_on(true);
 
         TestFixture tf2{initial_state};
+        tf.adcs_dcdc_fp->set(true);
         tf2.set(fault_response_t::safehold);
         tf2.step();
         tf2.check(mission_state_t::safehold);
+        tf2.check_adcs_dcdc_on(false);
     }
 }
 
