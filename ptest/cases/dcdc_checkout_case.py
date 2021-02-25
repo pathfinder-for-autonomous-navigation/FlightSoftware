@@ -59,6 +59,21 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
     def reset_command(self, value: bool):
         self.ws("dcdc.reset_cmd", value)
 
+    def abort(self, *args, **kwargs):
+        self.logger.put(f"Testcase failed:")
+        self.logger.put(f"\tadcs_command    = {self.adcs_command}")
+        self.logger.put(f"\tadcs            = {self.adcs}")
+        self.logger.put(f"\tprop_command    = {self.prop_command}")
+        self.logger.put(f"\tprop            = {self.prop}")
+        self.logger.put(f"\tdisable_command = {self.disable_command}")
+        self.logger.put(f"\treset_command   = {self.reset_command}")
+
+        self.adcs_command = False
+        self.prop_command = False
+        self.cycle()
+
+        raise TestCaseFailure(*args, **kwargs)
+
     def cycle(self):
         super(DCDCCheckoutCase, self).cycle()
 
@@ -69,44 +84,27 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.__disable_command = self.rs("dcdc.disable_cmd")
         self.__reset_command = self.rs("dcdc.reset_cmd")
 
+    def reset(self, has_enabled = True):
+        self.reset_command = True
+        self.cycle()
+
+        if has_enabled:
+            if not self.reset_command:
+                self.abort("Reset command should persist for one cycle is some elements are enabled.")
+
+            self.cycle()
+
+        if not self.adcs_command or not self.adcs or \
+                not self.prop_command or not self.prop or self.reset_command:
+            self.abort("Failed to reset the DCDCs.")
+
     def run_case_singlesat(self):
-
-        def abort(*args, **kwargs):
-            self.logger.put(f"Testcase failed:")
-            self.logger.put(f"\tadcs_command   = {self.adcs_command}")
-            self.logger.put(f"\tadcs           = {self.adcs}")
-            self.logger.put(f"\tprop_command   = {self.prop_command}")
-            self.logger.put(f"\tprop           = {self.prop}")
-            self.logger.put(f"\tdisable_command = {self.disable_command}")
-            self.logger.put(f"\treset_command   = {self.reset_command}")
-
-            self.adcs_command = False
-            self.prop_command = False
-            self.cycle()
-
-            raise TestCaseFailure(*args, **kwargs)
-
-        def reset(has_enabled = True):
-            self.reset_command = True
-            self.cycle()
-
-            if has_enabled:
-                if not self.reset_command:
-                    abort("Reset command should persist for one cycle is some elements are enabled.")
-
-                self.cycle()
-
-            if not self.adcs_command or not self.adcs or \
-                    not self.prop_command or not self.prop or self.reset_command:
-               abort("Failed to reset the DCDCs.")
-
-        self.ws("pan.state", Enums.mission_states["manual"])
         self.cycle()
 
         if self.adcs_command or self.adcs or self.prop or self.prop_command or \
                 self.disable_command or self.reset_command:
-            abort("All fields should be false on initialization; " +
-                  "ensure the spacecraft was rebooted before running this case.")
+            self.abort("All fields should be false on initialization; " +
+                       "ensure the spacecraft was rebooted before running this case.")
         else:
             self.logger.put("Testcase initialized correctly.")
             self.logger.put("")
@@ -120,7 +118,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         if self.adcs_command and self.adcs and self.prop_command and self.prop:
             self.logger.put("Success!")
         else:
-            abort("Failed to enable both DCDCs.")
+            self.abort("Failed to enable both DCDCs.")
 
         self.logger.put("")
         self.logger.put("Step 2: Set only ADCS to be on and then attempt a reset command...")
@@ -130,9 +128,9 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         if not self.adcs_command or not self.adcs or self.prop_command or self.prop:
-            abort("Failed to enable only the ADCS DCDC.")
+            self.abort("Failed to enable only the ADCS DCDC.")
 
-        reset()
+        self.reset()
         self.logger.put("Success!")
         self.logger.put("")
 
@@ -143,9 +141,9 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         if self.adcs_command or self.adcs or not self.prop or not self.prop_command:
-            abort("Failed to enable only the Prop DCDC.")
+            self.abort("Failed to enable only the Prop DCDC.")
 
-        reset()
+        self.reset()
         self.logger.put("Success!")
         self.logger.put("")
 
@@ -155,9 +153,9 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         if self.adcs_command or self.adcs or self.prop_command or self.prop or self.disable_command:
-            abort("Failed to disable the DCDCs.")
+            self.abort("Failed to disable the DCDCs.")
 
-        reset(False)
+        self.reset(False)
         self.logger.put("Success!")
         self.logger.put("")
 
