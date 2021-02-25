@@ -60,6 +60,9 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.ws("dcdc.reset_cmd", value)
 
     def abort(self, *args, **kwargs):
+        """Logs a table of the current DCDC state fields to the terminal,
+        attempts to shutdown the DCDCs, and raises a TestCaseFailure.
+        """
         self.logger.put(f"Testcase failed:")
         self.logger.put(f"\tadcs_command    = {self.adcs_command}")
         self.logger.put(f"\tadcs            = {self.adcs}")
@@ -75,6 +78,12 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         raise TestCaseFailure(*args, **kwargs)
 
     def cycle(self):
+        """Cycles the flight computer and reads in all DCDC state fields.
+
+        All DCDC reads are performed here to avoid extra overhead from duplicate
+        read state calls. In addition, it makes implementing the very useful
+        abort function trivial.
+        """
         super(DCDCCheckoutCase, self).cycle()
 
         self.__adcs_command = self.rs("dcdc.ADCSMotor_cmd")
@@ -85,6 +94,8 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
         self.__reset_command = self.rs("dcdc.reset_cmd")
 
     def reset(self, has_enabled = True):
+        """Runs and verifies the DCDC reset command executes as expected.
+        """
         self.reset_command = True
         self.cycle()
 
