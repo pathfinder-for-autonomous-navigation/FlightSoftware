@@ -71,6 +71,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
 
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
+    adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -205,8 +206,11 @@ void MissionManager::dispatch_detumble()
 
     if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
-        transition_to(mission_state_t::standby,
-                      adcs_state_t::point_standby);
+        if(!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
+            adcs_dcdc_fp->set(true);
+        else
+            transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            // dcdc will be reasserted to true but that's ok
     }
 }
 
@@ -307,7 +311,8 @@ void MissionManager::dispatch_docking()
     {
         have_set_docking_entry_ccno = false;
         transition_to(mission_state_t::standby,
-                      adcs_state_t::startup);
+                      adcs_state_t::point_standby);
+        // ADCS dcdc should already be on, no need to re-assert
     }
 }
 
@@ -378,6 +383,12 @@ void MissionManager::set(sat_designation_t designation)
 void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state)
 {
+   if (mission_state == mission_state_t::safehold)
+   {
+        adcs_dcdc_fp->set(false);
+    }
+    // all other transitions shall leave the DCDC's alone
+
     set(mission_state);
     set(adcs_state);
 }
@@ -395,7 +406,6 @@ void MissionManager::transition_to(mission_state_t mission_state,
         sph_dcdc_fp->set(true);
     }
 
-    set(mission_state);
-    set(adcs_state);
+    transition_to(mission_state, adcs_state);
     set(prop_state);
 }

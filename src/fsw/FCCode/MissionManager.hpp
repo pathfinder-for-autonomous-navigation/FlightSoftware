@@ -159,6 +159,11 @@ protected:
     WritableStateField<bool> *sph_dcdc_fp;
 
     /**
+     * @brief DCDC control Disables/enables wheels for the ADCS system.
+     */
+    WritableStateField<bool>* adcs_dcdc_fp;
+
+    /**
      * @brief Radio's mode.
      **/
     ReadableStateField<unsigned char> *radio_state_fp;
