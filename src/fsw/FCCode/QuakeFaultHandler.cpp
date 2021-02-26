@@ -144,11 +144,6 @@ bool QuakeFaultHandler::in_state_for_more_than_time(const unsigned int time) con
     return cccount - cur_state_entry_ccno >= time;
 }
 
-bool QuakeFaultHandler::in_state_for_exact_time(const unsigned int time) const
-{
-    return cccount - cur_state_entry_ccno == time;
-}
-
 bool QuakeFaultHandler::radio_is_disabled() const
 {
     return radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled);

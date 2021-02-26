@@ -185,15 +185,6 @@ void test_qfh_forced_standby()
         tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_1);
         tf.check_powercycled();
     }
-    {
-        //test if not in wait, won't power cycle at all
-        // TestFixtureQFH tf{qfh_state_t::forced_standby};
-        // tf.set_cur_state_entry_ccno(one_day_ccno);
-        // cc_count = 2 * one_day_ccno - 1;
-        // tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
-        // tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
-        // tf.check_not_powercycled();
-    }
 
     // If the radio is disabled the state should return to unfaulted immediately.
     {
@@ -227,15 +218,6 @@ void test_qfh_powercycle(qfh_state_t cur_state, qfh_state_t next_state)
         tf.step_and_expect(fault_response_t::standby, next_state);
         if (next_state != qfh_state_t::safehold)
             tf.check_powercycled();
-    }
-    {
-        //Test if not wait, should not power cycle
-        // TestFixtureQFH tf{cur_state};
-        // tf.set_cur_state_entry_ccno(one_day_ccno);
-        // cc_count = one_day_ccno + one_day_ccno / 3 - 1;
-        // tf.step_and_expect(fault_response_t::standby, cur_state);
-        // tf.step_and_expect(fault_response_t::standby, cur_state);
-        // if (next_state != qfh_state_t::safehold) tf.check_not_powercycled();
     }
 
     // If the radio is disabled the state should return to unfaulted immediately.
