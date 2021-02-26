@@ -334,12 +334,17 @@ unsigned char Piksi::read_all() {
     }
 
     microdelta = time - start_time;
-    
-    debug_console::printf(debug_severity::error, "microdelta : %lu\n", microdelta);
-    // println("start time: " + start_time);
-    // println("last time: " + last_time);
+
+    unsigned long start_time_l = start_time;
+    unsigned long last_time_l = last_time;
 
     interrupts();
+
+    debug_console::printf(debug_severity::error, "microdelta : %lu", microdelta);
+    debug_console::printf(debug_severity::error, "bytes : %d", bytes);
+    debug_console::printf(debug_severity::error, "start time : %lu", start_time_l);
+    debug_console::printf(debug_severity::error, "last time : %lu", last_time_l);
+    debug_console::printf(debug_severity::error, "time : %lu\n", time);
     
     _gps_time_update = false;
     _pos_ecef_update = false;

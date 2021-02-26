@@ -13,7 +13,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     current_state_f("piksi.state", Serializer<unsigned char>(10)),
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
-    microdelta_f("piksi.microdelta", Serializer<unsigned long>()),
+    microdelta_f("piksi.microdelta", Serializer<unsigned int>()),
     last_rtkfix_ccno_f("piksi.last_rtkfix_ccno"),
     no_bytes_available_f("piksi.bytes_available")
     {
