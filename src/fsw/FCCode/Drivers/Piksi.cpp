@@ -335,7 +335,7 @@ unsigned char Piksi::read_all() {
 
     microdelta = time - start_time;
     
-    debug_console::printf(debug_severity::error, "microdelta : %d\n", microdelta);
+    debug_console::printf(debug_severity::error, "microdelta : %lu\n", microdelta);
     // println("start time: " + start_time);
     // println("last time: " + last_time);
 
@@ -346,7 +346,7 @@ unsigned char Piksi::read_all() {
     _vel_ecef_update = false;
     _baseline_ecef_update = false;
     
-    if(bytes_available()){ 
+    if(buffer_begin < buffer_end){ 
         bool crc_error = process_buffer() < 0;
 
         if(crc_error)
