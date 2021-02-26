@@ -86,6 +86,9 @@ static constexpr lin::Matrix3x3f rwa_to_body = {
   -1.0f,  0.0f, 0.0f,
    0.0f, -1.0f, 0.0f
 };
+
+static_assert(lin::fro(rwa_to_body * body_to_rwa - lin::identity<lin::Matrix3x3f>()) < 1.0e-5f, "");
+
 }  // namespace rwa
 }  // namespace adcs
 
