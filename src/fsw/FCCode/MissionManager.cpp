@@ -383,10 +383,10 @@ void MissionManager::set(sat_designation_t designation)
 void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state)
 {
-    if (mission_state == mission_state_t::standby)
-        adcs_dcdc_fp->set(true);
-    else if(mission_state == mission_state_t::safehold)
+   if (mission_state == mission_state_t::safehold)
+   {
         adcs_dcdc_fp->set(false);
+    }
     // all other transitions shall leave the DCDC's alone
 
     set(mission_state);
@@ -406,13 +406,6 @@ void MissionManager::transition_to(mission_state_t mission_state,
         sph_dcdc_fp->set(true);
     }
 
-    if (mission_state == mission_state_t::standby)
-        adcs_dcdc_fp->set(true);
-    else if(mission_state == mission_state_t::safehold)
-        adcs_dcdc_fp->set(false);
-    // all other transitions shall leave the DCDC's alone
-
-    set(mission_state);
-    set(adcs_state);
+    transition_to(mission_state, adcs_state);
     set(prop_state);
 }
