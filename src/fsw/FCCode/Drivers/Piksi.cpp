@@ -3,9 +3,10 @@
 
 #ifndef DESKTOP
 #include <Arduino.h>
+#else 
 // The below are declared in Arduino.h
 static void interrupts() {}
-void noInterrupts() {}
+static void noInterrupts() {}
 #endif
 
 using namespace Devices;
@@ -36,21 +37,45 @@ Piksi::Piksi(const std::string &name) {
 }
 #endif
 
-volatile int Piksi::last_bytes;
-volatile int Piksi::start_time;
-volatile int Piksi::last_time;
-int[]
+static volatile int last_bytes = 0;
+static volatile unsigned long start_time;
+static volatile unsigned long last_time;
 
+void Piksi::check_bytes(){
+    #ifndef DESKTOP
+    int bytes = Serial4.available();
+    unsigned long time = micros();
+
+    // if bytes are entering the buffer, update the timestamp
+    if (bytes > last_bytes) {
+
+        if (time - last_time > 10000){
+            start_time = time;
+        }
+
+    last_bytes = bytes;
+    last_time = time;
+   }
+
+    #endif
+}
+
+unsigned long Piksi::get_microdelta(){
+    return microdelta;
+}
+
+void Piksi::start_interrupt(){
+    #ifndef DESKTOP
+    int interval = 100;
+    check_buffer_timer.begin(check_bytes, interval); //interrupts every 100 microseconds
+    #endif
+}
 
 bool Piksi::setup() {
     #ifndef DESKTOP
     _serial_port.begin(BAUD_RATE);
     #endif
 
-    sendtime = 0;
-    last_bytes = 0; 
-    start_time = micros();
-    last_time = micros();
     check_bytes();
     start_interrupt();
 
@@ -291,22 +316,28 @@ unsigned char Piksi::read_all() {
     noInterrupts();
 
     int bytes = Serial4.available();
+    unsigned long time = micros();
 
-    // if bytes are entering the buffer, update the timestamp
+    // from check_bytes, but set last_bytes to 0
     if (bytes > last_bytes) {
-      // latching timing logic in here
-      last_bytes = 0;
+
+        if (time - last_time > 10000){
+            start_time = time;
+        }
+
+      last_time = time;
     }
+    last_bytes = 0;
 
-    int initial_time = micros();
-
-    int buffer[bytes];
+    buffer_begin = buffer;
+    buffer_end = buffer;
     // copy buffer up to available
     for (int i = 0; i < bytes; i++){
-        buffer[i] = Serial4.read();
+        *(buffer_end++) = Serial4.read();
     }
 
-    int buffer_length = bytes;
+    microdelta = time - start_time;
+
 
     interrupts();
     
@@ -316,25 +347,7 @@ unsigned char Piksi::read_all() {
     _baseline_ecef_update = false;
     
     if(bytes_available()){ 
-        bool crc_error = false;
-        // while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){ // get rid of this while loop
-        //     //call process_buffer() to process data, and check if crc_error happened
-        //     if(process_buffer() < 0)
-        //         crc_error = true;
-        // }
-
-        if(process_buffer() < 0) crc_error = true;
-
-        //ensure that if the while loop terminated because of exceeding the READ_ALL_LIMIT
-        //it will enter the clear bytes condition below
-        delayMicroseconds(5);
-
-        if(micros()-initial_time >= READ_ALL_LIMIT){
-            clear_bytes();
-            return 5;
-        }
-        
-        //by this point in the code, it is guarenteed that there are no more bytes in buffer
+        bool crc_error = process_buffer() < 0;
 
         if(crc_error)
             return 3;
@@ -369,16 +382,15 @@ void Piksi::clear_bytes() {
     #endif
     }
 
+// edit this
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
     Piksi *piksi = (Piksi *)context; // so it can access serial port
-    
-    HardwareSerial &sp = piksi->_serial_port;
 
     u32 i;
     for (i = 0; i < n; i++) {
-        if (sp.available())
-            buff[i] = sp.read();
+        if (piksi->buffer_begin < piksi->buffer_end)
+            buff[i] = *(piksi->buffer_begin++);
         else
             break;
     }
@@ -388,25 +400,24 @@ u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #endif
 }
 
-u32 Piksi::_local_read(u8 *buff, u32 n, void *context) {
-    #ifndef DESKTOP
+// u32 Piksi::_local_read(u8 *buff, u32 n, void *context) {
+//     #ifndef DESKTOP
 
-    // we don't care about this since we're using the local buffer
-    Piksi *piksi = (Piksi *)context; // so it can access serial port
-    HardwareSerial &sp = piksi->_serial_port;
+//     Piksi *piksi = (Piksi *)context; // so it can access serial port
+//     HardwareSerial &sp = piksi->_serial_port;
 
-    u32 i;
-    for (i = 0; i < n; i++) {
-        if (sp.available())
-            buff[i] = sp.read();
-        else
-            break;
-    }
-    return i;
-    #else
-    return 0;
-    #endif
-}
+//     u32 i;
+//     for (i = 0; i < n; i++) {
+//         if (sp.available())
+//             buff[i] = sp.read();
+//         else
+//             break;
+//     }
+//     return i;
+//     #else
+//     return 0;
+//     #endif
+// }
 
 u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
@@ -499,26 +510,3 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
     memcpy((u8 *)(&(piksi->_user_data)), msg, sizeof(msg_user_data_t));
     piksi->_user_data_update = true;
 }
-
-void Piksi::check_bytes(){
-    #ifndef DESKTOP
-    int bytes = Serial4.available();
-    // if bytes are entering the buffer, update the timestamp
-    if (bytes > last_bytes) {
-      // latching timing logic in here
-      last_bytes = bytes;
-   }
-
-    #endif
-}
-
-void Piksi::start_interrupt(){
-    #ifndef DESKTOP
-    int interval = 100;
-    check_buffer_timer.begin(check_bytes, interval); //interrupts every 3 microseconds
-    #endif
-}
-
-int Piksi::get_sendtime(){
-    return sendtime;
-} 

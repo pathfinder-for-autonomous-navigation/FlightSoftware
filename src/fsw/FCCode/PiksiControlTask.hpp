@@ -36,18 +36,11 @@ public:
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
 
-    //Time data is loaded into the buffer
-    Serializer<unsigned int> sendtime_sr;
-    ReadableStateField<unsigned int> sendtime_f;
-
     //Serializer and StateField for
     // [difference between time of piksi data and current time]
     // in microseconds
     Serializer<unsigned int> microdelta_sr;
     ReadableStateField<unsigned int> microdelta_f;
-
-    // System time of last good Piksi reading
-    InternalStateField<sys_time_t> last_fix_time_f;
 
     // Control cycle of last good Piksi reading
     InternalStateField<unsigned int> last_rtkfix_ccno_f;

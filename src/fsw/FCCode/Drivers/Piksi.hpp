@@ -337,24 +337,20 @@ class Piksi {
      */
     void clear_bytes();
 
-    // time bytes last entered buffer
-    static volatile int sendtime;
-
-    // bytes in the buffer
-    static volatile int past_bytes;
-
-    // update sendtime if bytes are entering the buffer
+    // check if bytes are entering the buffer
     static void check_bytes();
 
     // begin checking bytes in buffer at set interval
     void start_interrupt();
 
-    int get_sendtime();
+    // return time delay between now and time data entered buffer
+    unsigned long get_microdelta();
 
    protected:
    #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
                                    // can access the port variable
+
     #endif
    private:
     // Internal values required by libsbp. See sbp.c
@@ -424,6 +420,11 @@ class Piksi {
     bool _vel_ecef_update;
     bool _heartbeat_update;
     bool _user_data_update;
+
+    unsigned char buffer[SERIAL4_RX_BUFFER_SIZE]; 
+    unsigned char* buffer_begin;
+    unsigned char* buffer_end;
+    unsigned long microdelta;
 
     //set read return mock
     // #if defined(DESKTOP) || defined(UNIT_TEST) 
