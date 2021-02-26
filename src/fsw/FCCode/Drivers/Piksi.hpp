@@ -8,6 +8,7 @@
 #else
 #include <iostream>
 #include <string>
+#define SERIAL4_RX_BUFFER_SIZE 1
 #endif
 
 #include <common/GPSTime.hpp>

@@ -1,12 +1,9 @@
 #include "Piksi.hpp"
+#include "common/debug_console.hpp"
 #include <cstring>
 
 #ifndef DESKTOP
 #include <Arduino.h>
-#else 
-// The below are declared in Arduino.h
-static void interrupts() {}
-static void noInterrupts() {}
 #endif
 
 using namespace Devices;
@@ -337,7 +334,10 @@ unsigned char Piksi::read_all() {
     }
 
     microdelta = time - start_time;
-
+    
+    debug_console::printf(debug_severity::error, "microdelta : %d\n", microdelta);
+    // println("start time: " + start_time);
+    // println("last time: " + last_time);
 
     interrupts();
     
