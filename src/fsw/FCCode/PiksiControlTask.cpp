@@ -21,7 +21,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(current_state_f);
         add_readable_field(fix_error_count_f);
         add_readable_field(time_f);
-        add_internal_field(last_fix_time_f);
         add_internal_field(last_rtkfix_ccno_f);
 
         //register callbacks and begin the serial port
@@ -111,18 +110,15 @@ void PiksiControlTask::execute()
 
         if(read_out == 0) {
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::spp));
-            last_fix_time_f.set(get_system_time());
         }
         if(read_out == 1){
             int baseline_flag = piksi.get_baseline_ecef_flags();
             if(baseline_flag == 1){
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::fixed_rtk));
-                last_fix_time_f.set(get_system_time());
                 last_rtkfix_ccno_f.set(TimedControlTaskBase::control_cycle_count);
             }
             else if(baseline_flag == 0){
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::float_rtk));
-                last_fix_time_f.set(get_system_time());
             }
             else{
                 //baseline flag unexpected value
