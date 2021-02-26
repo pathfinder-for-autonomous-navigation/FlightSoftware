@@ -91,23 +91,28 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
                                   for i in range(1, 7)]
         self.cycle()
         while int(self.read_state("pan.cycle_no")) % int(self.read_state("gomspace.powercycle_period")) != 0:
-            self.cycle()
-        # wait for outputs to be off
-        while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
                       for i in range(1, 7)]
-            self.write_state("pan.cycle_no", cycle_no + 1)
+            self.logger.put("current output: " + str(output))
+            self.cycle()
+        # wait for outputs to be off
+        while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 900:
+            output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
+                      for i in range(1, 7)]
+            self.cycle()
             cycle_no = int(self.read_state("pan.cycle_no"))
-            if cycle_no - cycle_no_init == 600:
+            if cycle_no - cycle_no_init == 900:
                 self.logger.put(
                     "Power cycled outputs could not turn off after 600 cycles (1 minute)")
+                cycle_no = int(self.read_state("pan.cycle_no"))
+                self.logger.put("failed on cycle: " + str(cycle_no))
                 self.failed = True
-
+            
         # wait for outputs to turn on again
         while (not all(out == True for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
                       for i in range(1, 7)]
-            self.write_state("pan.cycle_no", cycle_no + 1)
+            self.cycle()
             cycle_no = int(self.read_state("pan.cycle_no"))
             if cycle_no - cycle_no_init == 600:
                 self.logger.put(
