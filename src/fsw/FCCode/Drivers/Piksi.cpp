@@ -35,18 +35,20 @@ Piksi::Piksi(const std::string &name) {
 #endif
 
 static volatile int last_bytes = 0;
+static volatile unsigned long interrupt_count = 0;
 static volatile unsigned long start_time;
 static volatile unsigned long last_time;
 
 void Piksi::check_bytes(){
     #ifndef DESKTOP
+    interrupt_count++;
     int bytes = Serial4.available();
-    unsigned long time = micros();
+    unsigned long time = interrupt_count;
 
     // if bytes are entering the buffer, update the timestamp
     if (bytes > last_bytes) {
 
-        if (time - last_time > 10000){
+        if (time - last_time > 100){
             start_time = time;
         }
 
@@ -73,7 +75,6 @@ bool Piksi::setup() {
     _serial_port.begin(BAUD_RATE);
     #endif
 
-    check_bytes();
     start_interrupt();
 
     clear_log();
@@ -313,12 +314,12 @@ unsigned char Piksi::read_all() {
     noInterrupts();
 
     int bytes = Serial4.available();
-    unsigned long time = micros();
+    unsigned long time = interrupt_count;
 
     // from check_bytes, but set last_bytes to 0
     if (bytes > last_bytes) {
 
-        if (time - last_time > 10000){
+        if (time - last_time > 100){
             start_time = time;
         }
 
@@ -333,7 +334,7 @@ unsigned char Piksi::read_all() {
         *(buffer_end++) = Serial4.read();
     }
 
-    microdelta = time - start_time;
+    microdelta = (time - start_time)*100;
 
     unsigned long start_time_l = start_time;
     unsigned long last_time_l = last_time;
