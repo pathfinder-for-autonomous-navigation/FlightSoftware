@@ -34,7 +34,7 @@ def main(args):
         sys.exit(1)
 
     # Open a connection to elasticsearch
-    es = Elasticsearch([{'host':'127.0.0.1','port':args.elasticsearch_port}])
+    es = Elasticsearch([{'host':'192.168.80.129','port':args.elasticsearch_port}])
 
     # Create a read_iridium object
     readIr = IridiumEmailProcessor(radio_keys_config, es, args.downlink_parser_path)
