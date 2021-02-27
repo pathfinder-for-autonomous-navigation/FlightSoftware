@@ -12,9 +12,10 @@ from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 import email
 
-SCOPES = 'https://mail.google.com' 
-CLIENT_SECRET_FILE = 'client_secret.json'
+SCOPES = 'https://mail.google.com'
+CLIENT_SECRET_FILE = 'tlm/client_secret.json'
 APPLICATION_NAME = 'TelemetryServer'
+
 
 def get_credentials():
     home_dir = os.path.expanduser('~')
@@ -31,6 +32,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+
 def authenticate():
     '''
     Returns a connection to the PAN gmail
@@ -41,25 +43,30 @@ def authenticate():
     service = discovery.build('gmail', 'v1', http=http)
     return service
 
+
 def SendMessage(sender, to, subject, msgHtml, msgPlain, attachmentFile=None):
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
     if attachmentFile:
-        message1 = createMessageWithAttachment(sender, to, subject, msgHtml, msgPlain, attachmentFile)
-    else: 
+        message1 = createMessageWithAttachment(
+            sender, to, subject, msgHtml, msgPlain, attachmentFile)
+    else:
         message1 = CreateMessageHtml(sender, to, subject, msgHtml, msgPlain)
     result = SendMessageInternal(service, "me", message1)
     return result
 
+
 def SendMessageInternal(service, user_id, message):
     try:
-        message = (service.users().messages().send(userId=user_id, body=message).execute())
+        message = (service.users().messages().send(
+            userId=user_id, body=message).execute())
         return message
     except errors.HttpError as error:
         print('An error occurred: %s' % error)
         return "Error"
     return "OK"
+
 
 def CreateMessageHtml(sender, to, subject, msgHtml, msgPlain):
     msg = MIMEMultipart('alternative')
@@ -70,8 +77,9 @@ def CreateMessageHtml(sender, to, subject, msgHtml, msgPlain):
     msg.attach(MIMEText(msgHtml, 'html'))
     return {'raw': base64.urlsafe_b64encode(msg.as_string().encode()).decode()}
 
+
 def createMessageWithAttachment(
-    sender, to, subject, msgHtml, msgPlain, attachmentFile):
+        sender, to, subject, msgHtml, msgPlain, attachmentFile):
     """Create a message for an email.
 
     Args:
@@ -127,6 +135,7 @@ def createMessageWithAttachment(
 
     return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
 
+
 def main():
     to = "fy56@cornell.edu"
     sender = "pan.ssds.qlocate@gmail.com"
@@ -137,8 +146,9 @@ def main():
     # Send message without attachment
     SendMessage(sender, to, subject, msgHtml, msgPlain)
 
-    # Send message with attachment: 
+    # Send message with attachment:
     SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
+
 
 if __name__ == '__main__':
     main()
