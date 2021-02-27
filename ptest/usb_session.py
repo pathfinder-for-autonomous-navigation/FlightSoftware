@@ -31,7 +31,7 @@ class USBSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei = None):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks):
         '''
         Initializes state session with a device.
         '''
@@ -61,6 +61,7 @@ class USBSession(object):
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
         #connect to email
+        self.scrape = scrape_uplinks
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
         self.mail = None
@@ -101,7 +102,7 @@ class USBSession(object):
                 name=f"{self.device_name} logger thread",
                 target=self.check_console_msgs)
             self.check_msgs_thread.start()
-            self.get_uplinks = True
+
             self.scrape_uplinks_thread = threading.Thread(
                 name=f"{self.device_name} uplinks",
                 target=self.scrape_uplinks)
@@ -452,46 +453,59 @@ class USBSession(object):
         box in the PAN email account (attempted uplinks) and passes the uplink packet
         directly to the Flight computer.
         '''
-        while self.get_uplinks == True and self.mail != None:
-            #look for all new emails from iridium
-            self.mail.select('"[Gmail]/Sent Mail"')
-            _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
-            mail_ids = data[0]
-            id_list = mail_ids.split()
+        while self.scrape == True and self.mail != None:
+            self.scrape()
 
-            for num in id_list:
-                #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
-                # Message Access Protocol.
-                _, data = self.mail.fetch(num,'(RFC822)')
+    def scrape_uplink(self):
+        '''
+        Look in the Sent Mail box of the Pan email account and forward all the 
+        uplinks directed to this satellite to the Flight Computer
+        '''
+        #look for all new emails from iridium
+        self.mail.select('"[Gmail]/Sent Mail"')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
 
-                #go through each component of data
-                for response_part in data:
-                    if isinstance(response_part, tuple):
-                        # converts message from byte literal to string removing b''
-                        msg = email.message_from_string(response_part[1].decode('utf-8'))
-                        email_subject = msg['subject']
-                        
-                        if email_subject.isdigit():
-                            # Get imei number of the radio that the uplink was sent to
-                            radio_imei = int(email_subject)
+        for num in id_list:
+            #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
+            # Message Access Protocol.
+            _, data = self.mail.fetch(num,'(RFC822)')
 
-                            if self.radio_imei != None and radio_imei == int(self.radio_imei):
-                                # Go through the email contents
-                                for part in msg.walk():
-                                                
-                                    if part.get_content_maintype() == 'multipart':
-                                        continue
+            #go through each component of data
+            for response_part in data:
+                if isinstance(response_part, tuple):
+                    # converts message from byte literal to string removing b''
+                    msg = email.message_from_string(response_part[1].decode('utf-8'))
+                    email_subject = msg['subject']
+                    
+                    if email_subject.isdigit():
+                        # Get imei number of the radio that the uplink was sent to
+                        radio_imei = int(email_subject)
 
-                                    if part.get('Content-Disposition') is None:
-                                        continue
+                        if self.radio_imei != None and radio_imei == int(self.radio_imei):
+                            # Go through the email contents
+                            for part in msg.walk():
+                                            
+                                if part.get_content_maintype() == 'multipart':
+                                    continue
 
-                                    # Check if there is an email attachment
-                                    if part.get_filename() is not None:
-                                        # Download uplink packet from email attachment and send it to the Flight Computer
-                                        fp = open("new_uplink.sbd", 'wb')
-                                        fp.write(part.get_payload(decode=True))
-                                        fp.close()
-                                        self.send_uplink("new_uplink.sbd")
+                                if part.get('Content-Disposition') is None:
+                                    continue
+
+                                # Check if there is an email attachment
+                                if part.get_filename() is not None:
+                                    # Download uplink packet from email attachment and send it to the Flight Computer
+                                    fp = open("new_uplink.sbd", 'wb')
+                                    fp.write(part.get_payload(decode=True))
+                                    fp.close()
+                                    self.send_uplink("new_uplink.sbd")
+                                    os.remove("new_uplink.sbd")
+                        else:
+                            # Mark message as unseen again if it wasn't addressed to this satellite
+                            self.mail.store(num, '-FLAGS', '\SEEN')
+
+        return True
                         
 
     def disconnect(self):
@@ -502,7 +516,7 @@ class USBSession(object):
         # End threads
         self.running_logger = False
         self.check_msgs_thread.join()
-        self.get_uplinks = False
+        self.scrape = False
         self.scrape_uplinks_thread.join()
         self.console.close()
         self.dp_console.close()
