@@ -12,23 +12,15 @@
 #include <core_pins.h>
 #include <wiring.h>
 
-void pan_system_setup() {
-    StateFieldRegistry registry;
-    MainControlLoop fcp(registry, PAN::flow_data);
-
-    while (true) {
-        fcp.execute();
-    }
-}
-
 // "ifndef UNIT_TEST" used to stop "multiple definition" linker errors when running
 // tests
 #ifndef UNIT_TEST
-void setup() {
-    pan_system_setup();
-    while (true)
-        ;
-}
+void setup() {}
 
-void loop() {}
+void loop() {
+    static StateFieldRegistry registry;
+    static MainControlLoop fcp(registry, PAN::flow_data);
+
+    fcp.execute();
+}
 #endif
