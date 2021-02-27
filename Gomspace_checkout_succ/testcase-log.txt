@@ -1,0 +1,392 @@
+[2021-02-26 17:21:33.023246] [TESTCASE] Starting testcase.
+[2021-02-26 17:21:33.146256] [TESTCASE] Suppressing Faults!
+[2021-02-26 17:21:33.151752] Suppressing gomspace.low_batt
+[2021-02-26 17:21:33.158203] Turning off fault_handler
+[2021-02-26 17:21:33.159700] Suppressing turning off overpressued
+[2021-02-26 17:21:33.165601] Suppressing Tank2 temp high
+[2021-02-26 17:21:33.171797] Suppressing Tank1 temp high
+[2021-02-26 17:21:33.177967] Suppressing adcs_monitor.functional_fault
+[2021-02-26 17:21:33.183656] Suppressing adcs_monitor.wheel1_fault
+[2021-02-26 17:21:33.189770] Suppressing adcs_monitor.wheel2_fault
+[2021-02-26 17:21:33.195741] Suppressing adcs_monitor.wheel3_fault
+[2021-02-26 17:21:33.202269] Suppressing adcs_monitor.wheel_pot_fault
+[2021-02-26 17:21:33.202334] Waiting for the satellite to boot to manual.
+[2021-02-26 17:21:33.207955] [TESTCASE] Fast Boot: Setting MissionMode to manual state.
+[2021-02-26 17:21:33.231778] vboost0 is: 485 mV
+[2021-02-26 17:21:33.231800] vboost1 is: 495 mV
+[2021-02-26 17:21:33.231814] vboost2 is: 496 mV
+[2021-02-26 17:21:33.254825] curin0 is: 0 mA
+[2021-02-26 17:21:33.254846] curin1 is: 71 mA
+[2021-02-26 17:21:33.254861] curin2 is: 0 mA
+[2021-02-26 17:21:33.260868] cursun is: 0 mA
+[2021-02-26 17:21:33.266695] cursys is: 617 mA
+[2021-02-26 17:21:33.301865] curout0 is: 159 mA
+[2021-02-26 17:21:33.301891] curout1 is: 31 mA
+[2021-02-26 17:21:33.301905] curout2 is: 221 mA
+[2021-02-26 17:21:33.301916] curout3 is: 53 mA
+[2021-02-26 17:21:33.301952] curout4 is: 2 mA
+[2021-02-26 17:21:33.301964] curout5 is: 1 mA
+[2021-02-26 17:21:33.342668] wdt_i2c_time_left is less than 99 seconds at: 79
+[2021-02-26 17:21:33.348738] counter_wdt_i2c is: 4294902633
+[2021-02-26 17:21:33.354754] counter_wdt_i2c is: 0
+[2021-02-26 17:21:33.382359] bootcause is: 3
+[2021-02-26 17:21:33.387672] battmode is: 3
+[2021-02-26 17:21:33.392639] pptmode is: 1
+[2021-02-26 17:21:33.693089] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:33.880633] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:34.066791] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:34.254615] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:34.441992] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:34.629762] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:34.816765] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.006915] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.195791] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.382766] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.570631] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.755759] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:35.940674] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:36.126741] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:36.313594] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:36.499697] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:36.686621] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:36.873642] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.057867] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.241805] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.428724] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.615620] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.801650] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:37.987622] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:38.172686] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:38.359749] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:38.546842] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:38.732590] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:38.918709] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:39.105654] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:39.293787] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:39.479604] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:39.667729] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:39.852674] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.040602] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.224714] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.413600] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.599774] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.786601] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:40.972669] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:41.156629] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:41.342567] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:41.529688] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:41.713722] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:41.900570] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:42.088597] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:42.275718] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:42.462632] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:42.651683] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:42.838670] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.025561] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.212546] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.401816] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.591597] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.779646] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:43.965623] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:44.151683] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:44.339750] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:44.527589] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:44.715682] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:44.903631] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:45.090561] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:45.277681] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:45.467542] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:45.654697] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:45.840611] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.028701] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.215543] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.399668] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.589568] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.775725] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:46.964527] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:47.153613] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:47.342119] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:47.529533] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:47.714559] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:47.902622] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:48.088555] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:48.277704] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:48.466874] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:48.652547] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:48.840737] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.030599] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.221618] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.406511] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.592578] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.783640] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:49.973863] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:50.162579] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:50.352621] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:50.541733] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:50.730563] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:50.918606] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:51.109894] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:51.295565] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:51.480634] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:51.667549] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:51.854677] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.043519] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.232580] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.421835] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.609501] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.795628] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:52.984555] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:53.170738] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:53.357713] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:53.544510] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:53.732631] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:53.922575] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:54.109570] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:54.298015] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:54.482554] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:54.672523] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:54.860537] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.049481] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.238461] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.426543] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.612622] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.801616] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:55.986616] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:56.173513] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:56.358552] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:56.547598] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:56.737490] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:56.923483] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:57.110488] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:57.299556] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:57.488586] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:57.676551] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:57.862479] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.050498] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.236547] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.424536] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.612482] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.801509] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:58.989598] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:59.177496] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:59.366475] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:59.554631] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:59.742541] current output: [True, True, True, True, True, True]
+[2021-02-26 17:21:59.927467] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:00.115647] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:00.304566] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:00.491496] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:00.679603] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:00.865525] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.051681] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.234584] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.420501] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.610593] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.797612] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:01.986467] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:02.171550] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:02.358450] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:02.545508] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:02.731535] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:02.918624] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:03.106445] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:03.292501] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:03.479635] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:03.669558] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:03.860521] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.046501] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.232520] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.420571] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.604521] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.790539] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:04.981474] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:05.169441] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:05.357488] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:05.546557] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:05.735529] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:05.922525] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:06.109597] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:06.300573] current output: [True, True, True, True, True, True]
+[2021-02-26 17:22:06.445398] current cycle: 177
+[2021-02-26 17:22:06.480666] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:06.625453] current cycle: 178
+[2021-02-26 17:22:06.660863] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:06.805521] current cycle: 179
+[2021-02-26 17:22:06.839518] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:06.982382] current cycle: 180
+[2021-02-26 17:22:07.016391] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:07.161426] current cycle: 181
+[2021-02-26 17:22:07.194567] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:07.339453] current cycle: 182
+[2021-02-26 17:22:07.374588] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:07.519430] current cycle: 183
+[2021-02-26 17:22:07.554554] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:07.700611] current cycle: 184
+[2021-02-26 17:22:07.735481] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:07.879519] current cycle: 185
+[2021-02-26 17:22:07.911515] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.057604] current cycle: 186
+[2021-02-26 17:22:08.092623] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.237437] current cycle: 187
+[2021-02-26 17:22:08.273489] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.418422] current cycle: 188
+[2021-02-26 17:22:08.452511] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.598374] current cycle: 189
+[2021-02-26 17:22:08.632480] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.777457] current cycle: 190
+[2021-02-26 17:22:08.812432] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:08.956562] current cycle: 191
+[2021-02-26 17:22:08.991565] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:09.137490] current cycle: 192
+[2021-02-26 17:22:09.170420] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:09.315428] current cycle: 193
+[2021-02-26 17:22:09.348527] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:09.493380] current cycle: 194
+[2021-02-26 17:22:09.528535] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:09.673589] current cycle: 195
+[2021-02-26 17:22:09.707621] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:09.853400] current cycle: 196
+[2021-02-26 17:22:09.886380] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.031540] current cycle: 197
+[2021-02-26 17:22:10.065493] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.210414] current cycle: 198
+[2021-02-26 17:22:10.244606] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.389465] current cycle: 199
+[2021-02-26 17:22:10.421603] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.567412] current cycle: 200
+[2021-02-26 17:22:10.602464] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.747553] current cycle: 201
+[2021-02-26 17:22:10.778478] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:10.924373] current cycle: 202
+[2021-02-26 17:22:10.956416] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.100431] current cycle: 203
+[2021-02-26 17:22:11.134419] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.278600] current cycle: 204
+[2021-02-26 17:22:11.313567] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.458385] current cycle: 205
+[2021-02-26 17:22:11.492443] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.637408] current cycle: 206
+[2021-02-26 17:22:11.672535] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.817390] current cycle: 207
+[2021-02-26 17:22:11.852586] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:11.997381] current cycle: 208
+[2021-02-26 17:22:12.031456] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:12.175453] current cycle: 209
+[2021-02-26 17:22:12.207471] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:12.352438] current cycle: 210
+[2021-02-26 17:22:12.388454] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:12.533442] current cycle: 211
+[2021-02-26 17:22:12.566365] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:12.711408] current cycle: 212
+[2021-02-26 17:22:12.744432] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:12.890429] current cycle: 213
+[2021-02-26 17:22:12.923408] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.068375] current cycle: 214
+[2021-02-26 17:22:13.103462] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.247413] current cycle: 215
+[2021-02-26 17:22:13.282617] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.427326] current cycle: 216
+[2021-02-26 17:22:13.462499] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.607469] current cycle: 217
+[2021-02-26 17:22:13.641410] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.784443] current cycle: 218
+[2021-02-26 17:22:13.818416] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:13.962459] current cycle: 219
+[2021-02-26 17:22:13.997518] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:14.142360] current cycle: 220
+[2021-02-26 17:22:14.177425] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:14.321553] current cycle: 221
+[2021-02-26 17:22:14.356456] current output: [False, False, False, False, True, True]
+[2021-02-26 17:22:14.501405] current cycle: 222
+[2021-02-26 17:22:14.536567] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:14.681366] current cycle: 223
+[2021-02-26 17:22:14.715538] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:14.860342] current cycle: 224
+[2021-02-26 17:22:14.893572] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.039465] current cycle: 225
+[2021-02-26 17:22:15.073421] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.218450] current cycle: 226
+[2021-02-26 17:22:15.251372] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.396351] current cycle: 227
+[2021-02-26 17:22:15.429434] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.575544] current cycle: 228
+[2021-02-26 17:22:15.610534] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.755405] current cycle: 229
+[2021-02-26 17:22:15.788430] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:15.932398] current cycle: 230
+[2021-02-26 17:22:15.967573] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:16.112502] current cycle: 231
+[2021-02-26 17:22:16.145449] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:16.291394] current cycle: 232
+[2021-02-26 17:22:16.326484] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:16.472445] current cycle: 233
+[2021-02-26 17:22:16.505447] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:16.650457] current cycle: 234
+[2021-02-26 17:22:16.684434] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:16.829504] current cycle: 235
+[2021-02-26 17:22:16.863493] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.008334] current cycle: 236
+[2021-02-26 17:22:17.042487] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.187353] current cycle: 237
+[2021-02-26 17:22:17.223471] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.368367] current cycle: 238
+[2021-02-26 17:22:17.401416] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.546367] current cycle: 239
+[2021-02-26 17:22:17.580643] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.726410] current cycle: 240
+[2021-02-26 17:22:17.762457] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:17.907333] current cycle: 241
+[2021-02-26 17:22:17.941500] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.086332] current cycle: 242
+[2021-02-26 17:22:18.122589] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.267426] current cycle: 243
+[2021-02-26 17:22:18.301439] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.446384] current cycle: 244
+[2021-02-26 17:22:18.480500] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.625424] current cycle: 245
+[2021-02-26 17:22:18.660786] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.805365] current cycle: 246
+[2021-02-26 17:22:18.840529] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:18.986457] current cycle: 247
+[2021-02-26 17:22:19.019472] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:19.165427] current cycle: 248
+[2021-02-26 17:22:19.198627] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:19.344474] current cycle: 249
+[2021-02-26 17:22:19.378581] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:19.523402] current cycle: 250
+[2021-02-26 17:22:19.558420] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:19.703390] current cycle: 251
+[2021-02-26 17:22:19.739570] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:19.885553] current cycle: 252
+[2021-02-26 17:22:19.918411] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.063398] current cycle: 253
+[2021-02-26 17:22:20.097406] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.241386] current cycle: 254
+[2021-02-26 17:22:20.275365] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.419358] current cycle: 255
+[2021-02-26 17:22:20.452535] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.597389] current cycle: 256
+[2021-02-26 17:22:20.631409] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.776476] current cycle: 257
+[2021-02-26 17:22:20.810629] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:20.955435] current cycle: 258
+[2021-02-26 17:22:20.990460] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:21.136390] current cycle: 259
+[2021-02-26 17:22:21.169321] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:21.314415] current cycle: 260
+[2021-02-26 17:22:21.345377] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:21.490478] current cycle: 261
+[2021-02-26 17:22:21.526413] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:21.671373] current cycle: 262
+[2021-02-26 17:22:21.704316] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:21.849361] current cycle: 263
+[2021-02-26 17:22:21.884427] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:22.029307] current cycle: 264
+[2021-02-26 17:22:22.062348] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:22.207413] current cycle: 265
+[2021-02-26 17:22:22.243413] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:22.388373] current cycle: 266
+[2021-02-26 17:22:22.423505] current output: [False, False, False, False, True, False]
+[2021-02-26 17:22:22.569321] current cycle: 267
+[2021-02-26 17:22:22.603435] current output: [False, False, False, False, False, False]
+[2021-02-26 17:22:22.748429] current cycle: 268

@@ -1,0 +1,28 @@
+[2021-02-26 17:36:04.840215] [TESTCASE] Starting testcase.
+[2021-02-26 17:36:04.959883] [TESTCASE] Suppressing Faults!
+[2021-02-26 17:36:04.965634] Suppressing gomspace.low_batt
+[2021-02-26 17:36:04.971568] Turning off fault_handler
+[2021-02-26 17:36:04.977534] Suppressing turning off overpressued
+[2021-02-26 17:36:04.983180] Suppressing Tank2 temp high
+[2021-02-26 17:36:04.988063] Suppressing Tank1 temp high
+[2021-02-26 17:36:04.993207] Suppressing adcs_monitor.functional_fault
+[2021-02-26 17:36:04.998260] Suppressing adcs_monitor.wheel1_fault
+[2021-02-26 17:36:05.004215] Suppressing adcs_monitor.wheel2_fault
+[2021-02-26 17:36:05.009328] Suppressing adcs_monitor.wheel3_fault
+[2021-02-26 17:36:05.015614] Suppressing adcs_monitor.wheel_pot_fault
+[2021-02-26 17:36:05.015671] Waiting for the satellite to boot to manual.
+[2021-02-26 17:36:05.021554] [TESTCASE] Fast Boot: Setting MissionMode to manual state.
+[2021-02-26 17:36:05.192472] Testcase initialized correctly.
+[2021-02-26 17:36:05.192625] 
+[2021-02-26 17:36:05.192696] Step 1: Enable both DCDCs...
+[2021-02-26 17:36:05.375289] Success!
+[2021-02-26 17:36:05.375312] 
+[2021-02-26 17:36:05.375343] Step 2: Set only ADCS to be on and then attempt a reset command...
+[2021-02-26 17:36:05.907320] Success!
+[2021-02-26 17:36:05.907340] 
+[2021-02-26 17:36:05.907388] Step 3: Enable only Prop to be on and then attempt a reset command...
+[2021-02-26 17:36:06.444241] Success!
+[2021-02-26 17:36:06.444261] 
+[2021-02-26 17:36:06.444287] Step 4: Disable both DCDCs and attempt a reset command...
+[2021-02-26 17:36:06.803137] Success!
+[2021-02-26 17:36:06.803214] 

@@ -1,0 +1,38 @@
+[2021-02-27 15:09:24.244867] [TESTCASE] Starting testcase.
+[2021-02-27 15:09:24.365842] [TESTCASE] Suppressing Faults!
+[2021-02-27 15:09:24.371356] Suppressing gomspace.low_batt
+[2021-02-27 15:09:24.377388] Turning off fault_handler
+[2021-02-27 15:09:24.378489] Suppressing turning off overpressued
+[2021-02-27 15:09:24.384155] Suppressing Tank2 temp high
+[2021-02-27 15:09:24.389079] Suppressing Tank1 temp high
+[2021-02-27 15:09:24.394210] Suppressing adcs_monitor.functional_fault
+[2021-02-27 15:09:24.399002] Suppressing adcs_monitor.wheel1_fault
+[2021-02-27 15:09:24.404195] Suppressing adcs_monitor.wheel2_fault
+[2021-02-27 15:09:24.409151] Suppressing adcs_monitor.wheel3_fault
+[2021-02-27 15:09:24.414093] Suppressing adcs_monitor.wheel_pot_fault
+[2021-02-27 15:09:24.414121] Waiting for the satellite to boot to manual.
+[2021-02-27 15:09:24.419601] [TESTCASE] Fast Boot: Setting MissionMode to manual state.
+[2021-02-27 15:09:24.472438] 
+Testing docking and undocking with initial step angle of 0.032 and step delay of 4000. 
+Docking and Undocking should take 275 cycles.
+[2021-02-27 15:09:24.483702] 
+Starting to undock.
+[2021-02-27 15:09:24.532294] Cycle: 1	dock_config: true	turning: false	docked: false	dock_cmd: false	battery_voltage: 8202	battery_current : 666
+[2021-02-27 15:10:09.881049] Cycle: 267	dock_config: false	turning: false	docked: true	dock_cmd: false	battery_voltage: 8202	battery_current : 585
+[2021-02-27 15:10:09.886055] Successfully finished undocking config command in 266 cycles
+[2021-02-27 15:10:09.898316] 
+Starting to dock.
+[2021-02-27 15:10:09.949128] Cycle: 267	dock_config: false	turning: false	docked: true	dock_cmd: true	battery_voltage: 8202	battery_current : 585
+[2021-02-27 15:10:55.141721] Cycle: 532	dock_config: true	turning: false	docked: true	dock_cmd: true	battery_voltage: 8183	battery_current : 666
+[2021-02-27 15:10:55.146673] Successfully finished docking config command in 265 cycles
+[2021-02-27 15:10:55.146707] 
+Changing step angle from 0.032 to 0.036 and step delay from 4000 to 2000. 
+Docking and Undocking should take 150 cycles.
+[2021-02-27 15:10:55.185900] 
+Starting to undock.
+[2021-02-27 15:10:55.239554] Cycle: 532	dock_config: true	turning: false	docked: true	dock_cmd: false	battery_voltage: 8183	battery_current : 666
+[2021-02-27 15:11:15.546636] Cycle: 651	dock_config: false	turning: false	docked: true	dock_cmd: false	battery_voltage: 8174	battery_current : 690
+[2021-02-27 15:11:15.552629] Successfully finished undocking config command in 119 cycles
+[2021-02-27 15:11:15.564773] 
+Starting to dock.
+[2021-02-27 15:11:15.614997] Cycle: 651	dock_config: false	turning: false	docked: true	dock_cmd: true	battery_voltage: 8174	battery_current : 690
