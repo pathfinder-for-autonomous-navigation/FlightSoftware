@@ -1,5 +1,4 @@
 #include "Piksi.hpp"
-#include "common/debug_console.hpp"
 #include <cstring>
 
 #ifndef DESKTOP
@@ -333,19 +332,11 @@ unsigned char Piksi::read_all() {
     for (int i = 0; i < bytes; i++){
         *(buffer_end++) = Serial4.read();
     }
+    clear_bytes();
 
-    microdelta = (time - start_time)*100;
-
-    unsigned long start_time_l = start_time;
-    unsigned long last_time_l = last_time;
+    microdelta = (time - start_time)*100; //convert to us
 
     interrupts();
-
-    debug_console::printf(debug_severity::error, "microdelta : %lu", microdelta);
-    debug_console::printf(debug_severity::error, "bytes : %d", bytes);
-    debug_console::printf(debug_severity::error, "start time : %lu", start_time_l);
-    debug_console::printf(debug_severity::error, "last time : %lu", last_time_l);
-    debug_console::printf(debug_severity::error, "time : %lu\n", time);
     
     _gps_time_update = false;
     _pos_ecef_update = false;
@@ -353,7 +344,10 @@ unsigned char Piksi::read_all() {
     _baseline_ecef_update = false;
     
     if(buffer_begin < buffer_end){ 
-        bool crc_error = process_buffer() < 0;
+        bool crc_error;
+        while(buffer_begin < buffer_end){
+            crc_error = process_buffer() < 0;
+        }
 
         if(crc_error)
             return 3;
