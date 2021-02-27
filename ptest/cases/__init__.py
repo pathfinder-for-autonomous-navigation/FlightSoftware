@@ -14,6 +14,7 @@ from .psim_debug import PsimDebug
 
 # Testcases that don't require simulation
 from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
@@ -35,4 +36,8 @@ from .reset_for_flight import ResetforFlight
 from .safehold_standby_transition_case import SafeholdStandbyTransitionCase
 from .gomspacelogger import GomspaceLog
 
+<<<<<<< HEAD
 from .reboot_utility import Reboot
+=======
+from .dual_psim import DualPsim
+>>>>>>> dual_hitl_hootl

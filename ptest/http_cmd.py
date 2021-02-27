@@ -129,6 +129,11 @@ def create_radio_session_endpoint(radio_session, queue):
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+
+        #### FOR AMC TESTING ONLY!!! #####
+        if radio_session.username!="":
+            radio_session.mark_message_unseen()
+
          # Remove uplink files/cleanup
         os.remove("uplink.sbd")
         os.remove("uplink.json")
@@ -148,27 +153,31 @@ def create_usb_session_endpoint(usb_session):
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/usb_session/send-telem.yml")
     def send_telem():
-        uplink=request.get_json()
+        try:
+            uplink=request.get_json()
+            print(uplink)
+            # Create an uplink packet
+            fields, vals=list(), list()
+            for field_val in uplink:
+                fields.append(field_val["field"])
+                vals.append(field_val["value"])
 
-        # Create an uplink packet
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
+            uplink_console = app.config["uplink_console"]
+            success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
-        uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+            # If the uplink packet is successfully created, then send it to the Flight Computer
+            if not success: return "Unable to send telemetry"
+            success = usb_session.send_uplink("uplink.sbd")
 
-        # If the uplink packet is successfully created, then send it to the Flight Computer
-        if not success: return "Unable to send telemetry"
-        success = usb_session.send_uplink("uplink.sbd")
+            # Get rid of uplink files/cleanup
+            os.remove("uplink.sbd")
+            os.remove("uplink.json")
 
-        # Get rid of uplink files/cleanup
-        os.remove("uplink.sbd")
-        os.remove("uplink.json")
-
-        if success:
-            return "Successfully sent telemetry to State Session"
-        return "Unable to send telemetry"
-
+            if success:
+                return "Successfully sent telemetry to State Session"
+            return "Unable to send telemetry"
+        except:
+            import traceback
+            return traceback.format_exc()
+    
     return app
