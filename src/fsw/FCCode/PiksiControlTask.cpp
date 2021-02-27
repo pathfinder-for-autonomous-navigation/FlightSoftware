@@ -151,20 +151,3 @@ void PiksiControlTask::execute()
     }
 }
 
-// void PiksiControlTask::serialEvent()
-// {
-//     //currently no bytes available
-//     bool not_available_temp = piksi.bytes_available() == 0;
-
-//     // bytes have just started becoming available
-//     if (!not_available_temp && no_bytes_available_f) 
-//     {
-//         piksi.get_gps_time(&msg_time);
-//         time = gps_time_t(msg_time);
-
-//         // sendtime = time that bytes start become available
-//         sendtime_f.set(time);
-//     }
-
-//     no_bytes_available_f = not_available_temp;
-// }
