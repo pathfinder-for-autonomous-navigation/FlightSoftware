@@ -35,7 +35,13 @@ class QuakeManager : public TimedControlTask<void>
 {
 public:
    QuakeManager(StateFieldRegistry &registry, unsigned int offset);
-
+   
+   /**
+    * @brief i cri
+    * 
+    */
+   void init();
+   
    ~QuakeManager();
 #ifndef FLIGHT
 

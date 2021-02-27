@@ -7,7 +7,7 @@
             "key": "attitude_estimator.q_body_eci",
             "values": [
                 {
-                    "bitsize": 29,
+                    "bitsize": 0,
                     "flow_id": 3,
                     "type": "lin float quaternion",
                     "writable": false,
@@ -34,7 +34,7 @@
             "key": "attitude_estimator.w_body",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 149,
                     "flow_id": 3,
                     "max": 2.181661605834961,
                     "min": -2.181661605834961,

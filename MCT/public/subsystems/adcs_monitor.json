@@ -328,10 +328,10 @@
             "key": "adcs_monitor.rwa_speed_rd",
             "values": [
                 {
-                    "bitsize": 24,
+                    "bitsize": 10,
                     "flow_id": 7,
-                    "max": 1047.199951171875,
-                    "min": -1047.199951171875,
+                    "max": 1.0,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Rwa_speed_rd",
@@ -357,10 +357,10 @@
             "key": "adcs_monitor.rwa_torque_rd",
             "values": [
                 {
-                    "bitsize": 24,
+                    "bitsize": 10,
                     "flow_id": 7,
-                    "max": 0.004187500569969,
-                    "min": -0.004187500569969,
+                    "max": 1.0,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Rwa_torque_rd",
@@ -1083,7 +1083,7 @@
             "key": "adcs_monitor.ssa_voltage0",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1112,7 +1112,7 @@
             "key": "adcs_monitor.ssa_voltage1",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1141,7 +1141,7 @@
             "key": "adcs_monitor.ssa_voltage2",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1170,7 +1170,7 @@
             "key": "adcs_monitor.ssa_voltage3",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1199,7 +1199,7 @@
             "key": "adcs_monitor.ssa_voltage4",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1228,7 +1228,7 @@
             "key": "adcs_monitor.ssa_voltage5",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1257,7 +1257,7 @@
             "key": "adcs_monitor.ssa_voltage6",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1286,7 +1286,7 @@
             "key": "adcs_monitor.ssa_voltage7",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1315,7 +1315,7 @@
             "key": "adcs_monitor.ssa_voltage8",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1344,7 +1344,7 @@
             "key": "adcs_monitor.ssa_voltage9",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1373,7 +1373,7 @@
             "key": "adcs_monitor.ssa_voltage10",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1402,7 +1402,7 @@
             "key": "adcs_monitor.ssa_voltage11",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1431,7 +1431,7 @@
             "key": "adcs_monitor.ssa_voltage12",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1460,7 +1460,7 @@
             "key": "adcs_monitor.ssa_voltage13",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1489,7 +1489,7 @@
             "key": "adcs_monitor.ssa_voltage14",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1518,7 +1518,7 @@
             "key": "adcs_monitor.ssa_voltage15",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1547,7 +1547,7 @@
             "key": "adcs_monitor.ssa_voltage16",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1576,7 +1576,7 @@
             "key": "adcs_monitor.ssa_voltage17",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1605,7 +1605,7 @@
             "key": "adcs_monitor.ssa_voltage18",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1634,7 +1634,7 @@
             "key": "adcs_monitor.ssa_voltage19",
             "values": [
                 {
-                    "bitsize": 12,
+                    "bitsize": 8,
                     "flow_id": 25,
                     "max": 3.299999952316284,
                     "min": 0.0,
@@ -1663,7 +1663,7 @@
             "key": "adcs_monitor.gyr_temp",
             "values": [
                 {
-                    "bitsize": 8,
+                    "bitsize": 16,
                     "flow_id": 24,
                     "max": 153.0,
                     "min": -103.0,
@@ -1692,10 +1692,10 @@
             "key": "adcs_monitor.gyr_vec",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 10,
                     "flow_id": 24,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
+                    "max": 1.0,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Gyr_vec",
@@ -1721,10 +1721,10 @@
             "key": "adcs_monitor.mag1_vec",
             "values": [
                 {
-                    "bitsize": 24,
+                    "bitsize": 10,
                     "flow_id": 24,
-                    "max": 0.004999999888241,
-                    "min": -0.004999999888241,
+                    "max": 1.0,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Mag1_vec",
@@ -1750,10 +1750,10 @@
             "key": "adcs_monitor.mag2_vec",
             "values": [
                 {
-                    "bitsize": 24,
+                    "bitsize": 10,
                     "flow_id": 24,
-                    "max": 0.003199999919161,
-                    "min": -0.003199999919161,
+                    "max": 1.0,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Mag2_vec",
@@ -1779,10 +1779,10 @@
             "key": "adcs_monitor.ssa_vec",
             "values": [
                 {
-                    "bitsize": 21,
+                    "bitsize": 31,
                     "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Ssa_vec",

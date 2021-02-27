@@ -7,10 +7,10 @@
             "key": "attitude.pointer_vec1_current",
             "values": [
                 {
-                    "bitsize": 96,
+                    "bitsize": 31,
                     "flow_id": 14,
-                    "max": 1.0,
-                    "min": 0.0,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Pointer_vec1_current",
@@ -36,10 +36,10 @@
             "key": "attitude.pointer_vec1_desired",
             "values": [
                 {
-                    "bitsize": 96,
+                    "bitsize": 31,
                     "flow_id": 14,
-                    "max": 1.0,
-                    "min": 0.0,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": true,
                     "name": "Pointer_vec1_desired",
@@ -65,10 +65,10 @@
             "key": "attitude.pointer_vec2_current",
             "values": [
                 {
-                    "bitsize": 96,
+                    "bitsize": 31,
                     "flow_id": 14,
-                    "max": 1.0,
-                    "min": 0.0,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
                     "name": "Pointer_vec2_current",
@@ -94,10 +94,10 @@
             "key": "attitude.pointer_vec2_desired",
             "values": [
                 {
-                    "bitsize": 96,
+                    "bitsize": 31,
                     "flow_id": 14,
-                    "max": 1.0,
-                    "min": 0.0,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": true,
                     "name": "Pointer_vec2_desired",

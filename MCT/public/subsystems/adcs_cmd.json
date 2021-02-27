@@ -7,7 +7,7 @@
             "key": "adcs_cmd.rwa_speed_cmd",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 149,
                     "flow_id": 7,
                     "max": 680.677978515625,
                     "min": -680.677978515625,
@@ -36,7 +36,7 @@
             "key": "adcs_cmd.rwa_torque_cmd",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 149,
                     "flow_id": 7,
                     "max": 0.004187500569969,
                     "min": -0.004187500569969,
@@ -65,7 +65,7 @@
             "key": "adcs_cmd.mtr_cmd",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 149,
                     "flow_id": 13,
                     "max": 0.056668501347303,
                     "min": -0.056668501347303,

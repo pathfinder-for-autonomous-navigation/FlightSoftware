@@ -67,6 +67,10 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
     dump_telemetry_f.set(false);
 
+}
+
+void QuakeManager::init(){
+
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
     mo_buffer_copy = new char[max_snapshot_size]();
@@ -275,7 +279,11 @@ void QuakeManager::dispatch_transceive()
     if (has_finished())
     {
         // Case 1: We have no comms --> try again until we run out of cycles
+        #if !defined(FLIGHT) && defined(AUTOTELEM)
+        if (false) //lol
+        #else
         if (qct.get_MO_status() > 4)
+        #endif
         {
             return handle_no_comms();
         }
@@ -310,6 +318,7 @@ void QuakeManager::handle_no_comms()
     else
     {
         mo_idx = 0; // Make sure we get a new snapshot
+        printf(debug_severity::error, "new sn: %d\n", mo_idx);
         return transition_radio_state(radio_state_t::write);
     }
 }

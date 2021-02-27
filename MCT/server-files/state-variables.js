@@ -2,13 +2,15 @@
 module.exports = {
 pan: {
 state: 0,
+cycle_no: 0,
 deployed: false,
 sat_designation: 0,
 bootcount: 0},
 
 orbit: {
 baseline_pos: 0.0,
-pos: 0.0},
+pos: 0.0,
+vel: 0.0},
 
 piksi: {
 time: '',
