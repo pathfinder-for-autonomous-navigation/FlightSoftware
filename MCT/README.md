@@ -1,4 +1,5 @@
 # PAN Mission Control (OpenMCT)
+
 <hr style="border:4px solid gray"> </hr>
 
 [Usage Guide]:
@@ -8,6 +9,7 @@
    2. [Adding to the Instillation Configuration Object]
    3. [Installing the plugin in index.html]
    4. [Adding entry to state-variables.js to initialize the the variables]
+
 
 [Code Description]:
 1. [The Generic Plugin]

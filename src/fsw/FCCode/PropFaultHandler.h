@@ -21,7 +21,6 @@ private:
     // To be used when handling the event where both Tanks want to vent
     WritableStateField<unsigned int> *max_venting_cycles_fp;
 
-    Fault *pressurize_fail_fault_fp; // underpressurized
     Fault *overpressure_fault_fp;    // overpressurized
     Fault *tank2_temp_high_fault_fp;
     Fault *tank1_temp_high_fault_fp;

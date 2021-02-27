@@ -27,10 +27,11 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
     pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_pos)),
-    pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 32*3)),
-    pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 32*3)),
-    pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
-    pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
+    unit_vector_sr(1-1e-4,1+1e-4,0),
+    pointer_vec1_current_f("attitude.pointer_vec1_current", unit_vector_sr),
+    pointer_vec2_current_f("attitude.pointer_vec2_current", unit_vector_sr),
+    pointer_vec1_desired_f("attitude.pointer_vec1_desired", unit_vector_sr),
+    pointer_vec2_desired_f("attitude.pointer_vec2_desired", unit_vector_sr),
     t_body_cmd_f("pointer.rwa_torque_cmd", 
         Serializer<lin::Vector3f>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
     m_body_cmd_f("pointer.mtr_cmd", 
@@ -179,8 +180,8 @@ void AttitudeController::calculate_pointing_objectives() {
                 return;
             pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
-            pointer_vec1_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 1))); // v_hat_body
-            pointer_vec2_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 2))); // n_hat_body
+            pointer_vec1_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 1))); // v_hat_body
+            pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
             break;
         /*
          * Here we simply want to point the docking face towards the other
@@ -192,7 +193,7 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec1_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
             pointer_vec2_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));   // dr_hat
-            pointer_vec2_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 2))); // n_hat_body
+            pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
             break;
         }
         /* In other adcs states, we won't specify a pointing strategy.

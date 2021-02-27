@@ -10,11 +10,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/src/gsw"
+    "url": "git+https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/MCT"
   },
   "author": "Kirin Kambon, Tanishq Aggarwal, and Duncan McDonald",
   "dependencies": {
-    "axios": "^0.19.2",
     "express": "^4.14.1",
     "express-ws": "^3.0.0",
     "openmct": "https://github.com/nasa/openmct.git",

@@ -13,6 +13,7 @@ from ..gpstime import GPSTime
 import psim
 import lin 
 import json
+from ..cases.utils import is_lin_vector, to_lin_vector
 
 class Simulation(object):
     """
@@ -46,7 +47,7 @@ class Simulation(object):
 
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
-        else:
+        elif self.devices:
             self.flight_controller_leader = self.devices['FlightControllerLeader']
             self.flight_controller_follower = self.devices['FlightControllerFollower']
 
@@ -59,7 +60,7 @@ class Simulation(object):
 
     def start(self):
         '''
-        Start the MATLAB simulation. This function is blocking until the simulation begins.
+        Start the PSim C++ simulation. This function is blocking until the simulation begins.
         '''
         self.add_to_log("Starting simulation loop...")
         if self.is_interactive:
@@ -157,7 +158,7 @@ class Simulation(object):
     def interact_fc(self):
         if self.is_single_sat_sim:
             self.interact_fc_onesat(self.flight_controller)
-        else:
+        elif self.devices:
             self.interact_fc_onesat(self.flight_controller_follower)
             self.interact_fc_onesat(self.flight_controller_leader)
 
@@ -206,6 +207,20 @@ class CppSimulation(Simulation):
 
         configs_list = [prefix + x + postfix for x in self.sim_configs]
         config = psim.Configuration(configs_list)
+        
+        self.add_to_log("[ sim ] Overwriting Initial Sim Conditions...")
+
+        # get the mutation dict from test case
+        initials = self.testcase.sim_ic_map
+
+        # mutate config
+        for k,v in initials.items():
+            self.add_to_log(f"[ sim ] Set {k} to {v}")            
+            if type(v) == list:
+                v = to_lin_vector(v)
+            config[k] = v
+
+        # construct sim
         self.mysim = psim.Simulation(self.sim_model, config)
         self.dt = self.mysim["truth.dt.ns"]/1e9
 
@@ -218,7 +233,7 @@ class CppSimulation(Simulation):
         fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
         with open(fn) as json_file:
             self.fc_vs_sim = json.load(json_file)
-        
+
         # Create sub dictionaries for sensors and actuators
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
         self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']

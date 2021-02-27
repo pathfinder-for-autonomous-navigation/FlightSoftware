@@ -4,6 +4,26 @@ import math
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""
 
+def is_lin_vector(var):
+    import lin
+    return type(var) in {lin.Vector2, lin.Vector3, lin.Vector4}
+
+def to_lin_vector(var):
+    import lin
+    if type(var) == list:
+        _len = len(var)
+        if _len == 2:
+            var = lin.Vector2(var)
+        elif _len == 3:
+            var = lin.Vector3(var)
+        elif _len == 4:
+            var = lin.Vector4(var)
+        else:
+            raise RuntimeError("Unexpected List Length, can't change into lin Vector")
+    else:
+        raise RuntimeError("Expected list, can't change into lin Vector")
+    return var
+
 def mag_of(vals):
         """
         Returns the magnitude of a list of vals 
@@ -28,6 +48,29 @@ def sum_of_differentials(lists_of_vals):
         total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
 
     return sum(total_diff)
+
+def str_to_val(field):
+        '''
+        Automatically detects floats, ints and bools
+
+        Returns a float, int or bool
+        '''
+        if ',' in field:
+            # ret is a list
+            list_of_strings = field.split(',')
+            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_vals = [str_to_val(x) for x in list_of_strings]
+            return list_of_vals
+        elif 'nan' in field:
+            return float("NAN")
+        elif '.' in field:
+            return float(field)
+        elif field == 'true':
+            return True
+        elif field == 'false':
+            return False
+        else:
+            return int(field)
 
 class FSWEnum(object):
     """
@@ -230,12 +273,38 @@ class BootUtil(object):
         if self.suppress_faults:
             self.logger.put("[TESTCASE] Suppressing Faults!")
 
+            # Prevent faults from mucking up the state machine.
+            self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
+            self.logger.put("Suppressing gomspace.low_batt")
+            
+            self.flight_controller.write_state("fault_handler.enabled", "false")
+            self.logger.put("Turning off fault_handler")
+
+            # Suppress Prop Faults
+            self.flight_controller.write_state("prop.overpressured.suppress", "true")
+            self.logger.put("Suppressing turning off overpressued")
+
+            self.flight_controller.write_state("prop.tank2_temp_high.suppress", "true")
+            self.logger.put("Suppressing Tank2 temp high ")
+
+            self.flight_controller.write_state("prop.tank1_temp_high.suppress", "true")
+            self.logger.put("Suppressing Tank1 temp high")
+    
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
+            self.logger.put("Suppressing adcs_monitor.functional_fault")
+
             self.flight_controller.write_state("adcs_monitor.wheel1_fault.suppress", "true")
+            self.logger.put("Suppressing adcs_monitor.wheel1_fault")
+
             self.flight_controller.write_state("adcs_monitor.wheel2_fault.suppress", "true")
+            self.logger.put("Suppressing adcs_monitor.wheel2_fault")
+
             self.flight_controller.write_state("adcs_monitor.wheel3_fault.suppress", "true")
+            self.logger.put("Suppressing adcs_monitor.wheel3_fault")
+
             self.flight_controller.write_state("adcs_monitor.wheel_pot_fault.suppress", "true")
+            self.logger.put("Suppressing adcs_monitor.wheel_pot_fault")
 
         self.logger.put(f"Waiting for the satellite to boot to {self.desired_boot_state}.")
 

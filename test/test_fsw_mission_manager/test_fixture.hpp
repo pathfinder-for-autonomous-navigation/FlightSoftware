@@ -45,6 +45,7 @@ public:
   std::shared_ptr<Fault> overpressured_fp;
 
   std::shared_ptr<WritableStateField<bool>> sph_dcdc_fp;
+  std::shared_ptr<WritableStateField<bool>> adcs_dcdc_fp;
 
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
@@ -82,6 +83,7 @@ public:
 
   // Check if the SpikeDoc DCDC pin is on or off.
   void check_sph_dcdc_on(bool on) const;
+  void check_adcs_dcdc_on(bool on) const;
 
   // Containers for enum possibilities
   static adcs_state_t adcs_states[9];

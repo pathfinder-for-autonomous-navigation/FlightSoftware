@@ -38,9 +38,16 @@ class PsimDebug(SingleSatOnlyCase):
     def sim_initial_state(self):
         return "startup"
 
+    @property
+    def sim_ic_map(self):
+        ret = {}
+        ret["truth.t.ns"] = 420000000*10
+        ret["truth.leader.attitude.w"] = [1,2,3]
+        return ret
+
     def setup_post_bootsetup(self):
-        self.print_ws("pan.state", Enums.mission_states['standby'])
-        self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
+        # self.print_ws("pan.state", Enums.mission_states['standby'])
+        # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
         return
 
     def data_logs(self):
@@ -63,6 +70,8 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs("adcs_cmd.rwa_torque_cmd")
 
     def run_case_singlesat(self):
-        # self.print_rs_psim("truth.leader.environment.s.body")
         self.rs_psim("truth.leader.attitude.w")
+        self.rs_psim("truth.t.ns")
+        self.rs_psim("truth.dt.ns")
+
         self.data_logs()

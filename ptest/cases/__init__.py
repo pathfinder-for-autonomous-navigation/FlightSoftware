@@ -7,6 +7,8 @@ from .empty_case import EmptySimCase, FailingEmptySimCase
 from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
+from .autonomous_mission_manager_case import AutonomousMissionManagerCase
+from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
 from .psim_debug import PsimDebug
 
@@ -25,8 +27,12 @@ from .gyro_heater_diag_case import GyroHeaterDiagCase
 from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .prop_fault_handler import PropFaultHandler
 from .gomspace_long_duration_case import GomspaceLongDurationCheckoutCase
 from .hardware_stress_test_case import HardwareStressCheckoutCase
 from .torquer_rotate_case import MTorquerCase
-from  .reset_for_flight import ResetforFlight
-from .prep_for_charging_case import PrepForCharging
+from .reset_for_flight import ResetforFlight
+from .safehold_standby_transition_case import SafeholdStandbyTransitionCase
+from .gomspacelogger import GomspaceLog
+
+from .reboot_utility import Reboot

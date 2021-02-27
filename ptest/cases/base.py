@@ -77,6 +77,16 @@ class PTestCase(object):
         return 'startup'
 
     @property
+    def sim_ic_map(self):
+        """
+        A dictionary of strings representing sim key names to
+        values that should be overriding the sim initial conditions
+        
+        Defaults to empty dict (nothing is mutated)
+        """
+        return {}
+
+    @property
     def havt_read(self):
         '''
         Returns the ADCS HAVT table as a list of booleans
@@ -111,13 +121,14 @@ class PTestCase(object):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
-    def setup_case(self, devices):
+    
+    def setup_case(self, devices, radios):
         '''
         Entry point for simulation creation
         '''
-        self.populate_devices(devices)
+        self.populate_devices(devices, radios)
 
-        for dev_name,device in devices.items():
+        for _,device in devices.items():
             device.case_interaction_setup(self.debug_to_console)
 
         if self.sim_duration > 0:
@@ -143,7 +154,7 @@ class PTestCase(object):
         while not self.finished:
             self.run_case()
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         """
         Read the list of PTest-connected devices and
         pull in the ones that we care about.
@@ -199,7 +210,7 @@ class SingleSatOnlyCase(PTestCase):
         """
         return "manual"
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
         self.devices = [self.flight_controller]
 
@@ -214,9 +225,6 @@ class SingleSatOnlyCase(PTestCase):
     def _setup_case(self):
         self.setup_pre_bootsetup()
 
-        # Prevent faults from mucking up the state machine.
-        self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
-        self.flight_controller.write_state("fault_handler.enabled", "false")
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
         self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
@@ -320,16 +328,16 @@ class SingleSatOnlyCase(PTestCase):
         if(ret is None):
             raise NameError(f"ptest read failed: psim state field {name} does not exist!")
         
+        stripped = ret
         if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
             ret = list(ret)
-        
-        stripped = str(ret).strip("[]").replace(" ","")+","
+            stripped = str(ret).strip("[]").replace(" ","")+","
         
         packet = {}
         
         packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
         packet["field"] = name
-        packet["val"] = stripped
+        packet["val"] = str(stripped)
         packet["time"] = str(datetime.datetime.now())
 
         # log to datastore
@@ -389,10 +397,18 @@ class MissionCase(PTestCase):
     case.
     """
 
-    def populate_devices(self, devices):
-        self.flight_controller_leader = devices["FlightControllerLeader"]
-        self.flight_controller_follower = devices["FlightControllerFollower"]
-        self.devices = [self.flight_controller_leader, self.flight_controller_follower]
+    def populate_devices(self, devices, radios):
+        if devices:
+            self.flight_controller_leader = devices["FlightControllerLeader"]
+            self.flight_controller_follower = devices["FlightControllerFollower"]
+            self.devices = [self.flight_controller_leader, self.flight_controller_follower]
+        if "FlightControllerLeaderRadio" in radios:
+            self.radio_leader = radios["FlightControllerLeaderRadio"]
+            self.radio_follower = radios["FlightControllerFollowerRadio"]
+        else:
+            self.radio_leader = None
+            self.radio_follower = None
+        
 
     @property
     def initial_state_leader(self):
@@ -409,21 +425,22 @@ class MissionCase(PTestCase):
         raise NotImplementedError
 
     def _setup_case(self):
-        self.setup_pre_bootsetup_leader()
-        self.setup_pre_bootsetup_follower()
-        self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
-        self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
+        if self.devices != None:
+            self.setup_pre_bootsetup_leader()
+            self.setup_pre_bootsetup_follower()
+            self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+            self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
 
-        self.boot_util_leader = BootUtil(
-            self.flight_controller_leader, self.logger, self.initial_state_leader, 
-            self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
-        self.boot_util_follower = BootUtil(
-            self.flight_controller_follower, self.logger, self.initial_state_follower, 
-            self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
-        self.boot_util_leader.setup_boot()
-        self.boot_util_follower.setup_boot()
-        self.setup_post_bootsetup_leader()
-        self.setup_post_bootsetup_follower()
+            self.boot_util_leader = BootUtil(
+                self.flight_controller_leader, self.logger, self.initial_state_leader, 
+                self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
+            self.boot_util_follower = BootUtil(
+                self.flight_controller_follower, self.logger, self.initial_state_follower, 
+                self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
+            self.boot_util_leader.setup_boot()
+            self.boot_util_follower.setup_boot()
+            self.setup_post_bootsetup_leader()
+            self.setup_post_bootsetup_follower()
 
     def setup_pre_bootsetup_leader(self): pass
     def setup_pre_bootsetup_follower(self): pass
@@ -431,8 +448,9 @@ class MissionCase(PTestCase):
     def setup_post_bootsetup_follower(self): pass
 
     def _run_case(self):
-        if not self.boot_util_follower.finished_boot(): return
-        if not self.boot_util_leader.finished_boot(): return
+        if self.devices != None:
+            if not self.boot_util_follower.finished_boot(): return
+            if not self.boot_util_leader.finished_boot(): return
         self.run_case_fullmission()
 
     def run_case_fullmission(self):
@@ -457,11 +475,11 @@ class MissionCase(PTestCase):
 
     def write_state_leader(self, string_state, state_value):
         self.flight_controller_leader.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_leader.read_state(string_state)
 
     def read_state_follower(self, string_state):
         return self.flight_controller_follower.read_state(string_state)
 
     def write_state_follower(self, string_state, state_value):
         self.flight_controller_follower.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        return self.flight_controller_follower.read_state(string_state)
