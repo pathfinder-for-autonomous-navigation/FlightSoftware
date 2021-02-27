@@ -110,9 +110,11 @@ class AutonomousMissionController(MissionCase):
         # self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
         # self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
         
-        self.follower.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_follower[0])
-        self.leader.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_leader[0])
+        # self.follower.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_follower[0])
+        # self.leader.write_state(baseline_orbit_data_fields[0], baseline_orbit_data_vals_leader[0])
                 
+        self.leader.write_state("adcs.state", 4)
+       
         time.sleep(1)
         # self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
         # self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
