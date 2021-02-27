@@ -6,5 +6,5 @@ import os
 class Reboot(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.ws("gomspace.gs_reboot_cmd", True)
-        self.cycle
+        self.cycle()
         self.finish()
