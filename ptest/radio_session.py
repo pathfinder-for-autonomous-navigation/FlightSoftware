@@ -203,11 +203,11 @@ class RadioSession(object):
 
         #merged and updated fields to send
         fields, vals = self.statefield_dict.keys(), self.statefield_dict.values()
+        with open('uplink.json', 'w') as telem_file:
+                    json.dump(self.statefield_dict, telem_file)
 
         # Create an uplink packet
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
-
-        print(self.statefield_dict)
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http") and os.path.exists("uplink.sbd")
 
         if success:
             # Send the uplink to Iridium

@@ -129,7 +129,7 @@ def create_radio_session_endpoint(radio_session, queue):
             vals.append(field_val["value"])
 
          # Create a new uplink packet
-        success = uplink_console.create_uplink(fields, vals, "http_uplink.sbd") and os.path.exists("http_uplink.sbd")
+        success = uplink_console.create_uplink(fields, vals, "http_uplink.sbd", "http_uplink.json") and os.path.exists("http_uplink.sbd")
         if not success:
             return "Unable to send telemetry"
 
@@ -140,6 +140,7 @@ def create_radio_session_endpoint(radio_session, queue):
         SendMessage(sender, to, subject, "", "", 'http_uplink.sbd')
          # Remove uplink files/cleanup
         os.remove("http_uplink.sbd")
+        os.remove("http_uplink.json")
 
         return "Successfully sent telemetry to Iridium"
 
@@ -165,15 +166,15 @@ def create_usb_session_endpoint(usb_session):
             vals.append(field_val["value"])
 
         uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        success = uplink_console.create_uplink(fields, vals, "http_uplink.sbd", "http_uplink.json") and os.path.exists("http_uplink.sbd")
 
         # If the uplink packet is successfully created, then send it to the Flight Computer
         if not success: return "Unable to send telemetry"
         success = usb_session.send_uplink("uplink.sbd")
 
         # Get rid of uplink files/cleanup
-        os.remove("uplink.sbd")
-        os.remove("uplink.json")
+        os.remove("http_uplink.sbd")
+        os.remove("http_uplink.json")
 
         if success:
             return "Successfully sent telemetry to State Session"

@@ -372,7 +372,7 @@ class USBSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http")
 
         # If the uplink packet exists, send it to the FlightSoftware console
         if success and os.path.exists("uplink.sbd"):

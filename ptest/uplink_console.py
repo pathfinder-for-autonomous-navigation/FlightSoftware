@@ -36,7 +36,7 @@ class UplinkConsole(object):
             if val == "false": return False
         return None
 
-    def create_uplink(self, fields, vals, filename):
+    def create_uplink(self, fields, vals, filename, json_filename):
         """
         Puts fields and values in a JSON document and sends the JSON 
         object to the uplink producer console. This results in the creation
@@ -54,12 +54,12 @@ class UplinkConsole(object):
                 logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
                 self.logger.put(logline)
                 return False
-        with open('uplink.json', 'w') as telem_file:
+        with open(json_filename, 'w') as telem_file:
             json.dump(telem_json, telem_file)
 
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
         # holding the uplink packet.
-        self.uplink_console.write(("uplink.json\n").encode())
+        self.uplink_console.write((json_filename+"\n").encode())
         self.uplink_console.write((str(filename)+"\n").encode())
         response = json.loads(self.uplink_console.readline().rstrip())
 
