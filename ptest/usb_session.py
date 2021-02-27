@@ -439,7 +439,6 @@ class USBSession(object):
             print(f"Error parsing telemetry on {self.device_name}")
             return False
         failed = False
-        print("$$$$$$$$$$$$" + self.device_name)
         for field in jsonObj:
             value = jsonObj[field]
             data=json.dumps({
