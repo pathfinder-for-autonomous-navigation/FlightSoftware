@@ -17,7 +17,7 @@ var searchURl = 'http://localhost:5000/search-es';
 /**
  * The index of the Elastic Search database
  */
-var searchIndex = 'statefield_report_flightcontroller';
+var searchIndex = 'statefield_report_123456789';
 
 /**
  *  constructor initializing and then calling for the generation and updating of all telemetry points from all subsytems and domains
