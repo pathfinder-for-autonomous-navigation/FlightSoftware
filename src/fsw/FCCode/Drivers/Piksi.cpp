@@ -400,25 +400,6 @@ u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #endif
 }
 
-// u32 Piksi::_local_read(u8 *buff, u32 n, void *context) {
-//     #ifndef DESKTOP
-
-//     Piksi *piksi = (Piksi *)context; // so it can access serial port
-//     HardwareSerial &sp = piksi->_serial_port;
-
-//     u32 i;
-//     for (i = 0; i < n; i++) {
-//         if (sp.available())
-//             buff[i] = sp.read();
-//         else
-//             break;
-//     }
-//     return i;
-//     #else
-//     return 0;
-//     #endif
-// }
-
 u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
 
