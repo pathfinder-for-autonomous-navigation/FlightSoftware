@@ -283,7 +283,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_header("TORQUE TESTS: ")
 
-        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_ACCEL_CTRL"])
 
         for cmd_array in torque_tests:
 
@@ -303,7 +303,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
         time.sleep(1)
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
         time.sleep(1)
 
         self.ws("cycle.auto", False)
