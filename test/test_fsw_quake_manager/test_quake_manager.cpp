@@ -58,6 +58,8 @@ public:
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture(unsigned int radio_state) : registry()
     {
+        quake_manager->init();
+        
         // Create external field dependencies
         snapshot_size_fp = registry.create_internal_field<size_t>("downlink.snap_size");
         radio_mo_packet_fp = registry.create_internal_field<char *>("downlink.ptr");
