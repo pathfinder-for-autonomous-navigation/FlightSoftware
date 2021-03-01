@@ -101,7 +101,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
                       for i in range(1, 7)]
             self.cycle()
             cycle_no = int(self.read_state("pan.cycle_no"))
-            if cycle_no - cycle_no_init == 900:
+            if cycle_no - cycle_no_init == 600:
                 self.logger.put(
                     "Power cycled outputs could not turn off after 600 cycles (1 minute)")
                 cycle_no = int(self.read_state("pan.cycle_no"))
