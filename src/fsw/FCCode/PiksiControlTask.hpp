@@ -35,10 +35,7 @@ public:
     //Serializer and StateField for time
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
-
-    // System time of last good Piksi reading
-    InternalStateField<sys_time_t> last_fix_time_f;
-
+    
     // Control cycle of last good Piksi reading
     InternalStateField<unsigned int> last_rtkfix_ccno_f;
 

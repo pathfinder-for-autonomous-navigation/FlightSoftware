@@ -21,7 +21,6 @@ class TestFixture {
         ReadableStateField<d_vector_t>* baseline_fp;
         ReadableStateField<gps_time_t>* time_fp;
         ReadableStateField<unsigned int>* fix_error_count_fp;
-        InternalStateField<sys_time_t>* last_fix_time_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
@@ -44,7 +43,6 @@ class TestFixture {
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
                 fix_error_count_fp = registry.find_readable_field_t<unsigned int>("piksi.fix_error_count");
-                last_fix_time_fp = registry.find_internal_field_t<sys_time_t>("piksi.last_fix_time");
         }
 
         #undef PIKSI_INITIALIZATION
@@ -257,10 +255,6 @@ void test_dead(){
                 tf.execute();
                 TimedControlTaskBase::wait_duration(1);
         }
-        const unsigned int delta_t = TimedControlTaskBase::duration_to_us(
-                TimedControlTaskBase::get_system_time()
-                - tf.last_fix_time_fp->get());
-        TEST_ASSERT_GREATER_OR_EQUAL(1000, delta_t);
         assert_piksi_mode(piksi_mode_t::no_data_error);
 
         //one more execution to throw into DEAD mode
