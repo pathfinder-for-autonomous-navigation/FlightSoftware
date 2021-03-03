@@ -35,28 +35,26 @@ Piksi::Piksi(const std::string &name) {
 
 static volatile int last_bytes = 0;
 static volatile unsigned long interrupt_count = 0;
-static volatile unsigned long start_time;
-static volatile unsigned long last_time;
+static volatile unsigned long last_interrupt_count;
 
 void Piksi::check_bytes(){
-    #ifndef DESKTOP
+#ifndef DESKTOP
     interrupt_count++;
     int bytes = Serial4.available();
-    unsigned long time = interrupt_count;
+    unsigned long count = interrupt_count;
 
     // if bytes are entering the buffer, update the timestamp
     if (bytes > last_bytes) {
-
-        if (time - last_time > 100){
-            start_time = time;
+        if (++interrupt_count - last_time > 100) {
+            interrupt_count = 0;
         }
 
-    last_bytes = bytes;
-    last_time = time;
+        last_bytes = bytes;
+        last_interrupt_count = interrupt_count;
    }
-
-    #endif
+#endif
 }
+
 
 unsigned long Piksi::get_microdelta(){
     return microdelta;
