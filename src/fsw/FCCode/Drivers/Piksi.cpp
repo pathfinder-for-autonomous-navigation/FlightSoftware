@@ -311,17 +311,6 @@ unsigned char Piksi::read_all() {
     noInterrupts();
 
     int bytes = Serial4.available();
-    unsigned long time = interrupt_count;
-
-    // from check_bytes, but set last_bytes to 0
-    if (bytes > last_bytes) {
-
-        if (time - last_time > 100){
-            start_time = time;
-        }
-
-      last_time = time;
-    }
     last_bytes = 0;
 
     buffer_begin = buffer;
@@ -332,9 +321,10 @@ unsigned char Piksi::read_all() {
     }
     clear_bytes();
 
-    microdelta = (time - start_time)*100; //convert to us
+    microdelta = interrupt_count*100; //convert to us
 
     interrupts();
+
     
     _gps_time_update = false;
     _pos_ecef_update = false;
