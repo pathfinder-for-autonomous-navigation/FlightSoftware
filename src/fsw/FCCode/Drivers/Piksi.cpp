@@ -41,11 +41,11 @@ void Piksi::check_bytes(){
 #ifndef DESKTOP
     interrupt_count++;
     int bytes = Serial4.available();
-    unsigned long count = interrupt_count;
 
     // if bytes are entering the buffer, update the timestamp
     if (bytes > last_bytes) {
-        if (++interrupt_count - last_time > 100) {
+        // if there is a break of 10ms, new packet has arrived
+        if (interrupt_count - last_interrupt_count > 100) {
             interrupt_count = 0;
         }
 
@@ -319,7 +319,6 @@ unsigned char Piksi::read_all() {
     for (int i = 0; i < bytes; i++){
         *(buffer_end++) = Serial4.read();
     }
-    clear_bytes();
 
     microdelta = interrupt_count*100; //convert to us
 
