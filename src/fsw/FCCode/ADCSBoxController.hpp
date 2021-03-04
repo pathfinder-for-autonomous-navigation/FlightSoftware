@@ -37,11 +37,6 @@ protected:
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     /**
-     * @brief DCDC control. Disables/enables wheels.
-     */
-    WritableStateField<bool>* adcs_dcdc_fp;
-
-    /**
      * @brief RWA command fields
      * 
      */
