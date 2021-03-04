@@ -65,8 +65,9 @@ fault_response_t QuakeFaultHandler::dispatch_unfaulted()
 
 fault_response_t QuakeFaultHandler::dispatch_forced_standby()
 {
-    if (in_state_for_more_than_time(PAN::one_day_ccno) && radio_is_wait())
+    if (in_state_for_more_than_time(PAN::one_day_ccno))
     {
+        radio_state_fp->set(static_cast<unsigned int>(radio_state_t::disabled));
         radio_power_cycle_fp->set(true);
         transition_to(qfh_state_t::powercycle_1);
         return fault_response_t::standby;
@@ -80,9 +81,17 @@ fault_response_t QuakeFaultHandler::dispatch_forced_standby()
     return fault_response_t::standby;
 }
 
-fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next) {
-    if (in_state_for_more_than_time(PAN::one_day_ccno / 3) && radio_is_wait()) {
-        if (next != qfh_state_t::safehold){
+fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next)
+{
+    if (cur_state_entry_ccno + 1 >= cccount)
+    {
+        radio_state_fp->set(static_cast<unsigned int>(radio_state_t::config));
+    }
+    if (in_state_for_more_than_time(PAN::one_day_ccno / 3))
+    {
+        if (next != qfh_state_t::safehold)
+        {
+            radio_state_fp->set(static_cast<unsigned int>(radio_state_t::disabled));
             radio_power_cycle_fp->set(true);
         }
         transition_to(next);
@@ -97,28 +106,33 @@ fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next) {
     return fault_response_t::standby;
 }
 
-fault_response_t QuakeFaultHandler::dispatch_powercycle_1() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_1()
+{
     return dispatch_powercycle(qfh_state_t::powercycle_2);
 }
 
-fault_response_t QuakeFaultHandler::dispatch_powercycle_2() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_2()
+{
     return dispatch_powercycle(qfh_state_t::powercycle_3);
 }
 
-fault_response_t QuakeFaultHandler::dispatch_powercycle_3() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_3()
+{
     return dispatch_powercycle(qfh_state_t::safehold);
 }
 
-fault_response_t QuakeFaultHandler::dispatch_safehold() {
-     if (radio_is_disabled() || less_than_one_day_since_successful_comms() ) {
-         transition_to(qfh_state_t::unfaulted);
-         return fault_response_t::none;
-     }
-     else {
-         return fault_response_t::safehold;
-     }
+fault_response_t QuakeFaultHandler::dispatch_safehold()
+{
+    if (radio_is_disabled() || less_than_one_day_since_successful_comms())
+    {
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
+    }
+    else
+    {
+        return fault_response_t::safehold;
+    }
 }
-
 
 bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const
 {
@@ -128,6 +142,11 @@ bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const
 bool QuakeFaultHandler::in_state_for_more_than_time(const unsigned int time) const
 {
     return cccount - cur_state_entry_ccno >= time;
+}
+
+bool QuakeFaultHandler::in_state_for_exact_time(const unsigned int time) const
+{
+    return cccount - cur_state_entry_ccno == time;
 }
 
 bool QuakeFaultHandler::radio_is_disabled() const
