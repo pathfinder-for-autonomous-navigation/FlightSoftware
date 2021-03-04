@@ -7,7 +7,7 @@
             "key": "orbit.baseline_pos",
             "values": [
                 {
-                    "bitsize": 41,
+                    "bitsize": 73,
                     "flow_id": 2,
                     "max": 2000.0,
                     "min": 0.0,
@@ -36,9 +36,9 @@
             "key": "orbit.pos",
             "values": [
                 {
-                    "bitsize": 48,
+                    "bitsize": 103,
                     "flow_id": 2,
-                    "max": 6971000.0,
+                    "max": 6921000.0,
                     "min": 6771000.0,
                     "type": "lin double vector",
                     "writable": false,
