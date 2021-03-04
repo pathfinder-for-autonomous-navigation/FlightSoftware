@@ -14,8 +14,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
     microdelta_f("piksi.microdelta", Serializer<unsigned int>()),
-    last_rtkfix_ccno_f("piksi.last_rtkfix_ccno"),
-    no_bytes_available_f("piksi.bytes_available")
+    last_rtkfix_ccno_f("piksi.last_rtkfix_ccno")
     {
         add_readable_field(pos_f);
         add_readable_field(vel_f);
@@ -25,7 +24,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(time_f);
         add_readable_field(microdelta_f);
         add_internal_field(last_rtkfix_ccno_f);
-        add_internal_field(no_bytes_available_f);
 
         //register callbacks and begin the serial port
         piksi.setup();
@@ -37,7 +35,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         vel_f.set({nan, nan, nan});
         baseline_pos_f.set({nan, nan, nan});
         last_rtkfix_ccno_f.set(0);
-        no_bytes_available_f.set(true);
     }
 
 void PiksiControlTask::execute()

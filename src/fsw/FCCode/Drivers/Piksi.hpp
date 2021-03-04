@@ -338,13 +338,23 @@ class Piksi {
      */
     void clear_bytes();
 
-    // check if bytes are entering the buffer
+    /**
+     * @brief Check if bytes are entering the buffer
+     * 
+     */
     static void check_bytes();
 
-    // begin checking bytes in buffer at set interval
+    /**
+     * @brief Begin checking bytes in buffer at set interval
+     * 
+     */
     void start_interrupt();
 
-    // return time delay between now and time data entered buffer
+    /**
+     * @brief Get microdelta (time delay between now and time data entered buffer)
+     * 
+     * @return unsigned long 
+     */
     unsigned long get_microdelta();
 
    protected:

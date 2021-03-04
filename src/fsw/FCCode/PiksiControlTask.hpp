@@ -45,9 +45,6 @@ public:
     // Control cycle of last good Piksi reading
     InternalStateField<unsigned int> last_rtkfix_ccno_f;
 
-    // True if no bytes available in serial port to read
-    InternalStateField<bool> no_bytes_available_f;
-
 protected:
     //Internal Data Containers
     std::array<double, 3> pos;
