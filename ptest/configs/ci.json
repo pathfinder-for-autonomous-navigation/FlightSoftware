@@ -9,6 +9,14 @@
         }
     ],
     "radios" : [
+        {
+            "connected_device": "FlightController",
+            "imei": "",
+            "connect": false,
+            "send_queue_duration" : 0,
+            "send_lockout_duration" : 0,
+            "http_port": 8001
+        }
     ],
     "tlm": {
         "email_username" : "",
