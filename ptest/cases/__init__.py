@@ -8,6 +8,7 @@ from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_case import AutonomousMissionManagerCase
+from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
 from .psim_debug import PsimDebug
 
