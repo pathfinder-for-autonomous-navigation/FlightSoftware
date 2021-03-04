@@ -310,7 +310,7 @@ unsigned char Piksi::read_all() {
 
     noInterrupts();
 
-    int bytes = Serial4.available();
+    int bytes = last_bytes;
     last_bytes = 0;
 
     buffer_begin = buffer;
@@ -331,9 +331,9 @@ unsigned char Piksi::read_all() {
     _baseline_ecef_update = false;
     
     if(buffer_begin < buffer_end){ 
-        bool crc_error;
+        bool crc_error = false;
         while(buffer_begin < buffer_end){
-            crc_error = process_buffer() < 0;
+            crc_error |= process_buffer() < 0;
         }
 
         if(crc_error)
