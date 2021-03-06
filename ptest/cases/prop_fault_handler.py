@@ -1,4 +1,5 @@
 from .base import SingleSatOnlyCase
+from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
@@ -16,6 +17,34 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.fault_name = "prop.pressurize_fail"
 
         super().__init__(is_interactive, random_seed, data_dir)
+
+    @property
+    def sim_configs(self):
+        configs = ["truth/ci", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return SingleAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
+    @property
+    def sim_duration(self):
+        return float("inf")
+
+    @property
+    def sim_initial_state(self):
+        return "startup"
+
+    @property
+    def sim_ic_map(self):
+        ret = {}
+        ret["truth.t.ns"] = 420000000*10
+        ret["truth.leader.attitude.w"] = [0,0,0]
+        return ret
 
     @property
     def initial_state(self):
