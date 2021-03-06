@@ -21,3 +21,22 @@ class DualEmptyCase(MissionCase):
 
     def run_case_fullmission(self):
         self.finish()
+
+class DualEmptySimCase(DualEmptyCase):
+    @property
+    def sim_configs(self):
+        configs = ["truth/ci", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return DualAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
+
+    @property
+    def sim_duration(self):
+        return float("inf")

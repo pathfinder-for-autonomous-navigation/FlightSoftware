@@ -150,6 +150,10 @@ class Simulation(object):
             # Step 4. Read the actuators from the flight computer(s) and send to psim
             self.read_actuators_send_to_sim()
 
+            #Step 5. Read incoming uplinks
+            for device in self.devices:
+                self.devices[device].scrape_uplink()
+
             step += 1
 
         self.running = False
