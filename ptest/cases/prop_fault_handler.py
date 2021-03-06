@@ -19,11 +19,11 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     @property
     def initial_state(self):
-        return "leader"
+        return "standby"
 
     @property
     def fast_boot(self):
-        return True
+        return False
 
     def setup_pre_bootsetup(self):
         self.powercycle_happening = None
