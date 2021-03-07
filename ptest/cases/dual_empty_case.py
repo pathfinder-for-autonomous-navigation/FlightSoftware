@@ -6,11 +6,11 @@ from psim.sims import DualAttitudeOrbitGnc
 class DualEmptyCase(MissionCase):
     @property
     def initial_state_leader(self):
-        return "leader"
+        return "startup"
 
     @property
     def initial_state_follower(self):
-        return "follower"
+        return "startup"
 
     @property
     def fast_boot_leader(self):
@@ -40,3 +40,8 @@ class DualEmptySimCase(DualEmptyCase):
     @property
     def sim_duration(self):
         return float("inf")
+
+class DualEmptySimCaseEmail(DualEmptySimCase):
+    @property
+    def enable_scrape_email(self):
+        return True
