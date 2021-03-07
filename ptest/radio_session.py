@@ -24,7 +24,7 @@ class RadioSession(object):
     '''
 
     def __init__(self, device_name, imei, uplink_console, port, send_queue_duration,
-                    send_lockout_duration, simulation_run_dir, tlm_config):
+                    send_lockout_duration, check_uplink_queue_enable, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -36,6 +36,7 @@ class RadioSession(object):
 
         # Uplink timer
         self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
+        self.check_uplink_queue_enable = check_uplink_queue_enable
 
         # Radio session and the http endpoints communicate information about the state of the timer
         # by passing messages over the queue.
@@ -138,6 +139,8 @@ class RadioSession(object):
         Reads from the most recent Iridium Report whether or
         not RadioSession is able to send uplinks
      	'''
+        if self.uplink_queued() and self.check_uplink_queue_enable:
+            return False
 
         assert len(fields) == len(vals)
 
@@ -182,7 +185,7 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json") and not os.path.exists("http_uplink.json"):
+        if tlm_service_active and response.text.lower()=="true":
             return False
         return True
 

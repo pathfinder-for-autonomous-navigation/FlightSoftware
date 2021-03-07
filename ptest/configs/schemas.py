@@ -41,6 +41,7 @@ ptest_config_schema = {
                 "http_port" : {"type" : "integer", "required" : True},
                 "send_queue_duration" : {"type" : "integer", "required" : True},
                 "send_lockout_duration" : {"type" : "integer", "required" : True},
+                "check_uplink_queue_enable": {"type" : "boolean", "required" : True}
             }
         },
         "required" : True

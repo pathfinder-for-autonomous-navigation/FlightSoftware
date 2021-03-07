@@ -132,6 +132,7 @@ class PTest(object):
                     radio["http_port"],
                     radio["send_queue_duration"],
                     radio["send_lockout_duration"],
+                    radio["check_uplink_queue_enable"],
                     self.simulation_run_dir,
                     self.tlm_config)
                 self.radios[radio_name] = radio_session
