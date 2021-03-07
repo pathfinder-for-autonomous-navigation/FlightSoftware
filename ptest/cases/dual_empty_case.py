@@ -41,7 +41,6 @@ class DualEmptySimCase(DualEmptyCase):
     def sim_duration(self):
         return float("inf")
 
-class DualEmptySimCaseEmail(DualEmptySimCase):
     @property
-    def enable_scrape_email(self):
+    def scrape_uplinks(self):
         return True

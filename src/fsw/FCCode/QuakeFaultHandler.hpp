@@ -28,18 +28,18 @@ class QuakeFaultHandler : public FaultHandlerMachine
 {
 public:
 #ifdef UNIT_TEST
-  friend class TestFixtureQFH;
+   friend class TestFixtureQFH;
 #endif
 
-  /**
+   /**
      * @brief Construct a new Quake Fault Handler.
      * 
      * @param r State field registry. Needed so that the Quake fault
      * handler can check its indicator fields.
      */
-  QuakeFaultHandler(StateFieldRegistry &r);
+   QuakeFaultHandler(StateFieldRegistry &r);
 
-  /**
+   /**
      * @brief Runs the fault state machine and returns the suggested
      * mission state.
      * 
@@ -48,51 +48,51 @@ public:
      * safe hold if this state machine requires it, but should take
      * no action when manual is returned.
      */
-  fault_response_t execute();
+   fault_response_t execute();
 
 protected:
-  /**
+   /**
      * @brief Dispatch functions for the fault handler state machine.
      * 
      * @return mission_state_t 
      */
-    fault_response_t dispatch_unfaulted();
-    fault_response_t dispatch_forced_standby();
-    fault_response_t dispatch_powercycle(qfh_state_t next);
-    fault_response_t dispatch_powercycle_1();
-    fault_response_t dispatch_powercycle_2();
-    fault_response_t dispatch_powercycle_3();
-    fault_response_t dispatch_safehold();
+   fault_response_t dispatch_unfaulted();
+   fault_response_t dispatch_forced_standby();
+   fault_response_t dispatch_powercycle(qfh_state_t next);
+   fault_response_t dispatch_powercycle_1();
+   fault_response_t dispatch_powercycle_2();
+   fault_response_t dispatch_powercycle_3();
+   fault_response_t dispatch_safehold();
 
-  /**
+   /**
      * @brief Executes a clean transition between fault states.
      * 
      * In the future, this should also trigger the recording of an event.
      * 
      * @param next_state Next state for transition.
      */
-  void transition_to(qfh_state_t next_state);
+   void transition_to(qfh_state_t next_state);
 
-  // Current state of fault checker DFA, and the control cycle
-  // count at which it entered this state.
-  WritableStateField<unsigned char> cur_state;
-  unsigned int cur_state_entry_ccno = 0;
+   // Current state of fault checker DFA, and the control cycle
+   // count at which it entered this state.
+   WritableStateField<unsigned char> cur_state;
+   unsigned int cur_state_entry_ccno = 0;
 
-
-  /**
+   /**
      * @brief Indicator fields used by the fault handler.
      */
-  const ReadableStateField<unsigned char> *radio_state_fp;
-  const ReadableStateField<unsigned int> *last_checkin_cycle_fp;
-  WritableStateField<bool> *radio_power_cycle_fp;
+   ReadableStateField<unsigned char> *radio_state_fp;
+   const ReadableStateField<unsigned int> *last_checkin_cycle_fp;
+   WritableStateField<bool> *radio_power_cycle_fp;
 
-  /**
+   /**
      * @brief Helper functions for if-statements, to make them look cleaner.
      */
-  bool less_than_one_day_since_successful_comms() const;
-  bool in_state_for_more_than_time(const unsigned int time) const;
-  bool radio_is_disabled() const;
-  bool radio_is_wait() const;
+   bool less_than_one_day_since_successful_comms() const;
+   bool in_state_for_more_than_time(const unsigned int time) const;
+   bool in_state_for_exact_time(const unsigned int time) const;
+   bool radio_is_disabled() const;
+   bool radio_is_wait() const;
 };
 
 #endif
