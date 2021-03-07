@@ -11,6 +11,9 @@ from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
 from .uplink_timer import UplinkTimer
 
+import email
+import imaplib
+
 class RadioSession(object):
     '''
     Represents a connection session with a Flight Computer's Quake radio.
@@ -33,6 +36,9 @@ class RadioSession(object):
         self.device_name = device_name
         self.imei=imei
         self.port=port
+
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
 
         # Uplink timer
         self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
@@ -70,9 +76,13 @@ class RadioSession(object):
         self.flask_server=tlm_config["webservice"]["server"]
         self.flask_port=tlm_config["webservice"]["port"]
 
-        #email
-        self.username=tlm_config["email_username"]
-        self.password=tlm_config["email_password"]
+        # Connect to email
+        try:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print("Not connected to email")
 
     def check_queue(self, queue):
         '''
@@ -218,6 +228,34 @@ class RadioSession(object):
         else:
             os.remove("uplink.json")
             return False
+
+    def mark_message_unseen(self):
+        '''
+        Mark most recent message in sent mail box and UNSEEN
+        '''
+        try:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print(e)
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+        last_id = id_list[len(id_list)-1]
+        
+        _, data = self.mail.fetch(last_id, "(RFC822)")
+
+        for response_part in data:
+            if isinstance(response_part, tuple):
+                # converts message from byte literal to string removing b''
+                msg = email.message_from_string(response_part[1].decode('utf-8'))
+                email_subject = msg['subject']
+
+                if email_subject.isdigit() and int(self.imei) == int(email_subject):
+                    # mark message as unseen
+                    self.mail.store(last_id, '-FLAGS', '\SEEN')
+        
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''
