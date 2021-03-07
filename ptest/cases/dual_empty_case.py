@@ -40,3 +40,7 @@ class DualEmptySimCase(DualEmptyCase):
     @property
     def sim_duration(self):
         return float("inf")
+
+    @property
+    def scrape_uplinks(self):
+        return True

@@ -20,7 +20,7 @@ class Simulation(object):
     Full mission simulation, including both spacecraft.
     """
     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name):
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, scrape_emails):
         """
         Initializes self
 
@@ -43,6 +43,7 @@ class Simulation(object):
         self.sim_configs = _sim_configs
         self.sim_model = _sim_model
         self.mapping_file_name = _mapping_file_name
+        self.scrape_emails = scrape_emails
         self.log = ""
 
         if self.is_single_sat_sim:
@@ -151,8 +152,9 @@ class Simulation(object):
             self.read_actuators_send_to_sim()
 
             #Step 5. Read incoming uplinks
-            for device in self.devices:
-                self.devices[device].scrape_uplink()
+            if self.scrape_emails:
+                for device in self.devices:
+                    self.devices[device].scrape_uplink()
 
             step += 1
 
