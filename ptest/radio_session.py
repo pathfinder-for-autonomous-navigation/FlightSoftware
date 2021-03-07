@@ -153,7 +153,6 @@ class RadioSession(object):
             t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
             t.start()
 
-        print(self.statefield_dict)
         return True
 
     def write_state(self, field, val, timeout=None):
@@ -207,7 +206,7 @@ class RadioSession(object):
                     json.dump(self.statefield_dict, telem_file)
 
         # Create an uplink packet
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http") and os.path.exists("uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.json") and os.path.exists("uplink.sbd")
 
         if success:
             # Send the uplink to Iridium
