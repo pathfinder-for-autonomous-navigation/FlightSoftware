@@ -4,6 +4,7 @@
 
 # Testcases that require simulation
 from .empty_case import EmptySimCase, FailingEmptySimCase
+from .dual_empty_case import DualEmptySimCase
 from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
@@ -14,6 +15,7 @@ from .psim_debug import PsimDebug
 
 # Testcases that don't require simulation
 from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
@@ -34,5 +36,5 @@ from .torquer_rotate_case import MTorquerCase
 from .reset_for_flight import ResetforFlight
 from .safehold_standby_transition_case import SafeholdStandbyTransitionCase
 from .gomspacelogger import GomspaceLog
-
 from .reboot_utility import Reboot
+
