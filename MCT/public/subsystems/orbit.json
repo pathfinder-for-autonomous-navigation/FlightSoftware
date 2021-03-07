@@ -59,35 +59,6 @@
                     }
                 }
             ]
-        },
-        {
-            "name": "Vel",
-            "key": "orbit.vel",
-            "values": [
-                {
-                    "bitsize": 76,
-                    "flow_id": 2,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "Vel",
-                    "key": "value",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
         }
     ]
 }

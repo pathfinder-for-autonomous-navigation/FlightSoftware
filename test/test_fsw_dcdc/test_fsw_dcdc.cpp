@@ -52,21 +52,29 @@ void test_task_execute() {
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(true, tf.ADCSMotorDCDC_cmd_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.SpikeDockDCDC_fp->get());
 
     tf.ADCSMotorDCDC_cmd_fp->set(false);
     tf.SpikeDockDCDC_cmd_fp->set(false);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.ADCSMotorDCDC_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.SpikeDockDCDC_fp->get());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
 
     // Test the disable command
     tf.ADCSMotorDCDC_cmd_fp->set(true);
     tf.SpikeDockDCDC_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
 
     tf.disable_cmd_fp->set(true);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(false, tf.ADCSMotorDCDC_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.SpikeDockDCDC_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.disable_cmd_fp->get());
 
     // If one pin is truned off and the other is on, then disable()
     // should still turn both pins off
@@ -91,6 +99,16 @@ void test_task_execute() {
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    // The disable command shouldn't persist across control cycles if the DCDCs
+    // are already disable
+    tf.ADCSMotorDCDC_cmd_fp->set(false);
+    tf.SpikeDockDCDC_cmd_fp->set(false);
+    tf.dcdc_controller->execute();
+
+    tf.disable_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.disable_cmd_fp->get());
 
     // Test the reset command
     tf.ADCSMotorDCDC_cmd_fp->set(true);

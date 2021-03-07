@@ -131,17 +131,28 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
             self.tempTime = currCycle
             self.firstSafehold = False
           else:
-            if currCycle - self.tempTime < 70:
-              #do nothing
-              pass
-            else:
-                self.logger.put("supressing wheel 1 fault")
-                self.ws("adcs_monitor.wheel1_fault.suppress", True)
-                time.sleep(.2)
-                self.print_rs("pan.state")
-                self.print_rs("adcs_monitor.rwa_speed_rd")
+            #Finish test case (successfully returned to Standby)
+            self.logger.put("[TESTCASE] Success")
+            self.finish()
+          
+    #Case 10: Safehold
+    elif currState == 10:
+      if(self.firstSafehold):
+        self.logger.put("In Safehold")
+        self.tempTime = currCycle
+        self.firstSafehold = False
+      else:
+        if currCycle - self.tempTime < 20:
+          # about 3.4 seconds with sped up FSW (170 ms cc)
+          pass
+        else:
+          self.logger.put("supressing wheel 1 fault")
+          self.ws("adcs_monitor.wheel1_fault.suppress", True)
+          time.sleep(.2)
+          self.print_rs("pan.state")
+          self.print_rs("adcs_monitor.rwa_speed_rd")
 
-                self.logger.put("Resuppressing wheel 2 fault")
-                self.ws("adcs_monitor.wheel2_fault.suppress", True)
-                self.ws("adcs_monitor.wheel2_fault.override", False)
-                self.ws("pan.state", 0)
+          self.logger.put("Resuppressing wheel 2 fault")
+          self.ws("adcs_monitor.wheel2_fault.suppress", True)
+          self.ws("adcs_monitor.wheel2_fault.override", False)
+          self.ws("pan.state", 0)
