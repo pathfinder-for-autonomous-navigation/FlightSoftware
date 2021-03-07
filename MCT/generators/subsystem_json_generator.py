@@ -171,7 +171,7 @@ def removeOldJSON():
 
 def createJSON(satellite):
     '''
-    creates all the JSON subsystem/domain object files and puts them in .\public\subsystems
+    creates all the JSON subsystem/domain object files and puts them in ./public/subsystems
     '''
     f = open(flowDataPath, 'r')
     # gets the dictionary of fields
