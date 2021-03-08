@@ -42,11 +42,15 @@ void DCDCController::execute() {
         dcdc.disable_sph();
     }
 
-    if (disable_cmd_f.get() && (dcdc.adcs_enabled() || dcdc.sph_enabled())) {
-        dcdc.disable();
-        // Set commands to false to prevent unwanted writes on the next cycle
-        ADCSMotorDCDC_cmd_f.set(false);
-        SpikeDockDCDC_cmd_f.set(false);
+    if (disable_cmd_f.get()) {
+        if (dcdc.adcs_enabled() || dcdc.sph_enabled()) {
+            dcdc.disable();
+            // Set commands to false to prevent unwanted writes on the next cycle
+            ADCSMotorDCDC_cmd_f.set(false);
+            SpikeDockDCDC_cmd_f.set(false);
+        }
+        // Whether or not action was taken, we don't want the disable command to
+        // persist across control cycles
         disable_cmd_f.set(false);
     }
 
