@@ -189,6 +189,24 @@ class StateCmdPrompt(Cmd):
             write_succeeded = "Succeeded" if successful_upload else "Failed"
             print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
+    @USBSessionOnly
+    def do_scrapeuplinks(self, args):
+        '''
+        Scrape all telemtry sent to the PAN email 
+        and send it to the Flight Computer
+        '''
+        args = args.split()
+        if len(args) != 0:
+            print('scrapeuplinks takes no args')
+            return
+        else:
+            start_time = timeit.default_timer()
+            success = self.cmded_device.scrape_uplink()
+            elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
+            write_succeeded = "Succeeded" if success else "Failed"
+            print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+
     def do_wms(self, args):
         '''
         Write multiple states. See usb_session.py for documentation.
