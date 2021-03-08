@@ -25,7 +25,8 @@ ptest_config_schema = {
                     "dependencies" : {"run_mode" : ["teensy"]},
                     "excludes" : "pio_target"
                 },
-                "http_port" : {"type" : "integer", "required" : True}
+                "http_port" : {"type" : "integer", "required" : True},
+                "imei" : {"type" : "string", "required" : False}
             }
         },
         "required" : True
@@ -41,6 +42,7 @@ ptest_config_schema = {
                 "http_port" : {"type" : "integer", "required" : True},
                 "send_queue_duration" : {"type" : "integer", "required" : True},
                 "send_lockout_duration" : {"type" : "integer", "required" : True},
+                "check_uplink_queue_enable": {"type" : "boolean", "required" : True}
             }
         },
         "required" : True

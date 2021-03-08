@@ -46,6 +46,14 @@ class PTestCase(object):
         return None
 
     @property
+    def scrape_uplinks(self):
+        '''
+        Look for sent uplinks by scraping the sent mail box in the pan email account
+        and send packets to the Flight Computer
+        '''
+        return False
+
+    @property
     def debug_to_console(self):
         '''
         Default false, set to true if you want debug output from flight computer piped to console
@@ -135,7 +143,8 @@ class PTestCase(object):
             from ..psim import CppSimulation # Lazy import
             self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
-            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, 
+            self.sim_mapping, self.scrape_uplinks)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()

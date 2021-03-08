@@ -35,6 +35,14 @@ class QuakeManager : public TimedControlTask<void>
 {
 public:
    QuakeManager(StateFieldRegistry &registry, unsigned int offset);
+   
+   /**
+    * @brief Initializes the MO buffers
+    * 
+    * Should be called after the DownlinkProducer is initialized, so that it can
+    * grab the correct downlink sizes.    * 
+    */
+   void init();
 
    ~QuakeManager();
 
