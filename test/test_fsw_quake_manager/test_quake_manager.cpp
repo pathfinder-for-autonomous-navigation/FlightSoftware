@@ -57,7 +57,7 @@ public:
 
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture(unsigned int radio_state) : registry()
-    {
+    {      
         // Create external field dependencies
         snapshot_size_fp = registry.create_internal_field<size_t>("downlink.snap_size");
         radio_mo_packet_fp = registry.create_internal_field<char *>("downlink.ptr");
@@ -71,6 +71,8 @@ public:
 
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
+        quake_manager->init();
+
         max_wait_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_wait");
         max_transceive_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_transceive");
         radio_mt_packet_fp = registry.find_internal_field_t<char *>("uplink.ptr");
