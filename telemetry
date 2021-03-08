@@ -1791,6 +1791,14 @@
             "type": "unsigned int",
             "writable": false
         },
+        "piksi.microdelta": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "piksi.pos": {
             "bitsize": 103,
             "flow_id": 19,

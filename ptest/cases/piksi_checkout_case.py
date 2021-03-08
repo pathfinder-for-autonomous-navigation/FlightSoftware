@@ -4,6 +4,10 @@ from .utils import Enums, mag_of, sum_of_differentials, TestCaseFailure
 import math
     
 class PiksiCheckoutCase(SingleSatOnlyCase):
+    @property
+    def debug_to_console(self):
+        return True 
+        
     def print_piksi_state(self):
         st = self.rs("piksi.state")
         self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")
@@ -89,6 +93,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.logger.put(f"POS MAG: {mag_of(p)}")
             b = self.print_rs("piksi.baseline_pos")
             self.logger.put(f"BASELINE MAG: {mag_of(b)}")
+            d = self.print_rs("piksi.microdelta")
             self.logger.put("")
 
         # Take N readings for actual analysis
