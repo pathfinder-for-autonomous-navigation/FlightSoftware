@@ -26,17 +26,53 @@ sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 #ifndef DESKTOP
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
+IntervalTimer check_buffer_timer = IntervalTimer();
 #else
 Piksi::Piksi(const std::string &name) {
     _read_return = 2; // this is the no fix return condition
 }
 #endif
 
+static volatile int last_bytes = 0;
+static volatile unsigned long interrupt_count = 0;
+static volatile unsigned long last_interrupt_count;
+
+void Piksi::check_bytes(){
+#ifndef DESKTOP
+    interrupt_count++;
+    int bytes = Serial4.available();
+
+    // if bytes are entering the buffer, update the timestamp
+    if (bytes > last_bytes) {
+        // if there is a break of 10ms, new packet has arrived
+        if (interrupt_count - last_interrupt_count > 100) {
+            interrupt_count = 0;
+        }
+
+        last_bytes = bytes;
+        last_interrupt_count = interrupt_count;
+   }
+#endif
+}
+
+
+unsigned long Piksi::get_microdelta(){
+    return microdelta;
+}
+
+void Piksi::start_interrupt(){
+    #ifndef DESKTOP
+    int interval = 100;
+    check_buffer_timer.begin(check_bytes, interval); //interrupts every 100 microseconds
+    #endif
+}
 
 bool Piksi::setup() {
     #ifndef DESKTOP
     _serial_port.begin(BAUD_RATE);
     #endif
+
+    start_interrupt();
 
     clear_log();
     _heartbeat.flags = 1;  // By default, let there be an error in the system.
@@ -271,32 +307,34 @@ unsigned char Piksi::read_all() {
     #ifdef DESKTOP
     return _read_return;
     #else
+
+    noInterrupts();
+
+    int bytes = last_bytes;
+    last_bytes = 0;
+
+    buffer_begin = buffer;
+    buffer_end = buffer;
+    // copy buffer up to available
+    for (int i = 0; i < bytes; i++){
+        *(buffer_end++) = Serial4.read();
+    }
+
+    microdelta = interrupt_count*100; //convert to us
+
+    interrupts();
+
     
     _gps_time_update = false;
     _pos_ecef_update = false;
     _vel_ecef_update = false;
     _baseline_ecef_update = false;
-
-    int initial_time = micros();
     
-    if(bytes_available()){
+    if(buffer_begin < buffer_end){ 
         bool crc_error = false;
-        while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){
-            //call process_buffer() to process data, and check if crc_error happened
-            if(process_buffer() < 0)
-                crc_error = true;
+        while(buffer_begin < buffer_end){
+            crc_error |= process_buffer() < 0;
         }
-
-        //ensure that if the while loop terminated because of exceeding the READ_ALL_LIMIT
-        //it will enter the clear bytes condition below
-        delayMicroseconds(5);
-
-        if(micros()-initial_time >= READ_ALL_LIMIT){
-            clear_bytes();
-            return 5;
-        }
-        
-        //by this point in the code, it is guarenteed that there are no more bytes in buffer
 
         if(crc_error)
             return 3;
@@ -333,14 +371,12 @@ void Piksi::clear_bytes() {
 
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
-    Piksi *piksi = (Piksi *)context;
-    
-    HardwareSerial &sp = piksi->_serial_port;
+    Piksi *piksi = (Piksi *)context; // so it can access serial port
 
     u32 i;
     for (i = 0; i < n; i++) {
-        if (sp.available())
-            buff[i] = sp.read();
+        if (piksi->buffer_begin < piksi->buffer_end)
+            buff[i] = *(piksi->buffer_begin++);
         else
             break;
     }
