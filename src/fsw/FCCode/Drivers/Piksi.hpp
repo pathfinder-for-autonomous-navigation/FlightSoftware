@@ -8,7 +8,6 @@
 #else
 #include <iostream>
 #include <string>
-#define SERIAL4_RX_BUFFER_SIZE 1
 #endif
 
 #include <common/GPSTime.hpp>
@@ -432,9 +431,11 @@ class Piksi {
     bool _heartbeat_update;
     bool _user_data_update;
 
+#ifndef DESKTOP
     unsigned char buffer[SERIAL4_RX_BUFFER_SIZE]; 
     unsigned char* buffer_begin;
     unsigned char* buffer_end;
+#endif
     unsigned long microdelta;
 
     //set read return mock
