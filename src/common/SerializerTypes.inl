@@ -688,8 +688,11 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
      * TelemtryInfoGenerator.
      */
     void set_telemetry_info() {
-        this->_min(0) = _arr_sr->min()[0];
-        this->_max(0) = _arr_sr->max()[0];
+        if (N == 3)
+        {
+            this->_min(0) = _arr_sr->min()[0];
+            this->_max(0) = _arr_sr->max()[0];
+        }
         this->serialized_val.resize(_arr_sr->bitsize());
     }
 
@@ -719,6 +722,13 @@ class LinVectorSerializer :  public SerializerBase<lin::Vector<T, N>> {
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
         return _arr_sr->print(src_cpy);
     }
+
+    const bit_array& get_bit_array() const { return _arr_sr->get_bit_array(); }
+    bit_array& get_bit_array() { return _arr_sr->get_bit_array(); }
+
+    void set_bit_array(const bit_array& src) {
+        _arr_sr->set_bit_array(src);
+    }
 };
 
 template<typename T>
@@ -728,6 +738,7 @@ class Serializer<lin::Vector<T, 4>> : public LinVectorSerializer<T, 4>
     Serializer() : LinVectorSerializer<T, 4>()
     {
         this->_arr_sr = std::make_shared<Serializer<std::array<T,4>>>();
+        this->set_telemetry_info();
     }
 };
 
