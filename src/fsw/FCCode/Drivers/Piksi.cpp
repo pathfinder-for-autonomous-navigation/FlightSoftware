@@ -33,9 +33,11 @@ Piksi::Piksi(const std::string &name) {
 }
 #endif
 
+#ifndef DESKTOP
 static volatile int last_bytes = 0;
 static volatile unsigned long interrupt_count = 0;
 static volatile unsigned long last_interrupt_count;
+#endif
 
 void Piksi::check_bytes(){
 #ifndef DESKTOP
