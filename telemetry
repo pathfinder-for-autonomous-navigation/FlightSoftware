@@ -1080,7 +1080,7 @@
             "writable": true
         },
         "attitude_estimator.q_body_eci": {
-            "bitsize": 0,
+            "bitsize": 32,
             "flow_id": 3,
             "type": "lin float quaternion",
             "writable": false
