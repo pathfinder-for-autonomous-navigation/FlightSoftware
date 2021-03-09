@@ -125,7 +125,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
       min_speed_read * lin::ones<lin::Vector3f>();
 
   // Filter the results
-  speed_rd = speed_rd + speed_flt * (readings - speed_rd);
+  speed_rd = speed_rd + speed_flt * (rwa_to_body * readings - speed_rd);
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated speed reading " + String(readings(0)) + " "
@@ -155,7 +155,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
   readings = rwa::max_ramp_rd * readings / 3.3f + rwa::min_ramp_rd * lin::ones<lin::Vector3f>();
 
   // Filter the results
-  ramp_rd = ramp_rd + speed_flt * (readings - ramp_rd);
+  ramp_rd = ramp_rd + speed_flt * (rwa_to_body * readings - ramp_rd);
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated ramp reading " + String(readings(0)) + " "
