@@ -10,6 +10,8 @@
 #include "PiksiControlTask.hpp"
 #include "ADCSBoxMonitor.hpp"
 #include "ADCSBoxController.hpp"
+#include "TimeEstimator.hpp"
+#include "OrbitEstimator.hpp"
 #include "AttitudeEstimator.hpp"
 #include "AttitudeController.hpp"
 #include "ADCSCommander.hpp"
@@ -40,6 +42,8 @@ class MainControlLoop : public ControlTask<void> {
 
     DebugTask debug_task;
 
+    TimeEstimator time_estimator;
+    OrbitEstimator orbit_estimator;
     AttitudeEstimator attitude_estimator;
 
     Devices::Gomspace::eps_hk_t hk;
@@ -102,6 +106,8 @@ class MainControlLoop : public ControlTask<void> {
     TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
     TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
     TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
+    TRACKED_CONSTANT_SC(unsigned int, time_estimator_offset      ,  35500 + test_offset); // TODO : Like wtf is this supposed to be...
+    TRACKED_CONSTANT_SC(unsigned int, orbit_estimator_offset     ,  35500 + test_offset); // TODO : ^^ same question
     TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);

@@ -30,6 +30,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
       debug_task(registry, debug_task_offset),
+      time_estimator(registry, time_estimator_offset),
+      orbit_estimator(registry, orbit_estimator_offset),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
@@ -111,6 +113,8 @@ void MainControlLoop::execute() {
     #endif
 
     uplink_consumer.execute_on_time();
+    time_estimator.execute_on_time();
+    orbit_estimator.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     dcdc_controller.execute_on_time();
@@ -122,7 +126,7 @@ void MainControlLoop::execute() {
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
-    
+
     #ifdef DESKTOP
         eeprom_controller.execute_on_time();
     #else

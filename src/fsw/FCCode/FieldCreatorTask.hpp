@@ -15,7 +15,6 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      ReadableStateField<double> time_f;
       ReadableStateField<lin::Vector3d> pos_f;
       ReadableStateField<lin::Vector3d> vel_f;
       ReadableStateField<lin::Vector3d> pos_baseline_f;
@@ -24,7 +23,6 @@ class FieldCreatorTask : public ControlTask<void> {
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
         pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
         vel_f("orbit.vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000,22)),
@@ -32,7 +30,6 @@ class FieldCreatorTask : public ControlTask<void> {
         bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
       {
           // For OrbitController
-          add_readable_field(time_f); // Time since the PAN epoch in seconds
           add_readable_field(pos_f);
           add_readable_field(vel_f);
           add_readable_field(pos_baseline_f);
