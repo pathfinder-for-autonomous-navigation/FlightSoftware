@@ -87,8 +87,7 @@ void test_update()
         auto const dt_ns = static_cast<unsigned long long>(tf.piksi_time_fp->get() - pan_epoch);
         TEST_ASSERT(tf.time_gps_fp->get() == tf.piksi_time_fp->get());
         TEST_ASSERT_EQUAL(tf.time_ns_fp->get(), dt_ns);
-        // TEST_ASSERT_EQUAL_DOUBLE(tf.time_s_fp->get(), static_cast<double>(dt_ns) * 1.0-9);
-        //  ^^ TODO : Fix this b/c tolerances are weird
+        TEST_ASSERT_EQUAL_DOUBLE(tf.time_s_fp->get(), static_cast<double>(dt_ns) * 1.0e-9);
     };
     assert_update_for(piksi_mode_t::spp);
     assert_update_for(piksi_mode_t::fixed_rtk);
