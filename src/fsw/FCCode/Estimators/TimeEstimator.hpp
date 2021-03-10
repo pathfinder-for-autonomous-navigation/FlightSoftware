@@ -51,7 +51,7 @@ class TimeEstimator : public ControlTask<void>
 
     /* Command to forcibly reset the time estimate.
      */
-    WritableStateField<bool> time_reset_f;
+    WritableStateField<bool> time_reset_cmd_f;
 };
 
 #endif

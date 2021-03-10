@@ -15,24 +15,24 @@ TimeEstimator::TimeEstimator(StateFieldRegistry &registry)
       time_gps_f("time.gps", Serializer<gps_time_t>()),
       time_ns_f("time.ns"),
       time_s_f("time.s"),
-      time_reset_f("time.reset", Serializer<bool>())
+      time_reset_cmd_f("time.reset_cmd", Serializer<bool>())
 {
     add_readable_field(time_valid_f);
     add_internal_field(time_s_f);
     add_internal_field(time_ns_f);
     add_readable_field(time_gps_f);
-    add_writable_field(time_reset_f);
+    add_writable_field(time_reset_cmd_f);
 
     time_valid_f.set(false);
-    time_reset_f.set(false);
+    time_reset_cmd_f.set(false);
 }
 
 void TimeEstimator::execute()
 {
-    if (time_reset_f.get())
+    if (time_reset_cmd_f.get())
     {
         time_valid_f.set(false);
-        time_reset_f.set(false);
+        time_reset_cmd_f.set(false);
         return;
     }
 

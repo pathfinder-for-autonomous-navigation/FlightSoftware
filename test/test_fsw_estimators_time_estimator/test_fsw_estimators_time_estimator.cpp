@@ -22,7 +22,7 @@ class TestFixture
     ReadableStateField<gps_time_t> const *const time_gps_fp;
     InternalStateField<unsigned long long> const *const time_ns_fp;
     InternalStateField<double> const *const time_s_fp;
-    WritableStateField<bool> *const time_reset_fp;
+    WritableStateField<bool> *const time_reset_cmd_fp;
 
     TestFixture()
         : registry(),
@@ -34,7 +34,7 @@ class TestFixture
           time_gps_fp(registry.find_readable_field_t<gps_time_t>("time.gps")),
           time_ns_fp(registry.find_internal_field_t<unsigned long long>("time.ns")),
           time_s_fp(registry.find_internal_field_t<double>("time.s")),
-          time_reset_fp(registry.find_writable_field_t<bool>("time.reset"))
+          time_reset_cmd_fp(registry.find_writable_field_t<bool>("time.reset_cmd"))
     { }
 };
 
@@ -47,7 +47,7 @@ void test_constructor()
 
     // By default, the valid flag and reset command should be false
     TEST_ASSERT_FALSE(tf.time_valid_fp->get());
-    TEST_ASSERT_FALSE(tf.time_reset_fp->get());
+    TEST_ASSERT_FALSE(tf.time_reset_cmd_fp->get());
 }
 
 void test_update()
@@ -141,20 +141,20 @@ void test_reset()
     tf.time_estimator.execute();
 
     TEST_ASSERT_TRUE(tf.time_valid_fp->get());
-    TEST_ASSERT_FALSE(tf.time_reset_fp->get());
+    TEST_ASSERT_FALSE(tf.time_reset_cmd_fp->get());
 
     // Ensure reset will be successfull even with valid data for a control cycle
-    tf.time_reset_fp->set(true);
+    tf.time_reset_cmd_fp->set(true);
     tf.time_estimator.execute();
 
     TEST_ASSERT_FALSE(tf.time_valid_fp->get());
-    TEST_ASSERT_FALSE(tf.time_reset_fp->get());
+    TEST_ASSERT_FALSE(tf.time_reset_cmd_fp->get());
 
     // Ensure the estimate will initialize again
     tf.time_estimator.execute();
 
     TEST_ASSERT_TRUE(tf.time_valid_fp->get());
-    TEST_ASSERT_FALSE(tf.time_reset_fp->get());
+    TEST_ASSERT_FALSE(tf.time_reset_cmd_fp->get());
 }
 
 int test_control_task()
