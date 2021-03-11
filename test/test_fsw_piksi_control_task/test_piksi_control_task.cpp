@@ -1,10 +1,11 @@
 #include "../StateFieldRegistryMock.hpp"
+#include "../custom_assertions.hpp"
 
+#include <fsw/FCCode/Drivers/Piksi.hpp>
 #include <fsw/FCCode/PiksiControlTask.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>
 
-#include <fsw/FCCode/Drivers/Piksi.hpp>
-#include "../custom_assertions.hpp"
+#include <lin/core.hpp>
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
@@ -16,9 +17,9 @@ class TestFixture {
 
         // pointers to statefields for easy access
         ReadableStateField<unsigned char>* currentState_fp;
-        ReadableStateField<d_vector_t>* pos_fp;
-        ReadableStateField<d_vector_t>* vel_fp;
-        ReadableStateField<d_vector_t>* baseline_fp;
+        ReadableStateField<lin::Vector3d>* pos_fp;
+        ReadableStateField<lin::Vector3d>* vel_fp;
+        ReadableStateField<lin::Vector3d>* baseline_fp;
         ReadableStateField<gps_time_t>* time_fp;
         ReadableStateField<unsigned int>* fix_error_count_fp;
 
@@ -38,9 +39,9 @@ class TestFixture {
 
                 // initialize pointers to statefields      
                 currentState_fp = registry.find_readable_field_t<unsigned char>("piksi.state");
-                pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
-                vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
-                baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
+                pos_fp = registry.find_readable_field_t<lin::Vector3d>("piksi.pos");
+                vel_fp = registry.find_readable_field_t<lin::Vector3d>("piksi.vel");
+                baseline_fp = registry.find_readable_field_t<lin::Vector3d>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
                 fix_error_count_fp = registry.find_readable_field_t<unsigned int>("piksi.fix_error_count");
         }
@@ -59,24 +60,22 @@ class TestFixture {
         void set_gps_time(const unsigned int tow){
                 piksi_task->piksi.set_gps_time(tow);
         }
-        void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats){
-                piksi_task->piksi.set_pos_ecef(tow, position, nsats);
+        void set_pos_ecef(const unsigned int tow, const lin::Vector3d& position, const unsigned char nsats){
+                const std::array<double, 3> arr = {position(0), position(1), position(2)};
+                piksi_task->piksi.set_pos_ecef(tow, arr, nsats);
         }
-        void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity){
-                piksi_task->piksi.set_vel_ecef(tow, velocity);
+        void set_vel_ecef(const unsigned int tow, const lin::Vector3d& velocity){
+                const std::array<double, 3> arr = {velocity(0), velocity(1), velocity(2)};
+                piksi_task->piksi.set_vel_ecef(tow, arr);
         }
-        void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position){
-                piksi_task->piksi.set_baseline_ecef(tow, position);
+        void set_baseline_ecef(const unsigned int tow, const lin::Vector3d& position){
+                const std::array<double, 3> arr = {position(0), position(1), position(2)};
+                piksi_task->piksi.set_baseline_ecef(tow, arr);
         }
         void set_baseline_flag(const unsigned char flag){
                 piksi_task->piksi.set_baseline_flag(flag);
         }
 };
-
-//returns the magnitude^2 of a vector 3 of doubles
-float mag_2(const std::array<double, 3> input){
-        return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
-}
 
 void test_task_initialization()
 {
@@ -113,9 +112,9 @@ void test_read_errors(){
 void test_normal_errors(){
         TestFixture tf;
 
-        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+        lin::Vector3d pos = {1000.0, 2000.0, 3000.0};
+        lin::Vector3d vel = {4000.0, 5000.0, 6000.0};
+        lin::Vector3d baseline = {7000.0, 8000.0, 9000.0};
 
         //tests to make sure to error out if packets not synced to same tow
         unsigned int tow = 100;
@@ -160,9 +159,9 @@ void test_task_execute()
 {
         TestFixture tf;
 
-        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+        lin::Vector3d pos = {1000.0, 2000.0, 3000.0};
+        lin::Vector3d vel = {4000.0, 5000.0, 6000.0};
+        lin::Vector3d baseline = {7000.0, 8000.0, 9000.0};
 
         tf.set_read_return(2);
         tf.execute();
@@ -180,9 +179,9 @@ void test_task_execute()
         //times should now agree, and be in baseline
         assert_piksi_mode(piksi_mode_t::fixed_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(pos),lin::fro(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(baseline),lin::fro(tf.baseline_fp->get()));
 
         //float RTK
         tow = 300;
@@ -200,9 +199,9 @@ void test_task_execute()
         //float rtk test
         assert_piksi_mode(piksi_mode_t::float_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,300,0) == tf.time_fp->get());
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(pos),lin::fro(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(baseline),lin::fro(tf.baseline_fp->get()));
 
         //SPP check
         tow = 500;
@@ -217,17 +216,17 @@ void test_task_execute()
         //check in SPP
         assert_piksi_mode(piksi_mode_t::spp);
         TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(pos),lin::fro(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
 }
 
 //test to make sure the control task goes into dead mode if it happens
 void test_dead(){
         TestFixture tf;
 
-        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
+        lin::Vector3d pos = {1000.0, 2000.0, 3000.0};
+        lin::Vector3d vel = {4000.0, 5000.0, 6000.0};
+        lin::Vector3d baseline = {7000.0, 8000.0, 9000.0};
 
         //get a good reading from driver
         unsigned int tow = 200;
@@ -241,9 +240,9 @@ void test_dead(){
         //times should now agree, and be in baseline
         assert_piksi_mode(piksi_mode_t::fixed_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(pos),lin::fro(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(baseline),lin::fro(tf.baseline_fp->get()));
 
         //simulate that the piksi is not sending any data for 1000 control cycles.
         //Make sure that the counter state fields are set correctl.
