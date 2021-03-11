@@ -23,9 +23,9 @@ public:
     void execute() override;
 
     // StateField for position, velocity, and baseline
-    ReadableStateField<d_vector_t> pos_f;
-    ReadableStateField<d_vector_t> vel_f;
-    ReadableStateField<d_vector_t> baseline_pos_f;
+    ReadableStateField<lin::Vector3d> pos_f;
+    ReadableStateField<lin::Vector3d> vel_f;
+    ReadableStateField<lin::Vector3d> baseline_pos_f;
 
     // Serializer and StateField for currentState and
     // number of cycles since a good reading

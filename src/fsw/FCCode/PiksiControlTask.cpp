@@ -1,15 +1,17 @@
 #include "PiksiControlTask.hpp"
-#include <limits>
-#include <cmath>
+
 #include <gnc/constants.hpp>
+
+#include <lin/core.hpp>
+#include <lin/views.hpp>
 
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, 
     unsigned int offset, Devices::Piksi &_piksi) 
     : TimedControlTask<void>(registry, "piksi", offset),
     piksi(_piksi),
-    pos_f("piksi.pos", Serializer<d_vector_t>(6771000,6921000,28)),
-    vel_f("piksi.vel", Serializer<d_vector_t>(7570,7685,19)),
-    baseline_pos_f("piksi.baseline_pos", Serializer<d_vector_t>(0,2000,22)),
+    pos_f("piksi.pos", Serializer<lin::Vector3d>(6771000,6921000,28)),
+    vel_f("piksi.vel", Serializer<lin::Vector3d>(7570,7685,19)),
+    baseline_pos_f("piksi.baseline_pos", Serializer<lin::Vector3d>(0,2000,22)),
     current_state_f("piksi.state", Serializer<unsigned char>(14)),
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
@@ -134,10 +136,10 @@ void PiksiControlTask::execute()
 
         //set values in data statefields
         time_f.set(time);
-        pos_f.set(pos);
-        vel_f.set(vel);
+        pos_f.set(lin::view<lin::Vector3d>(pos.data()));
+        vel_f.set(lin::view<lin::Vector3d>(vel.data()));
         if(read_out == 1){
-            baseline_pos_f.set(baseline_pos);
+            baseline_pos_f.set(lin::view<lin::Vector3d>(baseline_pos.data()));
         }
     }
 
