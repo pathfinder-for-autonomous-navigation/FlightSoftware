@@ -2,6 +2,7 @@
 #define ESTIMATORS_ORBIT_ESTIMATOR_HPP_
 
 #include <fsw/FCCode/ControlTask.hpp>
+#undef abs
 
 #include <lin/core.hpp>
 
