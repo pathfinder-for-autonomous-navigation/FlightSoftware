@@ -13,12 +13,14 @@ class PTestCase(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, is_interactive, random_seed, data_dir):
+    def __init__(self, is_interactive, random_seed, data_dir, device_config):
         self._finished = False
         self.is_interactive = is_interactive
         self.random_seed = random_seed
         self.data_dir = data_dir
         self.logger = Logger("testcase", data_dir, print=True)
+
+        self.device_config = device_config
 
         self.errored = False
         self.finished = False
@@ -144,7 +146,7 @@ class PTestCase(object):
             self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
             isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, 
-            self.sim_mapping, self.scrape_uplinks)
+            self.sim_mapping, self.scrape_uplinks, self.device_config)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
