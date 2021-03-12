@@ -20,7 +20,7 @@ class Simulation(object):
     Full mission simulation, including both spacecraft.
     """
     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, scrape_emails):
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, scrape_emails, device_config):
         """
         Initializes self
 
@@ -44,6 +44,11 @@ class Simulation(object):
         self.sim_model = _sim_model
         self.mapping_file_name = _mapping_file_name
         self.scrape_emails = scrape_emails
+        
+        self.enable_autotelem = False
+        if device_config != None and 'autotelem' in str(device_config):
+            self.enable_autotelem = True
+        
         self.log = ""
 
         if self.is_single_sat_sim:
@@ -151,11 +156,12 @@ class Simulation(object):
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
             # Step 4. Send telemetry to database
-            # if self.is_single_sat_sim:
-            #     self.flight_controller.dbtelem()
-            # else:
-            #     self.flight_controller_follower.dbtelem()
-            #     self.flight_controller_leader.dbtelem()
+            if self.enable_autotelem:
+                if self.is_single_sat_sim:
+                    self.flight_controller.dbtelem()
+                else:
+                    self.flight_controller_follower.dbtelem()
+                    self.flight_controller_leader.dbtelem()
 
             # Step 5. Read the actuators from the flight computer(s) and send to psim
             self.read_actuators_send_to_sim()
