@@ -20,7 +20,8 @@ class DualEmptyCase(MissionCase):
         return True
 
     def run_case_fullmission(self):
-        self.finish()
+        pass
+        #self.finish()
 
 class DualEmptySimCase(DualEmptyCase):
     @property
