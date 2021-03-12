@@ -85,11 +85,11 @@ class AutonomousMissionController(MissionCase):
         # while(1): #for testing
             #Pass telemetry between spacecraft 
 
-        #wait for data from both spacecrafts to come down from Iridium
-        orbit_data_fields = ["orbit.pos"]
-        # while("Unable to find field" in self.leader.read_state("orbit.time") or 
-        #         "Unable to find field" in self.follower.read_state("orbit.time")): 
-        #     pass
+            #wait for data from both spacecrafts to come down from Iridium
+            orbit_data_fields = ["orbit.pos", "orbit.vel"]
+            while("Unable to find" in self.leader.read_state("orbit.time") or 
+                    "Unable to find" in self.follower.read_state("orbit.time")): 
+                pass
 
         downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
         downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]

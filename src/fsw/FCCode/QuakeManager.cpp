@@ -1,4 +1,4 @@
-#include "QuakeManager.h"
+pdated_fields={}#include "QuakeManager.h"
 #include "Drivers/QLocate.hpp"
 
 #include "radio_state_t.enum"
@@ -66,11 +66,9 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     // Radio initializes to the disabled state
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
     dump_telemetry_f.set(false);
-
 }
 
 void QuakeManager::init(){
-
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
     mo_buffer_copy = new char[max_snapshot_size]();

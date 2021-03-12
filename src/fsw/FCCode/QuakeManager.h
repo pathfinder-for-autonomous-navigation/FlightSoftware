@@ -37,11 +37,13 @@ public:
    QuakeManager(StateFieldRegistry &registry, unsigned int offset);
    
    /**
-    * @brief i cri
+    * @brief Initializes the MO buffers
     * 
+    * Should be called after the DownlinkProducer is initialized, so that it can
+    * grab the correct downlink sizes.    * 
     */
    void init();
-   
+
    ~QuakeManager();
 #ifndef FLIGHT
 
