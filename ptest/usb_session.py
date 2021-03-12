@@ -441,7 +441,7 @@ class USBSession(object):
             field: value,
                 "time": str(datetime.datetime.now().isoformat())
             })
-            res = self.es.index(index='statefield_report_'+str(self.device_name.lower()), doc_type='report', body=data)
+            res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
                 failed = True
         return not failed
