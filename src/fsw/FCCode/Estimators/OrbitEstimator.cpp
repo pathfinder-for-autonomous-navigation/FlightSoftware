@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "OrbitEstimator.hpp"
 
 #include <fsw/FCCode/constants.hpp>
@@ -85,14 +83,10 @@ void OrbitEstimator::execute()
             orb::OrbitEstimate measurement(orb::MINGPSTIME_NS, piksi_pos_fp->get(),
                     piksi_vel_fp->get(), sqrtR);
 
-            std::cout << "Generating measurement that's valid? " << measurement.valid() << "\n";
-
             if (piksi_dns)
             {
                 measurement.shortupdate(piksi_dns, w_earth_ecef, sqrtQ, _);
             }
-
-            std::cout << "Propagated measurement that's valid? " << measurement.valid() << "\n";
 
             if (_estimate.valid())
             {
@@ -102,8 +96,6 @@ void OrbitEstimator::execute()
             else
             {
                 _estimate = measurement;
-
-                std::cout << "Initialized estimate that's valid? " << _estimate.valid() << "\n";
             }
             break;
         }
@@ -116,8 +108,6 @@ void OrbitEstimator::execute()
             }
             break;
     }
-
-    std::cout << "Estimate that's valid? " << _estimate.valid() << "\n";
 
     orbit_valid_f.set(_estimate.valid());
     if (_estimate.valid())
