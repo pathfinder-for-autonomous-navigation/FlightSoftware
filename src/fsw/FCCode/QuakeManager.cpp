@@ -1,4 +1,4 @@
-pdated_fields={}#include "QuakeManager.h"
+#include "QuakeManager.h"
 #include "Drivers/QLocate.hpp"
 
 #include "radio_state_t.enum"
