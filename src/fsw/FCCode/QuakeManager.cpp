@@ -277,11 +277,7 @@ void QuakeManager::dispatch_transceive()
     if (has_finished())
     {
         // Case 1: We have no comms --> try again until we run out of cycles
-        #if !defined(FLIGHT) && defined(AUTOTELEM)
-        if (false) //lol
-        #else
         if (qct.get_MO_status() > 4)
-        #endif
         {
             return handle_no_comms();
         }
@@ -316,7 +312,6 @@ void QuakeManager::handle_no_comms()
     else
     {
         mo_idx = 0; // Make sure we get a new snapshot
-        printf(debug_severity::error, "new sn: %d\n", mo_idx);
         return transition_radio_state(radio_state_t::write);
     }
 }
