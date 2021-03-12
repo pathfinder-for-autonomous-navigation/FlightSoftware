@@ -280,13 +280,13 @@ class USBSession(object):
             return False
 
         returned_vals = returned_vals[0].split(",")
-        returned_vals = [x for x in returned_vals if x is not ""]
+        returned_vals = [x for x in returned_vals if x != ""]
         
         if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
             numeric_returned_vals = [float(x) for x in returned_vals]
             if type(vals[0]) == str:
                 vals = vals[0]
-                vals = [float(x) for x in vals.split(",") if x is not '']
+                vals = [float(x) for x in vals.split(",") if x != '']
 
             return numeric_returned_vals == vals
 
