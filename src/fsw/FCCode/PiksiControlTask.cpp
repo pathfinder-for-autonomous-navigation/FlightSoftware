@@ -48,7 +48,7 @@ void PiksiControlTask::execute()
 
     //Throw CRC error if microdelta is not in expected range
     int md_threshold = 100000; // 100 ms
-    if (microdelta < 0 || microdelta > md_threshold) read_out = 3; 
+    if (microdelta > PIKSI_MD_THRESHOLD) read_out = 3; 
 
     //4 means no bytes
     //3 means CRC error on serial
