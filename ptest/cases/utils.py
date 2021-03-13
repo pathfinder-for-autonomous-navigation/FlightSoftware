@@ -58,7 +58,7 @@ def str_to_val(field):
         if ',' in field:
             # ret is a list
             list_of_strings = field.split(',')
-            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_strings = [x for x in list_of_strings if x != '']
             list_of_vals = [str_to_val(x) for x in list_of_strings]
             return list_of_vals
         elif 'nan' in field:

@@ -129,7 +129,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
 
         # When in no fix, no_data_error is actually the most common mode
-        if self.most_common_mode is 'no_data_error' and self.second_most_common_mode is 'no_fix':
+        if self.most_common_mode == 'no_data_error' and self.second_most_common_mode == 'no_fix':
             self.nominal_checkout()
         elif self.most_common_mode in nominal_list:
             self.nominal_checkout()
