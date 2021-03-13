@@ -46,6 +46,7 @@ class Simulation(object):
         self.scrape_emails = scrape_emails
         self.log = ""
 
+        # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
         if device_config != None and 'autotelem' in str(device_config):
             self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
             self.enable_autotelem = True
