@@ -5,8 +5,8 @@
 #include "flow_data.hpp"
 
 const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
-{1, true, {"pan.state", "pan.deployed", "pan.sat_designation", "pan.bootcount"}},
-{2, true, {"orbit.baseline_pos", "orbit.pos", "piksi.time"}},
+{1, true, {"pan.state", "pan.cycle_no", "pan.deployed", "pan.sat_designation", "pan.bootcount"}},
+{2, true, {"orbit.baseline_pos", "orbit.pos", "orbit.vel", "piksi.time"}},
 {3, true, {"attitude_estimator.q_body_eci", "attitude_estimator.w_body", "adcs_monitor.ssa_mode"}},
 {4, true, {"adcs_monitor.wheel1_fault.base", "adcs_monitor.wheel1_fault.override", "adcs_monitor.wheel1_fault.persistence", "adcs_monitor.wheel1_fault.suppress", "adcs_monitor.wheel1_fault.unsignal", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel2_fault.override", "adcs_monitor.wheel2_fault.persistence", "adcs_monitor.wheel2_fault.suppress", "adcs_monitor.wheel2_fault.unsignal", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel3_fault.override", "adcs_monitor.wheel3_fault.persistence", "adcs_monitor.wheel3_fault.suppress", "adcs_monitor.wheel3_fault.unsignal", "adcs_monitor.wheel_pot_fault.base", "adcs_monitor.wheel_pot_fault.override", "adcs_monitor.wheel_pot_fault.persistence", "adcs_monitor.wheel_pot_fault.suppress", "adcs_monitor.wheel_pot_fault.unsignal"}},
 {5, true, {"prop.state", "prop.overpressured.base", "prop.overpressured.override", "prop.overpressured.persistence", "prop.overpressured.suppress", "prop.overpressured.unsignal", "prop.pressurize_fail.base", "prop.pressurize_fail.override", "prop.pressurize_fail.persistence", "prop.pressurize_fail.suppress", "prop.pressurize_fail.unsignal"}},
