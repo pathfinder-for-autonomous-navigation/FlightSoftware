@@ -146,7 +146,7 @@ class Enums(object):
         "config"
     ])
 
-        qfh_states = FSWEnum([
+    qfh_states = FSWEnum([
         "unfaulted",
         "forced_standby",
         "powercycle_1",
