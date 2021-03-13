@@ -44,15 +44,14 @@ class Simulation(object):
         self.sim_model = _sim_model
         self.mapping_file_name = _mapping_file_name
         self.scrape_emails = scrape_emails
-        
+        self.log = ""
+
         if device_config != None and 'autotelem' in str(device_config):
             self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
             self.enable_autotelem = True
         else:
             self.add_to_log('[PTEST-SIM] Autotelem INACTIVE!')
             self.enable_autotelem = False
-
-        self.log = ""
 
         if self.is_single_sat_sim:
             self.add_to_log('[PTEST-SIM] Singlesat sim!')
