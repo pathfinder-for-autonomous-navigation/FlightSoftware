@@ -1,10 +1,10 @@
 {
     "name": "Fault_handler",
-    "key": "fault_handler",
+    "key": "leader_fault_handler",
     "measurements": [
         {
             "name": "Enabled",
-            "key": "fault_handler.enabled",
+            "key": "leader_fault_handler.enabled",
             "values": [
                 {
                     "bitsize": 1,

@@ -8,7 +8,8 @@ bootcount: 0},
 
 orbit: {
 baseline_pos: 0.0,
-pos: 0.0},
+pos: 0.0,
+vel: 0.0},
 
 piksi: {
 time: '',

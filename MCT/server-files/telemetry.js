@@ -15,9 +15,10 @@ const request = require('request');
  */
 var searchURl = 'http://localhost:5000/search-es';
 /**
- * The index of the Elastic Search database
+ * The indexes of the Elastic Search database
  */
-var searchIndex = 'statefield_report_123456789';
+ var leaderIndex = 'statefield_report_123456789012345';
+ var followerIndex = 'statefield_report_987654321012345';
 
 /**
  *  constructor initializing and then calling for the generation and updating of all telemetry points from all subsytems and domains
@@ -27,13 +28,15 @@ function Telemetry() {
     this.initialState = variables;
 
     //all of the current values for the telemetry
-    this.state = {};
+    this.follower_state = {};
+    this.leader_state = {};
 
     //creates an entry in state for every variable in './state-variables'
     Object.entries(this.initialState).forEach(function ([statesSubsystem,v]) {
       Object.entries(v).forEach(function ([k,v]) {
         let key = statesSubsystem + '.' + k;
-        this.state[key] = v;
+        this.follower_state[('follower_' + key)] = v;
+        this.leader_state[('leader_' + key)] = v;
       }, this);
     }, this);
 
@@ -43,10 +46,16 @@ function Telemetry() {
     //the listeners for the real time telemetry
     this.listeners = [];
 
-    //adds all the initial values to history
-    Object.entries(this.state).forEach(function ([k,v]) {
+    //adds all the initial follower values to history
+    Object.entries(this.follower_state).forEach(function ([k,v]) {
       this.history[k] = [];
     }, this);
+
+    //adds all the initial leader values to history
+    Object.entries(this.leader_state).forEach(function ([k,v]) {
+      this.history[k] = [];
+    }, this);
+
 
     //updates the states, generates the realtime listers/notifications and historical telemetry ever 1 second.
     setInterval(function () {
@@ -54,7 +63,7 @@ function Telemetry() {
         this.generateTelemetry();
     }.bind(this), 1000);
 
-    console.log("Now reading spacecraft telemetry")
+    console.log("Now reading spacecraft telemetry from leader and follower")
 
 };
 
@@ -68,23 +77,48 @@ function Telemetry() {
 *   for the state value directly
 **/
 Telemetry.prototype.updateState = async function () {
-  Object.keys(this.state).forEach(async function (id) {
+  Object.keys(this.follower_state).forEach(async function (id) {
 
     //if the value for the key of the state entry is an object
-    if(typeof(this.state[id]) == 'object'){
-      
-      Object.keys(this.state[id]).forEach(async function (subId){
+    if(typeof(this.follower_state[id]) == 'object'){
+
+      Object.keys(this.follower_state[id]).forEach(async function (subId){
+        new_id = id.substr(id.indexOf('_') + 1);
         //send a request to Elastic Search for the field
-        let res = await this.getValue(searchURl, searchIndex, id + '.' + subId);
-        (this.state[id])[subId] = res;//update state
+        let res = await this.getValue(searchURl, followerIndex, new_id + '.' + subId);
+        (this.follower_state[id])[subId] = res;//update state
       },this)
 
     }
     //if the value for the key of the state entry is a primitive
     else{
+      new_id = id.substr(id.indexOf('_') + 1);
       //send a request to Elastic Search for the field
-      let res = await this.getValue(searchURl, searchIndex, id);
-      this.state[id] = res;//update state
+      let res = await this.getValue(searchURl, followerIndex, new_id);
+      this.follower_state[id] = res;//update state
+    }
+
+  }, this);
+
+  Object.keys(this.leader_state).forEach(async function (id) {
+
+    //if the value for the key of the state entry is an object
+    if(typeof(this.leader_state[id]) == 'object'){
+      
+      Object.keys(this.leader_state[id]).forEach(async function (subId){
+        new_id = id.substr(id.indexOf('_') + 1);
+        //send a request to Elastic Search for the field
+        let res = await this.getValue(searchURl, leaderIndex, new_id + '.' + subId);
+        (this.leader_state[id])[subId] = res;//update state
+      },this)
+
+    }
+    //if the value for the key of the state entry is a primitive
+    else{
+      new_id = id.substr(id.indexOf('_') + 1);
+      //send a request to Elastic Search for the field
+      let res = await this.getValue(searchURl, leaderIndex, new_id);
+      this.leader_state[id] = res;//update state
     }
 
   }, this);
@@ -130,15 +164,15 @@ Telemetry.prototype.generateTelemetry = function () {
     var timestamp = Date.now(), sent = 0;
     //make two cases one that updates objects and one that directly updates field
     
-    Object.keys(this.state).forEach(function (id) {
+    Object.keys(this.follower_state).forEach(function (id) {
 
       //if the value for the key of the state entry is an object
-      if(typeof(this.state[id]) == 'object'){
+      if(typeof(this.follower_state[id]) == 'object'){
 
         //generate telemetry point oject
         var telempoint = { timestamp: timestamp, id: id};
-        for (const output in this.state[id]){
-          telempoint[output] = this.state[id][output];
+        for (const output in this.follower_state[id]){
+          telempoint[output] = this.follower_state[id][output];
         }
 
         //notify the realtime server and push the datapoint to the history server
@@ -150,7 +184,37 @@ Telemetry.prototype.generateTelemetry = function () {
       else{
 
         //generate telemetry point primitve state
-        var telempoint = { timestamp: timestamp, value: this.state[id], id: id};
+        var telempoint = { timestamp: timestamp, value: this.follower_state[id], id: id};
+
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+      }
+
+    }, this);
+
+
+    Object.keys(this.leader_state).forEach(function (id) {
+
+      //if the value for the key of the state entry is an object
+      if(typeof(this.leader_state[id]) == 'object'){
+
+        //generate telemetry point oject
+        var telempoint = { timestamp: timestamp, id: id};
+        for (const output in this.leader_state[id]){
+          telempoint[output] = this.leader_state[id][output];
+        }
+
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+
+      }
+      //if the value for the key of the state entry is a primitive
+      else{
+
+        //generate telemetry point primitve state
+        var telempoint = { timestamp: timestamp, value: this.leader_state[id], id: id};
 
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);

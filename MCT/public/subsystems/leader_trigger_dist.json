@@ -1,10 +1,10 @@
 {
     "name": "Trigger_dist",
-    "key": "trigger_dist",
+    "key": "leader_trigger_dist",
     "measurements": [
         {
             "name": "Close_approach",
-            "key": "trigger_dist.close_approach",
+            "key": "leader_trigger_dist.close_approach",
             "values": [
                 {
                     "bitsize": 13,
@@ -33,7 +33,7 @@
         },
         {
             "name": "Docking",
-            "key": "trigger_dist.docking",
+            "key": "leader_trigger_dist.docking",
             "values": [
                 {
                     "bitsize": 14,

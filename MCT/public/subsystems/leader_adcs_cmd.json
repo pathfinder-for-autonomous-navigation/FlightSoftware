@@ -1,10 +1,10 @@
 {
     "name": "Adcs_cmd",
-    "key": "adcs_cmd",
+    "key": "leader_adcs_cmd",
     "measurements": [
         {
             "name": "Rwa_speed_cmd",
-            "key": "adcs_cmd.rwa_speed_cmd",
+            "key": "leader_adcs_cmd.rwa_speed_cmd",
             "values": [
                 {
                     "bitsize": 149,
@@ -33,7 +33,7 @@
         },
         {
             "name": "Rwa_torque_cmd",
-            "key": "adcs_cmd.rwa_torque_cmd",
+            "key": "leader_adcs_cmd.rwa_torque_cmd",
             "values": [
                 {
                     "bitsize": 149,
@@ -62,7 +62,7 @@
         },
         {
             "name": "Mtr_cmd",
-            "key": "adcs_cmd.mtr_cmd",
+            "key": "leader_adcs_cmd.mtr_cmd",
             "values": [
                 {
                     "bitsize": 149,
@@ -91,7 +91,7 @@
         },
         {
             "name": "Imu_gyr_filter",
-            "key": "adcs_cmd.imu_gyr_filter",
+            "key": "leader_adcs_cmd.imu_gyr_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -120,7 +120,7 @@
         },
         {
             "name": "Imu_gyr_temp_desired",
-            "key": "adcs_cmd.imu_gyr_temp_desired",
+            "key": "leader_adcs_cmd.imu_gyr_temp_desired",
             "values": [
                 {
                     "bitsize": 8,
@@ -149,7 +149,7 @@
         },
         {
             "name": "Imu_gyr_temp_filter",
-            "key": "adcs_cmd.imu_gyr_temp_filter",
+            "key": "leader_adcs_cmd.imu_gyr_temp_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -178,7 +178,7 @@
         },
         {
             "name": "Imu_gyr_temp_pwm",
-            "key": "adcs_cmd.imu_gyr_temp_pwm",
+            "key": "leader_adcs_cmd.imu_gyr_temp_pwm",
             "values": [
                 {
                     "bitsize": 8,
@@ -207,7 +207,7 @@
         },
         {
             "name": "Imu_mag_filter",
-            "key": "adcs_cmd.imu_mag_filter",
+            "key": "leader_adcs_cmd.imu_mag_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -236,7 +236,7 @@
         },
         {
             "name": "Mag1_mode",
-            "key": "adcs_cmd.mag1_mode",
+            "key": "leader_adcs_cmd.mag1_mode",
             "values": [
                 {
                     "bitsize": 1,
@@ -265,7 +265,7 @@
         },
         {
             "name": "Mag2_mode",
-            "key": "adcs_cmd.mag2_mode",
+            "key": "leader_adcs_cmd.mag2_mode",
             "values": [
                 {
                     "bitsize": 1,
@@ -294,7 +294,7 @@
         },
         {
             "name": "Mtr_limit",
-            "key": "adcs_cmd.mtr_limit",
+            "key": "leader_adcs_cmd.mtr_limit",
             "values": [
                 {
                     "bitsize": 16,
@@ -323,7 +323,7 @@
         },
         {
             "name": "Mtr_mode",
-            "key": "adcs_cmd.mtr_mode",
+            "key": "leader_adcs_cmd.mtr_mode",
             "values": [
                 {
                     "bitsize": 2,
@@ -352,7 +352,7 @@
         },
         {
             "name": "Rwa_mode",
-            "key": "adcs_cmd.rwa_mode",
+            "key": "leader_adcs_cmd.rwa_mode",
             "values": [
                 {
                     "bitsize": 2,
@@ -381,7 +381,7 @@
         },
         {
             "name": "Rwa_ramp_filter",
-            "key": "adcs_cmd.rwa_ramp_filter",
+            "key": "leader_adcs_cmd.rwa_ramp_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -410,7 +410,7 @@
         },
         {
             "name": "Rwa_speed_filter",
-            "key": "adcs_cmd.rwa_speed_filter",
+            "key": "leader_adcs_cmd.rwa_speed_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -439,7 +439,7 @@
         },
         {
             "name": "Ssa_voltage_filter",
-            "key": "adcs_cmd.ssa_voltage_filter",
+            "key": "leader_adcs_cmd.ssa_voltage_filter",
             "values": [
                 {
                     "bitsize": 8,
@@ -468,7 +468,7 @@
         },
         {
             "name": "Havt_disable0",
-            "key": "adcs_cmd.havt_disable0",
+            "key": "leader_adcs_cmd.havt_disable0",
             "values": [
                 {
                     "bitsize": 1,
@@ -494,7 +494,7 @@
         },
         {
             "name": "Havt_disable1",
-            "key": "adcs_cmd.havt_disable1",
+            "key": "leader_adcs_cmd.havt_disable1",
             "values": [
                 {
                     "bitsize": 1,
@@ -520,7 +520,7 @@
         },
         {
             "name": "Havt_disable2",
-            "key": "adcs_cmd.havt_disable2",
+            "key": "leader_adcs_cmd.havt_disable2",
             "values": [
                 {
                     "bitsize": 1,
@@ -546,7 +546,7 @@
         },
         {
             "name": "Havt_disable3",
-            "key": "adcs_cmd.havt_disable3",
+            "key": "leader_adcs_cmd.havt_disable3",
             "values": [
                 {
                     "bitsize": 1,
@@ -572,7 +572,7 @@
         },
         {
             "name": "Havt_disable4",
-            "key": "adcs_cmd.havt_disable4",
+            "key": "leader_adcs_cmd.havt_disable4",
             "values": [
                 {
                     "bitsize": 1,
@@ -598,7 +598,7 @@
         },
         {
             "name": "Havt_disable5",
-            "key": "adcs_cmd.havt_disable5",
+            "key": "leader_adcs_cmd.havt_disable5",
             "values": [
                 {
                     "bitsize": 1,
@@ -624,7 +624,7 @@
         },
         {
             "name": "Havt_disable6",
-            "key": "adcs_cmd.havt_disable6",
+            "key": "leader_adcs_cmd.havt_disable6",
             "values": [
                 {
                     "bitsize": 1,
@@ -650,7 +650,7 @@
         },
         {
             "name": "Havt_disable7",
-            "key": "adcs_cmd.havt_disable7",
+            "key": "leader_adcs_cmd.havt_disable7",
             "values": [
                 {
                     "bitsize": 1,
@@ -676,7 +676,7 @@
         },
         {
             "name": "Havt_disable8",
-            "key": "adcs_cmd.havt_disable8",
+            "key": "leader_adcs_cmd.havt_disable8",
             "values": [
                 {
                     "bitsize": 1,
@@ -702,7 +702,7 @@
         },
         {
             "name": "Havt_disable9",
-            "key": "adcs_cmd.havt_disable9",
+            "key": "leader_adcs_cmd.havt_disable9",
             "values": [
                 {
                     "bitsize": 1,
@@ -728,7 +728,7 @@
         },
         {
             "name": "Havt_disable10",
-            "key": "adcs_cmd.havt_disable10",
+            "key": "leader_adcs_cmd.havt_disable10",
             "values": [
                 {
                     "bitsize": 1,
@@ -754,7 +754,7 @@
         },
         {
             "name": "Havt_disable11",
-            "key": "adcs_cmd.havt_disable11",
+            "key": "leader_adcs_cmd.havt_disable11",
             "values": [
                 {
                     "bitsize": 1,
@@ -780,7 +780,7 @@
         },
         {
             "name": "Havt_disable12",
-            "key": "adcs_cmd.havt_disable12",
+            "key": "leader_adcs_cmd.havt_disable12",
             "values": [
                 {
                     "bitsize": 1,
@@ -806,7 +806,7 @@
         },
         {
             "name": "Havt_disable13",
-            "key": "adcs_cmd.havt_disable13",
+            "key": "leader_adcs_cmd.havt_disable13",
             "values": [
                 {
                     "bitsize": 1,
@@ -832,7 +832,7 @@
         },
         {
             "name": "Havt_disable14",
-            "key": "adcs_cmd.havt_disable14",
+            "key": "leader_adcs_cmd.havt_disable14",
             "values": [
                 {
                     "bitsize": 1,
@@ -858,7 +858,7 @@
         },
         {
             "name": "Havt_disable15",
-            "key": "adcs_cmd.havt_disable15",
+            "key": "leader_adcs_cmd.havt_disable15",
             "values": [
                 {
                     "bitsize": 1,
@@ -884,7 +884,7 @@
         },
         {
             "name": "Havt_disable16",
-            "key": "adcs_cmd.havt_disable16",
+            "key": "leader_adcs_cmd.havt_disable16",
             "values": [
                 {
                     "bitsize": 1,
@@ -910,7 +910,7 @@
         },
         {
             "name": "Havt_disable17",
-            "key": "adcs_cmd.havt_disable17",
+            "key": "leader_adcs_cmd.havt_disable17",
             "values": [
                 {
                     "bitsize": 1,
@@ -936,7 +936,7 @@
         },
         {
             "name": "Havt_disable18",
-            "key": "adcs_cmd.havt_disable18",
+            "key": "leader_adcs_cmd.havt_disable18",
             "values": [
                 {
                     "bitsize": 1,
@@ -962,7 +962,7 @@
         },
         {
             "name": "Havt_reset0",
-            "key": "adcs_cmd.havt_reset0",
+            "key": "leader_adcs_cmd.havt_reset0",
             "values": [
                 {
                     "bitsize": 1,
@@ -988,7 +988,7 @@
         },
         {
             "name": "Havt_reset1",
-            "key": "adcs_cmd.havt_reset1",
+            "key": "leader_adcs_cmd.havt_reset1",
             "values": [
                 {
                     "bitsize": 1,
@@ -1014,7 +1014,7 @@
         },
         {
             "name": "Havt_reset2",
-            "key": "adcs_cmd.havt_reset2",
+            "key": "leader_adcs_cmd.havt_reset2",
             "values": [
                 {
                     "bitsize": 1,
@@ -1040,7 +1040,7 @@
         },
         {
             "name": "Havt_reset3",
-            "key": "adcs_cmd.havt_reset3",
+            "key": "leader_adcs_cmd.havt_reset3",
             "values": [
                 {
                     "bitsize": 1,
@@ -1066,7 +1066,7 @@
         },
         {
             "name": "Havt_reset4",
-            "key": "adcs_cmd.havt_reset4",
+            "key": "leader_adcs_cmd.havt_reset4",
             "values": [
                 {
                     "bitsize": 1,
@@ -1092,7 +1092,7 @@
         },
         {
             "name": "Havt_reset5",
-            "key": "adcs_cmd.havt_reset5",
+            "key": "leader_adcs_cmd.havt_reset5",
             "values": [
                 {
                     "bitsize": 1,
@@ -1118,7 +1118,7 @@
         },
         {
             "name": "Havt_reset6",
-            "key": "adcs_cmd.havt_reset6",
+            "key": "leader_adcs_cmd.havt_reset6",
             "values": [
                 {
                     "bitsize": 1,
@@ -1144,7 +1144,7 @@
         },
         {
             "name": "Havt_reset7",
-            "key": "adcs_cmd.havt_reset7",
+            "key": "leader_adcs_cmd.havt_reset7",
             "values": [
                 {
                     "bitsize": 1,
@@ -1170,7 +1170,7 @@
         },
         {
             "name": "Havt_reset8",
-            "key": "adcs_cmd.havt_reset8",
+            "key": "leader_adcs_cmd.havt_reset8",
             "values": [
                 {
                     "bitsize": 1,
@@ -1196,7 +1196,7 @@
         },
         {
             "name": "Havt_reset9",
-            "key": "adcs_cmd.havt_reset9",
+            "key": "leader_adcs_cmd.havt_reset9",
             "values": [
                 {
                     "bitsize": 1,
@@ -1222,7 +1222,7 @@
         },
         {
             "name": "Havt_reset10",
-            "key": "adcs_cmd.havt_reset10",
+            "key": "leader_adcs_cmd.havt_reset10",
             "values": [
                 {
                     "bitsize": 1,
@@ -1248,7 +1248,7 @@
         },
         {
             "name": "Havt_reset11",
-            "key": "adcs_cmd.havt_reset11",
+            "key": "leader_adcs_cmd.havt_reset11",
             "values": [
                 {
                     "bitsize": 1,
@@ -1274,7 +1274,7 @@
         },
         {
             "name": "Havt_reset12",
-            "key": "adcs_cmd.havt_reset12",
+            "key": "leader_adcs_cmd.havt_reset12",
             "values": [
                 {
                     "bitsize": 1,
@@ -1300,7 +1300,7 @@
         },
         {
             "name": "Havt_reset13",
-            "key": "adcs_cmd.havt_reset13",
+            "key": "leader_adcs_cmd.havt_reset13",
             "values": [
                 {
                     "bitsize": 1,
@@ -1326,7 +1326,7 @@
         },
         {
             "name": "Havt_reset14",
-            "key": "adcs_cmd.havt_reset14",
+            "key": "leader_adcs_cmd.havt_reset14",
             "values": [
                 {
                     "bitsize": 1,
@@ -1352,7 +1352,7 @@
         },
         {
             "name": "Havt_reset15",
-            "key": "adcs_cmd.havt_reset15",
+            "key": "leader_adcs_cmd.havt_reset15",
             "values": [
                 {
                     "bitsize": 1,
@@ -1378,7 +1378,7 @@
         },
         {
             "name": "Havt_reset16",
-            "key": "adcs_cmd.havt_reset16",
+            "key": "leader_adcs_cmd.havt_reset16",
             "values": [
                 {
                     "bitsize": 1,
@@ -1404,7 +1404,7 @@
         },
         {
             "name": "Havt_reset17",
-            "key": "adcs_cmd.havt_reset17",
+            "key": "leader_adcs_cmd.havt_reset17",
             "values": [
                 {
                     "bitsize": 1,
@@ -1430,7 +1430,7 @@
         },
         {
             "name": "Havt_reset18",
-            "key": "adcs_cmd.havt_reset18",
+            "key": "leader_adcs_cmd.havt_reset18",
             "values": [
                 {
                     "bitsize": 1,

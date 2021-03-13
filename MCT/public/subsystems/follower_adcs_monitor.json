@@ -1,10 +1,10 @@
 {
     "name": "Adcs_monitor",
-    "key": "adcs_monitor",
+    "key": "follower_adcs_monitor",
     "measurements": [
         {
             "name": "Ssa_mode",
-            "key": "adcs_monitor.ssa_mode",
+            "key": "follower_adcs_monitor.ssa_mode",
             "values": [
                 {
                     "bitsize": 2,
@@ -33,7 +33,7 @@
         },
         {
             "name": "Wheel1_fault",
-            "key": "adcs_monitor.wheel1_fault",
+            "key": "follower_adcs_monitor.wheel1_fault",
             "values": [
                 {
                     "bitsize": 1,
@@ -106,7 +106,7 @@
         },
         {
             "name": "Wheel2_fault",
-            "key": "adcs_monitor.wheel2_fault",
+            "key": "follower_adcs_monitor.wheel2_fault",
             "values": [
                 {
                     "bitsize": 1,
@@ -179,7 +179,7 @@
         },
         {
             "name": "Wheel3_fault",
-            "key": "adcs_monitor.wheel3_fault",
+            "key": "follower_adcs_monitor.wheel3_fault",
             "values": [
                 {
                     "bitsize": 1,
@@ -252,7 +252,7 @@
         },
         {
             "name": "Wheel_pot_fault",
-            "key": "adcs_monitor.wheel_pot_fault",
+            "key": "follower_adcs_monitor.wheel_pot_fault",
             "values": [
                 {
                     "bitsize": 1,
@@ -325,7 +325,7 @@
         },
         {
             "name": "Rwa_speed_rd",
-            "key": "adcs_monitor.rwa_speed_rd",
+            "key": "follower_adcs_monitor.rwa_speed_rd",
             "values": [
                 {
                     "bitsize": 10,
@@ -354,7 +354,7 @@
         },
         {
             "name": "Rwa_torque_rd",
-            "key": "adcs_monitor.rwa_torque_rd",
+            "key": "follower_adcs_monitor.rwa_torque_rd",
             "values": [
                 {
                     "bitsize": 10,
@@ -383,7 +383,7 @@
         },
         {
             "name": "Functional",
-            "key": "adcs_monitor.functional",
+            "key": "follower_adcs_monitor.functional",
             "values": [
                 {
                     "bitsize": 1,
@@ -409,7 +409,7 @@
         },
         {
             "name": "Functional_fault",
-            "key": "adcs_monitor.functional_fault",
+            "key": "follower_adcs_monitor.functional_fault",
             "values": [
                 {
                     "bitsize": 1,
@@ -482,7 +482,7 @@
         },
         {
             "name": "Havt_device0",
-            "key": "adcs_monitor.havt_device0",
+            "key": "follower_adcs_monitor.havt_device0",
             "values": [
                 {
                     "bitsize": 1,
@@ -508,7 +508,7 @@
         },
         {
             "name": "Havt_device1",
-            "key": "adcs_monitor.havt_device1",
+            "key": "follower_adcs_monitor.havt_device1",
             "values": [
                 {
                     "bitsize": 1,
@@ -534,7 +534,7 @@
         },
         {
             "name": "Havt_device2",
-            "key": "adcs_monitor.havt_device2",
+            "key": "follower_adcs_monitor.havt_device2",
             "values": [
                 {
                     "bitsize": 1,
@@ -560,7 +560,7 @@
         },
         {
             "name": "Havt_device3",
-            "key": "adcs_monitor.havt_device3",
+            "key": "follower_adcs_monitor.havt_device3",
             "values": [
                 {
                     "bitsize": 1,
@@ -586,7 +586,7 @@
         },
         {
             "name": "Havt_device4",
-            "key": "adcs_monitor.havt_device4",
+            "key": "follower_adcs_monitor.havt_device4",
             "values": [
                 {
                     "bitsize": 1,
@@ -612,7 +612,7 @@
         },
         {
             "name": "Havt_device5",
-            "key": "adcs_monitor.havt_device5",
+            "key": "follower_adcs_monitor.havt_device5",
             "values": [
                 {
                     "bitsize": 1,
@@ -638,7 +638,7 @@
         },
         {
             "name": "Havt_device6",
-            "key": "adcs_monitor.havt_device6",
+            "key": "follower_adcs_monitor.havt_device6",
             "values": [
                 {
                     "bitsize": 1,
@@ -664,7 +664,7 @@
         },
         {
             "name": "Havt_device7",
-            "key": "adcs_monitor.havt_device7",
+            "key": "follower_adcs_monitor.havt_device7",
             "values": [
                 {
                     "bitsize": 1,
@@ -690,7 +690,7 @@
         },
         {
             "name": "Havt_device8",
-            "key": "adcs_monitor.havt_device8",
+            "key": "follower_adcs_monitor.havt_device8",
             "values": [
                 {
                     "bitsize": 1,
@@ -716,7 +716,7 @@
         },
         {
             "name": "Havt_device9",
-            "key": "adcs_monitor.havt_device9",
+            "key": "follower_adcs_monitor.havt_device9",
             "values": [
                 {
                     "bitsize": 1,
@@ -742,7 +742,7 @@
         },
         {
             "name": "Havt_device10",
-            "key": "adcs_monitor.havt_device10",
+            "key": "follower_adcs_monitor.havt_device10",
             "values": [
                 {
                     "bitsize": 1,
@@ -768,7 +768,7 @@
         },
         {
             "name": "Havt_device11",
-            "key": "adcs_monitor.havt_device11",
+            "key": "follower_adcs_monitor.havt_device11",
             "values": [
                 {
                     "bitsize": 1,
@@ -794,7 +794,7 @@
         },
         {
             "name": "Havt_device12",
-            "key": "adcs_monitor.havt_device12",
+            "key": "follower_adcs_monitor.havt_device12",
             "values": [
                 {
                     "bitsize": 1,
@@ -820,7 +820,7 @@
         },
         {
             "name": "Havt_device13",
-            "key": "adcs_monitor.havt_device13",
+            "key": "follower_adcs_monitor.havt_device13",
             "values": [
                 {
                     "bitsize": 1,
@@ -846,7 +846,7 @@
         },
         {
             "name": "Havt_device14",
-            "key": "adcs_monitor.havt_device14",
+            "key": "follower_adcs_monitor.havt_device14",
             "values": [
                 {
                     "bitsize": 1,
@@ -872,7 +872,7 @@
         },
         {
             "name": "Havt_device15",
-            "key": "adcs_monitor.havt_device15",
+            "key": "follower_adcs_monitor.havt_device15",
             "values": [
                 {
                     "bitsize": 1,
@@ -898,7 +898,7 @@
         },
         {
             "name": "Havt_device16",
-            "key": "adcs_monitor.havt_device16",
+            "key": "follower_adcs_monitor.havt_device16",
             "values": [
                 {
                     "bitsize": 1,
@@ -924,7 +924,7 @@
         },
         {
             "name": "Havt_device17",
-            "key": "adcs_monitor.havt_device17",
+            "key": "follower_adcs_monitor.havt_device17",
             "values": [
                 {
                     "bitsize": 1,
@@ -950,7 +950,7 @@
         },
         {
             "name": "Gyr_vec_flag",
-            "key": "adcs_monitor.gyr_vec_flag",
+            "key": "follower_adcs_monitor.gyr_vec_flag",
             "values": [
                 {
                     "bitsize": 1,
@@ -976,7 +976,7 @@
         },
         {
             "name": "Mag1_vec_flag",
-            "key": "adcs_monitor.mag1_vec_flag",
+            "key": "follower_adcs_monitor.mag1_vec_flag",
             "values": [
                 {
                     "bitsize": 1,
@@ -1002,7 +1002,7 @@
         },
         {
             "name": "Mag2_vec_flag",
-            "key": "adcs_monitor.mag2_vec_flag",
+            "key": "follower_adcs_monitor.mag2_vec_flag",
             "values": [
                 {
                     "bitsize": 1,
@@ -1028,7 +1028,7 @@
         },
         {
             "name": "Speed_rd_flag",
-            "key": "adcs_monitor.speed_rd_flag",
+            "key": "follower_adcs_monitor.speed_rd_flag",
             "values": [
                 {
                     "bitsize": 1,
@@ -1054,7 +1054,7 @@
         },
         {
             "name": "Torque_rd_flag",
-            "key": "adcs_monitor.torque_rd_flag",
+            "key": "follower_adcs_monitor.torque_rd_flag",
             "values": [
                 {
                     "bitsize": 1,
@@ -1080,7 +1080,7 @@
         },
         {
             "name": "Ssa_voltage0",
-            "key": "adcs_monitor.ssa_voltage0",
+            "key": "follower_adcs_monitor.ssa_voltage0",
             "values": [
                 {
                     "bitsize": 8,
@@ -1109,7 +1109,7 @@
         },
         {
             "name": "Ssa_voltage1",
-            "key": "adcs_monitor.ssa_voltage1",
+            "key": "follower_adcs_monitor.ssa_voltage1",
             "values": [
                 {
                     "bitsize": 8,
@@ -1138,7 +1138,7 @@
         },
         {
             "name": "Ssa_voltage2",
-            "key": "adcs_monitor.ssa_voltage2",
+            "key": "follower_adcs_monitor.ssa_voltage2",
             "values": [
                 {
                     "bitsize": 8,
@@ -1167,7 +1167,7 @@
         },
         {
             "name": "Ssa_voltage3",
-            "key": "adcs_monitor.ssa_voltage3",
+            "key": "follower_adcs_monitor.ssa_voltage3",
             "values": [
                 {
                     "bitsize": 8,
@@ -1196,7 +1196,7 @@
         },
         {
             "name": "Ssa_voltage4",
-            "key": "adcs_monitor.ssa_voltage4",
+            "key": "follower_adcs_monitor.ssa_voltage4",
             "values": [
                 {
                     "bitsize": 8,
@@ -1225,7 +1225,7 @@
         },
         {
             "name": "Ssa_voltage5",
-            "key": "adcs_monitor.ssa_voltage5",
+            "key": "follower_adcs_monitor.ssa_voltage5",
             "values": [
                 {
                     "bitsize": 8,
@@ -1254,7 +1254,7 @@
         },
         {
             "name": "Ssa_voltage6",
-            "key": "adcs_monitor.ssa_voltage6",
+            "key": "follower_adcs_monitor.ssa_voltage6",
             "values": [
                 {
                     "bitsize": 8,
@@ -1283,7 +1283,7 @@
         },
         {
             "name": "Ssa_voltage7",
-            "key": "adcs_monitor.ssa_voltage7",
+            "key": "follower_adcs_monitor.ssa_voltage7",
             "values": [
                 {
                     "bitsize": 8,
@@ -1312,7 +1312,7 @@
         },
         {
             "name": "Ssa_voltage8",
-            "key": "adcs_monitor.ssa_voltage8",
+            "key": "follower_adcs_monitor.ssa_voltage8",
             "values": [
                 {
                     "bitsize": 8,
@@ -1341,7 +1341,7 @@
         },
         {
             "name": "Ssa_voltage9",
-            "key": "adcs_monitor.ssa_voltage9",
+            "key": "follower_adcs_monitor.ssa_voltage9",
             "values": [
                 {
                     "bitsize": 8,
@@ -1370,7 +1370,7 @@
         },
         {
             "name": "Ssa_voltage10",
-            "key": "adcs_monitor.ssa_voltage10",
+            "key": "follower_adcs_monitor.ssa_voltage10",
             "values": [
                 {
                     "bitsize": 8,
@@ -1399,7 +1399,7 @@
         },
         {
             "name": "Ssa_voltage11",
-            "key": "adcs_monitor.ssa_voltage11",
+            "key": "follower_adcs_monitor.ssa_voltage11",
             "values": [
                 {
                     "bitsize": 8,
@@ -1428,7 +1428,7 @@
         },
         {
             "name": "Ssa_voltage12",
-            "key": "adcs_monitor.ssa_voltage12",
+            "key": "follower_adcs_monitor.ssa_voltage12",
             "values": [
                 {
                     "bitsize": 8,
@@ -1457,7 +1457,7 @@
         },
         {
             "name": "Ssa_voltage13",
-            "key": "adcs_monitor.ssa_voltage13",
+            "key": "follower_adcs_monitor.ssa_voltage13",
             "values": [
                 {
                     "bitsize": 8,
@@ -1486,7 +1486,7 @@
         },
         {
             "name": "Ssa_voltage14",
-            "key": "adcs_monitor.ssa_voltage14",
+            "key": "follower_adcs_monitor.ssa_voltage14",
             "values": [
                 {
                     "bitsize": 8,
@@ -1515,7 +1515,7 @@
         },
         {
             "name": "Ssa_voltage15",
-            "key": "adcs_monitor.ssa_voltage15",
+            "key": "follower_adcs_monitor.ssa_voltage15",
             "values": [
                 {
                     "bitsize": 8,
@@ -1544,7 +1544,7 @@
         },
         {
             "name": "Ssa_voltage16",
-            "key": "adcs_monitor.ssa_voltage16",
+            "key": "follower_adcs_monitor.ssa_voltage16",
             "values": [
                 {
                     "bitsize": 8,
@@ -1573,7 +1573,7 @@
         },
         {
             "name": "Ssa_voltage17",
-            "key": "adcs_monitor.ssa_voltage17",
+            "key": "follower_adcs_monitor.ssa_voltage17",
             "values": [
                 {
                     "bitsize": 8,
@@ -1602,7 +1602,7 @@
         },
         {
             "name": "Ssa_voltage18",
-            "key": "adcs_monitor.ssa_voltage18",
+            "key": "follower_adcs_monitor.ssa_voltage18",
             "values": [
                 {
                     "bitsize": 8,
@@ -1631,7 +1631,7 @@
         },
         {
             "name": "Ssa_voltage19",
-            "key": "adcs_monitor.ssa_voltage19",
+            "key": "follower_adcs_monitor.ssa_voltage19",
             "values": [
                 {
                     "bitsize": 8,
@@ -1660,7 +1660,7 @@
         },
         {
             "name": "Gyr_temp",
-            "key": "adcs_monitor.gyr_temp",
+            "key": "follower_adcs_monitor.gyr_temp",
             "values": [
                 {
                     "bitsize": 16,
@@ -1689,7 +1689,7 @@
         },
         {
             "name": "Gyr_vec",
-            "key": "adcs_monitor.gyr_vec",
+            "key": "follower_adcs_monitor.gyr_vec",
             "values": [
                 {
                     "bitsize": 10,
@@ -1718,7 +1718,7 @@
         },
         {
             "name": "Mag1_vec",
-            "key": "adcs_monitor.mag1_vec",
+            "key": "follower_adcs_monitor.mag1_vec",
             "values": [
                 {
                     "bitsize": 10,
@@ -1747,7 +1747,7 @@
         },
         {
             "name": "Mag2_vec",
-            "key": "adcs_monitor.mag2_vec",
+            "key": "follower_adcs_monitor.mag2_vec",
             "values": [
                 {
                     "bitsize": 10,
@@ -1776,7 +1776,7 @@
         },
         {
             "name": "Ssa_vec",
-            "key": "adcs_monitor.ssa_vec",
+            "key": "follower_adcs_monitor.ssa_vec",
             "values": [
                 {
                     "bitsize": 31,
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "Gyr_temp_flag",
-            "key": "adcs_monitor.gyr_temp_flag",
+            "key": "follower_adcs_monitor.gyr_temp_flag",
             "values": [
                 {
                     "bitsize": 1,

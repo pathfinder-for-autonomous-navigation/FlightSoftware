@@ -1,19 +1,19 @@
 {
-    "name": "Piksi_fh",
-    "key": "piksi_fh",
+    "name": "Orbit",
+    "key": "leader_orbit",
     "measurements": [
         {
-            "name": "No_cdpgs_max_wait",
-            "key": "piksi_fh.no_cdpgs_max_wait",
+            "name": "Baseline_pos",
+            "key": "leader_orbit.baseline_pos",
             "values": [
                 {
-                    "bitsize": 20,
-                    "flow_id": 36,
-                    "max": 720000,
-                    "min": 0,
-                    "type": "unsigned int",
-                    "writable": true,
-                    "name": "No_cdpgs_max_wait",
+                    "bitsize": 73,
+                    "flow_id": 2,
+                    "max": 2000.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Baseline_pos",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -32,17 +32,17 @@
             ]
         },
         {
-            "name": "Cdpgs_delay_max_wait",
-            "key": "piksi_fh.cdpgs_delay_max_wait",
+            "name": "Pos",
+            "key": "leader_orbit.pos",
             "values": [
                 {
-                    "bitsize": 20,
-                    "flow_id": 36,
-                    "max": 720000,
-                    "min": 0,
-                    "type": "unsigned int",
-                    "writable": true,
-                    "name": "Cdpgs_delay_max_wait",
+                    "bitsize": 103,
+                    "flow_id": 2,
+                    "max": 6921000.0,
+                    "min": 6771000.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Pos",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -61,19 +61,22 @@
             ]
         },
         {
-            "name": "Enabled",
-            "key": "piksi_fh.enabled",
+            "name": "Vel",
+            "key": "leader_orbit.vel",
             "values": [
                 {
-                    "bitsize": 1,
-                    "flow_id": 36,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Enabled",
+                    "bitsize": 76,
+                    "flow_id": 2,
+                    "max": 7685.0,
+                    "min": 7570.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Vel",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    }
+                    },
+                    "units": "_____"
                 },
                 {
                     "key": "utc",

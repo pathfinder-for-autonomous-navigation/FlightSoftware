@@ -9,7 +9,7 @@ var configs = {
         typeName: 'Battery Telemetry Point',
         typeDescription: 'Telemetry point on the Gomspace battery',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/gomspace.json'
+        jsonFile: 'gomspace.json'
     },
 
     attitude: {
@@ -19,7 +19,7 @@ var configs = {
         typeName: 'Attitude',
         typeDescription: 'An Attitude Telemetry Point',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/attitude.json'
+        jsonFile: 'attitude.json'
     },
 
     pan:{
@@ -29,8 +29,9 @@ var configs = {
         typeName: 'PAN Telemetry Point',
         typeDescription: 'Telemetry point for PAN namespace',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/pan.json'
+        jsonFile: 'pan.json'
     },
+
 
     orbit:{
         namespace: 'orb.taxonomy',
@@ -39,7 +40,7 @@ var configs = {
         typeName: 'Orbit Telemetry Point',
         typeDescription: 'Telemetry point for the Orbit',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/orbit.json'
+        jsonFile: 'orbit.json'
     },
 
     piksi:{
@@ -49,7 +50,7 @@ var configs = {
         typeName: 'Pikis Telemetry Point',
         typeDescription: 'Telemetry point on the piksi',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/piksi.json'
+        jsonFile: 'piksi.json'
     },
 
     attitude_estimator:{
@@ -59,7 +60,7 @@ var configs = {
         typeName: 'Attitude Estimator Telemetry Point',
         typeDescription: 'Telemetry point for the Attitude Estimator',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/attitude_estimator.json' 
+        jsonFile: 'attitude_estimator.json' 
     },
 
     adcs_monitor:{
@@ -69,7 +70,7 @@ var configs = {
         typeName: 'ADCS Monitor Telemetry Point',
         typeDescription: 'Telemetry point for the ADCS Monitor',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs_monitor.json'
+        jsonFile: 'adcs_monitor.json'
     },
 
     prop:{
@@ -79,7 +80,7 @@ var configs = {
         typeName: 'Prop Telemetry Point',
         typeDescription: 'Telemetry point for Prop',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/prop.json'
+        jsonFile: 'prop.json'
     },
 
     adcs_command:{
@@ -89,7 +90,7 @@ var configs = {
         typeName: 'ADCS Command Telemetry Point',
         typeDescription: 'Telemetry point for the ADCS Command',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs_cmd.json'
+        jsonFile: 'adcs_cmd.json'
     },
 
     adcs: {
@@ -99,7 +100,7 @@ var configs = {
         typeName: 'ADCS Telemetry Point',
         typeDescription: 'Telemetry point for the ADCS',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs.json'
+        jsonFile: 'adcs.json'
     },
 
     radio: {
@@ -109,7 +110,7 @@ var configs = {
         typeName: 'Radio Telemetry Point',
         typeDescription: 'Telemetry point for the Radio',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/radio.json'
+        jsonFile: 'radio.json'
     },
 
     docksys: {
@@ -119,7 +120,7 @@ var configs = {
         typeName: 'Docksys Telemetry Point',
         typeDescription: 'Telemetry point for Docksys',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/docksys.json'
+        jsonFile: 'docksys.json'
     },
 
     dcdc: {
@@ -129,7 +130,7 @@ var configs = {
         typeName: 'DCDC Telemetry Point',
         typeDescription: 'Telemetry point for DCDC',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/dcdc.json'
+        jsonFile: 'dcdc.json'
     },
 
     fault_handler:{
@@ -139,7 +140,7 @@ var configs = {
         typeName: 'Fault Handler Telemetry Point',
         typeDescription: 'Telemetry point for the Fault Handler',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/fault_handler.json'
+        jsonFile: 'fault_handler.json'
     },
 
     trigger_dist:{
@@ -149,7 +150,7 @@ var configs = {
         typeName: 'Trigger Distance Telemetry Point',
         typeDescription: 'Telemetry point for the Trigger Distance',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/trigger_dist.json'
+        jsonFile: 'trigger_dist.json'
     },
 
     downlink:{
@@ -159,7 +160,7 @@ var configs = {
         typeName: 'Downlink Telemetry Point',
         typeDescription: 'Telemetry point for Downlink',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/downlink.json'
+        jsonFile: 'downlink.json'
     },
 
     timing: {
@@ -169,7 +170,7 @@ var configs = {
         typeName: 'Timing Telemetry Point',
         typeDescription: 'Telemetry point for timing',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/timing.json'
+        jsonFile: 'timing.json'
     },
 
     piksi_fh: {
@@ -179,7 +180,7 @@ var configs = {
         typeName: 'Piksi_fh Telemetry Point',
         typeDescription: 'Telemetry point for the Piksi_fh',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/piksi_fh.json'
+        jsonFile: 'piksi_fh.json'
     },
 
     miscellaneous: {
@@ -189,7 +190,7 @@ var configs = {
         typeName: 'Miscellaneous Telemetry Point',
         typeDescription: 'A miscellaneous telemetry point on the satellite',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/miscellaneous.json'
+        jsonFile: 'miscellaneous.json'
     }
 }
 
@@ -210,8 +211,9 @@ function requestJSON(j) {
  * This enables the plugin to be used generically for all subsystems/domain objects
  * 
  * @param {*} config A string matching the key of one of the config data objects
+ * @param {*} satellite A string designating either "Follower" or "Leader"
  */
-function GenericPlugin(config) {
+function GenericPlugin(config, satellite) {
     return  function install(openmct) {
 
         console.log(configs);
@@ -314,19 +316,19 @@ function GenericPlugin(config) {
 
             //Adds the taxonomy namespace and key to MCT using the configData
             openmct.objects.addRoot({
-                namespace: generalConfigData.namespace,
+                namespace: satellite + '_' + generalConfigData.namespace,
                 key: generalConfigData.key
             });
 
             //creates the object provider from the json file coorisponding with the domain object
-            openmct.objects.addProvider(generalConfigData.namespace, {
+            openmct.objects.addProvider(satellite + '_' + generalConfigData.namespace, {
                 get: function (identifier) {
-                    return requestJSON('/subsystems' + generalConfigData.jsonFile).then(function (generic) {
+                    return requestJSON('/subsystems'  + '/' + satellite + '_' + generalConfigData.jsonFile).then(function (generic) {
                         //Sets up the folder path for the domain object and the Root
                         if (identifier.key === generalConfigData.key) {
                             return {
                                 identifier: identifier,
-                                name: generic.name,
+                                name: satellite.charAt(0).toUpperCase() + satellite.slice(1) + ' ' + generic.name,
                                 type: 'folder',
                                 location: 'ROOT'
                             };
@@ -344,7 +346,7 @@ function GenericPlugin(config) {
                                 telemetry: {
                                     values: measurement.values
                                 },
-                                location: generalConfigData.namespace + ':' + generalConfigData.key
+                                location: satellite + '_' + generalConfigData.namespace + ':' + generalConfigData.key
                             };
                         }
                     });
@@ -356,16 +358,16 @@ function GenericPlugin(config) {
             openmct.composition.addProvider({
                 //checks to see if the provider is able to be used for the domain object
                 appliesTo: function (domainObject) {
-                    return domainObject.identifier.namespace === generalConfigData.namespace &&
+                    return domainObject.identifier.namespace === (satellite + '_' + generalConfigData.namespace) &&
                            domainObject.type === 'folder';
                 },
                 //loads in the data from the coorisponding json file for the measurements to load in the composition provider
                 load: function (domainObject) {
-                    return requestJSON('/subsystems' + generalConfigData.jsonFile)
+                    return requestJSON('/subsystems' + '/' + satellite + '_' + generalConfigData.jsonFile)
                         .then(function (generic) {
                             return generic.measurements.map(function (m) {
                                 return {
-                                    namespace: generalConfigData.namespace,
+                                    namespace: satellite + '_' + generalConfigData.namespace,
                                     key: m.key
                                 };
                             });
@@ -376,7 +378,7 @@ function GenericPlugin(config) {
             //adds the data for the telemetry type stored in the config data to MCT
             openmct.types.addType(generalConfigData.type, {
                 name: generalConfigData.typeName,
-                description: generalConfigData.typeDescription,
+                description: generalConfigData.typeDescription + ' on the ' + satellite + ' satellite',
                 cssClass: generalConfigData.typeCssClass
             });
 

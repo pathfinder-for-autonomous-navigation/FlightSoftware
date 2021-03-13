@@ -1,10 +1,10 @@
 {
     "name": "Piksi",
-    "key": "piksi",
+    "key": "follower_piksi",
     "measurements": [
         {
             "name": "Time",
-            "key": "piksi.time",
+            "key": "follower_piksi.time",
             "values": [
                 {
                     "bitsize": 62,
@@ -31,7 +31,7 @@
         },
         {
             "name": "State",
-            "key": "piksi.state",
+            "key": "follower_piksi.state",
             "values": [
                 {
                     "bitsize": 4,
@@ -60,14 +60,14 @@
         },
         {
             "name": "Pos",
-            "key": "piksi.pos",
+            "key": "follower_piksi.pos",
             "values": [
                 {
                     "bitsize": 103,
                     "flow_id": 19,
                     "max": 6921000.0,
                     "min": 6771000.0,
-                    "type": "std double vector",
+                    "type": "lin double vector",
                     "writable": false,
                     "name": "Pos",
                     "key": "value",
@@ -89,14 +89,14 @@
         },
         {
             "name": "Vel",
-            "key": "piksi.vel",
+            "key": "follower_piksi.vel",
             "values": [
                 {
                     "bitsize": 76,
                     "flow_id": 19,
                     "max": 7685.0,
                     "min": 7570.0,
-                    "type": "std double vector",
+                    "type": "lin double vector",
                     "writable": false,
                     "name": "Vel",
                     "key": "value",
@@ -118,14 +118,14 @@
         },
         {
             "name": "Baseline_pos",
-            "key": "piksi.baseline_pos",
+            "key": "follower_piksi.baseline_pos",
             "values": [
                 {
                     "bitsize": 73,
                     "flow_id": 19,
                     "max": 2000.0,
                     "min": 0.0,
-                    "type": "std double vector",
+                    "type": "lin double vector",
                     "writable": false,
                     "name": "Baseline_pos",
                     "key": "value",
@@ -147,7 +147,7 @@
         },
         {
             "name": "Fix_error_count",
-            "key": "piksi.fix_error_count",
+            "key": "follower_piksi.fix_error_count",
             "values": [
                 {
                     "bitsize": 10,

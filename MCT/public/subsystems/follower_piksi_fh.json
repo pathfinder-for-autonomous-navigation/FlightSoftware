@@ -1,19 +1,19 @@
 {
-    "name": "Radio",
-    "key": "radio",
+    "name": "Piksi_fh",
+    "key": "follower_piksi_fh",
     "measurements": [
         {
-            "name": "Err",
-            "key": "radio.err",
+            "name": "No_cdpgs_max_wait",
+            "key": "follower_piksi_fh.no_cdpgs_max_wait",
             "values": [
                 {
-                    "bitsize": 7,
-                    "flow_id": 16,
-                    "max": 10,
-                    "min": -90,
-                    "type": "signed int",
-                    "writable": false,
-                    "name": "Err",
+                    "bitsize": 20,
+                    "flow_id": 36,
+                    "max": 720000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "No_cdpgs_max_wait",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -32,17 +32,17 @@
             ]
         },
         {
-            "name": "Max_transceive",
-            "key": "radio.max_transceive",
+            "name": "Cdpgs_delay_max_wait",
+            "key": "follower_piksi_fh.cdpgs_delay_max_wait",
             "values": [
                 {
                     "bitsize": 20,
-                    "flow_id": 34,
+                    "flow_id": 36,
                     "max": 720000,
                     "min": 0,
                     "type": "unsigned int",
                     "writable": true,
-                    "name": "Max_transceive",
+                    "name": "Cdpgs_delay_max_wait",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -61,22 +61,19 @@
             ]
         },
         {
-            "name": "Max_wait",
-            "key": "radio.max_wait",
+            "name": "Enabled",
+            "key": "follower_piksi_fh.enabled",
             "values": [
                 {
-                    "bitsize": 20,
-                    "flow_id": 34,
-                    "max": 720000,
-                    "min": 0,
-                    "type": "unsigned int",
+                    "bitsize": 1,
+                    "flow_id": 36,
+                    "type": "bool",
                     "writable": true,
-                    "name": "Max_wait",
+                    "name": "Enabled",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",

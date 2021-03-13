@@ -1,13 +1,13 @@
 {
     "name": "Attitude_estimator",
-    "key": "attitude_estimator",
+    "key": "follower_attitude_estimator",
     "measurements": [
         {
             "name": "Q_body_eci",
-            "key": "attitude_estimator.q_body_eci",
+            "key": "follower_attitude_estimator.q_body_eci",
             "values": [
                 {
-                    "bitsize": 0,
+                    "bitsize": 32,
                     "flow_id": 3,
                     "type": "lin float quaternion",
                     "writable": false,
@@ -31,7 +31,7 @@
         },
         {
             "name": "W_body",
-            "key": "attitude_estimator.w_body",
+            "key": "follower_attitude_estimator.w_body",
             "values": [
                 {
                     "bitsize": 149,

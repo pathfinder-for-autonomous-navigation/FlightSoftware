@@ -1,24 +1,21 @@
 {
-    "name": "Downlink",
-    "key": "downlink",
+    "name": "Docksys",
+    "key": "leader_docksys",
     "measurements": [
         {
-            "name": "Shift_id1",
-            "key": "downlink.shift_id1",
+            "name": "Docked",
+            "key": "leader_docksys.docked",
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
-                    "max": 10,
-                    "min": 0,
-                    "type": "unsigned char",
-                    "writable": true,
-                    "name": "Shift_id1",
+                    "flow_id": 17,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Docked",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -32,22 +29,19 @@
             ]
         },
         {
-            "name": "Shift_id2",
-            "key": "downlink.shift_id2",
+            "name": "Dock_config",
+            "key": "leader_docksys.dock_config",
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
-                    "max": 10,
-                    "min": 0,
-                    "type": "unsigned char",
-                    "writable": true,
-                    "name": "Shift_id2",
+                    "flow_id": 17,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Dock_config",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -61,22 +55,45 @@
             ]
         },
         {
-            "name": "Toggle_id",
-            "key": "downlink.toggle_id",
+            "name": "Is_turning",
+            "key": "leader_docksys.is_turning",
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
-                    "max": 10,
-                    "min": 0,
-                    "type": "unsigned char",
-                    "writable": true,
-                    "name": "Toggle_id",
+                    "flow_id": 35,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Is_turning",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Config_cmd",
+            "key": "leader_docksys.config_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 35,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Config_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
                 },
                 {
                     "key": "utc",

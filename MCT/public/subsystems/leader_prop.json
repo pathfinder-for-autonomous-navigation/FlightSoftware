@@ -1,10 +1,10 @@
 {
     "name": "Prop",
-    "key": "prop",
+    "key": "leader_prop",
     "measurements": [
         {
             "name": "State",
-            "key": "prop.state",
+            "key": "leader_prop.state",
             "values": [
                 {
                     "bitsize": 4,
@@ -33,7 +33,7 @@
         },
         {
             "name": "Overpressured",
-            "key": "prop.overpressured",
+            "key": "leader_prop.overpressured",
             "values": [
                 {
                     "bitsize": 1,
@@ -106,7 +106,7 @@
         },
         {
             "name": "Pressurize_fail",
-            "key": "prop.pressurize_fail",
+            "key": "leader_prop.pressurize_fail",
             "values": [
                 {
                     "bitsize": 1,

@@ -1,21 +1,24 @@
 {
-    "name": "Docksys",
-    "key": "docksys",
+    "name": "Attitude",
+    "key": "follower_attitude",
     "measurements": [
         {
-            "name": "Docked",
-            "key": "docksys.docked",
+            "name": "Pointer_vec1_current",
+            "key": "follower_attitude.pointer_vec1_current",
             "values": [
                 {
-                    "bitsize": 1,
-                    "flow_id": 17,
-                    "type": "bool",
+                    "bitsize": 31,
+                    "flow_id": 14,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
                     "writable": false,
-                    "name": "Docked",
+                    "name": "Pointer_vec1_current",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    }
+                    },
+                    "units": "_____"
                 },
                 {
                     "key": "utc",
@@ -29,71 +32,80 @@
             ]
         },
         {
-            "name": "Dock_config",
-            "key": "docksys.dock_config",
+            "name": "Pointer_vec1_desired",
+            "key": "follower_attitude.pointer_vec1_desired",
             "values": [
                 {
-                    "bitsize": 1,
-                    "flow_id": 17,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "Dock_config",
-                    "key": "value",
-                    "hints": {
-                        "range": 1
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Is_turning",
-            "key": "docksys.is_turning",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 35,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "Is_turning",
-                    "key": "value",
-                    "hints": {
-                        "range": 1
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Config_cmd",
-            "key": "docksys.config_cmd",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 35,
-                    "type": "bool",
+                    "bitsize": 31,
+                    "flow_id": 14,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
                     "writable": true,
-                    "name": "Config_cmd",
+                    "name": "Pointer_vec1_desired",
                     "key": "value",
                     "hints": {
                         "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
                     }
+                }
+            ]
+        },
+        {
+            "name": "Pointer_vec2_current",
+            "key": "follower_attitude.pointer_vec2_current",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 14,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": false,
+                    "name": "Pointer_vec2_current",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pointer_vec2_desired",
+            "key": "follower_attitude.pointer_vec2_desired",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 14,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": true,
+                    "name": "Pointer_vec2_desired",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
                 },
                 {
                     "key": "utc",
