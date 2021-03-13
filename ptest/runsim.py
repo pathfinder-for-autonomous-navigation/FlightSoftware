@@ -152,7 +152,7 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir)
+        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.device_config)
         self.testcase.setup_case(self.devices, self.radios)
 
     def set_up_cmd_prompt(self):
