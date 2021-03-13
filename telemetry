@@ -1731,7 +1731,7 @@
         },
         "pan.cycle_no": {
             "bitsize": 32,
-            "flow_id": 1,
+            "flow_id": "undefined",
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2519,7 +2519,6 @@
             "active": true,
             "fields": [
                 "pan.state",
-                "pan.cycle_no",
                 "pan.deployed",
                 "pan.sat_designation",
                 "pan.bootcount"
