@@ -417,7 +417,13 @@ class USBSession(object):
         except ValueError:
             return "No telemetry to parse."
         self.dp_console.write((newest_telem_file+"\n").encode())
-        telem_json_data = json.loads(self.dp_console.readline().rstrip())
+        line = self.dp_console.readline().rstrip()
+        if line == b'':
+            # TODO A MORE FORMAL FIX
+            print("[ WARNING ] USB_SESSION LINE FIX")
+            line = b'null'
+        telem_json_data = json.loads(line)
+
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
@@ -432,7 +438,7 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print("Error parsing telemetry.")
+            print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
