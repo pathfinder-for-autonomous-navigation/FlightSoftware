@@ -45,6 +45,10 @@ public:
    void init();
 
    ~QuakeManager();
+#ifndef FLIGHT
+
+   void dump_debug_telemetry(char *buffer, size_t size);
+#endif
 
    void execute() override;
 
