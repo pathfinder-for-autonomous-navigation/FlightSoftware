@@ -43,8 +43,11 @@ void PiksiControlTask::execute()
 {
     int read_out = piksi.read_all();
 
-    int microdelta = piksi.get_microdelta();
+    unsigned int microdelta = piksi.get_microdelta();
     microdelta_f.set(microdelta);
+
+    //Throw CRC error if microdelta is not in expected range
+    if (microdelta > PIKSI_MD_THRESHOLD) read_out = 3; 
 
     //4 means no bytes
     //3 means CRC error on serial
