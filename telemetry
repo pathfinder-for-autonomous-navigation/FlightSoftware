@@ -1086,10 +1086,10 @@
             "writable": false
         },
         "attitude_estimator.w_body": {
-            "bitsize": 149,
+            "bitsize": 37,
             "flow_id": 3,
-            "max": 2.181661605834961,
-            "min": -2.181661605834961,
+            "max": 0.261799395084381,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": false
         },
