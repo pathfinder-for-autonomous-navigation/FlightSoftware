@@ -76,15 +76,12 @@ class StateCmdPrompt(Cmd):
         '''
         args = args.split()
 
-        if len(args) < 1:
-            print('Need to specify a device to command')
-            return
+        list_of_names = [x for x,y in self.devices.items()]
 
-        try:
-            self.cmded_device = self.devices[args[0]]
-        except KeyError:
-            print('Invalid device specified')
-            return
+        if self.cmded_device.device_name == self.devices[list_of_names[0]].device_name:
+            self.cmded_device = self.devices[list_of_names[1]]
+        else:
+            self.cmded_device = self.devices[list_of_names[0]]
 
         print(f"Switched to {self.cmded_device.device_name}")
 
