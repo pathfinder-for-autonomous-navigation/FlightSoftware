@@ -9,20 +9,33 @@ Then it adds it to the hisorical and realtime servers through the history and li
  */
 const variables = require('./state-variables.js')
 const request = require('request');
+var path = require('path');
 
 /**
  * The URL of the Elastic Search database
  */
 var searchURl = 'http://localhost:5000/search-es';
-/**
- * The index of the Elastic Search database
- */
-var searchIndex = 'statefield_report_123456789';
 
 /**
  *  constructor initializing and then calling for the generation and updating of all telemetry points from all subsytems and domains
  */
-function Telemetry() {
+function Telemetry(configuration) {
+
+    var FlightSoftware = path.resolve(__dirname, '../..')
+    var config_file = FlightSoftware + "/" + configuration
+    var config_json = require(config_file);
+    /**
+    * The index of the Elastic Search database
+    */
+    if(config_json.devices.length>0){
+      this.searchIndex = 'statefield_report_' + config_json.devices[0].imei
+    }
+    else if(config_json.radios.length>0){
+      this.searchIndex = 'statefield_report_' + config_json.radios[0].imei
+    }
+    else{
+      this.searchIndex = 'statefield_report_'
+    }
     //This state function takes in initial values from the state-variables.js file
     this.initialState = variables;
 
@@ -75,7 +88,7 @@ Telemetry.prototype.updateState = async function () {
       
       Object.keys(this.state[id]).forEach(async function (subId){
         //send a request to Elastic Search for the field
-        let res = await this.getValue(searchURl, searchIndex, id + '.' + subId);
+        let res = await this.getValue(searchURl, this.searchIndex, id + '.' + subId);
         (this.state[id])[subId] = res;//update state
       },this)
 
@@ -83,7 +96,7 @@ Telemetry.prototype.updateState = async function () {
     //if the value for the key of the state entry is a primitive
     else{
       //send a request to Elastic Search for the field
-      let res = await this.getValue(searchURl, searchIndex, id);
+      let res = await this.getValue(searchURl, this.searchIndex, id);
       this.state[id] = res;//update state
     }
 
@@ -188,6 +201,6 @@ Telemetry.prototype.listen = function (listener) {
 };
 
 //exports the telemetry function for use in './server.js'
-module.exports = function () {
-    return new Telemetry()
+module.exports = function (config) {
+    return new Telemetry(config)
 };
