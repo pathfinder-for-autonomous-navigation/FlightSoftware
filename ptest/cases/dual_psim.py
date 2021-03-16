@@ -47,6 +47,7 @@ class DualPsim(MissionCase):
         
         fc_states = ["pan.deployment.elapsed",
         "pan.state",
+        "radio.state",
         "pan.cycle_no",
         "pan.bootcount",
         "adcs.state",
