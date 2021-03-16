@@ -56,11 +56,16 @@ OrbitEstimator::OrbitEstimator(StateFieldRegistry &registry)
 
 void OrbitEstimator::execute()
 {
-    if (!time_valid_fp->get() || orbit_reset_cmd_f.get())
+    auto const should_reset = !time_valid_fp->get() || orbit_reset_cmd_f.get();
+
+    if (should_reset)
     {
         orbit_valid_f.set(false);
         orbit_reset_cmd_f.set(false);
-        return;
+
+	_estimate = orb::OrbitEstimate();
+
+	return;
     }
 
     auto const piksi_mode = static_cast<piksi_mode_t>(piksi_state_fp->get());
