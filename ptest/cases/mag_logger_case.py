@@ -19,6 +19,7 @@ class MagLogCase(SingleSatOnlyCase):
                 sum2 += input[1]
                 sum3 += input[2]
         result = [sum1/len(inputList),sum2/len(inputList),sum3/len(inputList)]
+        
         return str(result)
     
     def take_mag_measurements(self, duration):
@@ -47,15 +48,13 @@ class MagLogCase(SingleSatOnlyCase):
 
     def torque_test(self):
         """
-        For a low value read in the magnetometer values while 
+        For a low wheel spin value read in the magnetometer values while 
         wheels are spinning for 10 seconds
-        
         """
-        cmd_array = [10,10,10]
-        
-        self.ws( "adcs_cmd.rwa_speed_cmd", cmd_array )
+        self.ws( "adcs_cmd.rwa_speed_cmd", [10,10,10] )
         time.sleep(.2)
-        self.print_header( "Testing command " + str( cmd_array ) )
+
+        self.print_header( "Testing command " + str( [10,10,10] ) )
         results = self.take_mag_measurements( 10 )
         self.logger.put( self.avg_list( results ) )
        
@@ -72,6 +71,7 @@ class MagLogCase(SingleSatOnlyCase):
         self.cycle()
         self.print_header( "Finished Initialization" )
         return 
+
     def run_case_singlesat(self):
 
         #run main testing with matrix of command vectors
