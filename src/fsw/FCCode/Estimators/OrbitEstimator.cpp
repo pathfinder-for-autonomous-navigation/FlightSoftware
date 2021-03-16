@@ -63,9 +63,9 @@ void OrbitEstimator::execute()
         orbit_valid_f.set(false);
         orbit_reset_cmd_f.set(false);
 
-	  _estimate = orb::OrbitEstimate();
+        _estimate = orb::OrbitEstimate();
 
-	  return;
+        return;
     }
 
     auto const piksi_mode = static_cast<piksi_mode_t>(piksi_state_fp->get());
