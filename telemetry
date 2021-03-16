@@ -1707,7 +1707,7 @@
         },
         "orbit.vel": {
             "bitsize": 76,
-            "flow_id": "undefined",
+            "flow_id": 2,
             "max": 7685.0,
             "min": 7570.0,
             "type": "lin double vector",
@@ -2531,6 +2531,7 @@
             "fields": [
                 "orbit.baseline_pos",
                 "orbit.pos",
+                "orbit.vel",
                 "piksi.time"
             ],
             "id": 2,
