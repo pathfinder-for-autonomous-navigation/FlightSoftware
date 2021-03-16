@@ -32,7 +32,7 @@ Running **```npm start```** default to using the ci.json configuration file. you
 
 For example:
 
-**```npm start ptest/configs/dual_usb.json```** would start MCT using the configuration file dual_usb.json
+**```npm start ptest/configs/dual_usb.json```** would start MCT using the configuration file dual_usb.json. Make sure the config file has at least 1 device or 1 radio and that it is a valid ptest config file.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
 
