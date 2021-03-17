@@ -15,11 +15,11 @@
         //installs plugins for creation and storage of user objects like layouts (only local in browser cache currently)
         openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
         openmct.install(openmct.plugins.MyItems());
+        //installs new plugins for viewing telemetry and analyzing telemetry
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.fixed"
         }));
         openmct.install(openmct.plugins.SummaryWidget());
-        //openmct.install(openmct.plugins.Conductor());
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
