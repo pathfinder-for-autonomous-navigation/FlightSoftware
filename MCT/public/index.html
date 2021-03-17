@@ -13,8 +13,13 @@
         //indicates the location of the openmct libraries and assets
         openmct.setAssetPath('openmct');
         //installs plugins for creation and storage of user objects like layouts (only local in browser cache currently)
-        openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
         openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.AutoflowView({
+            type: "telemetry.fixed"
+        }));
+        openmct.install(openmct.plugins.SummaryWidget());
+        //openmct.install(openmct.plugins.Conductor());
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
@@ -45,6 +50,7 @@
         openmct.install(GenericPlugin("timing"));
         openmct.install(GenericPlugin("piksi_fh"));
 
+        
 
         //starts OpenMCT once all installs are completed
         openmct.start();
