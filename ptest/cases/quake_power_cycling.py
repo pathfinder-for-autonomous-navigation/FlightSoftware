@@ -35,6 +35,8 @@ class QuakePowerCycling(SingleSatOnlyCase):
             self.cycle()
             self.diagnostics()
             self.cycles_since_blackout_start += 1
+            self.logger.put(f"cycle {self.rs('pan.cycle_no')}")
+            # self.logger.put(f"mission_state {self.rs('pan.state')}")
             
             # Check that radio is in config after power cycling
             if self.cycles_since_blackout_start == 1 and self.is_powercycle_state():
@@ -70,6 +72,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
         self.read_state("qfh.state")
         self.read_state("radio.last_comms_ccno")
         self.read_state("gomspace.power_cycle_output3_cmd")
+        self.read_state("pan.state")
 
     def run_case_singlesat(self):
         # The satellite has been in a blackout since startup. Cycle count starts at 1.
@@ -78,10 +81,13 @@ class QuakePowerCycling(SingleSatOnlyCase):
         # These steps necessary in HOOTL, unsure about how it will affect HITL
         self.ws("radio.state", Enums.radio_states["wait"])
         self.ws("gomspace.power_cycle_output3_cmd",True)
+        # self.ws("pan.state", Enums.mission_states["standby"])
 
         # Simulate one day of no comms
         self.logger.put(f"Creating a comms blackout of 24 hours, starting on control cycle: {self.rs('pan.cycle_no')}")
         self.advance_to_next_qfh_state(self.one_day_ccno)
+        # if not self.mission_state == "standby":
+        #             raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
             
         # Reset cycles
         self.cycles_since_blackout_start = 0
