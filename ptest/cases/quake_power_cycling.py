@@ -6,28 +6,6 @@ from .utils import Enums, TestCaseFailure
 
 class QuakePowerCycling(SingleSatOnlyCase):
     @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
-
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
     def desired_initial_state(self):
         return "standby"
 
@@ -53,7 +31,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
 
     # Cycle until the QFH transitions to the next state
     def advance_to_next_qfh_state(self,time):
-        while True:
+        for i in range(time):
             self.cycle()
             self.diagnostics()
             self.cycles_since_blackout_start += 1
@@ -64,10 +42,6 @@ class QuakePowerCycling(SingleSatOnlyCase):
 
             # Check power cycle behavior
             self.check_correct_powercycle_behavior(time)
-
-            if (self.cycles_since_blackout_start >= time):
-                break
-
 
     def check_correct_powercycle_behavior(self,time):
         powercycled = self.check_powercycle()
@@ -91,7 +65,6 @@ class QuakePowerCycling(SingleSatOnlyCase):
         if (powercycled and not should_powercycle) or (should_powercycle and not powercycled):
             raise TestCaseFailure("QuakeFaultHandler failed to power cycle the output channel.")
        
-
     def diagnostics(self):
         self.read_state("radio.state")
         self.read_state("qfh.state")
@@ -103,7 +76,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
         self.cycles_since_blackout_start = self.rs("pan.cycle_no") - 1
 
         # These steps necessary in HOOTL, unsure about how it will affect HITL
-        self.ws("radio.state", 0)
+        self.ws("radio.state", Enums.radio_states["wait"])
         self.ws("gomspace.power_cycle_output3_cmd",True)
 
         # Simulate one day of no comms

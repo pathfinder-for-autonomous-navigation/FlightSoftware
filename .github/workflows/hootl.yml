@@ -71,6 +71,7 @@ jobs:
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
         python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
         python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler -ni
+        python -m ptest runsim -c ptest/comfigs/ci.json -t QuakePowerCycling
 
     # Add quake and piksi fault handler to the above once completed.
 
