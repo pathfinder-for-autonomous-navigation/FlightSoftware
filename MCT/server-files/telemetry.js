@@ -10,6 +10,7 @@ Then it adds it to the hisorical and realtime servers through the history and li
 const variables = require('./state-variables.js')
 const request = require('request');
 var path = require('path');
+const { config } = require('process');
 
 /**
  * The URL of the Elastic Search database
@@ -27,11 +28,26 @@ function Telemetry(configuration) {
   /**
   * The index of the Elastic Search database
   */
-  if (config_json.devices.length > 0) {
-    this.searchIndex = 'statefield_report_' + config_json.devices[0].imei
+  if (config_json.devices.length == 1) {
+    this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
+    this.singleSat = true
   }
-  else if (config_json.radios.length > 0) {
-    this.searchIndex = 'statefield_report_' + config_json.radios[0].imei
+  else if (config_json.devices.length > 1) {
+    let deviceOneFilled = false
+    let deviceTwoFilled = false
+    if(config_json.devices[0].name.indexOf("Leader") != -1){
+      this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
+    }
+    else if(config_json.devices[0].name.indexOf("Follower") != -1){
+      this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
+    }
+    if(config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined){
+      this.leaderIndex = 'statefield_report_' + config_json.devices[1].imei
+    }
+    else if(config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined){
+      this.followerIndex = 'statefield_report_' + config_json.devices[1].imei
+    }
+    
   }
   else {
     throw "Malformed: There are no devices or radios in this config file"
@@ -50,6 +66,8 @@ function Telemetry(configuration) {
       this.follower_state[('follower_' + key)] = v;
       this.leader_state[('leader_' + key)] = v;
     }, this);
+  
+  }, this);
 
   //all of the historical telemetry data
   this.history = {};
@@ -157,7 +175,7 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
     });
   });
   return await p;
-}
+};
 
 
 
@@ -219,22 +237,12 @@ Telemetry.prototype.generateTelemetry = function () {
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
-
-      //generate telemetry point oject
-      var telempoint = { timestamp: timestamp, id: id };
-      for (const output in this.state[id]) {
-        telempoint[output] = this.state[id][output];
       }
-
-        //generate telemetry point primitve state
-        var telempoint = { timestamp: timestamp, value: this.leader_state[id], id: id};
-
-    }
     //if the value for the key of the state entry is a primitive
     else {
 
       //generate telemetry point primitve state
-      var telempoint = { timestamp: timestamp, value: this.state[id], id: id };
+      var telempoint = { timestamp: timestamp, value: this.leader_state[id], id: id };
 
       //notify the realtime server and push the datapoint to the history server
       this.notify(telempoint);
