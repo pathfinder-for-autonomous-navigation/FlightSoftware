@@ -1705,6 +1705,30 @@
             "type": "double",
             "writable": false
         },
+        "orbit.uplink_pos": {
+            "bitsize": 103,
+            "flow_id": "undefined",
+            "max": 6921000.0,
+            "min": 6771000.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "orbit.uplink_t": {
+            "bitsize": 64,
+            "flow_id": "undefined",
+            "max": 1.8446744073709552e+19,
+            "min": 0.0,
+            "type": "double",
+            "writable": true
+        },
+        "orbit.uplink_vel": {
+            "bitsize": 76,
+            "flow_id": "undefined",
+            "max": 7685.0,
+            "min": 7570.0,
+            "type": "lin double vector",
+            "writable": true
+        },
         "orbit.vel": {
             "bitsize": 76,
             "flow_id": 2,
