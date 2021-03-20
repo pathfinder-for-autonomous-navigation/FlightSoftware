@@ -1,9 +1,15 @@
 from .base import MissionCase
 import time
-from psim.sims import DualAttitudeOrbitGnc
+from psim.sims import DualAttitudeOrbitGnc, SingleOrbitGnc
+from psim import Configuration, Simulation
 import lin
 from .utils import str_to_val, Enums
+from typing import NamedTuple
 
+class OrbitData(NamedTuple):
+    pos: lin.Vector3
+    vel: lin.Vector3
+    time: float
 class AutonomousMissionController(MissionCase):
 
     def state_check(self, satellite, designation):
@@ -48,8 +54,40 @@ class AutonomousMissionController(MissionCase):
 
         return True
     
-    def propagate_orbits(self, vals):
-        return vals
+    def readDownlinkData(self, satellite):
+        pos = lin.Vector3(str_to_val(satellite.read_state("orbit.pos")))
+        vel = lin.Vector3(str_to_val(satellite.read_state("orbit.vel")))
+        time = str_to_val(satellite.read_state("orbit.time"))
+        return OrbitData(pos, vel, time)
+
+    def writeUplinkData(self, satellite, orbit):
+        uplink_orbit_data_fields = ["orbit.uplink_pos", "orbit.uplink_vel", "orbit.uplink_t"]
+        satellite.write_multiple_states(uplink_orbit_data_fields, list(orbit))
+    
+    #default forward propagation time of 10 minutes
+    def propagate_orbits(self, orbit, propagation_time = 10*60*1000000000):
+        
+        #get default sim configs
+        configs = ['sensors/base', 'truth/base', 'truth/detumble']
+        configs = ['config/parameters/' + f + '.txt' for f in configs]
+        #should we use the default truth.dt.ns, or should it depend on something like prop_time?
+        config = Configuration(configs)
+
+        #update values to current (sim assumes leader, works equally for follower)
+        config['truth.leader.orbit.r'] = orbit.pos
+        config['truth.leader.orbit.v'] = orbit.vel
+        config['truth.t.ns'] = orbit.time #what are the units on this
+
+        #step sim to desired time
+        sim = Simulation(SingleOrbitGnc, config)
+        while sim['truth.t.ns'] < config['truth.t.ns'] + propagation_time:
+            sim.step()
+
+        #return the sim propagated orbit
+        propagatedOrbit = OrbitData(sim['truth.leader.orbit.r'], 
+                                    sim['truth.leader.orbit.v'],
+                                    sim['truth.t.ns'])
+        return propagatedOrbit
 
 
     @property
@@ -81,32 +119,29 @@ class AutonomousMissionController(MissionCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
+        #Pass telemetry between spacecraft 
         while(self.continue_mission()): 
 
-            #Pass telemetry between spacecraft 
-
             #wait for data from both spacecrafts to come down from Iridium
-            orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while("Unable to find" in self.leader.read_state("orbit.time") or 
                     "Unable to find" in self.follower.read_state("orbit.time")): 
                 pass
 
-            downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
-            downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]
+            #read the orbit data from each satellite from database
+            downlinked_data_vals_leader = self.readDownlinkData(self.leader)
+            downlinked_data_vals_follower = self.readDownlinkData(self.follower)
+
+            #propagate the orbits of each satellite using psim 
             propagated_data_vals_leader = self.propagate_orbits(downlinked_data_vals_leader)
             propagated_data_vals_follower = self.propagate_orbits(downlinked_data_vals_follower)
 
-            #uplink the leader's data to the follower and vice versa #TODO: add uplink_time field
-            uplink_orbit_data_fields = ["orbit.uplink_pos", "orbit.uplink_vel"]
-            
-            uplink_orbit_data_vals_follower = [propagated_data_vals_leader[i] for i in range(len(uplink_orbit_data_fields))]
-            uplink_orbit_data_vals_leader = [propagated_data_vals_follower[i] for i in range(len(uplink_orbit_data_fields))]
+            #uplink the leader's data to the follower and vice versa   
+            self.writeUplinkData(self.follower, propagated_data_vals_leader)
+            self.writeUplinkData(self.leader, propagated_data_vals_follower)
 
-            self.follower.write_multiple_states(uplink_orbit_data_fields, uplink_orbit_data_vals_follower)
-            self.leader.write_multiple_states(uplink_orbit_data_fields, uplink_orbit_data_vals_leader)
-
-            self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
-            self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
+            #update time of last comms
+            self.leader_time_last_comms = str_to_val(self.leader.read_state("orbit.time"))
+            self.follower_time_last_comms = str_to_val(self.follower.read_state("orbit.time"))    
 
         self.logger.put("EXITING AMC")
         self.finish()
