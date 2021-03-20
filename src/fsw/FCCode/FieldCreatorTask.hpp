@@ -22,6 +22,10 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<lin::Vector3d> vel_baseline_f;
       ReadableStateField<unsigned int> bootcount_f;
 
+      WritableStateField<lin::Vector3d> uplink_pos_f;
+      WritableStateField<lin::Vector3d> uplink_vel_f;
+      WritableStateField<double> uplink_t_f;
+
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
@@ -29,7 +33,11 @@ class FieldCreatorTask : public ControlTask<void> {
         vel_f("orbit.vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000,22)),
         vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,11,14)),
-        bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
+        bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000),
+
+        uplink_pos_f("orbit.uplink_pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
+        uplink_vel_f("orbit.uplink_vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
+        uplink_t_f("orbit.uplink_t", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64))
       {
           // For OrbitController
           add_readable_field(time_f); // Time since the PAN epoch in seconds
@@ -37,12 +45,17 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(vel_f);
           add_readable_field(pos_baseline_f);
           add_readable_field(vel_baseline_f);
+          add_writable_field(uplink_pos_f);
+          add_writable_field(uplink_vel_f);
+          add_writable_field(uplink_t_f);
 
           constexpr double nan_d = gnc::constant::nan;
           pos_f.set({nan_d, nan_d, nan_d});
           vel_f.set({nan_d, nan_d, nan_d});
           pos_baseline_f.set({nan_d, nan_d, nan_d});
           vel_baseline_f.set({nan_d, nan_d, nan_d});
+          uplink_pos_f.set({nan_d, nan_d, nan_d});
+          uplink_vel_f.set({nan_d, nan_d, nan_d});
 
           add_readable_field(bootcount_f);
       }

@@ -96,16 +96,14 @@ class AutonomousMissionController(MissionCase):
             propagated_data_vals_leader = self.propagate_orbits(downlinked_data_vals_leader)
             propagated_data_vals_follower = self.propagate_orbits(downlinked_data_vals_follower)
 
-            #uplink the leader's data to the follower and vice versa
-            baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
-            baseline_orbit_data_vals_follower = [propagated_data_vals_leader[i] - propagated_data_vals_follower[i] for i in range(len(baseline_orbit_data_fields))]
-            baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
+            #uplink the leader's data to the follower and vice versa #TODO: add uplink_time field
+            uplink_orbit_data_fields = ["orbit.uplink_pos", "orbit.uplink_vel"]
+            
+            uplink_orbit_data_vals_follower = [propagated_data_vals_leader[i] for i in range(len(uplink_orbit_data_fields))]
+            uplink_orbit_data_vals_leader = [propagated_data_vals_follower[i] for i in range(len(uplink_orbit_data_fields))]
 
-            baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
-            baseline_orbit_data_vals_leader = [val for val in baseline_orbit_data_vals_leader]
-
-            self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
-            self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
+            self.follower.write_multiple_states(uplink_orbit_data_fields, uplink_orbit_data_vals_follower)
+            self.leader.write_multiple_states(uplink_orbit_data_fields, uplink_orbit_data_vals_leader)
 
             self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
             self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
