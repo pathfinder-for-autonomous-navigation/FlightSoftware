@@ -131,6 +131,33 @@ size_t UplinkProducer::try_add_quat_field(bitstream& bs, std::string key, nlohma
     return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
+template<typename UnderlyingType>
+size_t UplinkProducer::try_add_linquat_field(bitstream& bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    static_assert(std::is_same<UnderlyingType, double>::value || std::is_same<UnderlyingType, float>::value,
+        "Can't collect quaternion field info for a vector of non-float or non-double type.");
+    using UnderlyingQuatType = lin::Vector<UnderlyingType, 4>;
+    using UnderlyingArrayQuatType = std::array<UnderlyingType, 4>;
+    WritableStateField<UnderlyingQuatType>* ptr = dynamic_cast<WritableStateField<UnderlyingQuatType>*>(registry.find_writable_field(key));
+
+    // If the quaternion statefield of the given underlying type doesn't exist in the registry, return 0 bits written. Otherwise, get the values of the key
+    if (!ptr) return 0;
+    UnderlyingArrayQuatType vals = j[key];
+
+    // Check that the magnitude of the values in the JSON file is 1 ± some margin of error
+    UnderlyingType quat_mag = std::sqrt(std::pow(vals[0], 2) + std::pow(vals[1], 2) + std::pow(vals[2], 2) + std::pow(vals[3], 2));
+    UnderlyingType error = 1e-10;
+    if (std::abs(quat_mag-1)>error) throw std::runtime_error("Magnitude of quaternion must be 1");
+
+    // Set the statefield pointer to the new values.
+    ptr->set(lin::view<UnderlyingQuatType>(vals.data()));
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
+    return add_entry(bs, ptr->get_bit_array(), field_index);
+}
+
 size_t UplinkProducer::try_add_gps_time(bitstream& bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<gps_time_t>* ptr = dynamic_cast<WritableStateField<gps_time_t>*>(registry.find_writable_field(key));
@@ -165,6 +192,8 @@ size_t UplinkProducer::add_field_to_bitstream(bitstream& bs, std::string key, nl
     bits_written += try_add_linvector_field<double>(bs, key, j);
     bits_written += try_add_quat_field<float>(bs, key, j);
     bits_written += try_add_quat_field<double>(bs, key, j);
+    bits_written += try_add_linquat_field<float>(bs, key, j);
+    bits_written += try_add_linquat_field<double>(bs, key, j);
     bits_written += try_add_gps_time(bs, key, j);
     return bits_written;
 }

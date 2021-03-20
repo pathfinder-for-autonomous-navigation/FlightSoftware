@@ -80,6 +80,14 @@ class UplinkProducer : public Uplink{
 
     /**
      * Helper function for add_field_to_bitstream.
+     * Check that the quaternion statefield of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    size_t try_add_linquat_field(bitstream& bs, std::string key, nlohmann::json j);
+
+    /**
+     * Helper function for add_field_to_bitstream.
      * Check that the time statefield of a given type is in the statefield registry.
      * If it is, add the value of the field/key to the bitstream
      */
