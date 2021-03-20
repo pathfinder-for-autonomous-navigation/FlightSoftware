@@ -28,6 +28,12 @@ This Mission control API uses the visual elements of the openMCT data visualizat
 
 The openMCT web server is run using the **```npm start```** command in terminal after navigating to the /MCT directory and installing the node.js modules with **```npm install```**.
 
+Running **```npm start```** default to using the ci.json configuration file. you can specify the configuration file that you want MCT to use by appending an argument containing the path relative to FlightSoftware root directory.
+
+For example:
+
+**```npm start ptest/configs/dual_usb.json```** would start MCT using the configuration file dual_usb.json. Make sure the config file has at least 1 device or 1 radio and that it is a valid ptest config file.
+
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
 
 ## Setting up a new Subsystem or Domain Object
