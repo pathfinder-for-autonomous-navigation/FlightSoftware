@@ -72,18 +72,33 @@ class StateCmdPrompt(Cmd):
 
     def do_switchcomp(self, args):
         '''
+        
         Switches the Teensy that the user is controlling by the command line.
+
+        If no args are presented, it attempts to automatically switch 
+        to the other sat
+
+        Otherwise, the full name must be specified.
         '''
         args = args.split()
+        if len(self.devices) == 2:
+            if len(args) < 1:
+                list_of_names = [x for x,y in self.devices.items()]
+                if self.cmded_device.device_name == self.devices[list_of_names[0]].device_name:
+                    self.cmded_device = self.devices[list_of_names[1]]
+                else:
+                    self.cmded_device = self.devices[list_of_names[0]]
 
-        list_of_names = [x for x,y in self.devices.items()]
-
-        if self.cmded_device.device_name == self.devices[list_of_names[0]].device_name:
-            self.cmded_device = self.devices[list_of_names[1]]
+                print(f"Switched to {self.cmded_device.device_name}")                
+                
+            else:
+                try:
+                    self.cmded_device = self.devices[args[0]]
+                except KeyError:
+                    print('Invalid device specified')
+            
         else:
-            self.cmded_device = self.devices[list_of_names[0]]
-
-        print(f"Switched to {self.cmded_device.device_name}")
+            print("Can't switchcomp in SingleSatCase")
 
     def do_rs(self, args):
         '''
