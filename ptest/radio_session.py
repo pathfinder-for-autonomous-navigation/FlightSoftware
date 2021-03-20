@@ -92,6 +92,8 @@ class RadioSession(object):
 
         if os.path.exists("uplink.json"):
             os.remove("uplink.json")
+        if os.path.exists("http_uplink.json"):
+            os.remove("http_uplink.json")
 
     def check_queue(self, queue):
         '''
