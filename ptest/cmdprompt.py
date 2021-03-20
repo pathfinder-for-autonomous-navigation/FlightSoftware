@@ -94,6 +94,8 @@ class StateCmdPrompt(Cmd):
             else:
                 try:
                     self.cmded_device = self.devices[args[0]]
+                    print(f"Switched to {self.cmded_device.device_name}")                
+
                 except KeyError:
                     print('Invalid device specified')
             
