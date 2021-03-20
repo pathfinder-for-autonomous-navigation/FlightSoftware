@@ -235,7 +235,7 @@ class RadioSession(object):
             SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
 
             # Remove uplink files/cleanup
-            # os.remove("uplink.sbd")
+            os.remove("uplink.sbd")
             os.remove("uplink.json")
             if os.path.exists("http_uplink.json"):
                 os.remove("http_uplink.json")
