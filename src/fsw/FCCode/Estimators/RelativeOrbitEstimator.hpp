@@ -12,6 +12,11 @@
 
 #include <orb/Orbit.h>
 
+/** @author Kyle Krol
+ *
+ *  @brief Provides an estimate of the other spacecraft's position and velocity
+ *         relative to this one.
+ */
 class RelativeOrbitEstimator : public ControlTask<void>
 {
   public:

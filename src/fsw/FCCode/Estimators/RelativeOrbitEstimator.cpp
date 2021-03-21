@@ -74,7 +74,7 @@ RelativeOrbitEstimator::RelativeOrbitEstimator(StateFieldRegistry &registry)
     add_readable_field(rel_orbit_rel_pos_sigma_f);
     add_readable_field(rel_orbit_rel_vel_f);
     add_readable_field(rel_orbit_rel_vel_sigma_f);
-    add_writable_field(rel_orbit_uplink_time_f);
+    add_writable_field(rel_orbit_reset_cmd_f);
     add_writable_field(rel_orbit_uplink_time_f);
     add_writable_field(rel_orbit_uplink_pos_f);
     add_writable_field(rel_orbit_uplink_vel_f);
