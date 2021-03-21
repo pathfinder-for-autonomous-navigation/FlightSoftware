@@ -68,7 +68,10 @@ void TimeEstimator::execute()
 
     if (time_valid_f.get())
     {
-        auto const time_s = static_cast<double>(time_ns_f.get()) * 1.0e-9;
+        time_ns_f.set(static_cast<unsigned long long>(time_gps_f.get()) - gps_epoch_ns);
+        time_s_f.set(static_cast<double>(time_ns_f.get()) * 1.0e-9);
+
+        auto const time_s = time_s_f.get();
         auto const earth_w = [](double t) {
             lin::Vector3d w;
             gnc::env::earth_angular_rate(t, w);
@@ -85,8 +88,6 @@ void TimeEstimator::execute()
             return p;
         }(earth_q_ecef_eci);
 
-        time_ns_f.set(static_cast<unsigned long long>(time_gps_f.get()) - gps_epoch_ns);
-        time_s_f.set(time_s);
         time_earth_w_f.set(earth_w);
         time_earth_q_ecef_eci_f.set(earth_q_ecef_eci);
         time_earth_q_eci_ecef_f.set(earth_q_eci_ecef);
