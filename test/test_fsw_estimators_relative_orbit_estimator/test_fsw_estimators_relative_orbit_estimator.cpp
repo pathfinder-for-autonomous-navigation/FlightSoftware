@@ -90,7 +90,7 @@ class TestFixture
 static auto const pan_epoch = gps_time_t(gnc::constant::init_gps_week_number,
             gnc::constant::init_gps_time_of_week, gnc::constant::init_gps_nanoseconds);
 static constexpr lin::Vector3d r_ecef = {6.8538e6, 0.0, 0.0};
-static constexpr lin::Vector3d v_ecef = {0.0, 5.3952e3, 5.3952e3};
+static constexpr lin::Vector3d v_ecef = {0.0, 4.8954e3, 5.3952e3};
 
 void test_constructor()
 {
@@ -101,10 +101,77 @@ void test_constructor()
     TEST_ASSERT_FALSE(tf.rel_orbit_reset_cmd_fp->get());
 }
 
+void test_uplink()
+{
+    TestFixture tf;
+
+    // Initialize a time and orbit estimate
+    tf.piksi_mode_fp->set(static_cast<unsigned char>(piksi_mode_t::spp));
+    tf.piksi_microdelta_fp->set(0);
+    tf.piksi_time_fp->set(pan_epoch);
+    tf.piksi_pos_fp->set(r_ecef);
+    tf.piksi_vel_fp->set(v_ecef);
+
+    tf.time_estimator.execute();
+    tf.orbit_estimator.execute();
+
+    TEST_ASSERT_TRUE(tf.time_valid_fp->get());
+    TEST_ASSERT_TRUE(tf.orbit_valid_fp->get());
+
+    // Check the an uplink is required to initialize the relative orbit estimate
+    // in propegating mode
+    tf.relative_orbit_estimator.execute();
+    tf.relative_orbit_estimator.execute();
+
+    TEST_ASSERT_FALSE(tf.rel_orbit_state_fp->get());
+
+    tf.rel_orbit_uplink_pos_fp->set(r_ecef);
+    tf.rel_orbit_uplink_vel_fp->set(v_ecef);
+
+    // Given an uplink in the future ensure we don't initialize right away
+    tf.rel_orbit_uplink_time_fp->set(pan_epoch + PAN::control_cycle_time_ns);
+
+    tf.relative_orbit_estimator.execute();  // Takes two cycles to happen
+    tf.relative_orbit_estimator.execute();
+
+    TEST_ASSERT_FALSE(tf.rel_orbit_state_fp->get());
+
+    // Given a stale uplink ensure we don't initialize
+    tf.rel_orbit_uplink_time_fp->set(pan_epoch - 3u * PAN::control_cycle_time_ns);
+
+    tf.relative_orbit_estimator.execute(); // Takes two cycles to happen
+    tf.relative_orbit_estimator.execute();
+
+    TEST_ASSERT_FALSE(tf.rel_orbit_state_fp->get());
+
+    // Given a valid orbital uplink check everything gets initialized
+    tf.rel_orbit_uplink_time_fp->set(pan_epoch - PAN::control_cycle_time_ns);
+
+    tf.relative_orbit_estimator.execute(); // Takes two cycles to happen
+    tf.relative_orbit_estimator.execute(); // This propegates forward by PAN
+
+    TEST_ASSERT_EQUAL(tf.rel_orbit_state_fp->get(), static_cast<unsigned char>(rel_orbit_state_t::propagating));
+    // Note that the two orbits are nearly identical
+    TEST_ASSERT_DOUBLE_WITHIN(10.0, lin::fro(tf.rel_orbit_rel_pos_fp->get()), 0.0);
+    TEST_ASSERT_DOUBLE_WITHIN(1.00, lin::fro(tf.rel_orbit_rel_vel_fp->get()), 0.0);
+    TEST_ASSERT_DOUBLE_WITHIN(10.0, lin::fro(tf.rel_orbit_pos_fp->get() - r_ecef), 0.0);
+    TEST_ASSERT_DOUBLE_WITHIN(1.00, lin::fro(tf.rel_orbit_vel_fp->get() - v_ecef), 0.0);
+
+    // Ensure it will continue propegating over time
+    tf.relative_orbit_estimator.execute();
+    tf.relative_orbit_estimator.execute();
+    tf.relative_orbit_estimator.execute();
+    tf.relative_orbit_estimator.execute();
+    tf.relative_orbit_estimator.execute();
+
+    TEST_ASSERT_EQUAL(tf.rel_orbit_state_fp->get(), static_cast<unsigned char>(rel_orbit_state_t::propagating));
+}
+
 int test_control_task()
 {
     UNITY_BEGIN();
     RUN_TEST(test_constructor);
+    RUN_TEST(test_uplink);
     return UNITY_END();
 }
 

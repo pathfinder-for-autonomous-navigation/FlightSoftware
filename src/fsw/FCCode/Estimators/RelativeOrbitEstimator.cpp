@@ -12,6 +12,15 @@
 #include <lin/math.hpp>
 #include <lin/references.hpp>
 
+#if (defined(UNIT_TEST) && defined(DESKTOP))
+#define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
+#else
+#define DD(f_, ...) \
+    do              \
+    {               \
+    } while (0)
+#endif
+
 // Estimator process noise
 TRACKED_CONSTANT_SC(double, RelOrbit_sqrtQ_r, 1.0e-8);
 TRACKED_CONSTANT_SC(double, RelOrbit_sqrtQ_v, 1.0e-2);
@@ -140,10 +149,14 @@ void RelativeOrbitEstimator::execute()
 
         if (have_queued_uplink && its_stale)
         {
+            DD("Queued and stale uplink detected.\n");
+
             auto const ns = static_cast<unsigned long long>(time_gps - _uplink_time);
 
             if (ns < 2u * PAN::control_cycle_time_ns)
             {
+                DD("Initializing absolute orbital state with uplink.\n");
+
                 auto const signed_ns =
                         static_cast<unsigned int>(ns) - static_cast<unsigned int>(PAN::control_cycle_time_ns);
 
@@ -163,10 +176,16 @@ void RelativeOrbitEstimator::execute()
 
         auto const have_new_uplink = uplink_time > get_gps_zero();
         auto const is_in_future = uplink_time > time_gps;
-        auto const is_closer = uplink_time < _uplink_time;
+        auto const is_closer =
+                uplink_time < _uplink_time || _uplink_time == get_gps_zero();
+
+        DD("Checking for new uplink: have_new_uplink=%d is_in_future=%d is_closer=%d\n",
+                have_new_uplink, is_in_future, is_closer);
 
         if (have_new_uplink && is_in_future && is_closer)
         {
+            DD("Moving new uplink to the queue.\n");
+
             _uplink_time = uplink_time;
             _uplink_pos = rel_orbit_uplink_pos_f.get();
             _uplink_vel = rel_orbit_uplink_vel_f.get();
@@ -274,7 +293,7 @@ void RelativeOrbitEstimator::execute()
         auto const pos = _orbit.recef();
         auto const vel = _orbit.vecef();
 
-        rel_orbit_state_f.set(cast_state(rel_orbit_state_t::estimating));
+        rel_orbit_state_f.set(cast_state(rel_orbit_state_t::propagating));
 
         rel_orbit_pos_f.set(pos);
         rel_orbit_vel_f.set(vel);
