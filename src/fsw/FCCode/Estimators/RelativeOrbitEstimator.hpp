@@ -84,12 +84,14 @@ class RelativeOrbitEstimator : public ControlTask<void>
     gnc::RelativeOrbitEstimate _relative_orbit;
     orb::Orbit _orbit;
 
-    gps_time_t _uplink_time;
-    lin::Vector3d _uplink_pos, _uplink_vel;
+    gps_time_t _uplink_t;
+    lin::Vector3d _uplink_r, _uplink_v;
 
     bool _have_previous_baseline;
     lin::Vector3d _previous_baseline_pos;
     unsigned int _previous_baseline_ns;
+
+    unsigned int _cycles_without_rtk;
 };
 
 #endif
