@@ -168,11 +168,13 @@ void RelativeOrbitEstimator::execute()
                 auto const signed_ns =  static_cast<unsigned int>(ns) -
                         static_cast<unsigned int>(PAN::control_cycle_time_ns);
 
-                DD("Initializing absolute orbital state with queued uplink.");
-
                 double _;
                 _orbit = orb::Orbit(orb::MINGPSTIME_NS, _uplink_r, _uplink_v);
                 _orbit.shortupdate(signed_ns, time_earth_w, _);
+
+                DD("Initializing absolute orbital state with queued uplink:");
+                DD("\tr = %f,%f,%f", _uplink_r(0), _uplink_r(1), _uplink_r(2));
+                DD("\tv = %f,%f,%f", _uplink_v(0), _uplink_v(1), _uplink_v(2));
             }
 
             _uplink_t = get_gps_zero();
