@@ -44,3 +44,6 @@ class DualEmptySimCase(DualEmptyCase):
     @property
     def scrape_uplinks(self):
         return True
+
+    def run_case_fullmission(self):
+        pass

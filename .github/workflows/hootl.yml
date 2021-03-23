@@ -6,7 +6,6 @@ on:
     paths-ignore:
       - 'tlm/**'
       - 'tools/**'
-      - 'MCT/**'
       - 'cmdclient/**'
       - 'docs/**'
       - 'README.md'
