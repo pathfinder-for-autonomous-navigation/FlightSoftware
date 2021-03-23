@@ -280,13 +280,13 @@ class USBSession(object):
             return False
 
         returned_vals = returned_vals[0].split(",")
-        returned_vals = [x for x in returned_vals if x is not ""]
+        returned_vals = [x for x in returned_vals if x != ""]
         
         if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
             numeric_returned_vals = [float(x) for x in returned_vals]
             if type(vals[0]) == str:
                 vals = vals[0]
-                vals = [float(x) for x in vals.split(",") if x is not '']
+                vals = [float(x) for x in vals.split(",") if x != '']
 
             return numeric_returned_vals == vals
 
@@ -417,7 +417,13 @@ class USBSession(object):
         except ValueError:
             return "No telemetry to parse."
         self.dp_console.write((newest_telem_file+"\n").encode())
-        telem_json_data = json.loads(self.dp_console.readline().rstrip())
+        line = self.dp_console.readline().rstrip()
+        if line == b'':
+            # TODO A MORE FORMAL FIX
+            print("[ WARNING ] USB_SESSION LINE FIX")
+            line = b'null'
+        telem_json_data = json.loads(line)
+
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
@@ -432,7 +438,7 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print("Error parsing telemetry.")
+            print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
@@ -441,7 +447,7 @@ class USBSession(object):
             field: value,
                 "time": str(datetime.datetime.now().isoformat())
             })
-            res = self.es.index(index='statefield_report_'+str(self.device_name.lower()), doc_type='report', body=data)
+            res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
                 failed = True
         return not failed

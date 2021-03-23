@@ -20,7 +20,7 @@ class Simulation(object):
     Full mission simulation, including both spacecraft.
     """
     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, scrape_emails):
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, scrape_emails, device_config):
         """
         Initializes self
 
@@ -46,9 +46,19 @@ class Simulation(object):
         self.scrape_emails = scrape_emails
         self.log = ""
 
+        # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
+        if device_config != None and 'autotelem' in str(device_config):
+            self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
+            self.enable_autotelem = True
+        else:
+            self.add_to_log('[PTEST-SIM] Autotelem INACTIVE!')
+            self.enable_autotelem = False
+
         if self.is_single_sat_sim:
+            self.add_to_log('[PTEST-SIM] Singlesat sim!')
             self.flight_controller = self.devices['FlightController']
         elif self.devices:
+            self.add_to_log('[PTEST-SIM] Dualsat sim!')
             self.flight_controller_leader = self.devices['FlightControllerLeader']
             self.flight_controller_follower = self.devices['FlightControllerFollower']
 
@@ -148,10 +158,18 @@ class Simulation(object):
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
-            # Step 4. Read the actuators from the flight computer(s) and send to psim
+            # Step 4. Send telemetry to database
+            if self.enable_autotelem:
+                if self.is_single_sat_sim:
+                    self.flight_controller.dbtelem()
+                else:
+                    self.flight_controller_follower.dbtelem()
+                    self.flight_controller_leader.dbtelem()
+
+            # Step 5. Read the actuators from the flight computer(s) and send to psim
             self.read_actuators_send_to_sim()
 
-            #Step 5. Read incoming uplinks
+            # Step 6. Read incoming uplinks
             if self.scrape_emails:
                 for device in self.devices:
                     self.devices[device].scrape_uplink()
