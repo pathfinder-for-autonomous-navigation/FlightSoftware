@@ -90,7 +90,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
         self.logger.put(f"Creating a comms blackout of 24 hours, starting on control cycle: {self.rs('pan.cycle_no')}")
         self.advance_to_next_qfh_state(self.one_day_ccno)
         if not self.mission_state == "standby":
-                    raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
+            raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
             
         # Reset cycles
         self.cycles_since_blackout_start = 0
