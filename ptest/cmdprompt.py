@@ -8,6 +8,7 @@ import timeit
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
+from .cases.utils import str_to_val
 import csv
 
 def USBSessionOnly(fn):
@@ -285,7 +286,7 @@ class StateCmdPrompt(Cmd):
             return
 
         fields = [args[x] for x in range(0, len(args), 2)]
-        vals = [args[x] for x in range(1, len(args), 2)]
+        vals = [str_to_val(args[x]) for x in range(1, len(args), 2)]
 
         start_time = timeit.default_timer()
         uplink_succeeded = self.cmded_device.uplink(fields, vals)
