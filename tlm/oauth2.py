@@ -13,7 +13,7 @@ from email.mime.base import MIMEBase
 import email
 
 SCOPES = 'https://mail.google.com' 
-CLIENT_SECRET_FILE = 'client_secret.json'
+CLIENT_SECRET_FILE = 'tlm/client_secret.json'
 APPLICATION_NAME = 'TelemetryServer'
 
 def get_credentials():
