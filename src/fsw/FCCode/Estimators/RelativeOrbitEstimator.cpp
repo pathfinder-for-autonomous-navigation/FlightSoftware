@@ -316,13 +316,19 @@ void RelativeOrbitEstimator::execute()
         if (_cycles_without_rtk > REL_ORBIT_CC_PREDICT_LIMIT)
         {
             DD("Control cycle predict limit reached for relative orbit "
-               "estimation; resetting the relative estimate.");
-            DD("_orbit.valid() = %i", _orbit.valid());
-            DD("pos=%f,%f,%f vel=%f,%f,%f", orbit_pos(0), orbit_pos(1), orbit_pos(2), orbit_vel(0), orbit_vel(1), orbit_vel(2));
-            DD("rel_pos=%f,%f,%f rel_vel=%f,%f,%f", rel_pos(0), rel_pos(1), rel_pos(2), rel_vel(0), rel_vel(1), rel_vel(2));
+               "estimation; resetting the relative estimate:");
+            DD("\t_orbit.valid() = %i", _orbit.valid());
+            DD("\tpos     = %f,%f,%f", orbit_pos(0), orbit_pos(1), orbit_pos(2));
+            DD("\tvel     = %f,%f,%f", orbit_vel(0), orbit_vel(1), orbit_vel(2));
+            DD("\trel_pos = %f,%f,%f", rel_pos(0), rel_pos(1), rel_pos(2));
+            DD("\trel_vel = %f,%f,%f", rel_vel(0), rel_vel(1), rel_vel(2));
 
             _cycles_without_rtk = 0;
             _relative_orbit = gnc::RelativeOrbitEstimate();
+
+            // We also want to clear any potential uplink as the relative orbit
+            // estimate should be more accurate.
+            _uplink_t = get_gps_zero();
         }
     }
     /* Otherwise, with no relative orbit estimate all we can do is propegate the
