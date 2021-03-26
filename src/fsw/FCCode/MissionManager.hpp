@@ -115,6 +115,7 @@ protected:
      * Manual mission mode is to be used whenever the adcs_state is point_manual or manual
      */
     void dispatch_manual();
+    void dispatch_kill_switch();
 
     // Fields required for control of prop subsystem.
     WritableStateField<unsigned int> *prop_state_fp;

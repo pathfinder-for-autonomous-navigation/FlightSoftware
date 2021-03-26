@@ -14,7 +14,8 @@ enum class mission_state_t {
     docking,
     docked,
     safehold,
-    manual
+    manual,
+    kill_switch
 };
 
 // For information on states, check out
