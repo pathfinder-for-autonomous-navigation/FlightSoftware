@@ -152,6 +152,9 @@ void MissionManager::execute()
     case mission_state_t::manual:
         dispatch_manual();
         break;
+    case mission_state_t::kill_switch:
+        dispatch_kill_switch();
+        break;
     default:
         printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
         transition_to(mission_state_t::safehold, adcs_state_t::startup);
@@ -330,6 +333,14 @@ void MissionManager::dispatch_safehold()
 void MissionManager::dispatch_manual()
 {
     // Do nothing.
+}
+
+void MissionManager::dispatch_kill_switch()
+{
+    //Shut down the radio system
+    set(radio_state_t::disabled);
+    //no longer attempts to make contact with the ground by 
+    //saving something to EEPROM
 }
 
 double MissionManager::distance_to_other_sat() const
