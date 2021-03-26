@@ -21,7 +21,10 @@ void EEPROMController::read_EEPROM(){
 }
 
 void EEPROMController::update_EEPROM(unsigned int position){
-  EEPROM.put(addresses[position], _registry.eeprom_saved_fields[position]->get_eeprom_repr());
+
+  while (EEPROM.read(addresses[position]) != _registry.eeprom_saved_fields[position]->get_eeprom_repr()){
+    EEPROM.update(addresses[position], _registry.eeprom_saved_fields[position]->get_eeprom_repr());
+  }
 }
 
 bool EEPROMController::check_empty(){
