@@ -251,8 +251,8 @@ void RelativeOrbitEstimator::execute()
 
                         lin::Vector3d baseline_dv =
                                 1.0e9 * (piksi_baseline_pos - _previous_baseline_pos) / double(_previous_baseline_ns);
-                        
-                        DD("Initializeing relative orbit estimate with:");
+
+                        DD("Initializing the relative orbit estimate with:");
                         DD("\trel_pos = %f,%f,%f", -piksi_baseline_pos(0), -piksi_baseline_pos(1), -piksi_baseline_pos(2));
                         DD("\trel_vel = %f,%f,%f", -baseline_dv(0), -baseline_dv(1), -baseline_dv(2));
 
