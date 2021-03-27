@@ -397,7 +397,7 @@ class USBSession(object):
         if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("uplink.http") 
+            os.remove("uplink.json") 
             return success
         else:
             if os.path.exists("uplink.json"): os.remove("uplink.json") 
@@ -503,7 +503,6 @@ class USBSession(object):
                                 if part.get_filename() is not None:
                                     # Download uplink packet from email attachment and send it to the Flight Computer
                                     fp = open("new_uplink.sbd", 'wb')
-                                    print("hiiii")
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
                                     self.send_uplink("new_uplink.sbd")
