@@ -6,7 +6,8 @@
             "run_mode": "native",
             "pio_target": "fsw_native_leader_realtime",
             "http_port": 8000,
-            "imei": ""
+            "imei": "",
+            "quake_connected": false
         }
     ],
     "radios": [
