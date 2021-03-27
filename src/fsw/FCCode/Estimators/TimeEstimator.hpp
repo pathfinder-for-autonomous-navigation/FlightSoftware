@@ -4,6 +4,7 @@
 #include <common/GPSTime.hpp>
 
 #include <fsw/FCCode/ControlTask.hpp>
+#undef abs
 
 /** @author Kyle Krol
  *
@@ -48,6 +49,13 @@ class TimeEstimator : public ControlTask<void>
     ReadableStateField<gps_time_t> time_gps_f;
     InternalStateField<unsigned long long> time_ns_f;
     InternalStateField<double> time_s_f;
+
+    /* Outputs ephemeris information that's directly tied to the current time
+     * estimate.
+     */
+    InternalStateField<lin::Vector3d> time_earth_w_f;
+    InternalStateField<lin::Vector4d> time_earth_q_ecef_eci_f;
+    InternalStateField<lin::Vector4d> time_earth_q_eci_ecef_f;
 
     /* Command to forcibly reset the time estimate.
      */
