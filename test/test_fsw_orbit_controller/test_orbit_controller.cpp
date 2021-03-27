@@ -32,7 +32,7 @@ class TestFixture {
                 pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 1);
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 1);
                 baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.uplink.pos", 0, 1, 1);
-                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.uplonk.vel", 0, 1, 1);
+                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.uplink.vel", 0, 1, 1);
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
