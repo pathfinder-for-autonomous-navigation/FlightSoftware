@@ -28,7 +28,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
                                                                                     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
                                                                                     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
-                                                                                    enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
+                                                                                    enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
+                                                                                    kill_switch_f("pan.kill_switch", Serializer<unsigned char>(3))
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -42,9 +43,10 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
     add_internal_field(enter_close_approach_ccno_f);
+    add_writable_field(kill_switch_f);
 
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
-    bootcount_fp->set(bootcount_fp->get()+1);
+    bootcount_fp->set(bootcount_fp->get() + 1);
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
@@ -92,6 +94,16 @@ void MissionManager::execute()
 {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
+    if ((kill_switch_f.get()) == 3)
+    {
+        while (true)
+        {
+            set(radio_state_t::disabled); //Shut down the radio system
+            delay(1);
+            //saving something to EEPROM
+        }
+    }
+
     // Step 1. Change state if faults exist.
     const fault_response_t fault_response = main_fault_handler->execute();
 
@@ -102,11 +114,7 @@ void MissionManager::execute()
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             return;
         }
-        else if (fault_response == fault_response_t::standby
-            && state != mission_state_t::safehold
-            && state != mission_state_t::initialization_hold
-            && state != mission_state_t::detumble
-            && state != mission_state_t::standby)
+        else if (fault_response == fault_response_t::standby && state != mission_state_t::safehold && state != mission_state_t::initialization_hold && state != mission_state_t::detumble && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
             return;
@@ -152,9 +160,6 @@ void MissionManager::execute()
     case mission_state_t::manual:
         dispatch_manual();
         break;
-    case mission_state_t::kill_switch:
-        dispatch_kill_switch();
-        break;
     default:
         printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
         transition_to(mission_state_t::safehold, adcs_state_t::startup);
@@ -170,7 +175,8 @@ bool MissionManager::check_adcs_hardware_faults() const
 void MissionManager::dispatch_startup()
 {
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1) { 
+    if (bootcount_fp->get() == 1)
+    {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -190,7 +196,7 @@ void MissionManager::dispatch_startup()
     {
         transition_to(mission_state_t::initialization_hold,
                       adcs_state_t::detumble,
-                        prop_state_t::idle);
+                      prop_state_t::idle);
     }
     else
     {
@@ -209,11 +215,11 @@ void MissionManager::dispatch_detumble()
 
     if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
-        if(!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
+        if (!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
             adcs_dcdc_fp->set(true);
         else
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
-            // dcdc will be reasserted to true but that's ok
+        // dcdc will be reasserted to true but that's ok
     }
 }
 
@@ -335,14 +341,6 @@ void MissionManager::dispatch_manual()
     // Do nothing.
 }
 
-void MissionManager::dispatch_kill_switch()
-{
-    //Shut down the radio system
-    set(radio_state_t::disabled);
-    //no longer attempts to make contact with the ground by 
-    //saving something to EEPROM
-}
-
 double MissionManager::distance_to_other_sat() const
 {
     const lin::Vector3d dr = propagated_baseline_pos_fp->get();
@@ -394,8 +392,8 @@ void MissionManager::set(sat_designation_t designation)
 void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state)
 {
-   if (mission_state == mission_state_t::safehold)
-   {
+    if (mission_state == mission_state_t::safehold)
+    {
         adcs_dcdc_fp->set(false);
     }
     // all other transitions shall leave the DCDC's alone
