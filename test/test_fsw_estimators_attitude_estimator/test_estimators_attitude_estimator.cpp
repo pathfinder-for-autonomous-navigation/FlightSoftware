@@ -1,7 +1,9 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <adcs/constants.hpp>
-#include <fsw/FCCode/AttitudeEstimator.hpp>
+#include <fsw/FCCode/Estimators/AttitudeEstimator.hpp>
+#include <fsw/FCCode/Estimators/OrbitEstimator.hpp>
+#include <fsw/FCCode/Estimators/TimeEstimator.hpp>
 
 #include <lin/core.hpp>
 

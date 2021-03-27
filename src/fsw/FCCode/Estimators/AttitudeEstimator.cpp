@@ -14,7 +14,7 @@
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry) 
     : ControlTask<void>(registry),
       time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),
-      time_s_fp(FIND_READABLE_FIELD(double, time.s)),
+      time_s_fp(FIND_INTERNAL_FIELD(double, time.s)),
       orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
       orbit_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
       adcs_gyr_functional_fp(FIND_READABLE_FIELD(bool, adcs_monitor.havt_device0)),
@@ -69,12 +69,19 @@ void AttitudeEstimator::execute()
 {
     /* Handle the processing of magnetometer information.
      */
-    auto const have_functional_magnetometer =
-            !adcs_mag1_functional_fp->get() && !adcs_mag2_functional_fp->get();
-
-    if (have_functional_magnetometer)
     {
-        
+        auto const mag1_functional = adcs_mag1_functional_fp->get();
+        auto const have_functional_magnetometer =
+                !mag1_functional && !adcs_mag2_functional_fp->get();
+
+        if (have_functional_magnetometer)
+        {
+            attitude_estimator_b_body_f.set(
+                    mag1_functional && attitude_estimator_mag_flag_f.get() ?
+                            adcs_mag1_fp->get() : adcs_mag2_fp->get());
+        }
+
+        attitude_estimator_b_valid_f.set(have_functional_magnetometer);
     }
 
     /* Reset the attitude estimator if the time estimate is invalid, orbit
@@ -84,7 +91,7 @@ void AttitudeEstimator::execute()
     {
         auto const should_reset = !time_valid_fp->get() ||
                 !orbit_valid_fp->get() || !adcs_gyr_functional_fp->get() ||
-                (!adcs_mag1_functional_fp->get() && !adcs_mag2_functional_fp->get());
+                !attitude_estimator_b_valid_f.get());
 
         if (should_reset)
         {
@@ -96,72 +103,55 @@ void AttitudeEstimator::execute()
         }
     }
 
-    /* Process magnetometer data.
-     *
-     * If the magnetometer flag is set to false, we'll listen to the first
-     * magnetomer and the second magnetometer otherwise.
-     */
-    auto const b_body = [&]() -> lin::Vector3f
-    {
-        auto const use_mag1 =
-            attitude_estimator_mag_flag_f.get() && adcs_mag1_functional_fp->get();
-
-        return use_mag1 ? adcs_mag1_fp->get() : adcs_mag2_fp->get();
-    }();
-    attitude_estimator_b_body_f.set(b_body);
-
     auto const time_s = time_s_fp->get();
     auto const orbit_pos = orbit_pos_fp->get();
     auto const adcs_gyr = adcs_gyr_fp->get();
-    auto const adcs_ssa = adcs_ssa_fp->get();
-
-
-    // Copy in all of our inputs
-    double t             = time_fp->get();
-    lin::Vector3d r_ecef = pos_fp->get();
-    lin::Vector3f s_body = ssa_vec_fp->get();
-    lin::Vector3f w_body = gyr_vec_fp->get();
-
-    // Normalize
-    s_body = s_body / lin::norm(s_body);
-
-    // Handle the special magnetometer case
-    lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
-    if (!lin::all(lin::isfinite(b_body)))
-        b_body = !mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get();
-
-    b_body_f.set(b_body);
-
-    // The filter is already up and running
-    if (state.is_valid) {
-        // Populate the input struct
-        data = gnc::AttitudeEstimatorData();
-        data.t = t;
-        data.r_ecef = r_ecef;
-        data.b_body = b_body;
-        data.s_body = s_body;
-        data.w_body = w_body;
-
-        // Update the filter
-        gnc::attitude_estimator_update(_state, _data, _estimate);
-
-        // Copy out the valid estimate
-        if (estimate.is_valid) {
-            q_body_eci_est_f.set(_estimate.q_body_eci);
-            w_body_est_f.set((_w_body - _estimate.gyro_bias).eval());
-            fro_P_est_f.set(lin::fro(_estimate.P));
+    auto const adcs_ssa_valid = adcs_ssa_mode_fp->get() == adcs::SSA_COMPLETE;
+    auto const adcs_ssa = [&]() -> lin::Vector3f {
+        if (adcs_ssa_valid) {
+            auto const s = adcs_ssa_fp->get();
+            return s / lin::norm(s);
+        } else {
+            return lin::nans<lin::Vector3f>();
         }
-        // Handle an invalid estimate
-        else {
-            _nan_estimate();
+    }();
+    auto const b_body = attitude_estimator_b_body_f.get();
+
+    /* Attempt to update or initialize the attitude estimator.
+     */
+    if (_state.is_valid)
+    {
+        _data = gnc::AttitudeEstimatorData();
+        _data.t = time_s;
+        _data.r_ecef = orbit_pos;
+        _data.b_body = b_body;
+        _data.s_body = adcs_ssa;
+        _data.w_body = adcs_gyr;
+
+        gnc::attitude_estimator_update(_state, _data, _estimate);
+    }
+    else
+    {
+        if (adcs_ssa_valid)
+        {
+            gnc::attitude_estimator_reset(
+                    _state, time_s, orbit_pos, b_body, adcs_ssa);
         }
     }
-    // The filter needs to be initialized
-    else {
-        // All we can give is a NaN estimate and hope the reset works on the next
-        // control cycle
-        _nan_estimate();
 
-        gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
+    /* Populate outputs of the attitude estimator if valid.
+     */
+    attitude_estimator_valid_f.set(_estimate.is_valid);
+    if (_estimate.is_valid)
+    {
+        attitude_estimator_q_body_eci_f.set(_estimate.q_body_eci);
+        attitude_estimator_p_body_eci_sigma_f.set(
+                lin::sqrt(lin::ref<lin::Vector3f>(lin::diag(_estimate.P), 0, 0)));
+        attitude_estimator_w_body_f.set(adcs_gyr - _estimate.gyro_bias);
+        attitude_estimator_w_bias_body_f.set(_estimate.gyro_bias);
+        attitude_estimator_w_bias_body_sigma_f.set(
+                lin::sqrt(lin::ref<lin::Vector3f>(lin::diag(_estimate.P), 3, 0)));
+        attitude_estimator_L_body_f.set(
+                gnc::constant::J_sat * attitude_estimator_w_body_f.get());
     }
 }
