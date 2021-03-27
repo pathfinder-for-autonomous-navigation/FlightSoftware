@@ -218,7 +218,6 @@ def main(args):
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
     parser.add_argument('--clean', dest='clean', action='store_true', help='Starts a fresh run if in HOOTL (deletes the EEPROM file.)')
-    parser.add_argument('--scrape', action='store_false', help='USB Session scrapes emails sent to Iridium if there is no physical radio connected')
     parser.set_defaults(interactive=True)
 
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -246,5 +245,5 @@ def main(args):
         print("Malformed config file. Exiting.")
         sys.exit(1)
 
-    test = PTest(config_data, args.testcase, args.data_dir, args.interactive, args.scrape)
+    test = PTest(config_data, args.testcase, args.data_dir, args.interactive)
     test.start()
