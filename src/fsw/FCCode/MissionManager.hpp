@@ -115,7 +115,6 @@ protected:
      * Manual mission mode is to be used whenever the adcs_state is point_manual or manual
      */
     void dispatch_manual();
-    void dispatch_kill_switch();
 
     // Fields required for control of prop subsystem.
     WritableStateField<unsigned int> *prop_state_fp;
@@ -164,7 +163,7 @@ protected:
     /**
      * @brief DCDC control Disables/enables wheels for the ADCS system.
      */
-    WritableStateField<bool>* adcs_dcdc_fp;
+    WritableStateField<bool> *adcs_dcdc_fp;
 
     /**
      * @brief Radio's mode.
@@ -194,6 +193,12 @@ protected:
      * @brief The cycle at which we enter the close approach state
      */
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
+
+    /**
+     * @brief The state at which we want to shut down all communication 
+     * from spacecraft with ground 
+     */
+    WritableStateField<unsigned char> kill_switch_f;
 
     /**
      * @brief Number of times the satellite has booted
