@@ -57,7 +57,7 @@ class AutonomousMissionController(MissionCase):
     def readDownlinkData(self, satellite):
         pos = lin.Vector3(str_to_val(satellite.read_state("orbit.pos")))
         vel = lin.Vector3(str_to_val(satellite.read_state("orbit.vel")))
-        time = str_to_val(satellite.read_state("orbit.time"))
+        time = str_to_val(satellite.read_state("time.gps"))
         return OrbitData(pos, vel, time)
 
     def writeUplinkData(self, satellite, orbit):
@@ -123,8 +123,8 @@ class AutonomousMissionController(MissionCase):
         while(self.continue_mission()): 
 
             #wait for data from both spacecrafts to come down from Iridium
-            while("Unable to find" in self.leader.read_state("orbit.time") or 
-                    "Unable to find" in self.follower.read_state("orbit.time")): 
+            while("Unable to find" in self.leader.read_state("time.valid") or 
+                    "Unable to find" in self.follower.read_state("time.valid")): 
                 pass
 
             #read the orbit data from each satellite from database
@@ -140,8 +140,8 @@ class AutonomousMissionController(MissionCase):
             self.writeUplinkData(self.leader, propagated_data_vals_follower)
 
             #update time of last comms
-            self.leader_time_last_comms = str_to_val(self.leader.read_state("orbit.time"))
-            self.follower_time_last_comms = str_to_val(self.follower.read_state("orbit.time"))    
+            self.leader_time_last_comms = str_to_val(self.leader.read_state("time.gps"))
+            self.follower_time_last_comms = str_to_val(self.follower.read_state("time.gps"))    
 
         self.logger.put("EXITING AMC")
         self.finish()
