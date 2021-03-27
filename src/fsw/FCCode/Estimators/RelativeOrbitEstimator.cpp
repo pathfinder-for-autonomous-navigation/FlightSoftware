@@ -304,9 +304,9 @@ void RelativeOrbitEstimator::execute()
         rel_orbit_pos_f.set(pos);
         rel_orbit_vel_f.set(vel);
 
-        rel_orbit_rel_pos_f.set(_relative_orbit.dr_ecef());
+        rel_orbit_rel_pos_f.set(rel_pos);
         rel_orbit_rel_pos_sigma_f.set(lin::ref<lin::Vector3d>(lin::diag(S), 0, 0));
-        rel_orbit_rel_vel_f.set(_relative_orbit.dv_ecef());
+        rel_orbit_rel_vel_f.set(rel_vel);
         rel_orbit_rel_vel_sigma_f.set(lin::ref<lin::Vector3d>(lin::diag(S), 3, 0));
 
         /* Limit the number of pure prediction steps we'll do before reverting
