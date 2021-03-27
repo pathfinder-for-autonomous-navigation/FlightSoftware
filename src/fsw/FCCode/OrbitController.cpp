@@ -5,11 +5,14 @@ const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
-    time_fp(FIND_READABLE_FIELD(double, orbit.time)),
+    time_fp(FIND_READABLE_FIELD(double, time.gps)),
+    time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),  
+    orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
+    rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
     pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
-    baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_pos)),
-    baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_vel)),
+    baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.uplink.pos)),
+    baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.uplink.vel)),
     q_body_eci_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
@@ -81,7 +84,8 @@ void OrbitController::execute() {
     }
 
     // Check if the satellite is around a firing point and the prop system is ready to fire
-    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
+    // and if the time and orbit data is valid
+    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing && time_valid_fp->get() && orbit_valid_fp->get() && rel_orbit_valid_fp->get()) {
 
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);

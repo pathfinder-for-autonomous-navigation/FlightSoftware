@@ -74,6 +74,9 @@ public:
     // Input statefields for time, position, velocity, and baseline
     // position/velocity in ECEF
     const ReadableStateField<double>* const time_fp;
+    const ReadableStateField<bool> *const time_valid_fp;
+    const ReadableStateField<bool> *const orbit_valid_fp;
+    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
     const ReadableStateField<lin::Vector3d>* const pos_fp;
     const ReadableStateField<lin::Vector3d>* const vel_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_pos_fp;
