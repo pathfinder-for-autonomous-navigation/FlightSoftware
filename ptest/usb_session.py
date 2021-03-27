@@ -397,7 +397,7 @@ class USBSession(object):
         if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("uplink.json") 
+            os.remove("uplink.http") 
             return success
         else:
             if os.path.exists("uplink.json"): os.remove("uplink.json") 
@@ -460,7 +460,7 @@ class USBSession(object):
         directly to the Flight computer.
         '''
         while self.scrape == True and self.mail != None:
-            self.scrape()
+            self.scrape_uplink()
 
     def scrape_uplink(self):
         '''
@@ -482,7 +482,7 @@ class USBSession(object):
             for response_part in data:
                 if isinstance(response_part, tuple):
                     # converts message from byte literal to string removing b''
-                    msg = email.message_from_string(response_part[1].decode('utf-8'))
+                    msg = email.message_from_bytes(response_part[1])
                     email_subject = msg['subject']
                     
                     if email_subject.isdigit():
@@ -503,10 +503,11 @@ class USBSession(object):
                                 if part.get_filename() is not None:
                                     # Download uplink packet from email attachment and send it to the Flight Computer
                                     fp = open("new_uplink.sbd", 'wb')
+                                    print("hiiii")
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
                                     self.send_uplink("new_uplink.sbd")
-                                    os.remove("new_uplink.sbd")
+                                    #os.remove("new_uplink.sbd")
                         else:
                             # Mark message as unseen again if it wasn't addressed to this satellite
                             self.mail.store(num, '-FLAGS', '\SEEN')
