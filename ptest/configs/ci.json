@@ -7,7 +7,7 @@
             "pio_target": "fsw_native_leader",
             "http_port" : 8000,
             "imei": "",
-            "quake_connected": false,
+            "scrape_uplinks": false,
             "enable_auto_dbtelem": false
         }
     ],
