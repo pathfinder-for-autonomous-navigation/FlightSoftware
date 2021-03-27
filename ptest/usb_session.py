@@ -507,7 +507,7 @@ class USBSession(object):
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
                                     self.send_uplink("new_uplink.sbd")
-                                    #os.remove("new_uplink.sbd")
+                                    os.remove("new_uplink.sbd")
                         else:
                             # Mark message as unseen again if it wasn't addressed to this satellite
                             self.mail.store(num, '-FLAGS', '\SEEN')
