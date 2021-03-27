@@ -61,7 +61,7 @@ class AutonomousMissionController(MissionCase):
         return OrbitData(pos, vel, time)
 
     def writeUplinkData(self, satellite, orbit):
-        uplink_orbit_data_fields = ["orbit.uplink_pos", "orbit.uplink_vel", "orbit.uplink_t"]
+        uplink_orbit_data_fields = ["rel_orbit.uplink.pos", "rel_orbit.uplink.vel", "rel_orbit.uplink.time"]
         satellite.write_multiple_states(uplink_orbit_data_fields, list(orbit))
     
     #default forward propagation time of 10 minutes
