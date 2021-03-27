@@ -26,7 +26,8 @@ ptest_config_schema = {
                     "excludes" : "pio_target"
                 },
                 "http_port" : {"type" : "integer", "required" : True},
-                "imei" : {"type" : "string", "required" : False}
+                "imei" : {"type" : "string", "required" : False},
+                "quake_connected": {"type" : "boolean", "required" : True}
             }
         },
         "required" : True

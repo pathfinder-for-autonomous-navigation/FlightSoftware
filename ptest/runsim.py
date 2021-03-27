@@ -97,7 +97,8 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, self.tlm_config, device['imei'], self.scrape_uplinks)
+            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, 
+                self.tlm_config, device['imei'], (!device["quake_connected"]) or self.scrape_uplinks)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -219,7 +220,7 @@ def main(args):
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
     parser.add_argument('--clean', dest='clean', action='store_true', help='Starts a fresh run if in HOOTL (deletes the EEPROM file.)')
-    parser.add_argument('--scrape', action='store_true', help='USB Session scrapes emails sent to Iridium if there is no physical radio connected')
+    parser.add_argument('--scrape', action='store_false', help='USB Session scrapes emails sent to Iridium if there is no physical radio connected')
     parser.set_defaults(interactive=True)
 
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
