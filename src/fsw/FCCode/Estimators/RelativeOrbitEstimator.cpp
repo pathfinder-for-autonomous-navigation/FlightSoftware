@@ -165,8 +165,8 @@ void RelativeOrbitEstimator::execute()
 
             if (ns < 2u * PAN::control_cycle_time_ns)
             {
-                auto const signed_ns =  static_cast<unsigned int>(ns) -
-                        static_cast<unsigned int>(PAN::control_cycle_time_ns);
+                auto const signed_ns =  static_cast<signed int>(ns) -
+                        static_cast<signed int>(PAN::control_cycle_time_ns);
 
                 double _;
                 _orbit = orb::Orbit(orb::MINGPSTIME_NS, _uplink_r, _uplink_v);
