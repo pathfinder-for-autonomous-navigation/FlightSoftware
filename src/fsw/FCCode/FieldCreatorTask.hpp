@@ -7,6 +7,8 @@
 #include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 #include <gnc/constants.hpp>
 
+#include <common/GPSTime.hpp>
+
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
 // behavior yet.
@@ -25,6 +27,7 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<lin::Vector3d> uplink_pos_f;
       WritableStateField<lin::Vector3d> uplink_vel_f;
       WritableStateField<double> uplink_t_f;
+      WritableStateField<gps_time_t> uplink_gps_t;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -37,7 +40,8 @@ class FieldCreatorTask : public ControlTask<void> {
 
         uplink_pos_f("orbit.uplink_pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
         uplink_vel_f("orbit.uplink_vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
-        uplink_t_f("orbit.uplink_t", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64))
+        uplink_t_f("orbit.uplink_t", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
+        uplink_gps_t("uplink.time", Serializer<gps_time_t>())
       {
           // For OrbitController
           add_readable_field(time_f); // Time since the PAN epoch in seconds
@@ -48,6 +52,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(uplink_pos_f);
           add_writable_field(uplink_vel_f);
           add_writable_field(uplink_t_f);
+          add_writable_field(uplink_gps_t);
 
           constexpr double nan_d = gnc::constant::nan;
           pos_f.set({nan_d, nan_d, nan_d});
