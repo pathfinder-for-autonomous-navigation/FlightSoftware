@@ -13,7 +13,7 @@ from email.mime.base import MIMEBase
 import email
 
 SCOPES = 'https://mail.google.com' 
-CLIENT_SECRET_FILE = 'client_secret.json'
+CLIENT_SECRET_FILE = 'tlm/client_secret.json'
 APPLICATION_NAME = 'TelemetryServer'
 
 def get_credentials():
@@ -125,7 +125,7 @@ def createMessageWithAttachment(
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
     message.attach(msg)
 
-    return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
+    return {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
 def main():
     to = "fy56@cornell.edu"
