@@ -12,7 +12,7 @@ class TestFixture {
 
         // Inputs to orbit controller
         std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
-        std::shared_ptr<ReadableStateField<double>> time_s_fp;
+        std::shared_ptr<InternalStateField<double>> time_s_fp;
         std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_fp;
@@ -34,17 +34,17 @@ class TestFixture {
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
                 time_valid_fp = registry.create_readable_field<bool>("time.valid");
-                time_s_fp = registry.create_readable_field<double>("time.s", 0, 1, 1);
+                time_s_fp = registry.create_internal_field<double>("time.s");
                 orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
                 pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 1);
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 1);
                 rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 3);
-                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.uplink.pos", 0, 1, 1);
-                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.uplink.vel", 0, 1, 1);
+                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 1);
+                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_vel", 0, 1, 1);
                 attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
-                orbit_controller = std::make_unique<OrbitController>(registry, 0);  
+                orbit_controller = std::make_unique<OrbitController>(registry, 0);
                 prop_controller = std::make_unique<PropController>(registry, 0);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");

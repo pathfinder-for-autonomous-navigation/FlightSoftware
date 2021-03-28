@@ -23,10 +23,10 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_wheels_rd_fp;
     std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> w_body_est_fp;
+    std::shared_ptr<InternalStateField<lin::Vector3f>> w_body_est_fp;
     std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
     std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
-    std::shared_ptr<ReadableStateField<double>> time_fp;
+    std::shared_ptr<InternalStateField<double>> time_fp;
     std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_ecef_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_ecef_fp;
@@ -50,10 +50,10 @@ class TestFixture {
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
         attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
-        w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
+        w_body_est_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.w_body");
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
         time_valid_fp = registry.create_readable_field<bool>("time.valid");
-        time_fp = registry.create_readable_field<double>("time.s", 0.0, 18'446'744'073'709'551'616.0, 64);
+        time_fp = registry.create_internal_field<double>("time.s");
         orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
         pos_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 100);
         vel_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 100);
