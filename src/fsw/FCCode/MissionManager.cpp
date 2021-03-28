@@ -58,7 +58,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
 
     prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
-    rel_orbit_valid_fp = FIND_READABLE_FIELD(bool, rel_orbit.valid);
+    rel_orbit_state_fp = FIND_READABLE_FIELD(unsigned char, rel_orbit.state);
     rel_orbit_rel_pos_fp = FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.rel_pos);
 
     reset_fp = find_writable_field<bool>("gomspace.gs_reset_cmd", __FILE__, __LINE__);
@@ -340,7 +340,7 @@ void MissionManager::dispatch_manual()
 
 double MissionManager::distance_to_other_sat() const
 {
-    return rel_orbit_valid_fp->get() ?
+    return rel_orbit_state_fp->get() ?
             lin::norm(rel_orbit_rel_pos_fp->get()) : gnc::constant::nan;
 }
 

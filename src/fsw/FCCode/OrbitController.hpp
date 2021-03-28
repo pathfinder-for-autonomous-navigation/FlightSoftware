@@ -73,7 +73,7 @@ public:
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity in ECEF
-    const ReadableStateField<double>* const time_fp;
+    const InternalStateField<double>* const time_fp;
     const ReadableStateField<bool> *const time_valid_fp;
     const ReadableStateField<bool> *const orbit_valid_fp;
     const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;

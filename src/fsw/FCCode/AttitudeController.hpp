@@ -34,14 +34,14 @@ class AttitudeController : public TimedControlTask<void> {
     InternalStateField<lin::Vector3f> const *const b_body_rd_fp;
     ReadableStateField<bool> const *const attitude_estimator_valid_fp;
     ReadableStateField<lin::Vector4f> const *const q_body_eci_est_fp;
-    ReadableStateField<lin::Vector3f> const *const w_body_est_fp;
+    InternalStateField<lin::Vector3f> const *const w_body_est_fp;
 
     // Inputs from mission manager
     WritableStateField<unsigned char> const *const adcs_state_fp;
 
     // Inputs from the time estimator
     ReadableStateField<bool> const *const time_valid_fp;
-    ReadableStateField<double> const *const time_fp;
+    InternalStateField<double> const *const time_fp;
 
     // Inputs from the orbit estimator
     ReadableStateField<bool> const *const orbit_valid_fp;

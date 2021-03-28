@@ -133,7 +133,7 @@ protected:
     ReadableStateField<lin::Vector3f> const *attitude_estimator_L_body_fp;
 
     // Fields provided by relative orbit estiamtor
-    const ReadableStateField<bool> *rel_orbit_valid_fp;
+    const ReadableStateField<unsigned char> *rel_orbit_state_fp;
     const ReadableStateField<lin::Vector3d> *rel_orbit_rel_pos_fp;
 
     // Field exposed by Gomspace for resetting entire spacecraft.
