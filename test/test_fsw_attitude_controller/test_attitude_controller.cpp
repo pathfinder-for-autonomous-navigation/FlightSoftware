@@ -16,17 +16,21 @@ const lin::Vector3f nan_vector = lin::Vector3f({nan_f, nan_f, nan_f});
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
-    
+
     // Input state fields to attitude controller
+    std::shared_ptr<InternalStateField<bool>> attitude_estimator_b_valid_fp;
     std::shared_ptr<InternalStateField<lin::Vector3f>> b_body_rd_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_wheels_rd_fp;
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> s_body_est_fp;
+    std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_body_est_fp;
     std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-    std::shared_ptr<ReadableStateField<double>>  time_fp;
+    std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
+    std::shared_ptr<ReadableStateField<double>> time_fp;
+    std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_ecef_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_ecef_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_baseline_ecef_fp;
 
     // Attitude controller
@@ -41,16 +45,21 @@ class TestFixture {
     WritableStateField<lin::Vector3f>* m_body_cmd_fp;
 
     TestFixture() : registry() {
+        attitude_estimator_b_valid_fp = registry.create_internal_field<bool>("attitude_estimator.b_valid");
         b_body_rd_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.b_body");
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
+        attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
-        time_fp = registry.create_readable_field<double>("orbit.time", 0.0, 18'446'744'073'709'551'616.0, 64);
+        time_valid_fp = registry.create_readable_field<bool>("time.valid");
+        time_fp = registry.create_readable_field<double>("time.s", 0.0, 18'446'744'073'709'551'616.0, 64);
+        orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
         pos_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 100);
         vel_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 100);
-        pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 1, 100);
-        
+        rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state");
+        pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 100);
+
         attitude_controller = std::make_unique<AttitudeController>(registry, 0);
 
         // Check that attitude controller creates its expected fields

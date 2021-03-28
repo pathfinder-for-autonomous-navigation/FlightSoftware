@@ -29,11 +29,11 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_b_body_f("attitude_estimator.b_body"),
       attitude_estimator_valid_f("attitude_estimator.valid", Serializer<bool>()),
       attitude_estimator_q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
-      attitude_estimator_p_body_eci_sigma_f("attitude_estimator.p_body_eci_sigma_f", Serializer<lin::Vector3f>(/* TODO */)),
+      attitude_estimator_p_body_eci_sigma_f("attitude_estimator.p_body_eci_sigma_f", Serializer<lin::Vector3f>(0.0, 0.5, 14)),
       attitude_estimator_w_body_f("attitude_estimator.w_body"),
-      attitude_estimator_w_bias_body_f("attitude_estimator.w_bias_body", Serializer<lin::Vector3f>(/* TODO */)),
-      attitude_estimator_w_bias_body_sigma_f("attitude_estimator.w_bias_sigma_body", Serializer<lin::Vector3f>(/* TODO */)),
-      attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(/* TODO */)),
+      attitude_estimator_w_bias_body_f("attitude_estimator.w_bias_body", Serializer<lin::Vector3f>(0.0, 0.35, 14)),
+      attitude_estimator_w_bias_body_sigma_f("attitude_estimator.w_bias_sigma_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
+      attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>())
 {
@@ -91,7 +91,7 @@ void AttitudeEstimator::execute()
     {
         auto const should_reset = !time_valid_fp->get() ||
                 !orbit_valid_fp->get() || !adcs_gyr_functional_fp->get() ||
-                !attitude_estimator_b_valid_f.get());
+                !attitude_estimator_b_valid_f.get();
 
         if (should_reset)
         {
@@ -108,12 +108,12 @@ void AttitudeEstimator::execute()
     auto const adcs_gyr = adcs_gyr_fp->get();
     auto const adcs_ssa_valid = adcs_ssa_mode_fp->get() == adcs::SSA_COMPLETE;
     auto const adcs_ssa = [&]() -> lin::Vector3f {
-        if (adcs_ssa_valid) {
-            auto const s = adcs_ssa_fp->get();
-            return s / lin::norm(s);
-        } else {
+        if (!adcs_ssa_valid)
+        {
             return lin::nans<lin::Vector3f>();
         }
+        auto const s = adcs_ssa_fp->get();
+        return s / lin::norm(s);
     }();
     auto const b_body = attitude_estimator_b_body_f.get();
 

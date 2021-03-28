@@ -83,7 +83,8 @@ public:
     const ReadableStateField<lin::Vector3d>* const baseline_vel_fp;
 
     // Converts from ECI to body frame
-    ReadableStateField<lin::Vector4f>* q_body_eci_fp;
+    ReadableStateField<bool> const *const attitude_estimator_valid_fp;
+    ReadableStateField<lin::Vector4f> const *const q_body_eci_fp;
 
     // Outputs
     WritableStateField<unsigned int>* prop_cycles_until_firing_fp;

@@ -5,7 +5,7 @@ const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
-    time_fp(FIND_READABLE_FIELD(double, time.gps)),
+    time_fp(FIND_READABLE_FIELD(double, time.s)),
     time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),  
     orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
     rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
@@ -13,6 +13,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
     baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.uplink.pos)),
     baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.uplink.vel)),
+    attitude_estimator_valid_fp(FIND_READABLE_FIELD(bool, attitude_estimator.valid)),
     q_body_eci_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
@@ -38,6 +39,15 @@ void OrbitController::init() {
 }
 
 void OrbitController::execute() {
+
+    // If we don't have all the information we need, don't calculate a firing
+    if (!time_valid_fp->get() || !orbit_valid_fp->get() || !rel_orbit_valid_fp->get() ||
+            !attitude_estimator_valid_fp->get()) {
+        sched_valve1_f.set(0);
+        sched_valve2_f.set(0);
+        sched_valve3_f.set(0);
+        sched_valve4_f.set(0);
+    }
 
     // Collect time, position, velocity
     double t = time_fp->get();

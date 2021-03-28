@@ -19,7 +19,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
     FieldCreatorTask(StateFieldRegistry& r)
         : ControlTask<void>(r),
-          bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000),
+          bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
     {
         add_readable_field(bootcount_f);
     }
