@@ -44,11 +44,6 @@ static inline constexpr auto cast_state(rel_orbit_state_t state)
     return static_cast<unsigned char>(state);
 }
 
-static inline constexpr auto cast_state(unsigned char state)
-{
-    return static_cast<rel_orbit_state_t>(state);
-}
-
 RelativeOrbitEstimator::RelativeOrbitEstimator(StateFieldRegistry &registry)
     : ControlTask<void>(registry),
       piksi_state_fp(FIND_READABLE_FIELD(unsigned char, piksi.state)),
