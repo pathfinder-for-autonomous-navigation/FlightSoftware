@@ -44,6 +44,13 @@ class CppSimulation(object):
         self.sim_model = _sim_model
         self.mapping_file_name = _mapping_file_name
         self.log = ""
+        
+        '''
+        If this member variable is true, then we will attempt to populate a 
+        set of sensor validity fields based off of psim, as well as just purely
+        setting them to be "working just fine"
+        '''
+        self.mock_sensor_validity = False
 
         # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
         if device_config != None and 'autotelem' in str(device_config):
