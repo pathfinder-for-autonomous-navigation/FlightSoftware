@@ -42,12 +42,13 @@ class PsimDebug(SingleSatOnlyCase):
     def sim_ic_map(self):
         ret = {}
         ret["truth.t.ns"] = 420000000*10
-        ret["truth.leader.attitude.w"] = [1,2,3]
         return ret
 
     def setup_post_bootsetup(self):
         # self.print_ws("pan.state", Enums.mission_states['standby'])
         # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
+        self.sim.mock_sensor_validity = True
+        
         return
 
     def data_logs(self):
@@ -64,6 +65,9 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs('adcs_monitor.ssa_vec')
         self.rs('adcs_monitor.mag1_vec')
         self.rs('adcs_monitor.gyr_vec')
+        
+        self.rs('adcs_monitor.ssa_mode')
+
         self.rs("attitude_estimator.q_body_eci")
         self.rs("attitude_estimator.w_body")
         self.rs("attitude_estimator.fro_P")

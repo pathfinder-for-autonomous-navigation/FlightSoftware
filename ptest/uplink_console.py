@@ -45,8 +45,7 @@ class UplinkConsole(object):
 
         # Create a JSON file with all the fields and values
         telem_json={}
-        for field, val in zip(fields, vals):
-            value = self.get_val(val)
+        for field, value in zip(fields, vals):
             if value is not None:
                 telem_json[field]=value
             else:

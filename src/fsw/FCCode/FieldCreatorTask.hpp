@@ -7,6 +7,8 @@
 #include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 #include <gnc/constants.hpp>
 
+#include <common/GPSTime.hpp>
+
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
 // behavior yet.
