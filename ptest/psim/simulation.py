@@ -43,7 +43,6 @@ class CppSimulation(object):
         self.sim_configs = _sim_configs
         self.sim_model = _sim_model
         self.mapping_file_name = _mapping_file_name
-        self.scrape_emails = scrape_emails
         self.log = ""
 
         # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
@@ -269,7 +268,7 @@ class CppSimulation(object):
 
             # Step 6. Read incoming uplinks
             for device in self.devices:
-                if self.devices[device][device]["scrape_uplinks"]:
+                if self.devices[device].scrape:
                     self.devices[device].scrape_uplink()
 
             step += 1
