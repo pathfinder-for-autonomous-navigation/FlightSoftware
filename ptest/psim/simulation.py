@@ -239,7 +239,9 @@ class CppSimulation(object):
             self.update_sensors()
                         
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
-            self.interact_fc()
+            for device_name, device in self.devices.items():
+                self.write_adcs_estimator_inputs(device)
+                self.read_actuators(device)
 
             # Step 3 Simulate Flight Computers if need be
             self.simulate_flight_computers()
@@ -274,26 +276,6 @@ class CppSimulation(object):
 
         self.running = False
         self.add_to_log("Simulation ended.")
-
-    def interact_fc(self):
-        if self.is_single_sat_sim:
-            self.interact_fc_onesat(self.flight_controller)
-        elif self.devices:
-            self.interact_fc_onesat(self.flight_controller_follower)
-            self.interact_fc_onesat(self.flight_controller_leader)
-
-    def interact_fc_onesat(self, fc):
-        """
-        Exchange simulation state variables with the one of the flight controllers.
-        """
-        # Step 3.2.1 Send inputs to Flight Controller
-        self.write_adcs_estimator_inputs(fc)
-
-        # Step 3.2.2 Read outputs from previous control cycle
-        # self.read_adcs_estimator_outputs(fc)
-        
-        # Step 3.2.3
-        self.read_actuators(fc)
     
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]
@@ -326,23 +308,3 @@ class CppSimulation(object):
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
-
-
-class CppSimulation(Simulation):
-    # good god i hate matlab
-
-    def read_adcs_estimator_outputs(self, flight_controller):
-        """
-        Read and store estimates from the ADCS estimator onboard flight software.
-
-        The estimates are automatically stored in the Flight Controller telemetry log
-        by calling read_state.
-        """
-
-        flight_controller.read_state("pan.state")
-        flight_controller.read_state("adcs.state")        
-        flight_controller.read_state("adcs_monitor.mag1_vec")
-        flight_controller.read_state("adcs_monitor.mag2_vec")
-        flight_controller.read_state("attitude_estimator.q_body_eci")
-        flight_controller.read_state("attitude_estimator.w_body")
-        flight_controller.read_state("attitude_estimator.fro_P")
