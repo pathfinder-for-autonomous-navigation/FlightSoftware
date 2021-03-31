@@ -15,7 +15,7 @@ import lin
 import json
 from ..cases.utils import is_lin_vector, to_lin_vector
 
-class Simulation(object):
+class CppSimulation(object):
     """
     Full mission simulation, including both spacecraft.
     """
@@ -84,138 +84,6 @@ class Simulation(object):
     def add_to_log(self, msg):
         print(msg)
         self.log += f"[{datetime.datetime.now()}] {msg}\n"
-
-    def configure(self):
-        """
-        Initialize anything required for the sim.
-        """
-        raise NotImplementedError
-
-    def update_sensors(self):
-        """
-        Read sensors from simulation.
-        """
-        raise NotImplementedError
-
-    def update_dynamics(self):
-        """
-        Allow simulation to step forward in time and update its
-        truth.
-        """
-        raise NotImplementedError
-
-    def simulate_flight_computers(self):
-        """
-        For any flight computer simulations within the simulation,
-        update their data.
-
-        This is useful if the flight computer has not yet implemented
-        certain controllers, but this function should eventually be
-        removable from the simulation interface.
-        """
-        raise NotImplementedError
-
-    def read_actuators_send_to_sim(self):
-        """
-        Send actuator commands from the real flight computer to the
-        simulation so that it can update dynamics.
-        """
-        raise NotImplementedError
-
-    def run(self):
-        """
-        Runs the simulation for the time interval specified in start().
-        """
-
-        if self.sim_duration != float("inf"):
-            num_steps = int(self.sim_duration / self.dt) 
-        else:
-            num_steps = float("inf")
-            
-        step = 0
-
-        start_time = time.time()
-        while step < num_steps and self.running:
-            # Step 1. Generate dynamics
-            self.update_dynamics()
-
-            # Step 2. Load sensor data into ptest
-            self.update_sensors()
-                        
-            # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
-            self.interact_fc()
-
-            # Step 3 Simulate Flight Computers if need be
-            self.simulate_flight_computers()
-
-            # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            self.testcase.run_case()
-
-            # Step 3.4. Step the flight computer forward.
-            if self.is_single_sat_sim:
-                self.flight_controller.write_state("cycle.start", "true")
-            else:
-                self.flight_controller_follower.write_state("cycle.start", "true")
-                self.flight_controller_leader.write_state("cycle.start", "true")
-
-            # Step 4. Send telemetry to database
-            if self.enable_autotelem:
-                if self.is_single_sat_sim:
-                    self.flight_controller.dbtelem()
-                else:
-                    self.flight_controller_follower.dbtelem()
-                    self.flight_controller_leader.dbtelem()
-
-            # Step 5. Read the actuators from the flight computer(s) and send to psim
-            self.read_actuators_send_to_sim()
-
-            # Step 6. Read incoming uplinks
-            for device in self.devices:
-                if self.devices[device][device]["scrape_uplinks"]:
-                    self.devices[device].scrape_uplink()
-
-            step += 1
-
-        self.running = False
-        self.add_to_log("Simulation ended.")
-
-    def interact_fc(self):
-        if self.is_single_sat_sim:
-            self.interact_fc_onesat(self.flight_controller)
-        elif self.devices:
-            self.interact_fc_onesat(self.flight_controller_follower)
-            self.interact_fc_onesat(self.flight_controller_leader)
-
-    def interact_fc_onesat(self, fc):
-        """
-        Exchange simulation state variables with the one of the flight controllers.
-        """
-        # Step 3.2.1 Send inputs to Flight Controller
-        self.write_adcs_estimator_inputs(fc)
-
-        # Step 3.2.2 Read outputs from previous control cycle
-        self.read_adcs_estimator_outputs(fc)
-        
-        # Step 3.2.3
-        self.read_actuators(fc)
-    
-    def read_actuators(self, fc):
-        raise NotImplementedError
-
-    def stop(self, data_dir):
-        """
-        Stops a run of the simulation and saves run data to disk.
-        """
-        self.add_to_log("Stopping simulation...")
-        self.running = False
-        time.sleep(1) # Wait for logs to finish for the current timestep.
-
-        with open(data_dir + "/simulation_log.txt", "w") as fp:
-            fp.write(self.log)
-
-
-class CppSimulation(Simulation):
-    # good god i hate matlab
 
     def configure(self):
         self.actuator_commands_follower = {}
@@ -306,22 +174,6 @@ class CppSimulation(Simulation):
             local = self.sensor_readings[role][fc_sf]
             fc.write_state(fc_sf, local)
 
-    def read_adcs_estimator_outputs(self, flight_controller):
-        """
-        Read and store estimates from the ADCS estimator onboard flight software.
-
-        The estimates are automatically stored in the Flight Controller telemetry log
-        by calling read_state.
-        """
-
-        flight_controller.read_state("pan.state")
-        flight_controller.read_state("adcs.state")        
-        flight_controller.read_state("adcs_monitor.mag1_vec")
-        flight_controller.read_state("adcs_monitor.mag2_vec")
-        flight_controller.read_state("attitude_estimator.q_body_eci")
-        flight_controller.read_state("attitude_estimator.w_body")
-        flight_controller.read_state("attitude_estimator.fro_P")
-
     def update_dynamics(self):
         """
         Allow simulation to step forward in time and update its
@@ -330,9 +182,119 @@ class CppSimulation(Simulation):
         self.mysim.step()
 
     def simulate_flight_computers(self):
+        """
+        For any flight computer simulations within the simulation,
+        update their data.
+
+        This is useful if the flight computer has not yet implemented
+        certain controllers, but this function should eventually be
+        removable from the simulation interface.
+        """
         # we're all grown up now, don't need this
         pass 
 
+    def read_actuators_send_to_sim(self):
+        """
+        Send actuator commands from the real flight computer to the
+        simulation so that it can update dynamics.
+        """
+
+        # send the outputs of the FC to psim        
+        # iterate across each satellite's mappings
+        for role,mappings in self.actuators_map.items():
+            # iterate across each fc_sf vs psim_sf pair
+            for fc_sf,psim_sf in mappings.items():
+                local = self.actuator_cmds[role][fc_sf]
+                if type(local) == list:
+                    _len = len(local)
+                    if _len == 2:
+                        local = lin.Vector2(local)
+                    elif _len == 3:
+                        local = lin.Vector3(local)
+                    elif _len == 4:
+                        local = lin.Vector4(local)
+                    else:
+                        raise RuntimeError("Unexpected List Length, can't change into lin Vector")
+
+                self.mysim[psim_sf] = local
+
+    def run(self):
+        """
+        Runs the simulation for the time interval specified in start().
+        """
+
+        if self.sim_duration != float("inf"):
+            num_steps = int(self.sim_duration / self.dt) 
+        else:
+            num_steps = float("inf")
+            
+        step = 0
+
+        start_time = time.time()
+        while step < num_steps and self.running:
+            # Step 1. Generate dynamics
+            self.update_dynamics()
+
+            # Step 2. Load sensor data into ptest
+            self.update_sensors()
+                        
+            # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
+            self.interact_fc()
+
+            # Step 3 Simulate Flight Computers if need be
+            self.simulate_flight_computers()
+
+            # Step 3.3. Allow test case to do its own meddling with the flight computer.
+            self.testcase.run_case()
+
+            # Step 3.4. Step the flight computer forward.
+            if self.is_single_sat_sim:
+                self.flight_controller.write_state("cycle.start", "true")
+            else:
+                self.flight_controller_follower.write_state("cycle.start", "true")
+                self.flight_controller_leader.write_state("cycle.start", "true")
+
+            # Step 4. Send telemetry to database
+            if self.enable_autotelem:
+                if self.is_single_sat_sim:
+                    self.flight_controller.dbtelem()
+                else:
+                    self.flight_controller_follower.dbtelem()
+                    self.flight_controller_leader.dbtelem()
+
+            # Step 5. Read the actuators from the flight computer(s) and send to psim
+            self.read_actuators_send_to_sim()
+
+            # Step 6. Read incoming uplinks
+            for device in self.devices:
+                if self.devices[device][device]["scrape_uplinks"]:
+                    self.devices[device].scrape_uplink()
+
+            step += 1
+
+        self.running = False
+        self.add_to_log("Simulation ended.")
+
+    def interact_fc(self):
+        if self.is_single_sat_sim:
+            self.interact_fc_onesat(self.flight_controller)
+        elif self.devices:
+            self.interact_fc_onesat(self.flight_controller_follower)
+            self.interact_fc_onesat(self.flight_controller_leader)
+
+    def interact_fc_onesat(self, fc):
+        """
+        Exchange simulation state variables with the one of the flight controllers.
+        """
+        # Step 3.2.1 Send inputs to Flight Controller
+        self.write_adcs_estimator_inputs(fc)
+
+        # Step 3.2.2 Read outputs from previous control cycle
+        # self.read_adcs_estimator_outputs(fc)
+        
+        # Step 3.2.3
+        self.read_actuators(fc)
+    
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]
         for fc_sf in self.actuators_map[role]:
@@ -354,23 +316,33 @@ class CppSimulation(Simulation):
         # rwa_t_yf = 10
         # self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"] = [x*rwa_t_yf for x in self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"]]
 
-    def read_actuators_send_to_sim(self):
-        
-        # send the outputs of the FC to psim        
-        # iterate across each satellite's mappings
-        for role,mappings in self.actuators_map.items():
-            # iterate across each fc_sf vs psim_sf pair
-            for fc_sf,psim_sf in mappings.items():
-                local = self.actuator_cmds[role][fc_sf]
-                if type(local) == list:
-                    _len = len(local)
-                    if _len == 2:
-                        local = lin.Vector2(local)
-                    elif _len == 3:
-                        local = lin.Vector3(local)
-                    elif _len == 4:
-                        local = lin.Vector4(local)
-                    else:
-                        raise RuntimeError("Unexpected List Length, can't change into lin Vector")
+    def stop(self, data_dir):
+        """
+        Stops a run of the simulation and saves run data to disk.
+        """
+        self.add_to_log("Stopping simulation...")
+        self.running = False
+        time.sleep(1) # Wait for logs to finish for the current timestep.
 
-                self.mysim[psim_sf] = local
+        with open(data_dir + "/simulation_log.txt", "w") as fp:
+            fp.write(self.log)
+
+
+class CppSimulation(Simulation):
+    # good god i hate matlab
+
+    def read_adcs_estimator_outputs(self, flight_controller):
+        """
+        Read and store estimates from the ADCS estimator onboard flight software.
+
+        The estimates are automatically stored in the Flight Controller telemetry log
+        by calling read_state.
+        """
+
+        flight_controller.read_state("pan.state")
+        flight_controller.read_state("adcs.state")        
+        flight_controller.read_state("adcs_monitor.mag1_vec")
+        flight_controller.read_state("adcs_monitor.mag2_vec")
+        flight_controller.read_state("attitude_estimator.q_body_eci")
+        flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")
