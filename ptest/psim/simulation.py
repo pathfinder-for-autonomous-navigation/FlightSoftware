@@ -13,8 +13,7 @@ from ..gpstime import GPSTime
 import psim
 import lin 
 import json
-from ..cases.utils import is_lin_vector, to_lin_vector
-
+from ..cases.utils import is_lin_vector, to_lin_vector,Enums
 class CppSimulation(object):
     """
     Full mission simulation, including both spacecraft.
@@ -169,6 +168,20 @@ class CppSimulation(object):
                     psim_val = list(psim_val)
                 self.sensor_readings[role][fc_sf] = psim_val
 
+    def mock_piksi_state(self, fc_name):
+        psim_sat_name = self.fc_to_role_map[fc_name]
+        psim_piksi_state = self.mysim["sensors."+psim_sat_name+".cdgps.active"]
+
+        fsw_piksi_state = -1
+        fc_device = self.devices[fc_name]
+
+        if psim_piksi_state == 0:
+            fsw_piksi_state = Enums.piksi_modes['no_fix']
+        else:
+            fsw_piksi_state = Enums.piksi_modes['fixed_rtk']
+        
+        fc_name.write_state('piksi.state', fsw_piksi_state)
+
     def write_adcs_estimator_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
 
@@ -241,9 +254,13 @@ class CppSimulation(object):
             # Step 1. Generate dynamics
             self.update_dynamics()
 
-            # Step 2. Load sensor data into ptest
+            # Step 2. Load sensor data from psim into ptest
             self.update_sensors()
                         
+            if self.mock_sensor_validity:
+                for device_name, device in self.devices.items():
+                    self.mock_piksi_state(device_name)
+
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             for device_name, device in self.devices.items():
                 self.write_adcs_estimator_inputs(device)

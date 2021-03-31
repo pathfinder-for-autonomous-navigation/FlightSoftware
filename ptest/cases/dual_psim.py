@@ -43,6 +43,10 @@ class DualPsim(MissionCase):
     def debug_to_console(self):
         return True
 
+    def setup_post_bootsetup(self):
+        self.sim.mock_sensor_validity = True
+        return        
+
     def log_fc_data(self, usb_device: USBSession):
         
         fc_states = ["pan.deployment.elapsed",
