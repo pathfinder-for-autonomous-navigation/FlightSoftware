@@ -14,6 +14,8 @@ import psim
 import lin 
 import json
 from ..cases.utils import is_lin_vector, to_lin_vector,Enums
+import math
+
 class CppSimulation(object):
     """
     Full mission simulation, including both spacecraft.
@@ -168,12 +170,15 @@ class CppSimulation(object):
                     psim_val = list(psim_val)
                 self.sensor_readings[role][fc_sf] = psim_val
 
-    def mock_piksi_state(self, fc_name):
+    def mock_piksi_state(self, fc_name, fc_device):
+        '''
+        Lets piksi state to be populated with either spp for fixed rtk
+        based on a psim flag value
+        '''
         psim_sat_name = self.fc_to_role_map[fc_name]
         cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.active"]
 
         fsw_piksi_state = -1
-        fc_device = self.devices[fc_name]
 
         if cdgps_active == 0:
             fsw_piksi_state = Enums.piksi_modes['spp']
@@ -181,6 +186,31 @@ class CppSimulation(object):
             fsw_piksi_state = Enums.piksi_modes['fixed_rtk']
 
         fc_device.write_state('piksi.state', fsw_piksi_state)
+
+    def mock_adcs_havt(self, fc_name, fc_device):
+        '''
+        Set the gyro, and both mags to be "working"
+        '''
+        fc_device.write_state('adcs_monitor.havt_device0', True)
+        fc_device.write_state('adcs_monitor.havt_device1', True)
+        fc_device.write_state('adcs_monitor.havt_device2', True)
+
+    def mock_ssa_mode(self, fc_name, fc_device):
+        '''
+        Lets ssa mode to be populated with either ???
+        based on a psim flag value        
+        '''
+        psim_sat_name = self.fc_to_role_map[fc_name]
+        ssa_vec = self.mysim[f"sensors.{psim_sat_name}.sun_sensors.s"]
+        fsw_ssa_mode = -1
+
+        # if any of ssa_vec is nan
+        if any([math.isnan(x) for x in ssa_vec]):
+            fsw_ssa_mode = Enums.ssa_modes['SSA_FAILURE']
+        else:
+            fsw_ssa_mode = Enums.ssa_modes['SSA_COMPLETE']
+
+        fc_device.write_state('adcs_monitor.ssa_mode', fsw_ssa_mode)
 
     def write_adcs_estimator_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
@@ -261,7 +291,9 @@ class CppSimulation(object):
             # print(self.mock_sensor_validity)
             if self.mock_sensor_validity:
                 for device_name, device in self.devices.items():
-                    self.mock_piksi_state(device_name)
+                    self.mock_piksi_state(device_name, device)
+                    self.mock_adcs_havt(device_name, device)
+                    self.mock_ssa_mode(device_name, device)
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             for device_name, device in self.devices.items():

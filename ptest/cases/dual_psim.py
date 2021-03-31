@@ -66,6 +66,9 @@ class DualPsim(MissionCase):
         "adcs_monitor.ssa_vec",
         "adcs_monitor.mag1_vec",
         "adcs_monitor.gyr_vec",
+
+        'adcs_monitor.ssa_mode',
+
         "attitude_estimator.q_body_eci",
         "attitude_estimator.w_body",
         "attitude_estimator.fro_P",
