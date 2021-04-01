@@ -1,5 +1,4 @@
 from .base import SingleSatOnlyCase
-from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
@@ -19,40 +18,12 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.fault_name = "prop.pressurize_fail"
 
     @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
-
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def sim_initial_state(self):
-        return "startup"
-
-    @property
-    def sim_ic_map(self):
-        ret = {}
-        ret["truth.t.ns"] = 420000000*10
-        ret["truth.leader.attitude.w"] = [0,0,0]
-        return ret
-
-    @property
     def initial_state(self):
-        return "standby"
+        return "leader"
 
     @property
     def fast_boot(self):
-        return False
+        return True
 
     def setup_pre_bootsetup(self):
         self.powercycle_happening = None
@@ -75,8 +46,9 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("prop.max_pressurizing_cycles", 4)
         self.ws("prop.max_venting_cycles", 8)
 
-        #Enable SpikeDock so we can actually change prop state
+        # Enable SpikeDock so we can actually change prop state
         self.ws("dcdc.SpikeDock_cmd", True)
+
 # --------------------------------------------------------------------------------------
 # Prop Properties
 # --------------------------------------------------------------------------------------
