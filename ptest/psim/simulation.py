@@ -212,6 +212,12 @@ class CppSimulation(object):
 
         fc_device.write_state('adcs_monitor.ssa_mode', fsw_ssa_mode)
 
+    def transfer_piksi_time(self, fc_name, fc_device):
+        psim_time_ns = self.mysim['truth.t.ns']
+        python_time = GPSTime(psim_time_ns)
+
+        fc_device.write_state('piksi.time', python_time.to_list())
+
     def write_adcs_estimator_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
 
@@ -293,6 +299,11 @@ class CppSimulation(object):
                     self.mock_piksi_state(device_name, device)
                     self.mock_adcs_havt(device_name, device)
                     self.mock_ssa_mode(device_name, device)
+
+            for device_name, device in self.devices.items():
+                self.transfer_piksi_time(device_name, device)
+
+            ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             for device_name, device in self.devices.items():
