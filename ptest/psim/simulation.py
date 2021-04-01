@@ -176,7 +176,7 @@ class CppSimulation(object):
         based on a psim flag value
         '''
         psim_sat_name = self.fc_to_role_map[fc_name]
-        cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.active"]
+        cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.valid"]
 
         fsw_piksi_state = -1
 
