@@ -10,6 +10,10 @@ from elasticsearch import Elasticsearch
 from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
 from .uplink_timer import UplinkTimer
+from .cases.utils import str_to_val
+
+import email
+import imaplib
 
 class RadioSession(object):
     '''
@@ -24,7 +28,7 @@ class RadioSession(object):
     '''
 
     def __init__(self, device_name, imei, uplink_console, port, send_queue_duration,
-                    send_lockout_duration, simulation_run_dir, tlm_config):
+                    send_lockout_duration, check_uplink_queue_enable, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -34,8 +38,12 @@ class RadioSession(object):
         self.imei=imei
         self.port=port
 
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
+
         # Uplink timer
         self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
+        self.check_uplink_queue_enable = check_uplink_queue_enable
 
         # Radio session and the http endpoints communicate information about the state of the timer
         # by passing messages over the queue.
@@ -43,6 +51,10 @@ class RadioSession(object):
         self.check_queue_msgs = True
         self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,), name="Uplink queue check thread")
         self.check_queue_thread.start()
+
+        # dictionary of statefields and values to uplink
+        self.statefield_dict = {}
+
 
         # HTTP Endpoints
         self.flask_app=create_radio_session_endpoint(self, q)
@@ -70,9 +82,18 @@ class RadioSession(object):
         self.flask_server=tlm_config["webservice"]["server"]
         self.flask_port=tlm_config["webservice"]["port"]
 
-        #email
-        self.username=tlm_config["email_username"]
-        self.password=tlm_config["email_password"]
+        # Connect to email
+        try:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print("Not connected to email")
+
+        if os.path.exists("uplink.json"):
+            os.remove("uplink.json")
+        if os.path.exists("http_uplink.json"):
+            os.remove("http_uplink.json")
 
     def check_queue(self, queue):
         '''
@@ -134,25 +155,22 @@ class RadioSession(object):
         Reads from the most recent Iridium Report whether or
         not RadioSession is able to send uplinks
      	'''
+        if self.uplink_queued() and self.check_uplink_queue_enable:
+            return False
 
         assert len(fields) == len(vals)
 
-        if self.uplink_queued():
-            return False
-
-        # Create dictionary object with new fields and vals
-        updated_fields={}
         for i in range(len(fields)):
-            updated_fields[fields[i]]=self.uplink_console.get_val(vals[i])
-
-        # Create a JSON file to hold the uplink
-        with open('uplink.json', 'w') as telem_file:
-            json.dump(updated_fields, telem_file)
+            self.statefield_dict[fields[i]] = str_to_val(vals[i])
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.
-        t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
-        t.start()
+        # make the uplink.json file so we know there is data to send and http_cmd
+        # can see it as well
+        if not os.path.exists("uplink.json"):   
+            with open('uplink.json', 'w'): pass 
+            t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
+            t.start()
 
         return True
 
@@ -183,27 +201,35 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json"):
+        if tlm_service_active and response.text.lower()=="true":
             return False
         return True
 
     def send_uplink(self):
+        # Check there is an uplink to send
         if not os.path.exists("uplink.json"):
             return False
 
-        # Extract the json telemetry data from the queued uplink json file
-        with open("uplink.json", 'r') as uplink:
-            queued_uplink = json.load(uplink)
+        if os.path.exists("http_uplink.json"):
+            # Extract the json telemetry data from the queued http uplink json file
+            with open("http_uplink.json", 'r') as http_uplink:
+                queued_http_uplink = json.load(http_uplink)
 
-        # Get an updated list of the field and values
-        fields, vals = queued_uplink.keys(), queued_uplink.values()
+            # Get an updated list of the field and values from http endpoint and update the dictionary
+            for field in queued_http_uplink:
+                self.statefield_dict[field] = queued_http_uplink[field]
+
+        #merged and updated fields to send
+        fields, vals = self.statefield_dict.keys(), self.statefield_dict.values()
+        with open('uplink.json', 'w') as telem_file:
+                    json.dump(self.statefield_dict, telem_file)
 
         # Create an uplink packet
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.json") and os.path.exists("uplink.sbd")
 
         if success:
             # Send the uplink to Iridium
-            to = "data@sbd.iridium.com"
+            to = "pan.ssds.qlocate@gmail.com"
             sender = "pan.ssds.qlocate@gmail.com"
             subject = self.imei
             msgHtml = ""
@@ -213,11 +239,44 @@ class RadioSession(object):
             # Remove uplink files/cleanup
             os.remove("uplink.sbd")
             os.remove("uplink.json")
-
+            if os.path.exists("http_uplink.json"):
+                os.remove("http_uplink.json")
+            self.statefield_dict = {}
             return True
         else:
             os.remove("uplink.json")
+            if os.path.exists("http_uplink.json"):
+                os.remove("http_uplink.json")
+            self.statefield_dict = {}
             return False
+
+    def mark_message_unseen(self):
+        '''
+        Mark most recent message in sent mail box and UNSEEN
+        '''
+        try:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except Exception as e:
+            print(e)
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+        last_id = id_list[len(id_list)-1]
+        
+        _, data = self.mail.fetch(last_id, "(RFC822)")
+
+        for response_part in data:
+            if isinstance(response_part, tuple):
+                # converts message from byte literal to string removing b''
+                msg = email.message_from_string(response_part[1].decode('utf-8'))
+                email_subject = msg['subject']
+
+                if email_subject.isdigit() and int(self.imei) == int(email_subject):
+                    # mark message as unseen
+                    self.mail.store(last_id, '-FLAGS', '\SEEN')
+        
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

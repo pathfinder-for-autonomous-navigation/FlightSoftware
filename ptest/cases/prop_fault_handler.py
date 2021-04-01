@@ -5,7 +5,9 @@ from .utils import Enums, TestCaseFailure
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
 class PropFaultHandler(SingleSatOnlyCase):
-    def __init__(self, is_interactive, random_seed, data_dir):
+    def __init__(self, *args, **kwargs):
+        super(PropFaultHandler, self).__init__(*args, **kwargs)
+
         self.tank2_pressure = 12.0
         self.tank2_temp = 25.0
         self.tank1_temp = 25.0
@@ -15,8 +17,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.MAX_SAFE_PRESS = 75.0
 
         self.fault_name = "prop.pressurize_fail"
-
-        super().__init__(is_interactive, random_seed, data_dir)
 
     @property
     def sim_configs(self):

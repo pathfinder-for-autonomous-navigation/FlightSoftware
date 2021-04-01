@@ -73,35 +73,22 @@ static unsigned long const adcx_timeout = 10000;
 
 /** Transforms a vector from the body frame into the commanding frame for the
  *  reaction wheels. */
-static lin::Matrix3x3f const body_to_rwa({
-#ifdef PAN_LEADER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
-#elif PAN_FOLLOWER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
-});
+static constexpr lin::Matrix3x3f body_to_rwa = {
+  0.0f, -1.0f,  0.0f,
+  0.0f,  0.0f, -1.0f,
+  1.0f,  0.0f,  0.0f
+};
 
 /** Transforms a vector from the reaction wheel control frame to the body frame
  *  of the spacecraft. */
-static lin::Matrix3x3f const rwa_to_body({
-#ifdef PAN_LEADER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
-#elif PAN_FOLLOWER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
-});
+static constexpr lin::Matrix3x3f rwa_to_body = {
+   0.0f,  0.0f, 1.0f,
+  -1.0f,  0.0f, 0.0f,
+   0.0f, -1.0f, 0.0f
+};
+
+static_assert(lin::fro(rwa_to_body * body_to_rwa - lin::identity<lin::Matrix3x3f>()) < 1.0e-5f, "");
+
 }  // namespace rwa
 }  // namespace adcs
 

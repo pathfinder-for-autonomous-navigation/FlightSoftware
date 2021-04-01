@@ -2,6 +2,7 @@
 #define PIKSI_HPP_
 
 #ifndef DESKTOP
+#include <Arduino.h>
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
 #else
@@ -223,6 +224,7 @@ class Piksi {
     void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
     void set_baseline_flag(const unsigned char flag);
     void set_read_return(const unsigned int out);
+    void set_microdelta(unsigned long udelta);
     #endif
 
     /** @brief Reads current settings in Piksi RAM.
@@ -336,10 +338,30 @@ class Piksi {
      */
     void clear_bytes();
 
+    /**
+     * @brief Check if bytes are entering the buffer
+     * 
+     */
+    static void check_bytes();
+
+    /**
+     * @brief Begin checking bytes in buffer at set interval
+     * 
+     */
+    void start_interrupt();
+
+    /**
+     * @brief Get microdelta (time delay between now and time data entered buffer)
+     * 
+     * @return unsigned long 
+     */
+    unsigned long get_microdelta();
+
    protected:
    #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
                                    // can access the port variable
+
     #endif
    private:
     // Internal values required by libsbp. See sbp.c
@@ -409,6 +431,13 @@ class Piksi {
     bool _vel_ecef_update;
     bool _heartbeat_update;
     bool _user_data_update;
+
+#ifndef DESKTOP
+    unsigned char buffer[SERIAL4_RX_BUFFER_SIZE]; 
+    unsigned char* buffer_begin;
+    unsigned char* buffer_end;
+#endif
+    unsigned long microdelta;
 
     //set read return mock
     // #if defined(DESKTOP) || defined(UNIT_TEST) 

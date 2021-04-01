@@ -79,7 +79,10 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     eeprom_controller.init();
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
-
+    
+    // grab downlink sizes, intialize MO buffers
+    quake_manager.init();
+    
     #ifndef FLIGHT
     #ifndef DESKTOP
         // Allow for PTest testing to occur in a controlled way.

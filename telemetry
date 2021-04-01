@@ -1080,16 +1080,16 @@
             "writable": true
         },
         "attitude_estimator.q_body_eci": {
-            "bitsize": 0,
+            "bitsize": 32,
             "flow_id": 3,
             "type": "lin float quaternion",
             "writable": false
         },
         "attitude_estimator.w_body": {
-            "bitsize": 149,
+            "bitsize": 37,
             "flow_id": 3,
-            "max": 2.181661605834961,
-            "min": -2.181661605834961,
+            "max": 0.261799395084381,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": false
         },
@@ -1705,9 +1705,33 @@
             "type": "double",
             "writable": false
         },
-        "orbit.vel": {
+        "orbit.uplink_pos": {
+            "bitsize": 103,
+            "flow_id": "undefined",
+            "max": 6921000.0,
+            "min": 6771000.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "orbit.uplink_t": {
+            "bitsize": 64,
+            "flow_id": "undefined",
+            "max": 1.8446744073709552e+19,
+            "min": 0.0,
+            "type": "double",
+            "writable": true
+        },
+        "orbit.uplink_vel": {
             "bitsize": 76,
             "flow_id": "undefined",
+            "max": 7685.0,
+            "min": 7570.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "orbit.vel": {
+            "bitsize": 76,
+            "flow_id": 2,
             "max": 7685.0,
             "min": 7570.0,
             "type": "lin double vector",
@@ -1780,7 +1804,7 @@
             "flow_id": 19,
             "max": 2000.0,
             "min": 0.0,
-            "type": "std double vector",
+            "type": "lin double vector",
             "writable": false
         },
         "piksi.fix_error_count": {
@@ -1791,12 +1815,20 @@
             "type": "unsigned int",
             "writable": false
         },
+        "piksi.microdelta": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "piksi.pos": {
             "bitsize": 103,
             "flow_id": 19,
             "max": 6921000.0,
             "min": 6771000.0,
-            "type": "std double vector",
+            "type": "lin double vector",
             "writable": false
         },
         "piksi.state": {
@@ -1818,7 +1850,7 @@
             "flow_id": 19,
             "max": 7685.0,
             "min": 7570.0,
-            "type": "std double vector",
+            "type": "lin double vector",
             "writable": false
         },
         "piksi_fh.cdpgs_delay_max_wait": {
@@ -2523,6 +2555,7 @@
             "fields": [
                 "orbit.baseline_pos",
                 "orbit.pos",
+                "orbit.vel",
                 "piksi.time"
             ],
             "id": 2,

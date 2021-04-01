@@ -13,12 +13,14 @@ class PTestCase(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, is_interactive, random_seed, data_dir):
+    def __init__(self, is_interactive, random_seed, data_dir, device_config):
         self._finished = False
         self.is_interactive = is_interactive
         self.random_seed = random_seed
         self.data_dir = data_dir
         self.logger = Logger("testcase", data_dir, print=True)
+
+        self.device_config = device_config
 
         self.errored = False
         self.finished = False
@@ -44,6 +46,14 @@ class PTestCase(object):
         Json file name that contains the mappings desired
         '''
         return None
+
+    @property
+    def scrape_uplinks(self):
+        '''
+        Look for sent uplinks by scraping the sent mail box in the pan email account
+        and send packets to the Flight Computer
+        '''
+        return False
 
     @property
     def debug_to_console(self):
@@ -135,7 +145,8 @@ class PTestCase(object):
             from ..psim import CppSimulation # Lazy import
             self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
-            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, 
+            self.sim_mapping, self.scrape_uplinks, self.device_config)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
@@ -197,6 +208,39 @@ class PTestCase(object):
                 self.sim.stop(self.data_dir)
             self.logger.stop()
             time.sleep(1) # Allow time for logger to stop
+
+    def rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, and return the python value
+        '''
+        ret = self.sim.mysim.get(name)
+        if(ret is None):
+            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
+        
+        stripped = ret
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
+            ret = list(ret)
+            stripped = str(ret).strip("[]").replace(" ","")+","
+        
+        packet = {}
+        
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+        packet["field"] = name
+        packet["val"] = str(stripped)
+        packet["time"] = str(datetime.datetime.now())
+
+        # log to datastore
+        for d in self.devices:
+            d.datastore.put(packet)
+
+        return ret
+
+    def print_rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
+        '''
+        ret = self.rs_psim(name)
+        self.logger.put(f"{name} is {ret}")
 
 class SingleSatOnlyCase(PTestCase):
     """
@@ -319,39 +363,6 @@ class SingleSatOnlyCase(PTestCase):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-
-    def rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, and return the python value
-        '''
-        ret = self.sim.mysim.get(name)
-        if(ret is None):
-            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
-        
-        stripped = ret
-        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
-            ret = list(ret)
-            stripped = str(ret).strip("[]").replace(" ","")+","
-        
-        packet = {}
-        
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
-        packet["field"] = name
-        packet["val"] = str(stripped)
-        packet["time"] = str(datetime.datetime.now())
-
-        # log to datastore
-        for d in self.devices:
-            d.datastore.put(packet)
-
-        return ret
-
-    def print_rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, print to console and return the python value
-        '''
-        ret = self.rs_psim(name)
-        self.logger.put(f"{name} is {ret}")
 
     def ws(self, name, val):
         """

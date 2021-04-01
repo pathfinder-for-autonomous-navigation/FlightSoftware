@@ -13,6 +13,7 @@ class PiksiControlTask : public TimedControlTask<void>
 {
 public:
     TRACKED_CONSTANT_SC(unsigned int, DEAD_CYCLE_COUNT, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, PIKSI_MD_THRESHOLD, 100000);
 
     PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
     
@@ -23,9 +24,9 @@ public:
     void execute() override;
 
     // StateField for position, velocity, and baseline
-    ReadableStateField<d_vector_t> pos_f;
-    ReadableStateField<d_vector_t> vel_f;
-    ReadableStateField<d_vector_t> baseline_pos_f;
+    ReadableStateField<lin::Vector3d> pos_f;
+    ReadableStateField<lin::Vector3d> vel_f;
+    ReadableStateField<lin::Vector3d> baseline_pos_f;
 
     // Serializer and StateField for currentState and
     // number of cycles since a good reading
@@ -35,7 +36,13 @@ public:
     //Serializer and StateField for time
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
-    
+
+    //Serializer and StateField for
+    // [difference between time of piksi data and current time]
+    // in microseconds
+    Serializer<unsigned int> microdelta_sr;
+    ReadableStateField<unsigned int> microdelta_f;
+
     // Control cycle of last good Piksi reading
     InternalStateField<unsigned int> last_rtkfix_ccno_f;
 
