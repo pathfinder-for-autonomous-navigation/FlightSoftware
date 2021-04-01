@@ -58,7 +58,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_w_bias_body_sigma_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_L_body_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_reset_cmd_f.set(false);
-    attitude_estimator_mag_flag_f.set(false);
+    attitude_estimator_mag_flag_f.set(true);
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
