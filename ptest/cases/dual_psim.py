@@ -76,6 +76,7 @@ class DualPsim(MissionCase):
         "adcs_cmd.rwa_torque_cmd",
         
         "attitude_estimator.valid",
+        "attitude_estimator.w_bias_body",
         "orbit.valid"
         ]
 
@@ -85,10 +86,6 @@ class DualPsim(MissionCase):
     def rs_psim_data(self):
         
         psim_states = [
-        "truth.leader.attitude.w",
-        "truth.follower.attitude.w",
-        "truth.leader.attitude.L",
-        "truth.follower.attitude.L",
         "truth.t.ns",
         "truth.dt.ns"]
 
@@ -99,6 +96,8 @@ class DualPsim(MissionCase):
         'truth.{sat}.attitude.L',
         'truth.{sat}.wheels.t',
         'truth.{sat}.wheels.w',
+        'truth.{sat}.orbit.r.ecef',
+        'truth.{sat}.orbit.v.ecef',
         ]
         
         sats = ['follower', 'leader']
