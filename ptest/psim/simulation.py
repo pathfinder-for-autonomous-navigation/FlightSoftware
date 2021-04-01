@@ -287,8 +287,7 @@ class CppSimulation(object):
             # Step 2. Load sensor data from psim into ptest
             self.update_sensors()
                         
-
-            # print(self.mock_sensor_validity)
+            # Step 3.1 Mock sensor validity flags and states if requested
             if self.mock_sensor_validity:
                 for device_name, device in self.devices.items():
                     self.mock_piksi_state(device_name, device)
