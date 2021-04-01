@@ -59,7 +59,7 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs("pan.cycle_no")
         self.rs("pan.bootcount")
         self.rs("adcs.state")
-        self.rs("orbit.time")
+        self.rs("piksi.time")
         self.rs("orbit.pos")
         self.rs("orbit.vel")
         self.rs('adcs_monitor.ssa_vec')

@@ -15,7 +15,7 @@ class GPSTime(object):
         '''
         pan_ns_count_in should be a gps time *since* the PAN Epoch
         '''
-        ns_count = self.EPOCH_WN*NS_IN_WEEK + ns_count_in
+        ns_count = self.EPOCH_WN*self.NS_IN_WEEK + pan_ns_count_in
 
         self.wn  = int(ns_count // self.NS_IN_WEEK)
         

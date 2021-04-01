@@ -60,7 +60,7 @@ class DualPsim(MissionCase):
         "pan.cycle_no",
         "pan.bootcount",
         "adcs.state",
-        "orbit.time",
+        "piksi.time",
         "orbit.pos",
         "orbit.vel",
         "adcs_monitor.ssa_vec",
@@ -70,8 +70,8 @@ class DualPsim(MissionCase):
         'adcs_monitor.ssa_mode',
 
         "attitude_estimator.q_body_eci",
-        "attitude_estimator.w_body",
-        "attitude_estimator.fro_P",
+        "attitude_estimator.L_body",
+        # "attitude_estimator.fro_P",
         "adcs_cmd.mtr_cmd",
         "adcs_cmd.rwa_torque_cmd"]
 
