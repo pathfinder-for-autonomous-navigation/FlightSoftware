@@ -398,10 +398,7 @@ bool PropState_Pressurizing::can_enter() const
     // It is time to pressurize when we have min_cycles_needed - 1 cycles left
     bool is_time_to_pressurize =
         controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
-    //printf(debug_severity::error, "Is time to pressurize is: %d %b\n", static_cast<unsigned char>(state), is_time_to_pressurize);
-    //printf(debug_severity::error, "Is schedule valid is: %d %b\n", static_cast<unsigned char>(state), is_schedule_valid);
-    //printf(debug_severity::error, "Is functional is: %d %b\n", static_cast<unsigned char>(state), is_functional);
-
+        
     return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
 }
 
