@@ -72,7 +72,7 @@ void AttitudeEstimator::execute()
     {
         auto const mag1_functional = adcs_mag1_functional_fp->get();
         auto const have_functional_magnetometer =
-                !mag1_functional && !adcs_mag2_functional_fp->get();
+                mag1_functional || adcs_mag2_functional_fp->get();
 
         if (have_functional_magnetometer)
         {
