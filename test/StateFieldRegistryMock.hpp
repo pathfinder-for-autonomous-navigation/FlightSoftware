@@ -16,7 +16,7 @@
 class StateFieldRegistryMock : public StateFieldRegistry {
   protected:
     template<typename T, unsigned int eeprom_save_period>
-    class __field_creator {
+    class _field_creator {
       public:
         static std::shared_ptr<ReadableStateField<T>>
         create_readable_field(const std::string& name, const Serializer<T>& sr)
@@ -34,7 +34,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     };
 
     template<typename T>
-    class __field_creator<T, 0> {
+    class _field_creator<T, 0> {
       public:
         static std::shared_ptr<ReadableStateField<T>>
         create_readable_field(const std::string& name, const Serializer<T>& sr)
@@ -143,7 +143,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr;
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -169,7 +169,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr;
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -199,7 +199,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max, bitsize);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -229,7 +229,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max, bitsize);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -246,7 +246,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -263,7 +263,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -277,7 +277,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(max);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_readable_field(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -291,7 +291,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(max);
-        auto field_ptr = __field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
+        auto field_ptr = _field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -317,7 +317,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
-        auto field_ptr = __field_creator<std::array<T, 3>, 0>::create_readable_field(name, field_sr);
+        auto field_ptr = _field_creator<std::array<T, 3>, 0>::create_readable_field(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -358,7 +358,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
-        auto field_ptr = __field_creator<std::array<T, 3>, 0>::create_writable_field(name, field_sr);
+        auto field_ptr = _field_creator<std::array<T, 3>, 0>::create_writable_field(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;

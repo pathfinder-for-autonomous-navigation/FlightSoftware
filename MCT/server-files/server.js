@@ -1,6 +1,10 @@
 /**
  * Basic implementation of a history and realtime server for MCT.
  */
+
+//get arguments
+var myArgs = process.argv.slice(2);
+
 var Telemetry= require('./telemetry');
 var RealtimeServer = require('./boilerplate-mct-servers/realtime-server');
 var HistoryServer = require('./boilerplate-mct-servers/history-server');
@@ -16,7 +20,12 @@ var credentials = {key: privateKey, cert: certificate};
 var app = express()
 expressWs(app);
 
-var spacecraft = new Telemetry();
+//sets default config file to ci.json
+if(myArgs[0] == undefined){
+  myArgs[0] = "ptest/configs/ci.json"
+}
+
+var spacecraft = new Telemetry(myArgs[0]);
 var realtimeServer = new RealtimeServer(spacecraft);
 var historyServer = new HistoryServer(spacecraft);
 

@@ -1,18 +1,21 @@
 #include "PiksiControlTask.hpp"
-#include <limits>
-#include <cmath>
+
 #include <gnc/constants.hpp>
+
+#include <lin/core.hpp>
+#include <lin/views.hpp>
 
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, 
     unsigned int offset, Devices::Piksi &_piksi) 
     : TimedControlTask<void>(registry, "piksi", offset),
     piksi(_piksi),
-    pos_f("piksi.pos", Serializer<d_vector_t>(6771000, 6921000, 28)),
-    vel_f("piksi.vel", Serializer<d_vector_t>(7570, 7685, 19)),
-    baseline_pos_f("piksi.baseline_pos", Serializer<d_vector_t>(0,2000,22)),
+    pos_f("piksi.pos", Serializer<lin::Vector3d>(6771000,6921000,28)),
+    vel_f("piksi.vel", Serializer<lin::Vector3d>(7570,7685,19)),
+    baseline_pos_f("piksi.baseline_pos", Serializer<lin::Vector3d>(0,2000,22)),
     current_state_f("piksi.state", Serializer<unsigned char>(14)),
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
+    microdelta_f("piksi.microdelta", Serializer<unsigned int>()),
     last_rtkfix_ccno_f("piksi.last_rtkfix_ccno")
     {
         add_readable_field(pos_f);
@@ -21,6 +24,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(current_state_f);
         add_readable_field(fix_error_count_f);
         add_readable_field(time_f);
+        add_readable_field(microdelta_f);
         add_internal_field(last_rtkfix_ccno_f);
 
         //register callbacks and begin the serial port
@@ -38,6 +42,12 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
 void PiksiControlTask::execute()
 {
     int read_out = piksi.read_all();
+
+    unsigned int microdelta = piksi.get_microdelta();
+    microdelta_f.set(microdelta);
+
+    //Throw CRC error if microdelta is not in expected range and no other error is thrown
+    if (microdelta > PIKSI_MD_THRESHOLD && read_out < 2) read_out = 3; 
 
     //4 means no bytes
     //3 means CRC error on serial
@@ -96,7 +106,7 @@ void PiksiControlTask::execute()
 
         if(!check_time){
             //error caused by times not matching up
-            //indicitave of getting only part of the next scream
+            //indicative of getting only part of the next scream
 
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::sync_error));
             return;
@@ -129,10 +139,10 @@ void PiksiControlTask::execute()
 
         //set values in data statefields
         time_f.set(time);
-        pos_f.set(pos);
-        vel_f.set(vel);
+        pos_f.set(lin::view<lin::Vector3d>(pos.data()));
+        vel_f.set(lin::view<lin::Vector3d>(vel.data()));
         if(read_out == 1){
-            baseline_pos_f.set(baseline_pos);
+            baseline_pos_f.set(lin::view<lin::Vector3d>(baseline_pos.data()));
         }
     }
 
@@ -142,3 +152,4 @@ void PiksiControlTask::execute()
         return;
     }
 }
+

@@ -54,6 +54,7 @@ class PsimDebug(SingleSatOnlyCase):
 
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
+        self.rs("radio.state")
         self.rs("pan.cycle_no")
         self.rs("pan.bootcount")
         self.rs("adcs.state")
