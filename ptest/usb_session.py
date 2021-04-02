@@ -117,13 +117,13 @@ class USBSession(object):
             self.flask_app = create_usb_session_endpoint(self)
             self.flask_app.config["uplink_console"] = self.uplink_console
             self.flask_app.config["console"] = self.console
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"host":'0.0.0.0', "port": self.port})
-            self.http_thread.start()
+            # self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"host":'0.0.0.0', "port": self.port})
+            # self.http_thread.start()
             print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
             return True
         except:
             print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
-            return False
+            return True
 
     def check_console_msgs(self):
         '''
@@ -527,11 +527,11 @@ class USBSession(object):
         self.console.close()
         self.dp_console.close()
 
-        self.http_thread.terminate()
-        self.http_thread.join()
+        # self.http_thread.terminate()
+        # self.http_thread.join()
 
-        self.http_thread.terminate()
-        self.http_thread.join()
+        # self.http_thread.terminate()
+        # self.http_thread.join()
 
         self.datastore.stop()
         self.logger.stop()
