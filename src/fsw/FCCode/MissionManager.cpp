@@ -29,7 +29,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
                                                                                     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
                                                                                     enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
-                                                                                    kill_switch_f("pan.kill_switch", Serializer<unsigned char>(3))
+                                                                                    kill_switch_f("pan.kill_switch", Serializer<unsigned char>(7000))
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -93,16 +93,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
 void MissionManager::execute()
 {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
-
-    if ((kill_switch_f.get()) == 3)
-    {
-        while (true)
-        {
-            set(radio_state_t::disabled); //Shut down the radio system
-            delay(1);
-            //saving something to EEPROM
-        }
-    }
 
     // Step 1. Change state if faults exist.
     const fault_response_t fault_response = main_fault_handler->execute();
@@ -174,6 +164,17 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
+    // Step 0. If kill switch flag is set, shuts down radio connection
+    if ((kill_switch_f.get()) == 7000)
+    {
+        while (true)
+        {
+            set(radio_state_t::disabled); //Shut down the radio system
+            delay(1);
+            //saving something to EEPROM
+        }
+    }
+
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
     if (bootcount_fp->get() == 1)
     {
