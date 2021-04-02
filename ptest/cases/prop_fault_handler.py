@@ -46,6 +46,9 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("prop.max_pressurizing_cycles", 4)
         self.ws("prop.max_venting_cycles", 8)
 
+        # Enable SpikeDock so we can actually change prop state
+        self.ws("dcdc.SpikeDock_cmd", True)
+
 # --------------------------------------------------------------------------------------
 # Prop Properties
 # --------------------------------------------------------------------------------------
