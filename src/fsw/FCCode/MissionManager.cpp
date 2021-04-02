@@ -97,16 +97,6 @@ void MissionManager::execute()
 {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
-    if ((kill_switch_f.get()) == 3)
-    {
-        while (true)
-        {
-            set(radio_state_t::disabled); //Shut down the radio system
-            delay(1);
-            //saving something to EEPROM
-        }
-    }
-
     // Step 1. Change state if faults exist.
     const fault_response_t fault_response = main_fault_handler->execute();
 
@@ -177,6 +167,17 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
+    // Step 0. If kill switch flag is set, shuts down radio connection
+    if ((kill_switch_f.get()) == 7000)
+    {
+        while (true)
+        {
+            set(radio_state_t::disabled); //Shut down the radio system
+            delay(1);
+            //saving something to EEPROM
+        }
+    }
+
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
     if (bootcount_fp->get() == 1)
     {
