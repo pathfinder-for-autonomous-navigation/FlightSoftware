@@ -20,13 +20,5 @@
             "send_lockout_duration": 0,
             "http_port": 8001
         }
-    ],
-    "tlm": {
-        "email_username": "",
-        "email_password": "",
-        "webservice": {
-            "server": "",
-            "port": 0
-        }
-    }
+    ]
 }
