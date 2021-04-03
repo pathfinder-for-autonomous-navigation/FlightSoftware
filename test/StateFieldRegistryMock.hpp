@@ -21,8 +21,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         static std::shared_ptr<ReadableStateField<T>>
         create_readable_field(const std::string& name, const Serializer<T>& sr)
         {
-            if (!SerializableStateField<T>::is_eeprom_saveable()) assert(false);
-            else return std::make_shared<ReadableStateField<T>>(name, sr, eeprom_save_period);
+            assert(SerializableStateField<T>::is_eeprom_saveable());
+            return std::make_shared<ReadableStateField<T>>(name, sr, eeprom_save_period);
         }
 
         static std::shared_ptr<WritableStateField<T>>
