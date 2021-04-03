@@ -43,11 +43,20 @@ class DualPsim(MissionCase):
     def debug_to_console(self):
         return True
 
+    def setup_post_bootsetup_leader(self):
+        '''
+        No reason to do this with leader specifically,
+        just need an entry point post sim construction
+        '''
+        self.sim.mock_sensor_validity = True
+        return
+
     def log_fc_data(self, usb_device: USBSession):
         
         fc_states = ["pan.deployment.elapsed",
         "pan.state",
         "radio.state",
+        "piksi.state",
         "pan.cycle_no",
         "pan.bootcount",
         "adcs.state",
@@ -57,6 +66,9 @@ class DualPsim(MissionCase):
         "adcs_monitor.ssa_vec",
         "adcs_monitor.mag1_vec",
         "adcs_monitor.gyr_vec",
+
+        'adcs_monitor.ssa_mode',
+
         "attitude_estimator.q_body_eci",
         "attitude_estimator.w_body",
         "attitude_estimator.fro_P",
