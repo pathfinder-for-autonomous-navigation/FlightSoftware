@@ -114,11 +114,17 @@ class StateCmdPrompt(Cmd):
             return
 
         start_time = timeit.default_timer()
-        read_result = self.cmded_device.read_state(args[0])
+        try:
+            read_result = self.cmded_device.smart_read(args[0])
+        except NameError:
+            read_result = None
+            print('Field with that name does not exist!')
+            return 
+            
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
 
         try:
-            human_readable_result = Enums()[args[0]]
+            human_readable_result = Enums()[args[0]][read_result]
             print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
         except KeyError:
             # args[0] is not an enum field.
