@@ -437,7 +437,7 @@ class Piksi {
     unsigned char* buffer_begin;
     unsigned char* buffer_end;
 #endif
-    unsigned long microdelta;
+    unsigned long microdelta = 0;
 
     //set read return mock
     // #if defined(DESKTOP) || defined(UNIT_TEST) 
