@@ -2646,12 +2646,6 @@
             "min": 0.0,
             "type": "double",
             "writable": true
-        },
-        "uplink.time": {
-            "bitsize": 62,
-            "flow_id": "undefined",
-            "type": "gps_time_t",
-            "writable": true
         }
     },
     "flow_data": [
