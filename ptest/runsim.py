@@ -262,8 +262,9 @@ def main(args):
         sys.exit(1)
     except FileNotFoundError:
         print("WARNING TLM CONFIG NOT FOUND. DEFAULTING TO EMPTY TLM CONFIG")
-        tlm_config_data = json.load('ptest/configs/tlm_empty.json')
-        config_data = {**tlm_config_data, **config_data}
+        with open('ptest/configs/tlm_empty.json', 'r') as config_file:
+            tlm_config_data = json.load(config_file)
+            config_data = {**tlm_config_data, **config_data}
         
     print(config_data)
 
