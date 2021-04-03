@@ -151,7 +151,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     void wait_until_time(const sys_time_t& time) {
       // Compute timing statistics and publish them to state fields
       const signed int delta_t = (signed int) duration_to_us(time - get_system_time());
-      if (delta_t <= 0) {
+      if (delta_t < 0) {
         num_lates_f.set(num_lates_f.get() + 1);
       }
       const unsigned int wait_time = std::max(delta_t, 0);
