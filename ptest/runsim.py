@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 class PTest(object):
-    def __init__(self, config_data, testcase_name, data_dir, is_interactive, scrape_uplinks):
+    def __init__(self, config_data, testcase_name, data_dir, is_interactive):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
@@ -31,8 +31,6 @@ class PTest(object):
         self.tlm_config = config_data["tlm"]
 
         self.is_interactive = is_interactive
-
-        self.scrape_uplinks = scrape_uplinks
 
         self.devices = {}
         self.radios = {}
@@ -98,7 +96,7 @@ class PTest(object):
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
             device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, 
-                self.tlm_config, device['imei'], (not device["quake_connected"]) or self.scrape_uplinks)
+                self.tlm_config, device['imei'], device["scrape_uplinks"])
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -221,7 +219,6 @@ def main(args):
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
     parser.add_argument('--clean', dest='clean', action='store_true', help='Starts a fresh run if in HOOTL (deletes the EEPROM file.)')
-    parser.add_argument('--scrape', action='store_false', help='USB Session scrapes emails sent to Iridium if there is no physical radio connected')
     parser.set_defaults(interactive=True)
 
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -266,5 +263,5 @@ def main(args):
             tlm_config_data = json.load(config_file)
             config_data = {**tlm_config_data, **config_data}
         
-    test = PTest(config_data, args.testcase, args.data_dir, args.interactive, args.scrape)
+    test = PTest(config_data, args.testcase, args.data_dir, args.interactive)
     test.start()

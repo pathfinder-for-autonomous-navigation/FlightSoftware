@@ -16,6 +16,7 @@
 // As flight software develops, this list will grow longer and shorter, but
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
+<<<<<<< HEAD
     public:
       ReadableStateField<double> time_f;
       ReadableStateField<lin::Vector3d> pos_f;
@@ -61,15 +62,22 @@ class FieldCreatorTask : public ControlTask<void> {
           vel_baseline_f.set({nan_d, nan_d, nan_d});
           uplink_pos_f.set({nan_d, nan_d, nan_d});
           uplink_vel_f.set({nan_d, nan_d, nan_d});
+=======
+  public:
+    ReadableStateField<unsigned int> bootcount_f;
+>>>>>>> master
 
-          add_readable_field(bootcount_f);
-      }
+    FieldCreatorTask(StateFieldRegistry& r)
+        : ControlTask<void>(r),
+          bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
+    {
+        add_readable_field(bootcount_f);
+    }
 
-      void execute() {
-          // Do nada
-      }
+    ~FieldCreatorTask() = default;
 
-      ~FieldCreatorTask() {}
+    void execute()
+    { }
 };
 
 #endif

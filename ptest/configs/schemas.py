@@ -27,7 +27,8 @@ ptest_config_schema = {
                 },
                 "http_port" : {"type" : "integer", "required" : True},
                 "imei" : {"type" : "string", "required" : False},
-                "quake_connected": {"type" : "boolean", "required" : True}
+                "scrape_uplinks": {"type" : "boolean", "required" : True},
+                "enable_auto_dbtelem": {"type" : "boolean", "required" : True}
             }
         },
         "required" : True
@@ -60,7 +61,8 @@ ptest_config_schema = {
                     "port": { "type": "integer" , "required" : True}
                 }
             }
-        }
+        },
+        "required" : False
     }
 }
 
