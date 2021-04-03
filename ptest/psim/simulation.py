@@ -176,7 +176,11 @@ class CppSimulation(object):
         based on a psim flag value
         '''
         psim_sat_name = self.fc_to_role_map[fc_name]
-        cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.valid"]
+        try:
+            cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.valid"]
+        except RuntimeError:
+            # sim does not support this field, probably a single sat setup
+            cdgps_active = 0
 
         fsw_piksi_state = -1
 

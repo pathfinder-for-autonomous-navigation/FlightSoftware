@@ -69,8 +69,8 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs('adcs_monitor.ssa_mode')
 
         self.rs("attitude_estimator.q_body_eci")
-        self.rs("attitude_estimator.w_body")
-        self.rs("attitude_estimator.fro_P")
+        self.rs("attitude_estimator.L_body")
+
         self.rs("adcs_cmd.mtr_cmd")
         self.rs("adcs_cmd.rwa_torque_cmd")
 
