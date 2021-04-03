@@ -197,7 +197,7 @@ class CppSimulation(object):
 
     def mock_ssa_mode(self, fc_name, fc_device):
         '''
-        Lets ssa mode to be populated with either ???
+        Lets ssa mode to be populated with either SSA_COMPLETE OR SSA_FAILURE
         based on a psim flag value        
         '''
         psim_sat_name = self.fc_to_role_map[fc_name]
