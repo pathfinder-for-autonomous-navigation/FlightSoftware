@@ -71,14 +71,23 @@ void AttitudeEstimator::execute()
      */
     {
         auto const mag1_functional = adcs_mag1_functional_fp->get();
+        auto const mag2_functional = adcs_mag2_functional_fp->get();
         auto const have_functional_magnetometer =
                 mag1_functional || adcs_mag2_functional_fp->get();
 
         if (have_functional_magnetometer)
         {
-            attitude_estimator_b_body_f.set(
-                    mag1_functional && attitude_estimator_mag_flag_f.get() ?
-                            adcs_mag1_fp->get() : adcs_mag2_fp->get());
+            auto const mag1 = adcs_mag1_fp->get();
+            auto const mag2 = adcs_mag2_fp->get();
+
+            if (attitude_estimator_mag_flag_f.get())
+            {
+                attitude_estimator_b_body_f.set(mag1_functional ? mag1 : mag2);
+            }
+            else
+            {
+                attitude_estimator_b_body_f.set(mag2_functional ? mag2 : mag1);
+            }
         }
 
         attitude_estimator_b_valid_f.set(have_functional_magnetometer);
