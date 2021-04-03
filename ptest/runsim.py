@@ -266,7 +266,5 @@ def main(args):
             tlm_config_data = json.load(config_file)
             config_data = {**tlm_config_data, **config_data}
         
-    print(config_data)
-
     test = PTest(config_data, args.testcase, args.data_dir, args.interactive, args.scrape)
     test.start()
