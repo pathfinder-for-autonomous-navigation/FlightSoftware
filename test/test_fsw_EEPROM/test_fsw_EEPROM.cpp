@@ -18,7 +18,6 @@ class TestFixture {
     //Create the statefields that the EEPROM will eventually collect and store
     std::shared_ptr<ReadableStateField<unsigned char>> mission_mode_fp;
     std::shared_ptr<ReadableStateField<bool>> is_deployed_fp;
-    std::shared_ptr<ReadableStateField<unsigned char>> sat_designation_fp;
     std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 
     std::unique_ptr<EEPROMController> eeprom_controller;
@@ -37,9 +36,6 @@ class TestFixture {
 
         is_deployed_fp = registry.create_readable_field<bool, 3>("pan.deployed");
         is_deployed_fp->set(false);
-
-        sat_designation_fp = registry.create_readable_field<unsigned char, 5>("pan.sat_designation");
-        sat_designation_fp->set(3);
 
         control_cycle_count_fp = registry.create_readable_field<unsigned int, 7>("pan.cycle_no");
         control_cycle_count_fp->set(4);
@@ -114,7 +110,6 @@ void test_task_initialization() {
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
-    TEST_ASSERT_EQUAL(3, tf.sat_designation_fp->get());
     TEST_ASSERT_EQUAL(4, tf.control_cycle_count_fp->get());
 }
 
@@ -124,7 +119,6 @@ void test_task_execute() {
     // Set the statefields to new values.
     tf.mission_mode_fp->set(5);
     tf.is_deployed_fp->set(true);
-    tf.sat_designation_fp->set(7);
     tf.control_cycle_count_fp->set(8);
 
     // Test that each of the values are written after the appropriate number of control cycles has passed
@@ -179,7 +173,6 @@ void test_task_execute() {
     // value to "docked" so that it actually gets saved by the EEPROM.
     tf2.mission_mode_fp->set(9);
     tf2.is_deployed_fp->set(false);
-    tf2.sat_designation_fp->set(11);
     tf2.control_cycle_count_fp->set(12);
 
     // At the 210th control cycle, all the new values should be written to the EEPROM (210=2*3*5*7)
@@ -196,7 +189,6 @@ void test_task_execute() {
     TimedControlTaskBase::control_cycle_count=211;
     tf2.mission_mode_fp->set(13);
     tf2.is_deployed_fp->set(true);
-    tf2.sat_designation_fp->set(15);
     tf2.control_cycle_count_fp->set(16);
 
     // Check that these values are NOT written to the EEPROM
