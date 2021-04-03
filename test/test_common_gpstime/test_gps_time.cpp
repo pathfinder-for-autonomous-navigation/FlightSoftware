@@ -58,7 +58,7 @@ void test_cast() {
     TEST_ASSERT_EQUAL(0, static_cast<unsigned long long>(t)); 
 
     gps_time_t t2(2, 2, 2);
-    const unsigned long long e2 = t2.wn * nanoseconds_in_week + t2.tow * 1000000ull
+    const unsigned long long e2 = t2.wn * nanoseconds_in_week + t2.tow * 1000000ll
                              + t2.ns;
     TEST_ASSERT_EQUAL(e2, static_cast<unsigned long long>(t2)); 
 
