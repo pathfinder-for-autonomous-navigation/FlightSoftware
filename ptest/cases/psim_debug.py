@@ -73,6 +73,9 @@ class PsimDebug(SingleSatOnlyCase):
 
         self.rs("adcs_cmd.mtr_cmd")
         self.rs("adcs_cmd.rwa_torque_cmd")
+        self.rs("attitude_estimator.valid"),
+        self.rs("attitude_estimator.w_bias_body"),
+        self.rs("orbit.valid")
 
     def run_case_singlesat(self):
         self.rs_psim("truth.leader.attitude.w")
