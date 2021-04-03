@@ -216,6 +216,7 @@ def main(args):
                         default = "EmptyCase")
 
     parser.add_argument('-c', '--conf', action='store', help='JSON file listing serial ports and Teensy computer names.', required=True)
+    parser.add_argument('-tlm', '--tlmconfig', action='store', help='Custom secret tlm config, otherwise defaults to secret', required=False, default = 'ptest/configs/tlm_secret.json')
 
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
@@ -240,6 +241,21 @@ def main(args):
         with open(args.conf, 'r') as config_file:
             config_data = json.load(config_file)
             validate_config(config_data, ptest_config_schema)
+            print(config_data)
+            
+    except json.JSONDecodeError:
+        print("Could not load config file. Exiting.")
+        sys.exit(1)
+    except KeyError:
+        print("Malformed config file. Exiting.")
+        sys.exit(1)
+
+    try:
+        with open(args.tlmconfig, 'r') as config_file:
+            tlm_config_data = json.load(config_file)
+            config_data = {**tlm_config_data, **config_data}
+            print(tlm_config_data)
+            # validate_config(tlm_config_data, ptest_config_schema)
 
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
@@ -247,6 +263,8 @@ def main(args):
     except KeyError:
         print("Malformed config file. Exiting.")
         sys.exit(1)
+        
+    print(config_data)
 
     test = PTest(config_data, args.testcase, args.data_dir, args.interactive, args.scrape)
     test.start()
