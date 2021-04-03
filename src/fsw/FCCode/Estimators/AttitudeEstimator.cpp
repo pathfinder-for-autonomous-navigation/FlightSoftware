@@ -110,6 +110,7 @@ void AttitudeEstimator::execute()
 
             _state = gnc::AttitudeEstimatorState();
             _estimate = gnc::AttitudeEstimate();
+            return;
         }
     }
 

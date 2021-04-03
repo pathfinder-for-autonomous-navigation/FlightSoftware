@@ -47,6 +47,7 @@ void OrbitController::execute() {
         sched_valve2_f.set(0);
         sched_valve3_f.set(0);
         sched_valve4_f.set(0);
+        return;
     }
 
     // Collect time, position, velocity
@@ -95,7 +96,7 @@ void OrbitController::execute() {
 
     // Check if the satellite is around a firing point and the prop system is ready to fire
     // and if the time and orbit data is valid
-    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing && time_valid_fp->get() && orbit_valid_fp->get() && rel_orbit_valid_fp->get()) {
+    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
 
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);

@@ -144,11 +144,6 @@ void AttitudeController::calculate_pointing_objectives() {
         lin::Vector3f v = vel_ecef_fp->get(); // v = v_ecef
         lin::Vector4f q_body_eci_est = q_body_eci_est_fp->get();
 
-        // Position, velocity, and attitude estimate, must be finite
-        if (lin::any(!(lin::isfinite(r) && lin::isfinite(v))))
-            return;
-        if (lin::any(!(lin::isfinite(q_body_eci_est))))
-            return;
         // Current time since the PAN epoch in seconds
         auto const time_s = static_cast<double>(time_fp->get());
 
