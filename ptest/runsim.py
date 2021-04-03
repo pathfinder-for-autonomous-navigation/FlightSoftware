@@ -241,7 +241,6 @@ def main(args):
         with open(args.conf, 'r') as config_file:
             config_data = json.load(config_file)
             validate_config(config_data, ptest_config_schema)
-            print(config_data)
             
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
@@ -254,8 +253,6 @@ def main(args):
         with open(args.tlmconfig, 'r') as config_file:
             tlm_config_data = json.load(config_file)
             config_data = {**tlm_config_data, **config_data}
-            print(tlm_config_data)
-            # validate_config(tlm_config_data, ptest_config_schema)
 
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
@@ -263,6 +260,10 @@ def main(args):
     except KeyError:
         print("Malformed config file. Exiting.")
         sys.exit(1)
+    except FileNotFoundError:
+        print("WARNING TLM CONFIG NOT FOUND. DEFAULTING TO EMPTY TLM CONFIG")
+        tlm_config_data = json.load('ptest/configs/tlm_empty.json')
+        config_data = {**tlm_config_data, **config_data}
         
     print(config_data)
 
