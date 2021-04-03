@@ -224,6 +224,7 @@ class Piksi {
     void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
     void set_baseline_flag(const unsigned char flag);
     void set_read_return(const unsigned int out);
+    void set_microdelta(unsigned long udelta);
     #endif
 
     /** @brief Reads current settings in Piksi RAM.
