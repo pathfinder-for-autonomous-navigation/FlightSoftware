@@ -460,7 +460,7 @@ class USBSession(object):
         directly to the Flight computer.
         '''
         while self.scrape == True and self.mail != None:
-            self.scrape()
+            self.scrape_uplink()
 
     def scrape_uplink(self):
         '''
@@ -482,7 +482,7 @@ class USBSession(object):
             for response_part in data:
                 if isinstance(response_part, tuple):
                     # converts message from byte literal to string removing b''
-                    msg = email.message_from_string(response_part[1].decode('utf-8'))
+                    msg = email.message_from_bytes(response_part[1])
                     email_subject = msg['subject']
                     
                     if email_subject.isdigit():
