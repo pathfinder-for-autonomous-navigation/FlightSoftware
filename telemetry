@@ -1783,6 +1783,14 @@
             "type": "unsigned int",
             "writable": false
         },
+        "pan.kill_switch": {
+            "bitsize": 2,
+            "flow_id": "undefined",
+            "max": 3,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": true
+        },
         "pan.one_day_ccno": {
             "bitsize": 32,
             "flow_id": "undefined",
