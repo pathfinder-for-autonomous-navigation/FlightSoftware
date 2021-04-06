@@ -195,10 +195,11 @@ protected:
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
     /**
-     * @brief The state at which we want to shut down all communication 
-     * from spacecraft with ground 
+     * @brief The command to shut down all communication 
+     * from spacecraft with ground when set to 127.
      */
     WritableStateField<unsigned char> kill_switch_f;
+    TRACKED_CONSTANT_SC(unsigned char, kill_switch_value, 0);
 
     /**
      * @brief Number of times the satellite has booted
