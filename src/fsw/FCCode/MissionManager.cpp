@@ -168,13 +168,11 @@ bool MissionManager::check_adcs_hardware_faults() const
 void MissionManager::dispatch_startup()
 {
     // Step 0. If kill switch flag is set, shuts down radio connection
-    if ((kill_switch_f.get()) == 7000)
+    if (kill_switch_f.get() == 127)
     {
         while (true)
         {
-            set(radio_state_t::disabled); //Shut down the radio system
-            delay(1);
-            //saving something to EEPROM
+            //This will cause gomspace to reboot the spacecraft and we will get stuck in this loop forever
         }
     }
 
