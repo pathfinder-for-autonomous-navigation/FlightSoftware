@@ -5,7 +5,6 @@
         "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
-        "pan.sat_designation": 1,
         "pan.state": 1
     },
     "fields": {
