@@ -205,8 +205,8 @@ void test_execute(){
     std::cout << lin::transpose(tf.pointer_vec1_desired_fp->get());
     std::cout << lin::transpose(tf.pointer_vec2_desired_fp->get());
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f,  0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, -1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
     
     // this test is doomed to pass, but the important part is that it is not nan
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
@@ -222,8 +222,8 @@ void test_execute(){
     tf.step();
 
     // check that these values have persisted
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f,  0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, -1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 

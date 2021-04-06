@@ -1884,18 +1884,18 @@
             "writable": true
         },
         "pointer.mtr_cmd": {
-            "bitsize": 149,
+            "bitsize": 25,
             "flow_id": "undefined",
-            "max": 0.056668501347303,
-            "min": -0.056668501347303,
+            "max": 0.098152726888657,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": true
         },
         "pointer.rwa_torque_cmd": {
-            "bitsize": 149,
+            "bitsize": 31,
             "flow_id": "undefined",
-            "max": 0.004187500569969,
-            "min": -0.004187500569969,
+            "max": 0.007252963725477,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": true
         },
