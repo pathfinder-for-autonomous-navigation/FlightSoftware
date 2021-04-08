@@ -5,6 +5,7 @@
 #include <common/constant_tracker.hpp>
 #include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
+#include <fsw/FCCode/GomspaceController.hpp>
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
@@ -28,7 +29,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
-      sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
+      sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
       enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
 {
     add_writable_field(detumble_safety_factor_f);
@@ -89,6 +90,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
+    Devices::Gomspace gs;
 }
 
 void MissionManager::execute()
@@ -103,7 +105,6 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
-            set(sat_designation_t::undecided);
             return;
         }
         else if (fault_response == fault_response_t::standby
@@ -113,7 +114,6 @@ void MissionManager::execute()
             && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
-            set(sat_designation_t::undecided);
             return;
         }
     }
@@ -175,10 +175,14 @@ void MissionManager::dispatch_startup()
     if (bootcount_fp->get() == 1) { 
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
+            // Stop power to Piksi if it is not off already
+            gs.set_single_output(0,0); // (output port, 0 for off)
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
     }
+    // Resume power to Piksi if it is not on already
+    gs.set_single_output(0,1);
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
     // Turn radio on, and check for hardware faults that would necessitate
