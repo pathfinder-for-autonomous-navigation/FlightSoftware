@@ -32,6 +32,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
       enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
       kill_switch_f("pan.kill_switch", Serializer<unsigned char>(3), 100)
+
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -106,11 +107,13 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            set(sat_designation_t::undecided);
             return;
         }
         else if (fault_response == fault_response_t::standby && state != mission_state_t::safehold && state != mission_state_t::initialization_hold && state != mission_state_t::detumble && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            set(sat_designation_t::undecided);
             return;
         }
     }
