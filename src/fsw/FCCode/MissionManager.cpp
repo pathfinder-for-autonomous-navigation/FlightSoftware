@@ -12,6 +12,7 @@ const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
 const constexpr unsigned int MissionManager::initial_docking_timeout_limit;
 const constexpr unsigned int MissionManager::deployment_wait;
+const constexpr unsigned char MissionManager::kill_switch_value;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
@@ -168,7 +169,7 @@ bool MissionManager::check_adcs_hardware_faults() const
 void MissionManager::dispatch_startup()
 {
     // Step 0. If kill switch flag is set, shuts down radio connection
-    if (kill_switch_f.get() == 127)
+    if (kill_switch_f.get() == kill_switch_value)
     {
         while (true)
         {

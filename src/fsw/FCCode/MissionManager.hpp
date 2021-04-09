@@ -199,7 +199,7 @@ protected:
      * from spacecraft with ground when set to 127.
      */
     WritableStateField<unsigned char> kill_switch_f;
-    TRACKED_CONSTANT_SC(unsigned char, kill_switch_value, 0);
+    TRACKED_CONSTANT_SC(unsigned char, kill_switch_value, 127);
 
     /**
      * @brief Number of times the satellite has booted
