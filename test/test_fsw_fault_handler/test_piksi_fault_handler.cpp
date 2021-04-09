@@ -188,7 +188,7 @@ void test_cdgps_delay()
     tf.enter_close_appr_ccno_fp->set(cc_count);
 
     // Wait a few control cycles and get a GPS reading
-    cc_count += 1;
+    cc_count += 10;
     tf.last_rtkfix_ccno_fp->set(cc_count);
     tf.set_piksi_state(piksi_mode_t::no_fix);
 
