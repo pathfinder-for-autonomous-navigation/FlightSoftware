@@ -21,9 +21,8 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    bootcount_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount"); 
+    bootcount_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount");
     bootcount_fp->set(bootcount);
-
 
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
     adcs_functional_fault_fp = registry.create_fault("adcs_monitor.functional_fault", 1);
@@ -38,7 +37,7 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     adcs_dcdc_fp = registry.create_writable_field<bool>("dcdc.ADCSMotor_cmd");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
+    last_rtkfix_ccno_fp = registry.find_internal_field_t<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -216,7 +215,6 @@ unsigned int TestFixture::get_bootcount()
 {
     return mission_manager->bootcount_fp->get();
 }
-
 
 adcs_state_t TestFixture::adcs_states[9] = {adcs_state_t::detumble, adcs_state_t::limited, adcs_state_t::manual,
                                             adcs_state_t::point_docking, adcs_state_t::point_manual, adcs_state_t::point_standby,
