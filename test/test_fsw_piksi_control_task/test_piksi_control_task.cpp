@@ -75,6 +75,9 @@ class TestFixture {
         void set_baseline_flag(const unsigned char flag){
                 piksi_task->piksi.set_baseline_flag(flag);
         }
+        void set_microdelta(unsigned long udelta){
+                piksi_task->piksi.set_microdelta(udelta);
+        }
 };
 
 void test_task_initialization()
@@ -125,6 +128,7 @@ void test_normal_errors(){
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(1);
+        tf.set_microdelta(0);
         tf.execute();
         //should error out because of time inconsistency
         assert_piksi_mode(piksi_mode_t::sync_error);
@@ -137,6 +141,7 @@ void test_normal_errors(){
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(1);
+        tf.set_microdelta(0);
         tf.execute();
         //times agree, but insufficient nsat
         assert_piksi_mode(piksi_mode_t::nsat_error);
@@ -149,6 +154,7 @@ void test_normal_errors(){
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(2);
+        tf.set_microdelta(0);
         tf.execute();
         //times agree, but insufficient nsat
         assert_piksi_mode(piksi_mode_t::data_error);
@@ -175,6 +181,7 @@ void test_task_execute()
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(1);
+        tf.set_microdelta(0);
         tf.execute();
         //times should now agree, and be in baseline
         assert_piksi_mode(piksi_mode_t::fixed_rtk);
@@ -195,6 +202,7 @@ void test_task_execute()
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(0);
+        tf.set_microdelta(0);
         tf.execute();
         //float rtk test
         assert_piksi_mode(piksi_mode_t::float_rtk);
@@ -236,6 +244,7 @@ void test_dead(){
         tf.set_vel_ecef(tow, vel);
         tf.set_baseline_ecef(tow, baseline);
         tf.set_baseline_flag(1);
+        tf.set_microdelta(0);
         tf.execute();
         //times should now agree, and be in baseline
         assert_piksi_mode(piksi_mode_t::fixed_rtk);

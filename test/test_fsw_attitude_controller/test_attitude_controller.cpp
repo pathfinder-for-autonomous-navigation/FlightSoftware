@@ -5,6 +5,7 @@
 
 #include <fsw/FCCode/AttitudeController.hpp>
 #include <fsw/FCCode/adcs_state_t.enum>
+#include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
 
 #include "../custom_assertions.hpp"
 #include <gnc/constants.hpp>
@@ -16,17 +17,21 @@ const lin::Vector3f nan_vector = lin::Vector3f({nan_f, nan_f, nan_f});
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
-    
+
     // Input state fields to attitude controller
+    std::shared_ptr<InternalStateField<bool>> attitude_estimator_b_valid_fp;
     std::shared_ptr<InternalStateField<lin::Vector3f>> b_body_rd_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_wheels_rd_fp;
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> s_body_est_fp;
+    std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> w_body_est_fp;
+    std::shared_ptr<InternalStateField<lin::Vector3f>> w_body_est_fp;
     std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-    std::shared_ptr<ReadableStateField<double>>  time_fp;
+    std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
+    std::shared_ptr<InternalStateField<double>> time_fp;
+    std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_ecef_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_ecef_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_baseline_ecef_fp;
 
     // Attitude controller
@@ -41,16 +46,21 @@ class TestFixture {
     WritableStateField<lin::Vector3f>* m_body_cmd_fp;
 
     TestFixture() : registry() {
+        attitude_estimator_b_valid_fp = registry.create_internal_field<bool>("attitude_estimator.b_valid");
         b_body_rd_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.b_body");
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
+        attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
-        w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
+        w_body_est_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.w_body");
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
-        time_fp = registry.create_readable_field<double>("orbit.time", 0.0, 18'446'744'073'709'551'616.0, 64);
+        time_valid_fp = registry.create_readable_field<bool>("time.valid");
+        time_fp = registry.create_internal_field<double>("time.s");
+        orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
         pos_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 100);
         vel_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 100);
-        pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 1, 100);
-        
+        rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state");
+        pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 100);
+
         attitude_controller = std::make_unique<AttitudeController>(registry, 0);
 
         // Check that attitude controller creates its expected fields
@@ -79,9 +89,17 @@ void load_good_data(TestFixture& tf){
     tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
     tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));    
     tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+
+    // validity flags
+    tf.attitude_estimator_b_valid_fp->set(true);
+    tf.attitude_estimator_valid_fp->set(true);
+    tf.orbit_valid_fp->set(true);
+    tf.time_valid_fp->set(true);
+
+    tf.rel_orbit_state_fp->set(static_cast<unsigned char>(rel_orbit_state_t::propagating));
 }
 
-void nan_sensors(TestFixture& tf){
+void load_bad_data(TestFixture& tf){
     tf.b_body_rd_fp->set(lin::nans<lin::Vector3f>());
     tf.w_body_est_fp->set(lin::nans<lin::Vector3f>());
     tf.w_wheels_rd_fp->set(lin::nans<lin::Vector3f>());
@@ -90,6 +108,14 @@ void nan_sensors(TestFixture& tf){
     tf.pos_ecef_fp->set(lin::nans<lin::Vector3f>());
     tf.vel_ecef_fp->set(lin::nans<lin::Vector3f>());
     tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
+
+    // validity flags
+    tf.attitude_estimator_b_valid_fp->set(false);
+    tf.attitude_estimator_valid_fp->set(false);
+    tf.orbit_valid_fp->set(false);
+    tf.time_valid_fp->set(false);
+
+    tf.rel_orbit_state_fp->set(static_cast<unsigned char>(rel_orbit_state_t::invalid));
 }
 
 void test_valid_initialization() {
@@ -118,6 +144,7 @@ void test_execute(){
 
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::detumble));
     tf.b_body_rd_fp->set(lin::Vector3f({1,-1,0}));
+    tf.attitude_estimator_b_valid_fp->set(true); // declare that the mag_feld reading is valid
     tf.step();
 
     // all pointing objectives should be nan
@@ -150,19 +177,36 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.t_body_cmd_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.m_body_cmd_fp->get(), 1e-10);
 
+    // Restore a valid reading, reaffirm that you get a good reading.
+    tf.b_body_rd_fp->set(lin::Vector3f({-1,1,0}));
+    tf.step();
+    // check that we are able to dump into the mtr output command
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
+        {adcs::mtr::max_moment,-adcs::mtr::max_moment,0.0f}),
+        tf.m_body_cmd_fp->get(), 1e-10);
+
+    // check that if neither magnetometer is working, 
+    // no mtr output command is set.
+    // despite having a value
+    tf.attitude_estimator_b_valid_fp->set(false);
+    tf.b_body_rd_fp->set(lin::Vector3f({-1,1,0}));
+    tf.step();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.t_body_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.m_body_cmd_fp->get(), 1e-10);
+    
     /*** POINT STANDBY TESTING***/
+    std::cout << "BEGIN POINT STANDBY TESTING" << std::endl;
 
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
     load_good_data(tf);
 
     tf.step();
 
-
     std::cout << lin::transpose(tf.pointer_vec1_desired_fp->get());
     std::cout << lin::transpose(tf.pointer_vec2_desired_fp->get());
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f,  0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, -1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
     
     // this test is doomed to pass, but the important part is that it is not nan
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
@@ -178,8 +222,8 @@ void test_execute(){
     tf.step();
 
     // check that these values have persisted
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f,  0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, -1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 
@@ -194,35 +238,38 @@ void test_execute(){
     tf.step();
 
     // lose every signal needed for standby and show that it goes to 0 actuators
-    nan_sensors(tf);
+    load_bad_data(tf);
     tf.step();
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.t_body_cmd_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::zeros<lin::Vector3f>(), tf.m_body_cmd_fp->get(), 1e-10);
 
     /*** POINT DOCKING TESTING***/
+    std::cout << "BEGIN POINT DOCKING TESTING" << std::endl;
 
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_docking));
     load_good_data(tf);
 
     tf.step();
 
-    std::cout << tf.pointer_vec1_desired_fp->get();
-    std::cout << tf.pointer_vec2_desired_fp->get();
+    std::cout << lin::transpose(tf.pointer_vec1_desired_fp->get());
+    std::cout << lin::transpose(tf.pointer_vec2_desired_fp->get());
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, -1.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
     
     // this test is doomed to pass, but the important part is that it is not nan
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.994661f, .103185f, 0.00182815f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.00183598f, 0.000019023f, 0.999998f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 
+    std::cout << lin::transpose(tf.t_body_cmd_fp->get());
+
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
         {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
         tf.m_body_cmd_fp->get(), 1e-7);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0226458f,-0.000844621f,0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0223539397f,-0.00365795009f,0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // lose every signal needed for docking and show that it goes to 0 actuators
-    nan_sensors(tf);
+    load_bad_data(tf);
     tf.step();
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);    
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);

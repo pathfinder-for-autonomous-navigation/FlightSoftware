@@ -45,7 +45,7 @@ struct gps_time_t {
 
     /** Cast to integer operator **/
     explicit operator unsigned long long() const {
-        return wn * NANOSECONDS_IN_WEEK + tow * 1000000 + ns;
+        return wn * NANOSECONDS_IN_WEEK + (tow * 1000000ll + ns);
     }
 
     /** A bunch of equality and comparison operators. **/

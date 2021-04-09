@@ -5,7 +5,6 @@
 
 #include <gnc/config.hpp>
 #include <gnc/constants.hpp>
-#include <gnc/environment.hpp>
 
 #include <lin/core.hpp>
 #include <lin/generators.hpp>
@@ -32,8 +31,8 @@ OrbitEstimator::OrbitEstimator(StateFieldRegistry &registry)
       piksi_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, piksi.pos)),
       piksi_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, piksi.vel)),
       time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),
-      time_s_fp(FIND_INTERNAL_FIELD(double, time.s)),
       time_ns_fp(FIND_INTERNAL_FIELD(unsigned long long, time.ns)),
+      time_earth_w_fp(FIND_INTERNAL_FIELD(lin::Vector3d, time.earth.w)),
       orbit_valid_f("orbit.valid", Serializer<bool>()),
       orbit_pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
       orbit_pos_sigma_f("orbit.pos_sigma", Serializer<lin::Vector3d>(0, 100, 12)),
@@ -43,7 +42,9 @@ OrbitEstimator::OrbitEstimator(StateFieldRegistry &registry)
 {
     add_readable_field(orbit_valid_f);
     add_readable_field(orbit_pos_f);
+    add_readable_field(orbit_pos_sigma_f);
     add_readable_field(orbit_vel_f);
+    add_readable_field(orbit_vel_sigma_f);
     add_writable_field(orbit_reset_cmd_f);
 
     orbit_valid_f.set(false);
@@ -70,11 +71,7 @@ void OrbitEstimator::execute()
 
     auto const piksi_mode = static_cast<piksi_mode_t>(piksi_state_fp->get());
     auto const piksi_dns = static_cast<unsigned long long>(1000 * piksi_microdelta_fp->get());
-    auto const w_earth_ecef = [](double t) {
-        lin::Vector3d w_earth_ecef;
-        gnc::env::earth_angular_rate(t, w_earth_ecef);
-        return w_earth_ecef;
-    }(time_s_fp->get());
+    auto const w_earth_ecef = time_earth_w_fp->get();
 
     double _;
     switch (piksi_mode)
