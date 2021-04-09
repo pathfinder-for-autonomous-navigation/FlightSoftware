@@ -5,7 +5,7 @@
 #include <common/constant_tracker.hpp>
 #include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
-#include <fsw/FCCode/GomspaceController.hpp>
+
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
@@ -16,7 +16,7 @@ const constexpr unsigned int MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
-MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset)
+MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset, Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "mission_ct", offset),
       detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
       close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
@@ -30,7 +30,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
       sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
-      enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
+      enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
+      gs(_gs)
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -90,7 +91,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
-    Devices::Gomspace gs;
 }
 
 void MissionManager::execute()

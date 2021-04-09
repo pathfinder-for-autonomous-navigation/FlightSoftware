@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include "QuakeFaultHandler.hpp"
+#include <fsw/FCCode/GomspaceController.hpp>
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -21,7 +22,7 @@ class MissionManager : public TimedControlTask<void>
 #endif
 
 public:
-    MissionManager(StateFieldRegistry &registry, unsigned int offset);
+    MissionManager(StateFieldRegistry &registry, unsigned int offset, Devices::Gomspace&);
     void execute() override;
 
     // Constants that drive state transitions.
@@ -198,6 +199,9 @@ protected:
      * @brief Number of times the satellite has booted
      */
     ReadableStateField<unsigned int> *bootcount_fp;
+
+    // to turn off piksi
+    Devices::Gomspace &gs;
 
 private:
     /**
