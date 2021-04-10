@@ -19,7 +19,6 @@ from . import get_pio_asset
 from .cases.utils import str_to_val
 import lin
 
-
 class USBSession(object):
     '''
     Represents a connection session with a Flight Computer's state system.
@@ -54,25 +53,24 @@ class USBSession(object):
 
         downlink_parser_filepath = get_pio_asset("gsw_downlink_parser")
         master_fd, slave_fd = pty.openpty()
-        self.downlink_parser = subprocess.Popen(
-            [downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
+        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
 
         # Open a connection to elasticsearch
-        self.es = Elasticsearch([{'host': "127.0.0.1", 'port': "9200"}])
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
-        # connect to email
+        #connect to email
         self.scrape = scrape_uplinks
-        self.username = tlm_config["email_username"]
-        self.password = tlm_config["email_password"]
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
         self.mail = None
 
         if self.username != "":
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
             self.mail.login(self.username, self.password)
             self.mail.select('"[Gmail]/Sent Mail"')
-
+        
         self.debug_to_console = None
 
     def case_interaction_setup(self, _debug_to_console):
@@ -88,11 +86,9 @@ class USBSession(object):
         '''
         try:
             self.console = serial.Serial(console_port, baud_rate)
-            # This is t = 0 on the Teensy, +/- a few milliseconds.
-            self.start_time = datetime.datetime.now()
+            self.start_time = datetime.datetime.now() # This is t = 0 on the Teensy, +/- a few milliseconds.
 
-            # Lock to prevent multiple writes to device at the same time.
-            self.device_write_lock = threading.Lock()
+            self.device_write_lock = threading.Lock() # Lock to prevent multiple writes to device at the same time.
 
             # Queues used to manage interface between the check_msgs_thread and calls to read_state or write_state
             self.field_requests = queue.Queue()
@@ -121,16 +117,13 @@ class USBSession(object):
             self.flask_app = create_usb_session_endpoint(self)
             self.flask_app.config["uplink_console"] = self.uplink_console
             self.flask_app.config["console"] = self.console
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={
-                                       "host": '0.0.0.0', "port": self.port})
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"host":'0.0.0.0', "port": self.port})
             self.http_thread.start()
-            print(
-                f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
-            return False
-        except:
-            print(
-                f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
             return True
+        except:
+            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+            return False
 
     def check_console_msgs(self):
         '''
@@ -148,13 +141,12 @@ class USBSession(object):
                     continue
 
                 data = json.loads(line)
-                data['time'] = str(self.start_time +
-                                   datetime.timedelta(milliseconds=data['t']))
+                data['time'] = str(self.start_time + datetime.timedelta(milliseconds=data['t']))
 
                 if 'msg' in data:
                     # The logline represents a debugging message created by Flight Software. Report the message to the logger.
                     logline = f"[{data['time']}] ({data['svrty']}) {data['msg']}"
-                    self.logger.put(logline, add_time=False)
+                    self.logger.put(logline, add_time = False)
 
                     # If we want debug to go to the console
                     if self.debug_to_console:
@@ -164,15 +156,13 @@ class USBSession(object):
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
                     print("\n" + logline)
-                    self.logger.put(logline, add_time=False)
-                    # log data to a timestamped file
+                    self.logger.put(logline, add_time = False)
+                    #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
                     telem_bytes.remove("")
-                    telem_file = open(os.path.join(
-                        self.telem_save_dir, f"telem[{data['time']}].txt"), "wb")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
                     for byte in telem_bytes:
-                        telem_file.write(
-                            int(byte, 16).to_bytes(1, byteorder='big'))
+                        telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
                     telem_file.close()
                 elif 'uplink' in data:
                     if data['uplink'] and data['len']:
@@ -181,7 +171,7 @@ class USBSession(object):
                     else:
                         logline = f"[{data['time']}] Failed to send telemetry to FlightSoftware."
                     print("\n" + logline)
-                    self.logger.put(logline, add_time=False)
+                    self.logger.put(logline, add_time = False)
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -189,7 +179,7 @@ class USBSession(object):
                         # Report this failure to the logger.
 
                         logline = f"[{data['time']}] (ERROR) Tried to {data['mode']} state value named \"{data['field']}\" but encountered an error: {data['err']}"
-                        self.logger.put(logline, add_time=False)
+                        self.logger.put(logline, add_time = False)
                         data['val'] = None
                     else:
                         # A valid telemetry field was returned. Manage it.
@@ -209,7 +199,7 @@ class USBSession(object):
                 print('Unspecified error. Exiting.')
                 self.disconnect()
 
-    def _wait_for_state(self, field, timeout=None):
+    def _wait_for_state(self, field, timeout = None):
         """
         Helper function used by both read_state and write_state to wait for a desired value
         to be reported back by the connected device.
@@ -221,14 +211,13 @@ class USBSession(object):
         except queue.Empty:
             return None
 
-    def read_state(self, field, timeout=None):
+    def read_state(self, field, timeout = None):
         '''
         Read state.
-
+        
         Read the value of the state field associated with the given field name on the flight controller.
         '''
-        if not self.running_logger:
-            return
+        if not self.running_logger: return
 
         json_cmd = {'mode': ord('r'), 'field': str(field)}
         json_cmd = json.dumps(json_cmd) + "\n"
@@ -239,6 +228,7 @@ class USBSession(object):
 
         return self._wait_for_state(field)
 
+
     def smart_read(self, field, **kwargs):
         '''
         Turns a string state field read into the actual desired vals.
@@ -246,7 +236,7 @@ class USBSession(object):
         Returns list of vals, or the val itself. Vals can be bools, ints, or floats.
         Raises NameError if no state field was found.
         '''
-
+        
         ret = self.read_state(field, kwargs.get('timeout'))
         if ret is None:
             raise NameError(f"State field: {field} not found.")
@@ -254,16 +244,14 @@ class USBSession(object):
         # begin type inference
         return str_to_val(ret)
 
-    def _write_state_basic(self, fields, vals, timeout=None):
+    def _write_state_basic(self, fields, vals, timeout = None):
         '''
         Write multiple state fields to the device at once.
         '''
-        if not self.running_logger:
-            return
+        if not self.running_logger: return
 
         assert len(fields) == len(vals)
-        assert len(
-            fields) <= 20, "Flight Software can't handle more than 20 state field writes at a time"
+        assert len(fields) <= 20, "Flight Software can't handle more than 20 state field writes at a time"
 
         json_cmds = ""
         for field, val in zip(fields, vals):
@@ -293,8 +281,8 @@ class USBSession(object):
 
         returned_vals = returned_vals[0].split(",")
         returned_vals = [x for x in returned_vals if x != ""]
-
-        if (returned_vals[0].replace('.', '').replace('-', '')).isnumeric():
+        
+        if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
             numeric_returned_vals = [float(x) for x in returned_vals]
             if type(vals[0]) == str:
                 vals = vals[0]
@@ -365,10 +353,8 @@ class USBSession(object):
 
         uplink_packet = file.read()
         uplink_packet_length = len(uplink_packet)
-        file.close()
-        # get the hex representation of the packet bytes
-        uplink_packet = str(
-            ''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet))
+        file.close() 
+        uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
 
         # Send a command to the console to process the uplink packet
         json_cmd = {
@@ -384,7 +370,7 @@ class USBSession(object):
         self.raw_logger.put("Sent:     " + json_cmd)
 
         return True
-
+    
     def uplink(self, fields, vals, timeout=None):
         '''
         Create an uplink packet from the provided data and save it
@@ -397,8 +383,7 @@ class USBSession(object):
         The uplink might not be possible to create if it uses unrecognized
         state fields or if its size exceeds 70 bytes.
         '''
-        if not self.running_logger:
-            return
+        if not self.running_logger: return
 
         # Filter out fields that are being overridden by the user
         field_val_pairs = [
@@ -406,18 +391,16 @@ class USBSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.uplink_console.create_uplink(
-            fields, vals, "uplink.sbd", "uplink.http")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http")
 
         # If the uplink packet exists, send it to the FlightSoftware console
         if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
-            os.remove("uplink.sbd")
-            os.remove("uplink.http")
+            os.remove("uplink.sbd") 
+            os.remove("uplink.http") 
             return success
         else:
-            if os.path.exists("uplink.json"):
-                os.remove("uplink.http")
+            if os.path.exists("uplink.json"): os.remove("uplink.http") 
             return False
 
     def parsetelem(self):
@@ -427,7 +410,7 @@ class USBSession(object):
         of the latest completed downlink frame as a JSON object.
         '''
 
-        # get newest file
+        #get newest file
         telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
         try:
             newest_telem_file = max(telem_files, key=os.path.basename)
@@ -442,7 +425,7 @@ class USBSession(object):
         telem_json_data = json.loads(line)
 
         if telem_json_data is not None:
-            telem_json_data = telem_json_data["data"]
+                telem_json_data = telem_json_data["data"]
         return telem_json_data
 
     def dbtelem(self):
@@ -455,17 +438,16 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print(f"Error parsing telemetry on {self.device_name}")
+            print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
             value = jsonObj[field]
-            data = json.dumps({
-                field: value,
+            data=json.dumps({
+            field: value,
                 "time": str(datetime.datetime.now().isoformat())
             })
-            res = self.es.index(index='statefield_report_' +
-                                str(self.radio_imei), doc_type='report', body=data)
+            res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
                 failed = True
         return not failed
@@ -485,30 +467,29 @@ class USBSession(object):
         Look in the Sent Mail box of the Pan email account and forward all the 
         uplinks directed to this satellite to the Flight Computer
         '''
-        # look for all new emails from iridium
+        #look for all new emails from iridium
         try:
             self.mail.select('"[Gmail]/Sent Mail"')
         except:
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
             self.mail.login(self.username, self.password)
             self.mail.select('"[Gmail]/Sent Mail"')
-        _, data = self.mail.search(
-            None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
 
         for num in id_list:
-            # .fetch() fetches the mail for given id where 'RFC822' is an Internet
+            #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
             # Message Access Protocol.
-            _, data = self.mail.fetch(num, '(RFC822)')
+            _, data = self.mail.fetch(num,'(RFC822)')
 
-            # go through each component of data
+            #go through each component of data
             for response_part in data:
                 if isinstance(response_part, tuple):
                     # converts message from byte literal to string removing b''
                     msg = email.message_from_bytes(response_part[1])
                     email_subject = msg['subject']
-
+                    
                     if email_subject.isdigit():
                         # Get imei number of the radio that the uplink was sent to
                         radio_imei = int(email_subject)
@@ -516,7 +497,7 @@ class USBSession(object):
                         if self.radio_imei != None and radio_imei == int(self.radio_imei):
                             # Go through the email contents
                             for part in msg.walk():
-
+                                            
                                 if part.get_content_maintype() == 'multipart':
                                     continue
 
@@ -536,12 +517,12 @@ class USBSession(object):
                             self.mail.store(num, '-FLAGS', '\SEEN')
 
         return True
+                        
 
     def disconnect(self):
         '''Quits the program and stores message log and field telemetry to file.'''
 
-        print(
-            f' - Terminating console connection to and saving logging/telemetry data for {self.device_name}.')
+        print(f' - Terminating console connection to and saving logging/telemetry data for {self.device_name}.')
 
         # End threads
         self.running_logger = False
