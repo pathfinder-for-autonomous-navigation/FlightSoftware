@@ -107,6 +107,8 @@ class TestFixture {
 
     WritableStateField<bool>* gs_reboot_cmd_fp;
 
+    WritableStateField<bool>* piksi_off_fp;
+
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         Fault::cc = &TimedControlTaskBase::control_cycle_count;
 
@@ -175,7 +177,7 @@ class TestFixture {
 
         gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
 
-        // piksi_off_fp = registry.find_writable_field_t<bool>("pan.piksi_off");
+        piksi_off_fp = registry.find_writable_field_t<bool>("gomspace.piksi_off");
     }
 };
 
