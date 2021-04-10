@@ -191,6 +191,12 @@ class Enums(object):
         "MTR_ENABLED"
     ])
 
+    ssa_modes = FSWEnum([
+        "SSA_FAILURE",
+        "SSA_IN_PROGRESS",
+        "SSA_COMPLETE",
+    ])
+
     # copied from havt_devices.hpp
     havt_devices = FSWEnum([
         "IMU_GYR",
@@ -221,7 +227,8 @@ class Enums(object):
             "adcs.state" : self.adcs_states,
             "radio.state" : self.radio_states,
             "sat.designation" : self.sat_designations,
-            "piksi.mode" : self.piksi_modes,
+            "piksi.state" : self.piksi_modes,
+            "adcs_monitor.ssa_mode" : self.ssa_modes,
         }
         return key_associations[key]
 
