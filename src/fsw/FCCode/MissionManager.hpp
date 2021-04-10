@@ -202,7 +202,7 @@ protected:
     /**
      * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)
      */
-    ReadableStateField<bool> *piksi_off_fp;
+    WritableStateField<bool> *piksi_off_fp;
 
 private:
     /**

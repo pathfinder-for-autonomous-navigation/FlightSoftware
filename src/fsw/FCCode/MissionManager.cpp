@@ -76,7 +76,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
-    piksi_off_fp = find_readable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+    piksi_off_fp = find_writable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);

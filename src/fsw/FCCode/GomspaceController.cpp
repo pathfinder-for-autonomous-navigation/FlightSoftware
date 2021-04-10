@@ -191,8 +191,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_writable_field(gs_reboot_cmd_f);
 
-        add_readable_field(piksi_off_f);
-        // piksi_off_f.set(false);
+        add_writable_field(piksi_off_f);
+        piksi_off_f.set(true);
      }
 
 void GomspaceController::execute() {

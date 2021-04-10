@@ -150,7 +150,7 @@ class GomspaceController : public TimedControlTask<void> {
     WritableStateField<bool> gs_reboot_cmd_f;
 
     Serializer<bool> piksi_off_sr;
-    ReadableStateField<bool> piksi_off_f;
+    WritableStateField<bool> piksi_off_f;
 };
 
 #endif
