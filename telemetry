@@ -5,6 +5,7 @@
         "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
+        "pan.kill_switch": 100,
         "pan.state": 1
     },
     "fields": {
@@ -1781,6 +1782,14 @@
             "min": 0,
             "type": "unsigned int",
             "writable": false
+        },
+        "pan.kill_switch": {
+            "bitsize": 8,
+            "flow_id": "undefined",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": true
         },
         "pan.one_day_ccno": {
             "bitsize": 32,
