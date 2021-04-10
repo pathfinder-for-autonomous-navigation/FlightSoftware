@@ -6,7 +6,6 @@
 #include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
 
-
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
 const constexpr double MissionManager::initial_close_approach_trigger_dist;
@@ -16,7 +15,7 @@ const constexpr unsigned int MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
-MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset, Devices::Gomspace &_gs)
+MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "mission_ct", offset),
       detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
       close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
@@ -29,9 +28,9 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
-      sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
-      enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
-      gs(_gs)
+      sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
+      enter_close_approach_ccno_f("pan.enter_close_approach_ccno"), 
+      piksi_off_f("pan.piksi_off", Serializer<bool>())
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -45,6 +44,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
     add_internal_field(enter_close_approach_ccno_f);
+    add_readable_field(piksi_off_f);
 
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
     bootcount_fp->set(bootcount_fp->get()+1);
@@ -105,6 +105,7 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            set(sat_designation_t::undecided);
             return;
         }
         else if (fault_response == fault_response_t::standby
@@ -114,6 +115,7 @@ void MissionManager::execute()
             && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            set(sat_designation_t::undecided);
             return;
         }
     }
@@ -172,17 +174,18 @@ bool MissionManager::check_adcs_hardware_faults() const
 void MissionManager::dispatch_startup()
 {
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1) { 
+    if (bootcount_fp->get() == 1) {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             // Stop power to Piksi if it is not off already
-            gs.set_single_output(0,0); // (output port, 0 for off)
+            piksi_off_f.set(true); 
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
     }
     // Resume power to Piksi if it is not on already
-    gs.set_single_output(0,1);
+    piksi_off_f.set(false);
+
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
     // Turn radio on, and check for hardware faults that would necessitate

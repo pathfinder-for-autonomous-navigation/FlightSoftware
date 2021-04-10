@@ -3,7 +3,6 @@
 
 #include "TimedControlTask.hpp"
 #include "QuakeFaultHandler.hpp"
-#include <fsw/FCCode/GomspaceController.hpp>
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -22,7 +21,7 @@ class MissionManager : public TimedControlTask<void>
 #endif
 
 public:
-    MissionManager(StateFieldRegistry &registry, unsigned int offset, Devices::Gomspace&);
+    MissionManager(StateFieldRegistry &registry, unsigned int offset);
     void execute() override;
 
     // Constants that drive state transitions.
@@ -200,8 +199,10 @@ protected:
      */
     ReadableStateField<unsigned int> *bootcount_fp;
 
-    // to turn off piksi
-    Devices::Gomspace &gs;
+    /**
+     * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)
+     */
+    ReadableStateField<bool> piksi_off_f;
 
 private:
     /**

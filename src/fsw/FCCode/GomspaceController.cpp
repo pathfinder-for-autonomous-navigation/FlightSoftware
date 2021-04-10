@@ -188,6 +188,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(gs_reset_cmd_f);
 
         add_writable_field(gs_reboot_cmd_f);
+
+        piksi_off_fp = find_readable_field<bool>("pan.piksi_off", __FILE__, __LINE__);
      }
 
 void GomspaceController::execute() {
@@ -307,6 +309,11 @@ void GomspaceController::execute() {
     pptmode_f.set(gs.hk->pptmode);
 
     heater_f.set(gs.get_heater()==1);
+
+    // if wait < deployment_wait, turn off power to piksi
+    if(piksi_off_fp->get()){
+        gs.set_single_output(0,0); // (output port = OUT-1, 0 for off)
+    }
 }
 
 void GomspaceController::power_cycle_outputs() {

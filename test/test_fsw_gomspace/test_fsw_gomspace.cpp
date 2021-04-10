@@ -174,6 +174,8 @@ class TestFixture {
         gs_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reset_cmd");
 
         gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
+
+        // piksi_off_fp = registry.find_writable_field_t<bool>("pan.piksi_off");
     }
 };
 

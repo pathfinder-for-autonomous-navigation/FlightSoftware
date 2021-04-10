@@ -149,6 +149,10 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<bool> gs_reboot_cmd_sr;
     WritableStateField<bool> gs_reboot_cmd_f;
 
+    /**
+     * @brief Command to get from mission_manager
+     */
+    const ReadableStateField<bool>* piksi_off_fp;
 };
 
 #endif
