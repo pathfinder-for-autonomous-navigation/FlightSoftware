@@ -38,9 +38,9 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pointer_vec1_desired_f("attitude.pointer_vec1_desired", unit_vector_sr),
     pointer_vec2_desired_f("attitude.pointer_vec2_desired", unit_vector_sr),
     t_body_cmd_f("pointer.rwa_torque_cmd",
-        Serializer<lin::Vector3f>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
-    m_body_cmd_f("pointer.mtr_cmd", 
-        Serializer<lin::Vector3f>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
+        Serializer<lin::Vector3f>(0.0, 1.73205080757*adcs::rwa::max_torque, 8)),
+    m_body_cmd_f("pointer.mtr_cmd",
+        Serializer<lin::Vector3f>(0.0, 1.73205080757*adcs::mtr::max_moment, 6)),
     detumbler_state(),
     pointer_state()
     {
@@ -179,8 +179,8 @@ void AttitudeController::calculate_pointing_objectives() {
             // Ensure we have a DCM and time
             if (lin::any(!lin::isfinite(DCM_hill_body)))
                 return;
-            pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
-            pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
+            pointer_vec1_current_f.set({1.0f, 0.0f,  0.0f});                        // Antenna face
+            pointer_vec2_current_f.set({0.0f, 0.0f, -1.0f});                        // Docking face
             pointer_vec1_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 1))); // v_hat_body
             pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
             break;
