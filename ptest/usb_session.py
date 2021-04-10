@@ -114,7 +114,6 @@ class USBSession(object):
             print(f"Unable to open serial port for {self.device_name}.")
             return False
 
-        
         self.flask_app = create_usb_session_endpoint(self)
         self.flask_app.config["uplink_console"] = self.uplink_console
         self.flask_app.config["console"] = self.console
