@@ -120,12 +120,17 @@ class AutonomousMissionController(MissionCase):
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
         #Pass telemetry between spacecraft 
-        while(self.continue_mission()): 
-
+        #while(self.continue_mission()): 
+        print('1')
+        while(1):
+            print('2')
             #wait for data from both spacecrafts to come down from Iridium
             while("Unable to find" in self.leader.read_state("time.valid") or 
-                    "Unable to find" in self.follower.read_state("time.valid")): 
-                pass
+                    "Unable to find" in self.follower.read_state("time.valid")):
+                print('here') 
+                #pass
+
+            print('ehre')
 
             #read the orbit data from each satellite from database
             downlinked_data_vals_leader = self.readDownlinkData(self.leader)
