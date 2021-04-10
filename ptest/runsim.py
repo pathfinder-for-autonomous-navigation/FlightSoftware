@@ -9,6 +9,9 @@ from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
 from . import get_pio_asset
 import json, sys, os, time, threading
+import multiprocessing
+multiprocessing.set_start_method('fork') 
+
 
 try:
     import pty, subprocess
