@@ -1,4 +1,7 @@
 #include "OrbitController.hpp"
+#include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
+#include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
+
 
 const constexpr double OrbitController::valve_time_lin_reg_slope;
 const constexpr double OrbitController::valve_time_lin_reg_intercept;
@@ -18,16 +21,19 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
-    sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000))
+    sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
+    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,10,100))
 {
     add_writable_field(sched_valve1_f);
     add_writable_field(sched_valve2_f);
     add_writable_field(sched_valve3_f);
     add_writable_field(sched_valve4_f);
+    add_writable_field(J_ecef_f);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
     sched_valve4_f.set(0);
+    J_ecef_f.set(0.0);
 }
 
 void OrbitController::init() {
@@ -101,6 +107,9 @@ void OrbitController::execute() {
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
+        // Save J_ecef to statefield
+        J_ecef_f.set(J_ecef);
+
         // Transform the impulse from ecef frame to the eci frame
         lin::Vector4d q_eci_ecef;
         gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
@@ -139,12 +148,28 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
 lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
     const lin::Vector3d &dr, const lin::Vector3d &dv) {
 
+    // Collects Relative Orbit Estimator state
+    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
+
     // Assemble the input Orbit Controller data struct
     data.t = t;
     data.r_ecef = r;
     data.v_ecef = v;
     data.dr_ecef = dr;
     data.dv_ecef = dv;
+
+    // Sets Orbit Controller gains depending on whether satellites are in near or far-field 
+    if (rel_orbit_state==2) {
+        data.p = 1.0e-6/6;  //Make "6" a parameter
+        data.d = 5.0e-2/6;
+        data.energy_gain = 5.0e-5/6;   // Energy gain                   (J)
+        data.h_gain = 2.0e-3/6;        // Angular momentum gain         (kg m^2/sec)
+    } else {
+        data.p = 1.0e-6;
+        data.d = 5.0e-2;
+        data.energy_gain = 5.0e-5;   // Energy gain                   (J)
+        data.h_gain = 2.0e-3;        // Angular momentum gain         (kg m^2/sec)
+    }
 
     gnc::control_orbit(state, data, actuation);
 

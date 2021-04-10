@@ -92,5 +92,6 @@ public:
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
     WritableStateField<unsigned int> sched_valve4_f;
+    WritableStateField<lin::Vector3d> J_ecef_f;
 
 };
