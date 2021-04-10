@@ -29,8 +29,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
       sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
-      enter_close_approach_ccno_f("pan.enter_close_approach_ccno"), 
-      piksi_off_f("pan.piksi_off", Serializer<bool>())
+      enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -44,7 +43,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
     add_internal_field(enter_close_approach_ccno_f);
-    add_readable_field(piksi_off_f);
 
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
     bootcount_fp->set(bootcount_fp->get()+1);
@@ -78,6 +76,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
+    piksi_off_fp = find_readable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
     close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
@@ -91,6 +91,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
+    piksi_off_fp->set(false);
 }
 
 void MissionManager::execute()
@@ -178,13 +179,13 @@ void MissionManager::dispatch_startup()
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             // Stop power to Piksi if it is not off already
-            piksi_off_f.set(true); 
+            piksi_off_fp->set(true); 
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
     }
     // Resume power to Piksi if it is not on already
-    piksi_off_f.set(false);
+    piksi_off_fp->set(false);
 
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup

@@ -68,6 +68,7 @@ public:
   ReadableStateField<bool> *is_deployed_fp;
   ReadableStateField<unsigned int> *deployment_wait_elapsed_fp;
   WritableStateField<unsigned char> *sat_designation_fp;
+  ReadableStateField<bool> *piksi_off_fp;
 
   TestFixture(mission_state_t initial_state = mission_state_t::startup, unsigned int bootcount = 0);
 

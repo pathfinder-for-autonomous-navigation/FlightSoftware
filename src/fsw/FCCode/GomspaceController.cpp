@@ -103,8 +103,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reset_cmd_f("gomspace.gs_reset_cmd", gs_reset_cmd_sr),
 
     gs_reboot_cmd_sr(),
-    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
+    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr),
 
+    piksi_off_sr(),
+    piksi_off_f("gomspace.piksi_off", piksi_off_sr)
     {
         add_fault(get_hk_fault);
         add_fault(low_batt_fault);
@@ -189,7 +191,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_writable_field(gs_reboot_cmd_f);
 
-        piksi_off_fp = find_readable_field<bool>("pan.piksi_off", __FILE__, __LINE__);
+        add_readable_field(piksi_off_f);
+        // piksi_off_f.set(false);
      }
 
 void GomspaceController::execute() {
@@ -311,7 +314,7 @@ void GomspaceController::execute() {
     heater_f.set(gs.get_heater()==1);
 
     // if wait < deployment_wait, turn off power to piksi
-    if(piksi_off_fp->get()){
+    if(piksi_off_f.get()){
         gs.set_single_output(0,0); // (output port = OUT-1, 0 for off)
     }
 }
