@@ -8,7 +8,6 @@ import os
 import pty
 import subprocess
 import multiprocessing
-multiprocessing.set_start_method('fork') 
 import glob
 from elasticsearch import Elasticsearch
 import email
