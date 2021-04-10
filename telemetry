@@ -6,7 +6,6 @@
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
         "pan.kill_switch": 100,
-        "pan.sat_designation": 1,
         "pan.state": 1
     },
     "fields": {
@@ -1785,9 +1784,9 @@
             "writable": false
         },
         "pan.kill_switch": {
-            "bitsize": 2,
+            "bitsize": 8,
             "flow_id": "undefined",
-            "max": 3,
+            "max": 255,
             "min": 0,
             "type": "unsigned char",
             "writable": true
