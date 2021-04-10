@@ -69,7 +69,7 @@ class AutonomousMissionController(MissionCase):
         
         #get default sim configs
         configs = ['sensors/base', 'truth/base', 'truth/detumble']
-        configs = ['config/parameters/' + f + '.txt' for f in configs]
+        configs = ['lib/common/psim/config/parameters/' + f + '.txt' for f in configs]
         #should we use the default truth.dt.ns, or should it depend on something like prop_time?
         config = Configuration(configs)
 
