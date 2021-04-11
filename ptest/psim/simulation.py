@@ -46,10 +46,10 @@ class PSimCase(PTestCase):
         else:
             self._cycle = self._dual_sat_cycle
 
-    def setup_case(self, *args, **kwargs):
+    def setup_case(self, devices, radios):
         """
         """
-        super(PsimCase, self).setup_case(*args, **kwargs)
+        super(PsimCase, self).setup_case(devices, radios)
 
         configs = [self.psim_config_prefix + config + self.psim_config_suffix for config in self.psim_configs]
         config = psim.Configuration(configs)
