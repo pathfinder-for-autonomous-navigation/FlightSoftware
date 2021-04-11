@@ -16,6 +16,92 @@ import json
 from ..cases.utils import is_lin_vector, to_lin_vector,Enums
 import math
 
+class PSimCase(PTestCase):
+    """Base class for testcases running with a PSim simulation.
+
+    Attributes:
+        psim_config_override
+        psim_config_prefix
+        psim_config_suffix
+        psim_configs
+    """
+
+    def __init__(model, *args, **kwargs):
+        """
+        """
+        super(PSimSimulation, self).__init__(*args, **kwargs)
+
+        self.psim_config_overrides = dict()
+        self.psim_config_prefix = 'lib/common/psim/configs/parameters/'
+        self.psim_config_suffix = '.txt'
+        self.psim_configs = [
+            'truth/base',
+            'sensors/base'
+        ]
+
+        self.psim_model = model
+
+        if isinstance(self, SingleSatCase):
+            self._cycle = self._single_sat_cycle
+        else:
+            self._cycle = self._dual_sat_cycle
+
+    def setup_case(self, *args, **kwargs):
+        """
+        """
+        super(PsimCase, self).setup_case(*args, **kwargs)
+
+        configs = [self.psim_config_prefix + config + self.psim_config_suffix for config in self.psim_configs]
+        config = psim.Configuration(configs)
+        for name, param in self.psim_config_overrides.items():
+            config[name] = param
+
+        self.__sim = self.psim_model(config)
+
+    def cycle(self, *args, **kwargs):
+        """
+        """
+        super(PSimCase, self).cycle(*args, **kwargs)
+
+        self._cycle()
+
+        # TODO : Write actuator commands to the sim
+
+        self.__sim.step()
+
+        # TODO : Write sensor data to the flight computer
+
+    def psim_rs(self, name: str):
+        '''
+        Read a psim state field with <name>, log to datastore, and return the python value
+        '''
+        ret = self.__sim[name]
+
+        stripped = ret
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
+            ret = list(ret)
+            stripped = str(ret).strip("[]").replace(" ","")+","
+        
+        packet = {}
+        
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+        packet["field"] = name
+        packet["val"] = str(stripped)
+        packet["time"] = str(datetime.datetime.now())
+
+        # log to datastore
+        for d in self.devices:
+            d.datastore.put(packet)
+
+        return ret
+
+    def psim_print_rs(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
+        '''
+        ret = self.psim_rs(name)
+        self.logger.put(f"{name} is {ret}")
+
 class CppSimulation(object):
     """
     Full mission simulation, including both spacecraft.
