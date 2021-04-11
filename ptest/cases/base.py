@@ -9,13 +9,19 @@ import lin
 import datetime
 
 class PTestCase(object):
-    """
-    Base class for all HITL/HOOTL testcases.
-    """
+    """Base class for all HOOTL and HITL testcases.
 
+    Attributes:
+        debug_to_console  Setting this to true will pipe debug output from the
+                          flight computer to the console. Defaults to false.
+
+        skip_deployment_wait  Setting this to true will bypass the standard
+                              deployment wait period. Defaults to false.
+
+        suppress_faults  Setting this to true will suppress all faults on the
+                         spacecraft. Defaults to true.
+    """
     def __init__(self, is_interactive, random_seed, data_dir, device_config):
-        """
-        """
         self.is_interactive = is_interactive
         self.random_seed = random_seed
         self.data_dir = data_dir
@@ -27,26 +33,16 @@ class PTestCase(object):
         self.finished = False
         self.devices = None
 
+        self.debug_to_console = False
+        self.skip_deployment_wait = False
+        self.suppress_faults = True
+
     @property
     def sim_mapping(self):
         '''
         Json file name that contains the mappings desired
         '''
         return None
-
-    @property
-    def debug_to_console(self):
-        '''
-        Default false, set to true if you want debug output from flight computer piped to console
-        '''
-        return False
-
-    @property 
-    def suppress_faults(self):
-        '''
-        If true, faults will be suppressed on boot. Default True.
-        '''
-        return True
 
     @property
     def havt_read(self):
@@ -59,9 +55,13 @@ class PTestCase(object):
         return read_list
 
     def setup(self, devices, radios):
-        '''
-        Entry point for simulation creation
-        '''
+        """Initial entrypoint for running a testcase.
+
+        After testcase construction, the setup function is called. This is
+        responsible for populating devices, constructing the PSim simulation if
+        applicable, running preboot setup, booting the spacecraft, and finally
+        running postboot setup.
+        """
         self.populate_devices(devices, radios)
 
         for _,device in devices.items():
@@ -71,8 +71,12 @@ class PTestCase(object):
         self.logger.put("[TESTCASE] Starting testcase.")
 
     def cycle(self):
-        '''
-        '''
+        """Steps the testcase forward.
+
+        When working with a PSim simulation testcase, this will also step the
+        simulation forward in time and handling transactions between flight
+        software and PSim.
+        """
         pass
 
     def print_havt_read(self):
@@ -149,39 +153,6 @@ class PTestCase(object):
             self.logger.stop()
             time.sleep(1) # Allow time for logger to stop
 
-    def rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, and return the python value
-        '''
-        ret = self.sim.mysim.get(name)
-        if(ret is None):
-            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
-        
-        stripped = ret
-        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
-            ret = list(ret)
-            stripped = str(ret).strip("[]").replace(" ","")+","
-        
-        packet = {}
-        
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
-        packet["field"] = name
-        packet["val"] = str(stripped)
-        packet["time"] = str(datetime.datetime.now())
-
-        # log to datastore
-        for d in self.devices:
-            d.datastore.put(packet)
-
-        return ret
-
-    def print_rs_psim(self, name):
-        '''
-        Read a psim state field with <name>, log to datastore, print to console and return the python value
-        '''
-        ret = self.rs_psim(name)
-        self.logger.put(f"{name} is {ret}")
-
 class SingleSatCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a single-satellite mission.
@@ -209,7 +180,13 @@ class SingleSatCase(PTestCase):
     def setup(self, devices, radios):
         super(SingleSatCase, self).setup(devices, radios)
 
-        # Fault supression and skipping deployment wait
+        if self.suppress_faults:
+            # TODO : Actually supress faults
+            pass
+
+        if self.skip_deployment_wait:
+            # TODO : Actually skip deployment wait
+            pass
 
         self.setup_pre_boot()
 
