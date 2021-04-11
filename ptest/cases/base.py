@@ -14,31 +14,18 @@ class PTestCase(object):
     """
 
     def __init__(self, is_interactive, random_seed, data_dir, device_config):
-        self._finished = False
+        """
+        """
         self.is_interactive = is_interactive
         self.random_seed = random_seed
         self.data_dir = data_dir
-        self.logger = Logger("testcase", data_dir, print=True)
-
         self.device_config = device_config
+
+        self.logger = Logger("testcase", data_dir, print=True)
 
         self.errored = False
         self.finished = False
         self.devices = None
-
-    @property
-    def sim_configs(self):
-        '''
-        The parameter files from psim
-        '''
-        return []
-
-    @property
-    def sim_model(self):
-        '''
-        The psim simulation model
-        '''
-        return None
 
     @property
     def sim_mapping(self):
@@ -46,14 +33,6 @@ class PTestCase(object):
         Json file name that contains the mappings desired
         '''
         return None
-
-    @property
-    def scrape_uplinks(self):
-        '''
-        Look for sent uplinks by scraping the sent mail box in the pan email account
-        and send packets to the Flight Computer
-        '''
-        return False
 
     @property
     def debug_to_console(self):
@@ -70,33 +49,6 @@ class PTestCase(object):
         return True
 
     @property
-    def sim_duration(self):
-        """
-        Returns the duration of the simulation to run. If set to zero, the
-        simulation will not start. sim_duration is measured in seconds.
-
-        Usual values of this field are either 0 or float("inf").
-        """
-        return 0
-
-    @property
-    def sim_initial_state(self):
-        """
-        Initial state that is fed into the MATLAB simulation.
-        """
-        return 'startup'
-
-    @property
-    def sim_ic_map(self):
-        """
-        A dictionary of strings representing sim key names to
-        values that should be overriding the sim initial conditions
-        
-        Defaults to empty dict (nothing is mutated)
-        """
-        return {}
-
-    @property
     def havt_read(self):
         '''
         Returns the ADCS HAVT table as a list of booleans
@@ -105,6 +57,23 @@ class PTestCase(object):
         for x in range(Enums.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
+
+    def setup(self, devices, radios):
+        '''
+        Entry point for simulation creation
+        '''
+        self.populate_devices(devices, radios)
+
+        for _,device in devices.items():
+            device.case_interaction_setup(self.debug_to_console)
+
+        self.logger.start()
+        self.logger.put("[TESTCASE] Starting testcase.")
+
+    def cycle(self):
+        '''
+        '''
+        pass
 
     def print_havt_read(self):
         '''
@@ -131,26 +100,6 @@ class PTestCase(object):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
-    
-    def setup_case(self, devices, radios):
-        '''
-        Entry point for simulation creation
-        '''
-        self.populate_devices(devices, radios)
-
-        for _,device in devices.items():
-            device.case_interaction_setup(self.debug_to_console)
-
-        if self.sim_duration > 0:
-            from ..psim import CppSimulation # Lazy import
-            self.sim = CppSimulation(self.is_interactive, devices, 
-            self.random_seed, self, self.sim_duration, self.sim_initial_state, 
-            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, 
-            self.sim_mapping, self.device_config)
-        self.logger.start()
-        self.logger.put("[TESTCASE] Starting testcase.")
-        self._setup_case()
-
     def start(self):
         if hasattr(self, "sim"):
             self.sim.start()
@@ -163,7 +112,13 @@ class PTestCase(object):
 
     def run(self):
         while not self.finished:
-            self.run_case()
+            try:
+                self.run_case()
+            except TestCaseFailure:
+                tb = traceback.format_exc()
+                self.logger.put(tb)
+                self.finish(error=True)
+                return
 
     def populate_devices(self, devices, radios):
         """
@@ -172,22 +127,7 @@ class PTestCase(object):
         """
         raise NotImplementedError
 
-    def _setup_case(self):
-        """
-        Must be implemented by subclasses.
-        """
-        raise NotImplementedError
-
     def run_case(self):
-        try:
-            self._run_case()
-        except TestCaseFailure:
-            tb = traceback.format_exc()
-            self.logger.put(tb)
-            self.finish(error=True)
-            return
-
-    def _run_case(self):
         """
         Must be implemented by subclasses.
         """
@@ -242,7 +182,7 @@ class PTestCase(object):
         ret = self.rs_psim(name)
         self.logger.put(f"{name} is {ret}")
 
-class SingleSatOnlyCase(PTestCase):
+class SingleSatCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a single-satellite mission.
     """
@@ -266,18 +206,18 @@ class SingleSatOnlyCase(PTestCase):
         """
         return True
 
-    def _setup_case(self):
-        self.setup_pre_bootsetup()
+    def setup(self, devices, radios):
+        super(SingleSatCase, self).setup(devices, radios)
 
-        self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
+        # Fault supression and skipping deployment wait
 
-        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
-            self.fast_boot, self.one_day_ccno, self.suppress_faults)
+        self.setup_pre_boot()
 
-        self.boot_util.setup_boot()
-        self.setup_post_bootsetup()
+        # Boot utility stuff
 
-    def setup_pre_bootsetup(self):
+        self.setup_post_boot()
+
+    def setup_pre_boot(self):
         """
         Setup that should run prior to the boot utility setup.
 
@@ -288,7 +228,7 @@ class SingleSatOnlyCase(PTestCase):
         """
         pass
 
-    def setup_post_bootsetup(self):
+    def setup_post_boot(self):
         """
         Setup that should run after the boot utility has finished its setup. See
         documentation for setup_pre_bootsetup for more details.
