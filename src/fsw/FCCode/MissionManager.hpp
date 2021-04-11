@@ -129,10 +129,12 @@ protected:
      *        second).
      * 
      * Inputs from the AttitudedEstimator. */
-    ReadableStateField<lin::Vector3f> *adcs_w_body_est_fp;
+    ReadableStateField<bool> const *attitude_estimator_valid_fp;
+    ReadableStateField<lin::Vector3f> const *attitude_estimator_L_body_fp;
 
-    // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<lin::Vector3d> *propagated_baseline_pos_fp; // Propagated baseline position
+    // Fields provided by relative orbit estiamtor
+    const ReadableStateField<unsigned char> *rel_orbit_state_fp;
+    const ReadableStateField<lin::Vector3d> *rel_orbit_rel_pos_fp;
 
     // Field exposed by Gomspace for resetting entire spacecraft.
     WritableStateField<bool> *reset_fp;
@@ -161,7 +163,7 @@ protected:
     /**
      * @brief DCDC control Disables/enables wheels for the ADCS system.
      */
-    WritableStateField<bool>* adcs_dcdc_fp;
+    WritableStateField<bool> *adcs_dcdc_fp;
 
     /**
      * @brief Radio's mode.
@@ -193,9 +195,16 @@ protected:
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
     /**
+     * @brief The command to shut down all communication 
+     * from spacecraft with ground when set to 127.
+     */
+    WritableStateField<unsigned char> kill_switch_f;
+    TRACKED_CONSTANT_SC(unsigned char, kill_switch_value, 127);
+
+    /**
      * @brief Number of times the satellite has booted
      */
-    ReadableStateField<unsigned int> *bootcount_fp; 
+    ReadableStateField<unsigned int> *bootcount_fp;
 
 private:
     /**

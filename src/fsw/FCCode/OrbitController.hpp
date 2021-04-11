@@ -73,14 +73,18 @@ public:
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity in ECEF
-    const ReadableStateField<double>* const time_fp;
+    const InternalStateField<double>* const time_fp;
+    const ReadableStateField<bool> *const time_valid_fp;
+    const ReadableStateField<bool> *const orbit_valid_fp;
+    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
     const ReadableStateField<lin::Vector3d>* const pos_fp;
     const ReadableStateField<lin::Vector3d>* const vel_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_pos_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_vel_fp;
 
     // Converts from ECI to body frame
-    ReadableStateField<lin::Vector4f>* q_body_eci_fp;
+    ReadableStateField<bool> const *const attitude_estimator_valid_fp;
+    ReadableStateField<lin::Vector4f> const *const q_body_eci_fp;
 
     // Outputs
     WritableStateField<unsigned int>* prop_cycles_until_firing_fp;

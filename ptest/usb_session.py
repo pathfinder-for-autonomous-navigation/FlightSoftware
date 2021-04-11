@@ -397,10 +397,10 @@ class USBSession(object):
         if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("uplink.json") 
+            os.remove("uplink.http") 
             return success
         else:
-            if os.path.exists("uplink.json"): os.remove("uplink.json") 
+            if os.path.exists("uplink.json"): os.remove("uplink.http") 
             return False
 
     def parsetelem(self):
@@ -445,7 +445,7 @@ class USBSession(object):
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time": str(datetime.datetime.now().isoformat())
+                "time.downlink_recieved": str(datetime.datetime.now().isoformat())
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
@@ -468,7 +468,12 @@ class USBSession(object):
         uplinks directed to this satellite to the Flight Computer
         '''
         #look for all new emails from iridium
-        self.mail.select('"[Gmail]/Sent Mail"')
+        try:
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
         _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
