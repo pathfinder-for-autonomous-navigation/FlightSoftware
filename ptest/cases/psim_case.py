@@ -165,7 +165,7 @@ class PSimCase(PTestCase):
 
         step += 1        
 
-    def psim_rs(self, name: str):
+    def rs_psim(self, name: str):
         '''
         Read a psim state field with <name>, log to datastore, and return the python value
         '''
@@ -178,7 +178,7 @@ class PSimCase(PTestCase):
         
         packet = {}
         
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+        packet["t"] = int(self.__sim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
         packet["field"] = name
         packet["val"] = str(stripped)
         packet["time"] = str(datetime.datetime.now())
@@ -189,7 +189,7 @@ class PSimCase(PTestCase):
 
         return ret
 
-    def psim_print_rs(self, name):
+    def print_rs_psim(self, name):
         '''
         Read a psim state field with <name>, log to datastore, print to console and return the python value
         '''
@@ -374,77 +374,6 @@ class PSimCase(PTestCase):
                         raise RuntimeError("Unexpected List Length, can't change into lin Vector")
 
                 self.mysim[psim_sf] = local
-
-    def run(self):
-        """
-        Runs the simulation for the time interval specified in start().
-        """
-
-        if self.sim_duration != float("inf"):
-            num_steps = int(self.sim_duration / self.dt) 
-        else:
-            num_steps = float("inf")
-            
-        step = 0
-
-        start_time = time.time()
-        while step < num_steps and self.running:
-            # Step 1. Generate dynamics
-            self.update_dynamics()
-
-            # Step 2. Load sensor data from psim into ptest
-            self.update_sensors()
-                        
-            # Step 3.1 Mock sensor validity flags and states if requested
-            if self.mock_sensor_validity:
-                for device_name, device in self.devices.items():
-                    self.mock_piksi_state(device_name, device)
-                    self.mock_adcs_havt(device_name, device)
-                    self.mock_ssa_mode(device_name, device)
-
-            for device_name, device in self.devices.items():
-                self.transfer_piksi_time(device_name, device)
-
-            ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
-
-            # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
-            for device_name, device in self.devices.items():
-                self.write_adcs_estimator_inputs(device)
-                self.read_actuators(device)
-
-            # Step 3 Simulate Flight Computers if need be
-            self.simulate_flight_computers()
-
-            # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            self.testcase.run_case()
-
-            # Step 3.4. Step the flight computer forward.
-            if self.is_single_sat_sim:
-                self.flight_controller.write_state("cycle.start", "true")
-            else:
-                self.flight_controller_follower.write_state("cycle.start", "true")
-                self.flight_controller_leader.write_state("cycle.start", "true")
-
-            # Step 4. Send telemetry to database
-            if self.enable_autotelem:
-                if self.is_single_sat_sim:
-                    self.flight_controller.dbtelem()
-                else:
-                    self.flight_controller_follower.dbtelem()
-                    self.flight_controller_leader.dbtelem()
-
-            # Step 5. Read the actuators from the flight computer(s) and send to psim
-            self.read_actuators_send_to_sim()
-
-            # Step 6. Read incoming uplinks
-            for device in self.devices:
-                if self.devices[device].scrape:
-                    self.devices[device].scrape_uplink()
-
-            step += 1
-
-        self.running = False
-        print("Simulation ended.")
     
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]

@@ -52,7 +52,7 @@ class PSimDebug(SingleSatCase, PSimCase):
         self.rs("attitude_estimator.w_bias_body"),
         self.rs("orbit.valid")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.rs_psim("truth.leader.attitude.w")
         self.rs_psim("truth.t.ns")
         self.rs_psim("truth.dt.ns")
