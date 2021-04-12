@@ -165,6 +165,9 @@ class PSimCase(PTestCase):
 
         step += 1        
 
+    def run(self):
+        self.cycle()
+
     def rs_psim(self, name: str):
         '''
         Read a psim state field with <name>, log to datastore, and return the python value

@@ -256,11 +256,9 @@ class SingleSatCase(PTestCase):
 
         Asserts the FC did indeed step forward by one CC
         """
-
-        init = self.rs("pan.cycle_no")
+        super(SingleSatCase, self).cycle()
+        
         self.flight_controller.write_state('cycle.start', 'true')
-        if self.rs("pan.cycle_no") != init + 1:
-            raise TestCaseFailure(f"FC did not step forward by one cycle")
 
     def rs(self, name):
         """
