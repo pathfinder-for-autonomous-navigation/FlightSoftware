@@ -91,13 +91,13 @@ class PSimCase(PTestCase):
         #     print('[PTEST-SIM] Autotelem INACTIVE!')
         #     self.enable_autotelem = False
 
-        if self.is_single_sat_sim:
-            print('[PTEST-SIM] Singlesat sim!')
-            self.flight_controller = self.devices['FlightController']
-        elif self.devices:
-            print('[PTEST-SIM] Dualsat sim!')
-            self.flight_controller_leader = self.devices['FlightControllerLeader']
-            self.flight_controller_follower = self.devices['FlightControllerFollower']
+        # if self.is_single_sat_sim:
+        #     print('[PTEST-SIM] Singlesat sim!')
+        #     self.flight_controller = self.devices['FlightController']
+        # elif self.devices:
+        #     print('[PTEST-SIM] Dualsat sim!')
+        #     self.flight_controller_leader = self.devices['FlightControllerLeader']
+        #     self.flight_controller_follower = self.devices['FlightControllerFollower']
 
         print("Configuring simulation (please be patient)...")
         start_time = timeit.default_timer()
@@ -208,31 +208,9 @@ class PSimCase(PTestCase):
         prefix = "lib/common/psim/config/parameters/"
         postfix = ".txt"
 
-        if self.sim_configs == []:
-            raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
-        if self.sim_model == None:
-            raise RuntimeError("No simulation models were provided! Please set the sim_model property")
-        if self.mapping_file_name == "":
-            raise RuntimeError("Error. Please set the json mapping file name property")
-
-        configs_list = [prefix + x + postfix for x in self.sim_configs]
-        config = psim.Configuration(configs_list)
-        
         print("[ sim ] Overwriting Initial Sim Conditions...")
 
-        # get the mutation dict from test case
-        initials = self.testcase.sim_ic_map
-
-        # mutate config
-        for k,v in initials.items():
-            print(f"[ sim ] Set {k} to {v}")            
-            if type(v) == list:
-                v = to_lin_vector(v)
-            config[k] = v
-
-        # construct sim
-        self.mysim = psim.Simulation(self.sim_model, config)
-        self.dt = self.mysim["truth.dt.ns"]/1e9
+        self.dt = self.__sim["truth.dt.ns"]/1e9
 
         self.sat_names = ['leader','follower']
         if self.is_single_sat_sim:
