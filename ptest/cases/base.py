@@ -3,7 +3,7 @@ import time
 import math
 import threading
 import traceback
-from .utils import BootUtil, Enums, TestCaseFailure
+from .utils import BootUtil, Enums, TestCaseFailure, suppress_faults
 import psim # the actual python psim repo
 import lin
 import datetime
@@ -14,12 +14,6 @@ class PTestCase(object):
     Attributes:
         debug_to_console  Setting this to true will pipe debug output from the
                           flight computer to the console. Defaults to false.
-
-        skip_deployment_wait  Setting this to true will bypass the standard
-                              deployment wait period. Defaults to false.
-
-        suppress_faults  Setting this to true will suppress all faults on the
-                         spacecraft. Defaults to true.
     """
     def __init__(self, is_interactive, random_seed, data_dir, device_config):
         self.is_interactive = is_interactive
@@ -34,15 +28,78 @@ class PTestCase(object):
         self.devices = None
 
         self.debug_to_console = False
-        self.skip_deployment_wait = False
-        self.suppress_faults = True
 
-    @property
-    def sim_mapping(self):
-        '''
-        Json file name that contains the mappings desired
-        '''
-        return None
+    def setup(self, devices, radios):
+        """Initial entrypoint for running a testcase.
+
+        Here, we simply populate the testcase devices and setup any interaction.
+        From there, the PSim simulation would be setup next or control would
+        be handed off to the next class down the inheritance tree.
+        """
+        self.populate_devices(devices, radios)
+
+        for _,device in devices.items():
+            device.case_interaction_setup(self.debug_to_console)
+
+        self.logger.start()
+        self.logger.put("[TESTCASE] Starting testcase.")
+
+    def populate_devices(self, devices, radios):
+        """Read the list of PTest-connected devices and pull in the ones that we
+        care about.
+        """
+        raise NotImplementedError
+
+    def start(self):
+        """Called after setup to actually run the testcase.
+        """
+        def _run():
+            while not self.finished:
+                try:
+                    self.run()
+                except TestCaseFailure:
+                    tb = traceback.format_exc()
+                    self.logger.put(tb)
+                    self.finish(True)
+                    return
+
+        if self.is_interactive:
+            self.testcase_thread = threading.Thread(name="Testcase execution", target=_run, daemon=True)
+            self.testcase_thread.start()
+        else:
+            _run()
+
+    def run(self):
+        """Implemented by the subclass testcase providing the actual testcase
+        behavior.
+
+        This function is called in a loop repeatedly until testcase termination.
+        If you wish to exit the testcase from within the run function itself,
+        simply call the finish function.
+        """
+        raise NotImplementedError
+
+    def finish(self, error=False):
+        """
+        When called, this function indicates to PTest that
+        the testcase has finished its execution.
+        """
+        self.errored = error
+
+        if not self.finished:
+            self.logger.put("[TESTCASE] Finished testcase.")
+            self.finished = True
+            self.logger.stop()
+            time.sleep(1) # Allow time for logger to stop
+
+    def cycle(self):
+        """Steps the testcase forward.
+
+        When working with a PSim simulation testcase, this will also step the
+        simulation forward in time and handling transactions between flight
+        software and PSim.
+        """
+        pass
 
     @property
     def havt_read(self):
@@ -53,31 +110,6 @@ class PTestCase(object):
         for x in range(Enums.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
-
-    def setup(self, devices, radios):
-        """Initial entrypoint for running a testcase.
-
-        After testcase construction, the setup function is called. This is
-        responsible for populating devices, constructing the PSim simulation if
-        applicable, running preboot setup, booting the spacecraft, and finally
-        running postboot setup.
-        """
-        self.populate_devices(devices, radios)
-
-        for _,device in devices.items():
-            device.case_interaction_setup(self.debug_to_console)
-
-        self.logger.start()
-        self.logger.put("[TESTCASE] Starting testcase.")
-
-    def cycle(self):
-        """Steps the testcase forward.
-
-        When working with a PSim simulation testcase, this will also step the
-        simulation forward in time and handling transactions between flight
-        software and PSim.
-        """
-        pass
 
     def print_havt_read(self):
         '''
@@ -104,97 +136,68 @@ class PTestCase(object):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
-    def start(self):
-        if hasattr(self, "sim"):
-            self.sim.start()
-        elif self.is_interactive:
-            self.testcase_thread = threading.Thread(name="Testcase execution",
-                                        target=self.run)
-            self.testcase_thread.start()
-        else:
-            self.run()
+    def print_header(self, title):
+        self.logger.put("\n"+title+"\n")
 
-    def run(self):
-        while not self.finished:
-            try:
-                self.run_case()
-            except TestCaseFailure:
-                tb = traceback.format_exc()
-                self.logger.put(tb)
-                self.finish(error=True)
-                return
+    def soft_assert(self, condition, *args):
+        """
+        Soft assert prints a fail message if the condition is False
+        
+        If specificied with a fail message, then a pass message, 
+        it will also print a pass message if condition is True.
+        """
+        if condition: 
+            if len(args) == 1:
+                pass
+            else:
+                self.logger.put(args[1])
+        else: 
+            self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
-    def populate_devices(self, devices, radios):
-        """
-        Read the list of PTest-connected devices and
-        pull in the ones that we care about.
-        """
-        raise NotImplementedError
 
-    def run_case(self):
-        """
-        Must be implemented by subclasses.
-        """
-        raise NotImplementedError
-
-    def finish(self, error = False):
-        """
-        When called, this function indicates to PTest that
-        the testcase has finished its execution.
-        """
-
-        self.errored = error
-
-        if not self.finished:
-            self.logger.put("[TESTCASE] Finished testcase.")
-            self.finished = True
-            if hasattr(self, "sim"):
-                self.sim.stop(self.data_dir)
-            self.logger.stop()
-            time.sleep(1) # Allow time for logger to stop
 
 class SingleSatCase(PTestCase):
-    """
-    Base testcase for writing testcases that only work with a single-satellite mission.
-    """
+    """Base class for all HOOTL and HITL testcases involving a single satellite.
 
-    @property
-    def initial_state(self):
-        """
-        Sets the initial state for the boot utility.
-        """
-        return "manual"
+    Attributes:
+        initial_state  Set this to the string name of a desired flight software
+                       state. The testcase will cycle in setup until this state
+                       is reached.
+
+        initial_state_timeout  Timeout period in cycles in which flight software
+                               has to get into the desired initial state. If
+                               this timeout is violated, the testcase will fail.
+    """
+    def __init__(self, *args, **kwargs):
+        super(SingleSatCase, self).__init__(*args, **kwargs)
+
+        self.initial_state = None
+        self.initial_state_timeout = 25
+        self.skip_deployment_wait = False
+        self.suppress_faults = True
 
     def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
         self.devices = [self.flight_controller]
 
-    @property
-    def fast_boot(self):
-        """
-        If true, the boot utility will immediately jump to the initial_state
-        rather than stepping through the state machine.
-        """
-        return True
-
     def setup(self, devices, radios):
         super(SingleSatCase, self).setup(devices, radios)
 
         if self.suppress_faults:
-            # TODO : Actually supress faults
-            pass
+            self.logger.put("[TESTCASE] Suppressing Faults!")
+            suppress_faults(self.flight_controller, self.logger)
 
         if self.skip_deployment_wait:
             # TODO : Actually skip deployment wait
             pass
 
-        self.setup_pre_boot()
+        self.pre_boot()
 
         # Boot utility stuff
 
-        self.setup_post_boot()
+        self.post_boot()
 
-    def setup_pre_boot(self):
+    def pre_boot(self):
         """
         Setup that should run prior to the boot utility setup.
 
@@ -205,25 +208,12 @@ class SingleSatCase(PTestCase):
         """
         pass
 
-    def setup_post_boot(self):
+    def post_boot(self):
         """
         Setup that should run after the boot utility has finished its setup. See
         documentation for setup_pre_bootsetup for more details.
         """
         pass
-
-    def _run_case(self):
-        if not self.boot_util.finished_boot(): return
-        self.run_case_singlesat()
-
-    def run_case_singlesat(self):
-        """
-        Interface method that will contain the body of the test, which must be implemented by testcases.
-        
-        This function is analogous to Arduino's loop() method. It will run repeatedly, in step with the
-        MATLAB simulation (if it is turned on.)
-        """
-        raise NotImplementedError
 
     def read_state(self, string_state):
         """
@@ -267,7 +257,6 @@ class SingleSatCase(PTestCase):
 
         Checks that the name is indeed a string.
         """
-
         assert(type(name) is str), "State field name was not a string."
         ret = self.flight_controller.smart_read(name)
         return ret
@@ -276,7 +265,6 @@ class SingleSatCase(PTestCase):
         """
         Reads a statefield, and also prints it.
         """
-
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
@@ -285,35 +273,14 @@ class SingleSatCase(PTestCase):
         """
         Writes a state
         """
-
         self.flight_controller.write_state(name, val)
 
     def print_ws(self, name, val):
         """
         Writes the state and prints the written value.
         """
-
         self.logger.put(f"{name} set to: {val}")
         self.ws(name, val)
-
-    def print_header(self, title):
-        self.logger.put("\n"+title+"\n")
-
-    def soft_assert(self, condition, *args):
-        """
-        Soft assert prints a fail message if the condition is False
-        
-        If specificied with a fail message, then a pass message, 
-        it will also print a pass message if condition is True.
-        """
-
-        if condition: 
-            if len(args) == 1:
-                pass
-            else:
-                self.logger.put(args[1])
-        else: 
-            self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
 class MissionCase(PTestCase):
     """
