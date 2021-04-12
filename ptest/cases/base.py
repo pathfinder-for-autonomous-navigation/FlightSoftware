@@ -304,8 +304,7 @@ class DualSatCase(PTestCase):
 
         self.leader_initial_state = "startup"
         self.follower_initial_state = "startup"
-        self.leader_initial_state_timeout = 25
-        self.follower_initial_state_timeout = 25
+        self.initial_state_timeout = 25
         self.leader_skip_deployment_wait = False
         self.follower_skip_deployment_wait = False
         self.leader_suppress_faults = True
