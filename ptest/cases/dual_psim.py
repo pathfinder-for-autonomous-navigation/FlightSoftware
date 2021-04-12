@@ -5,7 +5,7 @@ import lin
 from .utils import str_to_val, Enums
 from ..usb_session import USBSession
 
-class DualPsim(DualSatCase):
+class DualPSim(DualSatCase):
 
     @property
     def sim_configs(self):

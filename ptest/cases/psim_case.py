@@ -15,6 +15,7 @@ import lin
 import json
 from ..cases.utils import is_lin_vector, to_lin_vector,Enums
 import math
+from .base import PTestCase, SingleSatCase
 
 class PSimCase(PTestCase):
     """Base class for testcases running with a PSim simulation.
@@ -26,7 +27,7 @@ class PSimCase(PTestCase):
         psim_configs
     """
 
-    def __init__(model, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         """
         super(PSimCase, self).__init__(*args, **kwargs)
@@ -38,13 +39,19 @@ class PSimCase(PTestCase):
             'truth/base',
             'sensors/base'
         ]
-
-        self.psim_model = model
+        
+        self.psim_mode = None
+        if isinstance(self, SingleSatCase):
+            from psim.sims import SingleAttitudeOrbitGnc
+            self.psim_model = SingleAttitudeOrbitGnc
+        else:
+            from psim.sims import DualAttitudeOrbitGnc
+            self.psim_model = DualAttitudeOrbitGnc
 
     def setup(self, *args, **kwargs):
         """
         """
-        super(PsimCase, self).setup(*args, **kwargs)
+        super(PSimCase, self).setup(*args, **kwargs)
 
         configs = [self.psim_config_prefix + config + self.psim_config_suffix for config in self.psim_configs]
         config = psim.Configuration(configs)
