@@ -1,7 +1,7 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 
-class ADCSWheelFaultHandler(SingleSatOnlyCase):
+class ADCSWheelFaultHandler(SingleSatCase):
     @property
     def initial_state(self):
         return "standby"
@@ -48,7 +48,7 @@ class ADCSWheelFaultHandler(SingleSatOnlyCase):
 
         self.finish()
 
-class LowBattFaultHandler(SingleSatOnlyCase):
+class LowBattFaultHandler(SingleSatCase):
     @property
     def sim_duration(self):
         return 0

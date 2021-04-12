@@ -2,10 +2,10 @@
 # tests that the motor rotates 180 degrees with the initial speed and angle
 # constants and with changes to the fields from ground.
 
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class DockingCheckoutCase(SingleSatOnlyCase):
+class DockingCheckoutCase(SingleSatCase):
     def str_to_bool(self, str):
         if str == "true":
             return True

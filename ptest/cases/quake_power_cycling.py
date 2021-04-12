@@ -1,10 +1,10 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 
-class QuakePowerCycling(SingleSatOnlyCase):
+class QuakePowerCycling(SingleSatCase):
     @property
     def initial_state(self):
         return "follower"

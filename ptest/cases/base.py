@@ -282,13 +282,13 @@ class SingleSatCase(PTestCase):
         self.logger.put(f"{name} set to: {val}")
         self.ws(name, val)
 
-class MissionCase(PTestCase):
+class DualSatCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a full mission simulation
     with both satellites.
 
     This function contains many functions that have exactly the same purpose as their
-    counterparts in SingleSatOnlyCase. Be sure to read the class documentation for that
+    counterparts in SingleSatCase. Be sure to read the class documentation for that
     case.
     """
 

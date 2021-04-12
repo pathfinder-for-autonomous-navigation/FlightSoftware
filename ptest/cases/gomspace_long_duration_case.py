@@ -1,4 +1,4 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 from .hardware_stress_test_case import ActuateHardwareCase
 

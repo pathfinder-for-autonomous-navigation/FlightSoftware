@@ -1,5 +1,5 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, mag_of, sum_of_differentials
 import math
 import time
@@ -18,7 +18,7 @@ def list_of_avgs(lists_of_vals):
     len_of_each = len(lists_of_vals[0])
     return [sum_of_each[i]/len_of_each for i in lists_of_vals]
 
-class ADCSCheckoutCase(SingleSatOnlyCase):
+class ADCSCheckoutCase(SingleSatCase):
     def assert_vec_within(self, expected, actual, delta):
         assert(len(expected) == len(actual))
         length = len(expected)

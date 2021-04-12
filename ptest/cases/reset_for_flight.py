@@ -1,8 +1,8 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatCase, TestCaseFailure
 from .utils import Enums
 import math
 
-class ResetforFlight(SingleSatOnlyCase):
+class ResetforFlight(SingleSatCase):
 
   #takes in field name and value to set, then confirms the value was correctly
   #set 

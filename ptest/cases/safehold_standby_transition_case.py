@@ -1,4 +1,4 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums
 from .utils import Enums, TestCaseFailure
@@ -6,7 +6,7 @@ from .utils import Enums, mag_of, sum_of_differentials
 import time, threading
 
 
-class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
+class SafeholdStandbyTransitionCase(SingleSatCase):
 
   #Bool fields so output is not spammed with what state spacecraft is in
   faultTriggered = False

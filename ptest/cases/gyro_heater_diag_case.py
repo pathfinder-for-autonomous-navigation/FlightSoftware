@@ -1,8 +1,8 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
-from .base import SingleSatOnlyCase, TestCaseFailure, Enums
+from .base import SingleSatCase, TestCaseFailure, Enums
 import time
     
-class GyroHeaterDiagCase(SingleSatOnlyCase):
+class GyroHeaterDiagCase(SingleSatCase):
 
     def setup_post_bootsetup(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")

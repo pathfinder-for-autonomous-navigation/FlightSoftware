@@ -1,10 +1,10 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
 
-class GomspaceCheckoutCase(SingleSatOnlyCase):
+class GomspaceCheckoutCase(SingleSatCase):
 
     def str_to_bool(self, string):
         if string == "true":
@@ -171,7 +171,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
 
         self.finish()
 
-class CheckBatteryLevel(SingleSatOnlyCase):
+class CheckBatteryLevel(SingleSatCase):
     def run_case_singlesat(self):
         voltage = float(self.read_state("gomspace.vbatt"))
         self.logger.put("                                 ")

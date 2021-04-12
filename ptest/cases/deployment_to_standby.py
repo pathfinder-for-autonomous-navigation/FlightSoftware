@@ -1,9 +1,9 @@
 # Runs mission from startup state to standby state.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
-class DeploymentToStandby(SingleSatOnlyCase):
+class DeploymentToStandby(SingleSatCase):
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]

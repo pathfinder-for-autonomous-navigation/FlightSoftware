@@ -1,8 +1,8 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
-class PiksiFaultHandler(SingleSatOnlyCase):
+class PiksiFaultHandler(SingleSatCase):
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]

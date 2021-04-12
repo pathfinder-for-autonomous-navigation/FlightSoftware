@@ -1,10 +1,10 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 import time
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
-class PropStateMachineCase(SingleSatOnlyCase):
+class PropStateMachineCase(SingleSatCase):
     @property
     def initial_state(self):
         return "manual"

@@ -1,9 +1,9 @@
 # PiksiCheckoutCase. Checks the functionality of the Piksi
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, mag_of, sum_of_differentials, TestCaseFailure
 import math
     
-class PiksiCheckoutCase(SingleSatOnlyCase):
+class PiksiCheckoutCase(SingleSatCase):
     @property
     def debug_to_console(self):
         return True 

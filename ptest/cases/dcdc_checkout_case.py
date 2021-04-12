@@ -1,7 +1,7 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
-class DCDCCheckoutCase(SingleSatOnlyCase):
+class DCDCCheckoutCase(SingleSatCase):
 
     def __init__(self, *args, **kwargs):
         super(DCDCCheckoutCase, self).__init__(*args, **kwargs)

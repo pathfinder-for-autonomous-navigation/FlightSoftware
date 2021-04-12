@@ -26,10 +26,10 @@ Warning: When running this case the operator must frequently generate plots of
 POC: Kyle Krol
 """
 
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class DitlCase(SingleSatOnlyCase):
+class DitlCase(SingleSatCase):
 
     def setup_post_bootsetup(self):
         self.ws("dcdc.ADCSMotor_cmd", True); self.cycle()

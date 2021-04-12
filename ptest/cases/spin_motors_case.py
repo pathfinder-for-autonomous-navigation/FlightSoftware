@@ -1,9 +1,9 @@
 # SpinMotorsCase. Spins the satellite wheels. Verified working - 04/06 for PR #335
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 import time
 
-class SpinMotorsCase(SingleSatOnlyCase):
+class SpinMotorsCase(SingleSatCase):
     def setup_post_bootsetup(self):
         self.ws("dcdc.ADCSMotor_cmd", True)
         self.cycle()

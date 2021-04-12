@@ -1,9 +1,9 @@
 # Test case that runs in continuous integration to ensure that PTest isn't broken.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 import os
 
-class CICase(SingleSatOnlyCase):
+class CICase(SingleSatCase):
     def run_case_singlesat(self):
         self.cycle_no = int(self.flight_controller.read_state("pan.cycle_no"))
         if self.cycle_no != 1:

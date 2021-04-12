@@ -1,7 +1,7 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 
-class SafeholdReboot(SingleSatOnlyCase):
+class SafeholdReboot(SingleSatCase):
     @property
     def initial_state(self):
         return "standby"

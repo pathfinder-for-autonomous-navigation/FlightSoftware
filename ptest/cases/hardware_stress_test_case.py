@@ -1,7 +1,7 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class ActuateHardwareCase(SingleSatOnlyCase):
+class ActuateHardwareCase(SingleSatCase):
     def setup_hardware(self):
         self.docking_spin_motor_setup()
         self.prop_valves_setup()

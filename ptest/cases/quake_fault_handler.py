@@ -1,8 +1,8 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
-class QuakeFaultHandler(SingleSatOnlyCase):
+class QuakeFaultHandler(SingleSatCase):
     @property
     def sim_duration(self):
         return float("inf")

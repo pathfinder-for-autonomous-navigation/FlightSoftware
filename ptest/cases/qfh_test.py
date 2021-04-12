@@ -1,10 +1,10 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 
-class QFHTest(SingleSatOnlyCase):
+class QFHTest(SingleSatCase):
     @property
     def sim_duration(self):
         return float("inf")

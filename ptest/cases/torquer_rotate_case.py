@@ -1,9 +1,9 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatCase, TestCaseFailure
 from .utils import Enums
 import math
 import time
 
-class MTorquerCase(SingleSatOnlyCase):
+class MTorquerCase(SingleSatCase):
 
     
     def avg_list(self, inputList):

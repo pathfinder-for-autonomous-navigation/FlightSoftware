@@ -1,9 +1,9 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
-class PropFaultHandler(SingleSatOnlyCase):
+class PropFaultHandler(SingleSatCase):
     def __init__(self, *args, **kwargs):
         super(PropFaultHandler, self).__init__(*args, **kwargs)
 
