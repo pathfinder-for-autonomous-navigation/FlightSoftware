@@ -3,7 +3,7 @@ import time
 import math
 import threading
 import traceback
-from .utils import BootUtil, Enums, TestCaseFailure, suppress_faults
+from .utils import Enums, TestCaseFailure, suppress_faults
 import psim # the actual python psim repo
 import lin
 import datetime
@@ -323,17 +323,10 @@ class DualSatCase(PTestCase):
         if self.devices != None:
             self.setup_pre_bootsetup_leader()
             self.setup_pre_bootsetup_follower()
+            
             self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
             self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
-
-            self.boot_util_leader = BootUtil(
-                self.flight_controller_leader, self.logger, self.initial_state_leader, 
-                self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
-            self.boot_util_follower = BootUtil(
-                self.flight_controller_follower, self.logger, self.initial_state_follower, 
-                self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
-            self.boot_util_leader.setup_boot()
-            self.boot_util_follower.setup_boot()
+            
             self.setup_post_bootsetup_leader()
             self.setup_post_bootsetup_follower()
 

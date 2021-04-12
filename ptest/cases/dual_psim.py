@@ -1,11 +1,11 @@
-from .base import MissionCase
+from .base import DualSatCase
 import time
 from psim.sims import DualAttitudeOrbitGnc
 import lin
 from .utils import str_to_val, Enums
 from ..usb_session import USBSession
 
-class DualPsim(MissionCase):
+class DualPsim(DualSatCase):
 
     @property
     def sim_configs(self):

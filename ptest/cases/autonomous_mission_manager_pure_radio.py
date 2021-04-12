@@ -1,10 +1,10 @@
-from .base import MissionCase
+from .base import DualSatCase
 import time
 from psim.sims import DualAttitudeOrbitGnc
 import lin
 from .utils import str_to_val, Enums
 
-class AutonomousMissionController(MissionCase):
+class AutonomousMissionController(DualSatCase):
 
     def state_check(self, satellite, designation):
         satellite_state = satellite.read_state("pan.state")

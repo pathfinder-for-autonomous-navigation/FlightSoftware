@@ -1,9 +1,9 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import MissionCase
+from .base import DualSatCase
 from .utils import Enums, TestCaseFailure
 from psim.sims import DualAttitudeOrbitGnc
 
-class DualEmptyCase(MissionCase):
+class DualEmptyCase(DualSatCase):
     @property
     def initial_state_leader(self):
         return "startup"
