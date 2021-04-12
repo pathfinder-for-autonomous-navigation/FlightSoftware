@@ -41,10 +41,14 @@ class PSimCase(PTestCase):
         ]
         
         self.psim_mode = None
+        self.is_single_sat_sim = None
+
         if isinstance(self, SingleSatCase):
+            self.is_single_sat_sim = True
             from psim.sims import SingleAttitudeOrbitGnc
             self.psim_model = SingleAttitudeOrbitGnc
         else:
+            self.is_single_sat_sim = False
             from psim.sims import DualAttitudeOrbitGnc
             self.psim_model = DualAttitudeOrbitGnc
 
@@ -71,13 +75,7 @@ class PSimCase(PTestCase):
             _sim_configs = List of psim configs
             _sim_modle = The desired psim model
         """
-        self.is_interactive = is_interactive
-        self.devices = devices
-        self.seed = seed
-        self.testcase = testcase
-        self.is_single_sat_sim = is_single_sat_sim
-        self.log = ""
-        
+
         '''
         If this member variable is true, then we will attempt to populate a 
         set of sensor validity fields based off of psim, as well as just purely
@@ -87,26 +85,26 @@ class PSimCase(PTestCase):
 
         # # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
         # if self.device_config != None and 'autotelem' in str(self.device_config):
-        #     self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
+        #     print('[PTEST-SIM] Autotelem ACTIVE!')
         #     self.enable_autotelem = True
         # else:
-        #     self.add_to_log('[PTEST-SIM] Autotelem INACTIVE!')
+        #     print('[PTEST-SIM] Autotelem INACTIVE!')
         #     self.enable_autotelem = False
 
         if self.is_single_sat_sim:
-            self.add_to_log('[PTEST-SIM] Singlesat sim!')
+            print('[PTEST-SIM] Singlesat sim!')
             self.flight_controller = self.devices['FlightController']
         elif self.devices:
-            self.add_to_log('[PTEST-SIM] Dualsat sim!')
+            print('[PTEST-SIM] Dualsat sim!')
             self.flight_controller_leader = self.devices['FlightControllerLeader']
             self.flight_controller_follower = self.devices['FlightControllerFollower']
 
-        self.add_to_log("Configuring simulation (please be patient)...")
+        print("Configuring simulation (please be patient)...")
         start_time = timeit.default_timer()
         self.running = True
         self.configure()
         elapsed_time = timeit.default_timer() - start_time
-        self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
+        print("Configuring simulation took %0.2fs." % elapsed_time)
 
     def cycle(self, *args, **kwargs):
         """
@@ -205,10 +203,6 @@ class PSimCase(PTestCase):
 #     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
 #     sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, device_config):
 
-    def add_to_log(self, msg):
-        print(msg)
-        self.log += f"[{datetime.datetime.now()}] {msg}\n"
-
     def configure(self):
         self.actuator_commands_follower = {}
         prefix = "lib/common/psim/config/parameters/"
@@ -224,14 +218,14 @@ class PSimCase(PTestCase):
         configs_list = [prefix + x + postfix for x in self.sim_configs]
         config = psim.Configuration(configs_list)
         
-        self.add_to_log("[ sim ] Overwriting Initial Sim Conditions...")
+        print("[ sim ] Overwriting Initial Sim Conditions...")
 
         # get the mutation dict from test case
         initials = self.testcase.sim_ic_map
 
         # mutate config
         for k,v in initials.items():
-            self.add_to_log(f"[ sim ] Set {k} to {v}")            
+            print(f"[ sim ] Set {k} to {v}")            
             if type(v) == list:
                 v = to_lin_vector(v)
             config[k] = v
@@ -472,7 +466,7 @@ class PSimCase(PTestCase):
             step += 1
 
         self.running = False
-        self.add_to_log("Simulation ended.")
+        print("Simulation ended.")
     
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]
@@ -494,14 +488,3 @@ class PSimCase(PTestCase):
         
         # rwa_t_yf = 10
         # self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"] = [x*rwa_t_yf for x in self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"]]
-
-    def stop(self, data_dir):
-        """
-        Stops a run of the simulation and saves run data to disk.
-        """
-        self.add_to_log("Stopping simulation...")
-        self.running = False
-        time.sleep(1) # Wait for logs to finish for the current timestep.
-
-        with open(data_dir + "/simulation_log.txt", "w") as fp:
-            fp.write(self.log)
