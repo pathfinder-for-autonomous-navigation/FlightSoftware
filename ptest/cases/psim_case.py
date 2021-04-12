@@ -52,6 +52,7 @@ class PSimCase(PTestCase):
             from psim.sims import DualAttitudeOrbitGnc
             self.psim_model = DualAttitudeOrbitGnc
 
+        
     def setup(self, *args, **kwargs):
         """
         """
@@ -81,7 +82,7 @@ class PSimCase(PTestCase):
         set of sensor validity fields based off of psim, as well as just purely
         setting them to be "working just fine"
         '''
-        self.mock_sensor_validity = False
+        self.mock_sensor_validity = True
 
         # # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
         # if self.device_config != None and 'autotelem' in str(self.device_config):
@@ -110,7 +111,10 @@ class PSimCase(PTestCase):
         """
         """
         super(PSimCase, self).cycle(*args, **kwargs)
-
+        
+        for device in self.devices:
+            self.read_actuators(device)
+        
         # Step 5. Read the actuators from the flight computer(s) and send to psim
         self.read_actuators_send_to_sim()
 
@@ -122,20 +126,19 @@ class PSimCase(PTestCase):
                     
         # Step 3.1 Mock sensor validity flags and states if requested
         if self.mock_sensor_validity:
-            for device_name, device in self.devices.items():
-                self.mock_piksi_state(device_name, device)
-                self.mock_adcs_havt(device_name, device)
-                self.mock_ssa_mode(device_name, device)
+            for device in self.devices:
+                self.mock_piksi_state(device)
+                self.mock_adcs_havt(device)
+                self.mock_ssa_mode(device)
 
-        for device_name, device in self.devices.items():
-            self.transfer_piksi_time(device_name, device)
+        for device in self.devices:
+            self.transfer_piksi_time(device)
 
         ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
 
         # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
-        for device_name, device in self.devices.items():
+        for device in self.devices:
             self.write_adcs_estimator_inputs(device)
-            self.read_actuators(device)
 
         # Step 3 Simulate Flight Computers if need be
         self.simulate_flight_computers()
@@ -163,10 +166,6 @@ class PSimCase(PTestCase):
         #     if self.devices[device].scrape:
         #         self.devices[device].scrape_uplink()
 
-        step += 1        
-
-    def run(self):
-        self.cycle()
 
     def rs_psim(self, name: str):
         '''
@@ -266,19 +265,20 @@ class PSimCase(PTestCase):
         for role,mappings in self.sensors_map.items():
             # iterate across each fc_sf vs psim_sf pair
             for fc_sf,psim_sf in mappings.items():
-                psim_val = self.mysim[psim_sf]
+                psim_val = self.__sim[psim_sf]
                 if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
                     psim_val = list(psim_val)
                 self.sensor_readings[role][fc_sf] = psim_val
 
-    def mock_piksi_state(self, fc_name, fc_device):
+    def mock_piksi_state(self, fc_device):
         '''
         Lets piksi state to be populated with either spp for fixed rtk
         based on a psim flag value
         '''
+        fc_name = fc_device.device_name
         psim_sat_name = self.fc_to_role_map[fc_name]
         try:
-            cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.valid"]
+            cdgps_active = self.__sim["sensors."+psim_sat_name+".cdgps.valid"]
         except RuntimeError:
             # sim does not support this field, probably a single sat setup
             cdgps_active = 0
@@ -292,7 +292,7 @@ class PSimCase(PTestCase):
 
         fc_device.write_state('piksi.state', fsw_piksi_state)
 
-    def mock_adcs_havt(self, fc_name, fc_device):
+    def mock_adcs_havt(self, fc_device):
         '''
         Set the gyro, and both mags to be "working"
         '''
@@ -300,13 +300,14 @@ class PSimCase(PTestCase):
         fc_device.write_state('adcs_monitor.havt_device1', True)
         fc_device.write_state('adcs_monitor.havt_device2', True)
 
-    def mock_ssa_mode(self, fc_name, fc_device):
+    def mock_ssa_mode(self, fc_device):
         '''
         Lets ssa mode to be populated with either SSA_COMPLETE OR SSA_FAILURE
         based on a psim flag value        
         '''
+        fc_name = fc_device.device_name
         psim_sat_name = self.fc_to_role_map[fc_name]
-        ssa_vec = self.mysim[f"sensors.{psim_sat_name}.sun_sensors.s"]
+        ssa_vec = self.__sim[f"sensors.{psim_sat_name}.sun_sensors.s"]
         fsw_ssa_mode = -1
 
         # if any of ssa_vec is nan
@@ -317,8 +318,8 @@ class PSimCase(PTestCase):
 
         fc_device.write_state('adcs_monitor.ssa_mode', fsw_ssa_mode)
 
-    def transfer_piksi_time(self, fc_name, fc_device):
-        psim_time_ns = self.mysim['truth.t.ns']
+    def transfer_piksi_time(self, fc_device):
+        psim_time_ns = self.__sim['truth.t.ns']
         python_time = GPSTime(psim_time_ns)
 
         fc_device.write_state('piksi.time', python_time.to_list())
@@ -339,7 +340,7 @@ class PSimCase(PTestCase):
         Allow simulation to step forward in time and update its
         truth.
         """
-        self.mysim.step()
+        self.__sim.step()
 
     def simulate_flight_computers(self):
         """
@@ -376,7 +377,7 @@ class PSimCase(PTestCase):
                     else:
                         raise RuntimeError("Unexpected List Length, can't change into lin Vector")
 
-                self.mysim[psim_sf] = local
+                self.__sim[psim_sf] = local
     
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]

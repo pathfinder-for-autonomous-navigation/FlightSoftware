@@ -27,7 +27,7 @@ class PSimDebug(SingleSatCase, PSimCase):
         return
 
     def data_logs(self):
-
+        
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
         self.rs("radio.state")
@@ -51,8 +51,11 @@ class PSimDebug(SingleSatCase, PSimCase):
         self.rs("attitude_estimator.valid"),
         self.rs("attitude_estimator.w_bias_body"),
         self.rs("orbit.valid")
+        
 
     def run(self):
+        self.cycle()
+
         self.rs_psim("truth.leader.attitude.w")
         self.rs_psim("truth.t.ns")
         self.rs_psim("truth.dt.ns")
