@@ -33,7 +33,7 @@ class PSimCase(PTestCase):
         super(PSimCase, self).__init__(*args, **kwargs)
 
         self.psim_config_overrides = dict()
-        self.psim_config_prefix = 'lib/common/psim/configs/parameters/'
+        self.psim_config_prefix = 'lib/common/psim/config/parameters/'
         self.psim_config_suffix = '.txt'
         self.psim_configs = [
             'truth/base',

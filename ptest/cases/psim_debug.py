@@ -11,6 +11,7 @@ class PSimDebug(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(PSimDebug, self).__init__(*args, **kwargs)
         self.initial_state = "startup"
+        self.psim_configs += ['truth/deployment']
 
     @property
     def sim_ic_map(self):
