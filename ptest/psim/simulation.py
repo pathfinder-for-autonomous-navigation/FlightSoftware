@@ -41,15 +41,10 @@ class PSimCase(PTestCase):
 
         self.psim_model = model
 
-        if isinstance(self, SingleSatCase):
-            self._cycle = self._single_sat_cycle
-        else:
-            self._cycle = self._dual_sat_cycle
-
-    def setup_case(self, *args, **kwargs):
+    def setup(self, *args, **kwargs):
         """
         """
-        super(PsimCase, self).setup_case(*args, **kwargs)
+        super(PsimCase, self).setup(*args, **kwargs)
 
         configs = [self.psim_config_prefix + config + self.psim_config_suffix for config in self.psim_configs]
         config = psim.Configuration(configs)
@@ -58,18 +53,117 @@ class PSimCase(PTestCase):
 
         self.__sim = self.psim_model(config)
 
+        """
+        Initializes self
+
+        Args:
+            devices: Connected Teensy devices that are controllable
+            seed(int or None) random number generator seed or None
+            print_log: If true, prints logging messages to the console rather than
+                       just to a file.
+            _sim_configs = List of psim configs
+            _sim_modle = The desired psim model
+            _mappings_file_name = The json file containing the mappings of fc to psim statefields
+        """
+        self.is_interactive = is_interactive
+        self.devices = devices
+        self.seed = seed
+        self.testcase = testcase
+        self.sim_duration = sim_duration
+        self.sim_initial_state = sim_initial_state
+        self.is_single_sat_sim = is_single_sat_sim
+        self.log = ""
+
+        self.mapping_configs = "ci_mapping.json"
+        
+        '''
+        If this member variable is true, then we will attempt to populate a 
+        set of sensor validity fields based off of psim, as well as just purely
+        setting them to be "working just fine"
+        '''
+        self.mock_sensor_validity = False
+
+        # # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
+        # if self.device_config != None and 'autotelem' in str(self.device_config):
+        #     self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
+        #     self.enable_autotelem = True
+        # else:
+        #     self.add_to_log('[PTEST-SIM] Autotelem INACTIVE!')
+        #     self.enable_autotelem = False
+
+        if self.is_single_sat_sim:
+            self.add_to_log('[PTEST-SIM] Singlesat sim!')
+            self.flight_controller = self.devices['FlightController']
+        elif self.devices:
+            self.add_to_log('[PTEST-SIM] Dualsat sim!')
+            self.flight_controller_leader = self.devices['FlightControllerLeader']
+            self.flight_controller_follower = self.devices['FlightControllerFollower']
+
+        self.add_to_log("Configuring simulation (please be patient)...")
+        start_time = timeit.default_timer()
+        self.running = True
+        self.configure()
+        elapsed_time = timeit.default_timer() - start_time
+        self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
+
     def cycle(self, *args, **kwargs):
         """
         """
         super(PSimCase, self).cycle(*args, **kwargs)
 
-        self._cycle()
+        # Step 5. Read the actuators from the flight computer(s) and send to psim
+        self.read_actuators_send_to_sim()
 
-        # TODO : Write actuator commands to the sim
+        # Step 1. Generate dynamics
+        self.update_dynamics()
 
-        self.__sim.step()
+        # Step 2. Load sensor data from psim into ptest
+        self.update_sensors()
+                    
+        # Step 3.1 Mock sensor validity flags and states if requested
+        if self.mock_sensor_validity:
+            for device_name, device in self.devices.items():
+                self.mock_piksi_state(device_name, device)
+                self.mock_adcs_havt(device_name, device)
+                self.mock_ssa_mode(device_name, device)
 
-        # TODO : Write sensor data to the flight computer
+        for device_name, device in self.devices.items():
+            self.transfer_piksi_time(device_name, device)
+
+        ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
+
+        # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
+        for device_name, device in self.devices.items():
+            self.write_adcs_estimator_inputs(device)
+            self.read_actuators(device)
+
+        # Step 3 Simulate Flight Computers if need be
+        self.simulate_flight_computers()
+
+        # # Step 3.3. Allow test case to do its own meddling with the flight computer.
+        # self.testcase.run_case()
+
+        # # Step 3.4. Step the flight computer forward.
+        # if self.is_single_sat_sim:
+        #     self.flight_controller.write_state("cycle.start", "true")
+        # else:
+        #     self.flight_controller_follower.write_state("cycle.start", "true")
+        #     self.flight_controller_leader.write_state("cycle.start", "true")
+
+        # # Step 4. Send telemetry to database
+        # if self.enable_autotelem:
+        #     if self.is_single_sat_sim:
+        #         self.flight_controller.dbtelem()
+        #     else:
+        #         self.flight_controller_follower.dbtelem()
+        #         self.flight_controller_leader.dbtelem()
+
+        # # Step 6. Read incoming uplinks
+        # for device in self.devices:
+        #     if self.devices[device].scrape:
+        #         self.devices[device].scrape_uplink()
+
+        step += 1        
 
     def psim_rs(self, name: str):
         '''
@@ -102,77 +196,12 @@ class PSimCase(PTestCase):
         ret = self.psim_rs(name)
         self.logger.put(f"{name} is {ret}")
 
-class CppSimulation(object):
-    """
-    Full mission simulation, including both spacecraft.
-    """
-    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, device_config):
-        """
-        Initializes self
-
-        Args:
-            devices: Connected Teensy devices that are controllable
-            seed(int or None) random number generator seed or None
-            print_log: If true, prints logging messages to the console rather than
-                       just to a file.
-            _sim_configs = List of psim configs
-            _sim_modle = The desired psim model
-            _mappings_file_name = The json file containing the mappings of fc to psim statefields
-        """
-        self.is_interactive = is_interactive
-        self.devices = devices
-        self.seed = seed
-        self.testcase = testcase
-        self.sim_duration = sim_duration
-        self.sim_initial_state = sim_initial_state
-        self.is_single_sat_sim = is_single_sat_sim
-        self.sim_configs = _sim_configs
-        self.sim_model = _sim_model
-        self.mapping_file_name = _mapping_file_name
-        self.log = ""
-        
-        '''
-        If this member variable is true, then we will attempt to populate a 
-        set of sensor validity fields based off of psim, as well as just purely
-        setting them to be "working just fine"
-        '''
-        self.mock_sensor_validity = False
-
-        # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
-        if device_config != None and 'autotelem' in str(device_config):
-            self.add_to_log('[PTEST-SIM] Autotelem ACTIVE!')
-            self.enable_autotelem = True
-        else:
-            self.add_to_log('[PTEST-SIM] Autotelem INACTIVE!')
-            self.enable_autotelem = False
-
-        if self.is_single_sat_sim:
-            self.add_to_log('[PTEST-SIM] Singlesat sim!')
-            self.flight_controller = self.devices['FlightController']
-        elif self.devices:
-            self.add_to_log('[PTEST-SIM] Dualsat sim!')
-            self.flight_controller_leader = self.devices['FlightControllerLeader']
-            self.flight_controller_follower = self.devices['FlightControllerFollower']
-
-        self.add_to_log("Configuring simulation (please be patient)...")
-        start_time = timeit.default_timer()
-        self.running = True
-        self.configure()
-        elapsed_time = timeit.default_timer() - start_time
-        self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
-
-    def start(self):
-        '''
-        Start the PSim C++ simulation. This function is blocking until the simulation begins.
-        '''
-        self.add_to_log("Starting simulation loop...")
-        if self.is_interactive:
-            self.sim_thread = threading.Thread(name="Simulation Interface",
-                                        target=self.run)
-            self.sim_thread.start()
-        else:
-            self.run()
+# class CppSimulation(object):
+#     """
+#     Full mission simulation, including both spacecraft.
+#     """
+#     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
+#     sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, device_config):
 
     def add_to_log(self, msg):
         print(msg)
