@@ -167,6 +167,14 @@ class SingleSatCase(PTestCase):
         initial_state_timeout  Timeout period in cycles in which flight software
                                has to get into the desired initial state. If
                                this timeout is violated, the testcase will fail.
+
+        skip_deployment_wait  Set this to true to skip the deployment wait. This
+                              sets the deployment elapsed counter high enough in
+                              setup so the satellite skips deployment wait on
+                              its very next cycle. Defaults to false.
+
+        suppress_faults  Set this to true to suppress faults in setup. Defaults
+                         to true.
     """
     def __init__(self, *args, **kwargs):
         super(SingleSatCase, self).__init__(*args, **kwargs)
@@ -194,9 +202,10 @@ class SingleSatCase(PTestCase):
         self.pre_boot()
 
         if self.initial_state:
-            cycles = 0 
+            cycles = 0
+            initial_state = Enums.mission_states[self.initial_state]
             state = self.flight_controller.smart_read("pan.state")
-            while cycles < self.initial_state_timeout and state != self.initial_state:
+            while cycles < self.initial_state_timeout and state != initial_state:
                 super(SingleSatCase, self).cycle()
 
                 cycles = cycles + 1
