@@ -188,12 +188,19 @@ class SingleSatCase(PTestCase):
             suppress_faults(self.flight_controller, self.logger)
 
         if self.skip_deployment_wait:
-            # TODO : Actually skip deployment wait
-            pass
+            self.logger.put("[TESTCASE] Skipping deployment wait!")
+            self.flight_controller.write_state("pan.deployment.elapsed", "15000")
 
         self.pre_boot()
 
-        # Boot utility stuff
+        if self.initial_state:
+            cycles = 0 
+            state = self.flight_controller.smart_read("pan.state")
+            while cycles < self.initial_state_timeout and state != self.initial_state:
+                super(SingleSatCase, self).cycle()
+
+                cycles = cycles + 1
+                state = self.flight_controller.smart_read("pan.state")
 
         self.post_boot()
 
