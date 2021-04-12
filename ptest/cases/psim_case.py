@@ -29,7 +29,7 @@ class PSimCase(PTestCase):
     def __init__(model, *args, **kwargs):
         """
         """
-        super(PSimSimulation, self).__init__(*args, **kwargs)
+        super(PSimCase, self).__init__(*args, **kwargs)
 
         self.psim_config_overrides = dict()
         self.psim_config_prefix = 'lib/common/psim/configs/parameters/'
@@ -63,18 +63,13 @@ class PSimCase(PTestCase):
                        just to a file.
             _sim_configs = List of psim configs
             _sim_modle = The desired psim model
-            _mappings_file_name = The json file containing the mappings of fc to psim statefields
         """
         self.is_interactive = is_interactive
         self.devices = devices
         self.seed = seed
         self.testcase = testcase
-        self.sim_duration = sim_duration
-        self.sim_initial_state = sim_initial_state
         self.is_single_sat_sim = is_single_sat_sim
         self.log = ""
-
-        self.mapping_configs = "ci_mapping.json"
         
         '''
         If this member variable is true, then we will attempt to populate a 
@@ -241,12 +236,21 @@ class PSimCase(PTestCase):
         self.sat_names = ['leader','follower']
         if self.is_single_sat_sim:
             self.sat_names = ['leader']
-
-        # Open the correct mapping config file. self.mapping_file_name is a property of the ptest case
-        self.mapping_file_name
-        fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
-        with open(fn) as json_file:
-            self.fc_vs_sim = json.load(json_file)
+            
+        self.fc_vs_sim = {
+            "fc_vs_sim_s":{
+                "piksi.pos": "truth.sat.orbit.r.ecef",
+                "piksi.vel": "truth.sat.orbit.v.ecef",
+                "adcs_monitor.ssa_vec":  "truth.sat.environment.s.body",
+                "adcs_monitor.mag1_vec": "truth.sat.environment.b.body",
+                "adcs_monitor.gyr_vec": "truth.sat.attitude.w",
+                "adcs_monitor.rwa_speed_rd": "truth.sat.wheels.w"
+            },
+            "fc_vs_sim_a":{
+                "adcs_cmd.mtr_cmd": "truth.sat.magnetorquers.m",
+                "adcs_cmd.rwa_torque_cmd": "truth.sat.wheels.t"
+            }
+        }
 
         # Create sub dictionaries for sensors and actuators
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']

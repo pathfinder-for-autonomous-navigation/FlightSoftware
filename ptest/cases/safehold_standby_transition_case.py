@@ -43,14 +43,6 @@ class SafeholdStandbyTransitionCase(SingleSatCase):
     return "startup"
 
   @property
-  def fast_boot(self):
-    return True
-
-  @property
-  def sim_initial_state(self):
-    return "startup"
-
-  @property
   def sim_ic_map(self):
     ret = {}
     ret["truth.t.ns"] = 420000000*10

@@ -11,6 +11,7 @@ from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_case import AutonomousMissionManagerCase
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
+from .psim_case import PsimCase
 from .psim_debug import PsimDebug
 from .dual_psim import DualPsim
 
