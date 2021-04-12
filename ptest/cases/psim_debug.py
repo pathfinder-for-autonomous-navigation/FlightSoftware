@@ -3,7 +3,7 @@ from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, mag_of, sum_of_differentials
 
-class PsimDebug(SingleSatCase):
+class PsimDebug(SingleSatCase, PsimCase):
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]
@@ -13,14 +13,6 @@ class PsimDebug(SingleSatCase):
     @property
     def sim_model(self):
         return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def debug_to_console(self):
-        return True
 
     @property
     def sim_duration(self):
