@@ -154,15 +154,13 @@ class PTestCase(object):
         else: 
             self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
-
-
 class SingleSatCase(PTestCase):
     """Base class for all HOOTL and HITL testcases involving a single satellite.
 
     Attributes:
         initial_state  Set this to the string name of a desired flight software
                        state. The testcase will cycle in setup until this state
-                       is reached.
+                       is reached. Defaults to 'startup'.
 
         initial_state_timeout  Timeout period in cycles in which flight software
                                has to get into the desired initial state. If
@@ -179,7 +177,7 @@ class SingleSatCase(PTestCase):
     def __init__(self, *args, **kwargs):
         super(SingleSatCase, self).__init__(*args, **kwargs)
 
-        self.initial_state = None
+        self.initial_state = "startup"
         self.initial_state_timeout = 25
         self.skip_deployment_wait = False
         self.suppress_faults = True
@@ -201,33 +199,30 @@ class SingleSatCase(PTestCase):
 
         self.pre_boot()
 
-        if self.initial_state:
-            cycles = 0
-            initial_state = Enums.mission_states[self.initial_state]
-            state = self.flight_controller.smart_read("pan.state")
-            while cycles < self.initial_state_timeout and state != initial_state:
-                super(SingleSatCase, self).cycle()
+        cycles = 0
+        initial_state = Enums.mission_states[self.initial_state]
+        state = self.flight_controller.smart_read("pan.state")
+        while cycles < self.initial_state_timeout and state != initial_state:
+            if cycles > self.initial_state_timeout:
+                raise TestCaseFailure(f"Failed to reach desired state of {initial_state}")
 
-                cycles = cycles + 1
-                state = self.flight_controller.smart_read("pan.state")
+            super(SingleSatCase, self).cycle()
+
+            cycles = cycles + 1
+            state = self.flight_controller.smart_read("pan.state")
 
         self.post_boot()
 
     def pre_boot(self):
-        """
-        Setup that should run prior to the boot utility setup.
-
-        The boot utility sets up fault suppressions and timeouts so that it steps through
-        the state machine in the correct way. Therefore, all fault-suppression related
-        setup that overlaps with the boot utility should happen in the setup_post_bootsetup
-        function, not here.
+        """Allows a testcase to perform actions just after supressing faults and
+        skipping deployment wait but before attempting to boot the spacecraft.
+        See setup for more information.
         """
         pass
 
     def post_boot(self):
-        """
-        Setup that should run after the boot utility has finished its setup. See
-        documentation for setup_pre_bootsetup for more details.
+        """Allows a testcase to perform actions just after booting the
+        spacecraft. See setup for more information.
         """
         pass
 
@@ -299,14 +294,22 @@ class SingleSatCase(PTestCase):
         self.ws(name, val)
 
 class DualSatCase(PTestCase):
+    """Base class for all HOOTL and HITL testcases involving two satellites.
+    See the SingleSatCase for descriptions of the attributes. Many of the other
+    functions used here mirror elements of SingleSatCase as well so be sure to
+    checkout the documentation there too.
     """
-    Base testcase for writing testcases that only work with a full mission simulation
-    with both satellites.
+    def __init__(self, *args, **kwargs):
+        super(DualSatCase, self).__init__(*args, **kwargs)
 
-    This function contains many functions that have exactly the same purpose as their
-    counterparts in SingleSatCase. Be sure to read the class documentation for that
-    case.
-    """
+        self.leader_initial_state = "startup"
+        self.follower_initial_state = "startup"
+        self.leader_initial_state_timeout = 25
+        self.follower_initial_state_timeout = 25
+        self.leader_skip_deployment_wait = False
+        self.follower_skip_deployment_wait = False
+        self.leader_suppress_faults = True
+        self.follower_suppress_faults = True
 
     def populate_devices(self, devices, radios):
         if devices:
@@ -319,50 +322,62 @@ class DualSatCase(PTestCase):
         else:
             self.radio_leader = None
             self.radio_follower = None
-        
 
-    @property
-    def initial_state_leader(self):
-        raise NotImplementedError
-    @property
-    def initial_state_follower(self):
-        raise NotImplementedError
+    def setup(self, devices, radios):
+        super(DualSatCase, self).setup(devices, radios)
 
-    @property
-    def fast_boot_leader(self):
-        raise NotImplementedError
-    @property
-    def fast_boot_follower(self):
-        raise NotImplementedError
+        if self.leader_suppress_faults:
+            self.logger.put("[TESTCASE] Suppressing leader faults!")
+            suppress_faults(self.flight_controller_leader, self.logger)
 
-    def _setup_case(self):
-        if self.devices != None:
-            self.setup_pre_bootsetup_leader()
-            self.setup_pre_bootsetup_follower()
-            
-            self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
-            self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
-            
-            self.setup_post_bootsetup_leader()
-            self.setup_post_bootsetup_follower()
+        if self.follower_suppress_faults:
+            self.logger.put("[TESTCASE] Suppressing follower faults!")
+            suppress_faults(self.flight_controller_follower, self.logger)
 
-    def setup_pre_bootsetup_leader(self): pass
-    def setup_pre_bootsetup_follower(self): pass
-    def setup_post_bootsetup_leader(self): pass
-    def setup_post_bootsetup_follower(self): pass
+        if self.leader_skip_deployment_wait:
+            self.logger.put("[TESTCASE] Skipping leader deployment wait!")
+            self.flight_controller_leader.write_state("pan.deployment.elapsed", "15000")
 
-    def _run_case(self):
-        if self.devices != None:
-            if not self.boot_util_follower.finished_boot(): return
-            if not self.boot_util_leader.finished_boot(): return
-        self.run_case_fullmission()
+        if self.follower_skip_deployment_wait:
+            self.logger.put("[TESTCASE] Skipping follower deployment wait!")
+            self.flight_controller_follower.write_state("pan.deployment.elapsed", "15000")
 
-    def run_case_fullmission(self):
-        raise NotImplementedError
+        self.pre_boot()
+
+        cycles = 0
+        leader_initial_state = Enums.mission_states[self.leader_initial_state]
+        leader_state = self.flight_controller_leader.smart_read("pan.state")
+        follower_initial_state = Enums.mission_states[self.follower_initial_state]
+        follower_state = self.flight_controller_follower.smart_read("pan.state")
+        while leader_state != leader_initial_state and follower_state != follower_initial_state:
+            if cycles > self.initial_state_timeout:
+                raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}")
+
+            super(DualSatCase, self).cycle()
+
+            cycles = cycles + 1
+            leader_state = self.flight_controller_leader.smart_read("pan.state")
+            follower_state = self.flight_controller_follower.smart_read("pan.state")
+
+        self.post_boot()
+
+    def pre_boot(self):
+        """Allows a testcase to perform actions just after supressing faults and
+        skipping deployment wait but before attempting to boot the spacecraft.
+        See setup for more information.
+        """
+        pass
+
+    def post_boot(self):
+        """Allows a testcase to perform actions just after booting the
+        spacecraft. See setup for more information.
+        """
+        pass
 
     @property
     def mission_state_leader(self):
         return Enums.mission_states[int(self.flight_controller_leader.read_state("pan.state"))]
+
     @property
     def mission_state_follower(self):
         return Enums.mission_states[int(self.flight_controller_follower.read_state("pan.state"))]
@@ -370,6 +385,7 @@ class DualSatCase(PTestCase):
     @mission_state_leader.setter
     def mission_state_leader(self, state):
         self.flight_controller_leader.write_state("pan.state", int(Enums.mission_states[state]))
+
     @mission_state_follower.setter
     def mission_state_follower(self, state):
         self.flight_controller_follower.write_state("pan.state", int(Enums.mission_states[state]))
