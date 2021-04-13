@@ -13,12 +13,6 @@ class PSimDebug(SingleSatCase, PSimCase):
         self.initial_state = "startup"
         self.psim_configs += ['truth/deployment']
 
-    @property
-    def sim_ic_map(self):
-        ret = {}
-        ret["truth.t.ns"] = 420000000*10
-        return ret
-
     def setup_post_bootsetup(self):
         # self.print_ws("pan.state", Enums.mission_states['standby'])
         # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])

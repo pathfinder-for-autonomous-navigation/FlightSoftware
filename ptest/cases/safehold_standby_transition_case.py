@@ -28,13 +28,6 @@ class SafeholdStandbyTransitionCase(SingleSatCase):
   def initial_state(self):
     return "startup"
 
-  @property
-  def sim_ic_map(self):
-    ret = {}
-    ret["truth.t.ns"] = 420000000*10
-    ret["truth.leader.attitude.w"] = [0.01, 0.073, -0.01]
-    return ret
-
   def setup_pre_bootsetup(self):
     self.ws("cycle.auto", False)
       

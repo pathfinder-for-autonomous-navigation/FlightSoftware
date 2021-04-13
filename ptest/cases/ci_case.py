@@ -4,7 +4,7 @@ from .utils import Enums, TestCaseFailure
 import os
 
 class CICase(SingleSatCase):
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = int(self.flight_controller.read_state("pan.cycle_no"))
         if self.cycle_no != 1:
             raise TestCaseFailure(f"Cycle number was incorrect: expected {1} got {self.cycle_no}.")

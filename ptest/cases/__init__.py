@@ -17,7 +17,7 @@ from .psim_debug import PSimDebug
 from .dual_psim import DualPSim
 
 # Testcases that don't require simulation
-from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
