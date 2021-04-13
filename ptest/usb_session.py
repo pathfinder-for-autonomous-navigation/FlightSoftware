@@ -155,7 +155,7 @@ class USBSession(object):
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
-                    print("\n" + logline)
+                    # print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
@@ -438,7 +438,7 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print(f"Error parsing telemetry on {self.device_name}")            
+            # print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
