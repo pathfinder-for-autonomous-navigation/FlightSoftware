@@ -113,14 +113,14 @@ class SingleSatCase(PTestCase):
         """
         super(SingleSatCase, self).cycle()
 
-        if self.device_config[0]['enable_auto_dbtelem']:
-            self.flight_controller.dbtelem()
-
         if self.flight_controller.scrape:
             self.flight_controller.scrape_uplink()
+        if self.flight_controller.enable_auto_dbtelem:
+            self.flight_controller.dbtelem()
 
         self.flight_controller.write_state('cycle.start', 'true')
-
+        print("FINISH SINGLE")
+        
     def rs(self, name):
         """
         Reads a state field (with type inference from smart_read()).

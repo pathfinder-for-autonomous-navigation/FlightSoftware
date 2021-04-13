@@ -119,7 +119,7 @@ class PSimCase(PTestCase):
             self.read_actuators(device)
         
         # Step 5. Read the actuators from the flight computer(s) and send to psim
-        self.read_actuators_send_to_sim()
+        self.send_to_sim()
 
         # Step 1. Generate dynamics
         self.update_dynamics()
@@ -141,7 +141,7 @@ class PSimCase(PTestCase):
 
         # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
         for device in self.devices:
-            self.write_adcs_estimator_inputs(device)
+            self.write_sensor_inputs(device)
 
         # Step 3 Simulate Flight Computers if need be
         self.simulate_flight_computers()
@@ -168,7 +168,7 @@ class PSimCase(PTestCase):
         # for device in self.devices:
         #     if self.devices[device].scrape:
         #         self.devices[device].scrape_uplink()
-
+        print("FINISH PSIM CYCLE")
 
     def rs_psim(self, name: str):
         '''
@@ -318,7 +318,7 @@ class PSimCase(PTestCase):
 
         fc_device.write_state('piksi.time', python_time.to_list())
 
-    def write_adcs_estimator_inputs(self, fc):
+    def write_sensor_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
 
         role = self.fc_to_role_map[fc.device_name]
@@ -348,7 +348,7 @@ class PSimCase(PTestCase):
         # we're all grown up now, don't need this
         pass 
 
-    def read_actuators_send_to_sim(self):
+    def send_to_sim(self):
         """
         Send actuator commands from the real flight computer to the
         simulation so that it can update dynamics.
