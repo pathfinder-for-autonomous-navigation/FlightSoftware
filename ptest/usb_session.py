@@ -155,7 +155,7 @@ class USBSession(object):
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
-                    print("\n" + logline)
+                    # print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
@@ -438,14 +438,14 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print(f"Error parsing telemetry on {self.device_name}")            
+            # print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time": str(datetime.datetime.now().isoformat())
+                "time.downlink_recieved": str(datetime.datetime.now().isoformat())
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':

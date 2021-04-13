@@ -243,7 +243,7 @@ void QuakeManager::copy_next_packet()
     // load the current 70 bytes of the buffer
     qct.set_downlink_msg(mo_buffer_copy + (packet_size * mo_idx), packet_size);
     #if !defined(FLIGHT) && defined(AUTOTELEM)
-    printf(debug_severity::error, "Attempting to Dump Telemetry\n");
+    // printf(debug_severity::error, "Attempting to Dump Telemetry\n");
     dump_debug_telemetry(mo_buffer_copy + (packet_size * mo_idx), packet_size);
     #endif
     assert(max_snapshot_size / packet_size != 0);
