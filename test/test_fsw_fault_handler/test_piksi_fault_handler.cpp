@@ -50,7 +50,7 @@ public:
         no_cdgps_max_wait_fp = registry.find_writable_field_t<unsigned int>("piksi_fh.no_cdpgs_max_wait");
         cdgps_delay_max_wait_fp = registry.find_writable_field_t<unsigned int>("piksi_fh.cdpgs_delay_max_wait");
         fault_handler_enabled_fp = registry.find_writable_field_t<bool>("piksi_fh.enabled");
-        last_rtkfix_ccno_fp = registry.find_internal_field_t<unsigned int>("piksi.last_rtkfix_ccno");
+        last_rtkfix_ccno_fp = registry.find_internal_field_t<unsigned int>("piksi_fh.last_rtkfix_ccno");
     }
 };
 
@@ -93,7 +93,7 @@ void test_dead_piksi()
     TestFixture tf;
     tf.set_piksi_state(piksi_mode_t::dead);
     fault_response_t response = tf.pfh->execute();
-    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
 }
 
 /**

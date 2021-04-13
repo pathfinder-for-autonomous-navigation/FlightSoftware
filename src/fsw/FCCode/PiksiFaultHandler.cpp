@@ -11,7 +11,7 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry &r)
       no_cdgps_max_wait_f("piksi_fh.no_cdpgs_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
       cdgps_delay_max_wait_f("piksi_fh.cdpgs_delay_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
       fault_handler_enabled_f("piksi_fh.enabled", Serializer<bool>()),
-      last_rtkfix_ccno_f("piksi.last_rtkfix_ccno")
+      last_rtkfix_ccno_f("piksi_fh.last_rtkfix_ccno")
 {
     add_writable_field(no_cdgps_max_wait_f);
     add_writable_field(cdgps_delay_max_wait_f);
@@ -27,7 +27,6 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry &r)
 
     piksi_state_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
-    // last_rtkfix_ccno_fp = find_internal_field<unsigned int>("piksi.last_rtkfix_ccno", __FILE__, __LINE__);
     last_rtkfix_ccno_f.set(0);
     enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_approach_ccno", __FILE__, __LINE__);
 }
@@ -40,9 +39,10 @@ fault_response_t PiksiFaultHandler::execute()
     piksi_mode_t piksi_state = static_cast<piksi_mode_t>(piksi_state_fp->get());
     mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
 
-    if (piksi_state == piksi_mode_t::dead)
+    // Recommend moving to safehold if piksi is dead in a non-standby state
+    if (mission_state != mission_state_t::startup && piksi_state == piksi_mode_t::dead)
     {
-        return fault_response_t::standby;
+        return fault_response_t::safehold;
     }
 
     if (piksi_state == piksi_mode_t::fixed_rtk)
@@ -62,8 +62,6 @@ fault_response_t PiksiFaultHandler::execute()
 fault_response_t PiksiFaultHandler::check_cdgps()
 {
     unsigned int close_appr_time = enter_close_appr_time_fp->get();
-    // unsigned int last_rtkfix_time = last_rtkfix_ccno_fp->get();
-
     unsigned int last_rtkfix_time = last_rtkfix_ccno_f.get();
     unsigned int duration = TimedControlTaskBase::control_cycle_count - std::max(close_appr_time, last_rtkfix_time);
 

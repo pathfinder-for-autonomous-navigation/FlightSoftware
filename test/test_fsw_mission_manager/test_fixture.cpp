@@ -37,7 +37,6 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     adcs_dcdc_fp = registry.create_writable_field<bool>("dcdc.ADCSMotor_cmd");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    // last_rtkfix_ccno_fp = registry.find_internal_field_t<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
