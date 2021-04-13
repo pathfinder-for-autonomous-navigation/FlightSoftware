@@ -2,7 +2,8 @@
 #define mission_state_t_enum_
 
 // pan.state
-enum class mission_state_t {
+enum class mission_state_t
+{
     startup,
     detumble,
     initialization_hold,

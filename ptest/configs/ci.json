@@ -21,13 +21,5 @@
             "check_uplink_queue_enable": false,
             "http_port": 8001
         }
-    ],
-    "tlm": {
-        "email_username" : "",
-        "email_password" : "",
-        "webservice": {
-            "server": "",
-            "port": 0
-        }
-    }
+    ]
 }

@@ -19,21 +19,8 @@
             "connect": false,
             "send_queue_duration": 0,
             "send_lockout_duration": 0,
-<<<<<<< Updated upstream
-            "check_uplink_queue_enable": false,
-            "http_port": 8001
-=======
             "http_port": 8001,
             "check_uplink_queue_enable": false
->>>>>>> Stashed changes
         }
-    ],
-    "tlm": {
-        "email_username": "",
-        "email_password": "",
-        "webservice": {
-            "server": "",
-            "port": 0
-        }
-    }
+    ]
 }

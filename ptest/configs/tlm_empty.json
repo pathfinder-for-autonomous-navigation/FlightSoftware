@@ -1,0 +1,10 @@
+{
+"tlm": {
+    "email_username" : "",
+    "email_password" : "",
+    "webservice": {
+        "server": "",
+        "port": 0
+    }
+}
+}

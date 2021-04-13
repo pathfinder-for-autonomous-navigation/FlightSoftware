@@ -197,7 +197,7 @@ void ADCSBoxMonitor::execute(){
     else{
         ssa_vec_f.set(lin::nans<lin::Vector3f>());
     }
-    
+
     //set statefields from internal containers
     rwa_speed_rd_f.set(to_linvector(rwa_speed_rd));
     rwa_torque_rd_f.set(to_linvector(rwa_torque_rd));
