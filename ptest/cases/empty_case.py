@@ -16,10 +16,14 @@ class EmptySimCase(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(EmptySimCase, self).__init__(*args, **kwargs)
         self.psim_configs += ['truth/deployment']
-    
+
     def run(self):
         pass
 
 class FailingEmptySimCase(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(EmptySimCase, self).__init__(*args, **kwargs)
+        self.psim_configs += ['truth/deployment']
+
     def run(self):
         raise TestCaseFailure("Deliberate failure intended to test failure in CI.")
