@@ -18,6 +18,7 @@ import json
 from ..utils import is_lin_vector, to_lin_vector,Enums
 import math
 from .ptest_case import PTestCase
+from .single_sat_case import SingleSatCase
 
 class PSimCase(PTestCase):
     """Base class for testcases running with a PSim simulation.
