@@ -183,9 +183,11 @@ void MissionManager::dispatch_startup()
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
+        else{
+            // Resume power to Piksi if it is not on already
+            piksi_off_fp->set(false);
     }
-    // Resume power to Piksi if it is not on already
-    piksi_off_fp->set(false);
+    }
 
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
