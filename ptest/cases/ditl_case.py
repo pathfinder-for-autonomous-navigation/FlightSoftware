@@ -31,7 +31,7 @@ from .utils import Enums
 
 class DitlCase(SingleSatCase):
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("dcdc.ADCSMotor_cmd", True); self.cycle()
         self.ws("adcs.state", Enums.adcs_states["manual"]); self.cycle()
         self.ws("adcs_cmd.rwa_speed_cmd", [15.0,10.0,10.0]); self.cycle()

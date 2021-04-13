@@ -13,7 +13,7 @@ class PiksiCheckoutCase(SingleSatCase):
         st = self.rs("piksi.state")
         self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Piksi Checkout Case")
 
         self.n = 100

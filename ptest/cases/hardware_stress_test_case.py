@@ -57,7 +57,7 @@ class ActuateHardwareCase(SingleSatCase):
             self.ws("docksys.config_cmd", True)
 
 class HardwareStressCheckoutCase(ActuateHardwareCase):
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Hardware Stress Test Checkout Case")
         self.setup_hardware()
         self.cycle()

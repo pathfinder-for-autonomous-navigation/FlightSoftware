@@ -3,23 +3,16 @@ from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
 class QuakeFaultHandler(SingleSatCase):
-    @property
-    def sim_duration(self):
-        return float("inf")
 
     @property
     def initial_state(self):
         return "leader"
 
-    @property
-    def fast_boot(self):
-        return False
-
-    def setup_pre_bootsetup(self):
+    def pre_boot(self):
         self.qfh_state = None
         self.powercycle_happening = None
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def check_quake_powercycled(self):

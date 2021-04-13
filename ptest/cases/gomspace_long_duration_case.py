@@ -3,7 +3,7 @@ from .utils import Enums
 from .hardware_stress_test_case import ActuateHardwareCase
 
 class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Gomspace Long Duration Checkout Case")
         self.setup_hardware()
         self.cycle()

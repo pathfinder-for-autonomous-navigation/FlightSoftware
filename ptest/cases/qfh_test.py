@@ -10,7 +10,7 @@ class QFHTest(SingleSatCase):
     def desired_initial_state(self):
         return "standby"
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def diagnostics(self):

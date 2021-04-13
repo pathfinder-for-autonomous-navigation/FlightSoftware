@@ -55,7 +55,7 @@ class DeploymentToInitHold(SingleSatCase):
         assert(value == "true" or value == "false")
         self.flight_controller.write_state("adcs_monitor.havt_device6", value)
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         # Move to startup and wait the full deployment length
         self.mission_state = "startup"
         self.logger.put("Now in startup. Cycling through deployment wait...")

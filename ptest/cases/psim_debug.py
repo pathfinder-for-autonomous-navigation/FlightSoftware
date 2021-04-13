@@ -13,7 +13,7 @@ class PSimDebug(SingleSatCase, PSimCase):
         self.initial_state = "startup"
         self.psim_configs += ['truth/deployment']
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         # self.print_ws("pan.state", Enums.mission_states['standby'])
         # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
         self.sim.mock_sensor_validity = True

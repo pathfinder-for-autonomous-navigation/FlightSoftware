@@ -5,7 +5,7 @@ import time
     
 class GyroHeaterDiagCase(SingleSatCase):
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
         self.ws("pan.state", Enums.mission_states["manual"])

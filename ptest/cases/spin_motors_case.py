@@ -4,7 +4,7 @@ from .utils import Enums
 import time
 
 class SpinMotorsCase(SingleSatCase):
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("dcdc.ADCSMotor_cmd", True)
         self.cycle()
 

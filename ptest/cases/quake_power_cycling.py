@@ -9,11 +9,7 @@ class QuakePowerCycling(SingleSatCase):
     def initial_state(self):
         return "follower"
 
-    @property
-    def fast_boot(self):
-        return True
-
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def check_powercycle(self):

@@ -10,7 +10,7 @@ class ADCSWheelFaultHandler(SingleSatCase):
     def fast_boot(self):
         return True
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def suppress_adcs_faults(self):
@@ -53,7 +53,7 @@ class LowBattFaultHandler(SingleSatCase):
     def initial_state(self):
         return "standby"
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def run_case_singlesat(self):

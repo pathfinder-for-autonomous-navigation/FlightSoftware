@@ -26,7 +26,7 @@ class DeploymentToStandby(SingleSatCase):
     def initial_state(self):
         return "standby"
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.sim.mock_sensor_validity = True
         return
 

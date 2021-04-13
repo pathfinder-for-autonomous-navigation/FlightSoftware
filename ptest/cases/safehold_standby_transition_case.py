@@ -21,17 +21,13 @@ class SafeholdStandbyTransitionCase(SingleSatCase):
     return True
 
   @property
-  def sim_duration(self):
-    return float("inf")
-
-  @property
   def initial_state(self):
     return "startup"
 
-  def setup_pre_bootsetup(self):
+  def pre_boot(self):
     self.ws("cycle.auto", False)
       
-  def setup_post_bootsetup(self):
+  def post_boot(self):
     self.ws("fault_handler.enabled", True)
     self.logger.put("[TESTCASE] Fault handler enabled")
 

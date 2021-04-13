@@ -9,7 +9,7 @@ class PropStateMachineCase(SingleSatCase):
     def initial_state(self):
         return "manual"
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])

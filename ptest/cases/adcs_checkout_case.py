@@ -27,7 +27,7 @@ class ADCSCheckoutCase(SingleSatCase):
             self.soft_assert(abs(expected[i]-actual[i]) < delta, 
                 f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin ADCS Checkout Case")
 
         self.ws("cycle.auto", False)
