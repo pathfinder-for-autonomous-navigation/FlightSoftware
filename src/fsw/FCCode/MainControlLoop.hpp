@@ -98,10 +98,10 @@ class MainControlLoop : public ControlTask<void> {
         TRACKED_CONSTANT_SC(unsigned int, test_offset, 50000);
     #endif
 
-    TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   ,   1000);
-    TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
+    TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   ,   1);
+    TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   1100);
     TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
-    TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
+    TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  140000 - 11251);
     TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);

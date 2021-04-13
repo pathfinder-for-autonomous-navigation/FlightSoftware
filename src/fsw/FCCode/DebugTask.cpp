@@ -21,6 +21,7 @@ void DebugTask::execute() {
     while (!start_cycle_f.get() && !auto_cycle_f.get()) 
       process_commands(_registry);
   }
+
 #endif
 }
 

@@ -70,6 +70,8 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs("adcs_cmd.mtr_cmd")
         self.rs("adcs_cmd.rwa_torque_cmd")
 
+        self.rs("timing.debug.duration")
+  
     def run_case_singlesat(self):
         self.rs_psim("truth.leader.attitude.w")
         self.rs_psim("truth.t.ns")

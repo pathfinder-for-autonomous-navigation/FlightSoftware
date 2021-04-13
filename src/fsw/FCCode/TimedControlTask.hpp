@@ -46,6 +46,7 @@ class TimedControlTaskBase {
 
   public:
     static unsigned int control_cycle_count;
+    unsigned int task_duration;
 
     /**
      * @brief Get the system time.
@@ -126,6 +127,13 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     std::string avg_wait_field_name;
     ReadableStateField<float> avg_wait_f;
 
+    /**
+     * @brief Time it takes for a control task to execute
+     */
+    std::string ct_duration_field_name;
+    ReadableStateField<unsigned int> ct_duration_f;
+
+
   public:
     /**
      * @brief Execute this control task's task, but only if it's reached its
@@ -138,7 +146,12 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
       sys_time_t earliest_start_time = 
         TimedControlTaskBase::control_cycle_start_time + offset;
       wait_until_time(earliest_start_time);
-      return this->execute();
+      sys_time_t now = get_system_time();
+      this->execute();
+      sys_time_t later = get_system_time();
+      signed int delta_ct = (signed int) duration_to_us(later - now);
+      ct_duration_f.set((unsigned int) delta_ct);
+      return;
     }
 
     /**
@@ -151,7 +164,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     void wait_until_time(const sys_time_t& time) {
       // Compute timing statistics and publish them to state fields
       const signed int delta_t = (signed int) duration_to_us(time - get_system_time());
-      if (delta_t < 0) {
+      if (delta_t <= 0) {
         num_lates_f.set(num_lates_f.get() + 1);
       }
       const unsigned int wait_time = std::max(delta_t, 0);
@@ -178,11 +191,13 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
         num_lates_field_name("timing." + name + ".num_lates"),
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),
-
-        avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us, 18))
+        avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us, 18)),
+        ct_duration_field_name("timing." + name + ".duration"),
+        ct_duration_f(ct_duration_field_name, Serializer<unsigned int>() )
     {
       this->add_readable_field(num_lates_f);
       this->add_readable_field(avg_wait_f);
+      this->add_readable_field(ct_duration_f);
     }
 };
 

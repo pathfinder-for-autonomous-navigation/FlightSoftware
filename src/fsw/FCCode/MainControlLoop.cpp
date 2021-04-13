@@ -126,7 +126,7 @@ void MainControlLoop::execute() {
     #ifdef DESKTOP
         eeprom_controller.execute_on_time();
     #else
-        // eeprom_controller.execute_on_time();
+        eeprom_controller.execute_on_time();
         // Commented to save EEPROM Cycles
     #endif
 }
