@@ -111,15 +111,13 @@ class SingleSatCase(PTestCase):
 
         Asserts the FC did indeed step forward by one CC
         """
+        self.flight_controller.write_state('cycle.start', 'true')
         super(SingleSatCase, self).cycle()
 
         if self.flight_controller.scrape:
             self.flight_controller.scrape_uplink()
         if self.flight_controller.enable_auto_dbtelem:
             self.flight_controller.dbtelem()
-
-        self.flight_controller.write_state('cycle.start', 'true')
-        print("FINISH SINGLE")
         
     def rs(self, name):
         """

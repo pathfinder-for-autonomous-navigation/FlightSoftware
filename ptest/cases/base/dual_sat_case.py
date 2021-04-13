@@ -92,6 +92,9 @@ class DualSatCase(PTestCase):
     def cycle(self):
         """Step the flight controllers forward by one CC
         """
+        self.flight_controller_leader.write_state('cycle.start', 'true')
+        self.flight_controller_follower.write_state('cycle.start', 'true')
+
         super(DualSatCase, self).cycle()
 
         for device in self.devices:
@@ -99,9 +102,6 @@ class DualSatCase(PTestCase):
                 device.scrape_uplink()
             if device.enable_auto_dbtelem:
                 device.dbtelem()
-
-        self.flight_controller_leader.write_state('cycle.start', 'true')
-        self.flight_controller_follower.write_state('cycle.start', 'true')
 
     @property
     def mission_state_leader(self):
