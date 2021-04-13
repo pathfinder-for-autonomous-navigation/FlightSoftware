@@ -94,6 +94,12 @@ class DualSatCase(PTestCase):
         """
         super(DualSatCase, self).cycle()
 
+        for device in self.devices:
+            if device.scrape:
+                device.scrape_uplink()
+            if device.enable_auto_dbtelem:
+                device.dbtelem()
+
         self.flight_controller_leader.write_state('cycle.start', 'true')
         self.flight_controller_follower.write_state('cycle.start', 'true')
 
