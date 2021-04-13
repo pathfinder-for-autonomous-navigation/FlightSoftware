@@ -1,5 +1,5 @@
-from .base import SingleSatCase, TestCaseFailure
-from .utils import Enums
+from .base import SingleSatCase
+from .utils import Enums, TestCaseFailure
 import math
 import time
 

@@ -4,7 +4,7 @@ from .utils import Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
 class EmptyCase(SingleSatCase):
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
         self.finish()
 

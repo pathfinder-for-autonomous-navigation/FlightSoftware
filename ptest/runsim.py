@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from .cases.base import PTestCase
+from .cases.base.ptest_case import PTestCase
 from .configs.schemas import *
 from .usb_session import USBSession
 from .radio_session import RadioSession

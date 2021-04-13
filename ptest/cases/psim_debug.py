@@ -1,6 +1,6 @@
 # Runs mission from startup state to standby state.
 from .base import SingleSatCase
-from .psim_case import PSimCase
+from .base import PSimCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, mag_of, sum_of_differentials
 

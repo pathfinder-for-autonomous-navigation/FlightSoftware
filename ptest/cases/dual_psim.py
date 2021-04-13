@@ -1,5 +1,5 @@
 from .base import DualSatCase
-from .psim_case import PSimCase
+from .base import PSimCase
 import time
 from psim.sims import DualAttitudeOrbitGnc
 import lin
