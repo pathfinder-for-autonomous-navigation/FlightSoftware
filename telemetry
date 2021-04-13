@@ -1226,17 +1226,17 @@
             "writable": true
         },
         "downlink.shift_id1": {
-            "bitsize": 1,
+            "bitsize": 6,
             "flow_id": 28,
-            "max": 10,
+            "max": 37,
             "min": 0,
             "type": "unsigned char",
             "writable": true
         },
         "downlink.shift_id2": {
-            "bitsize": 1,
+            "bitsize": 6,
             "flow_id": 28,
-            "max": 10,
+            "max": 37,
             "min": 0,
             "type": "unsigned char",
             "writable": true
