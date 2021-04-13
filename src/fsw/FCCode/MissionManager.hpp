@@ -163,7 +163,7 @@ protected:
     /**
      * @brief DCDC control Disables/enables wheels for the ADCS system.
      */
-    WritableStateField<bool>* adcs_dcdc_fp;
+    WritableStateField<bool> *adcs_dcdc_fp;
 
     /**
      * @brief Radio's mode.
@@ -193,6 +193,13 @@ protected:
      * @brief The cycle at which we enter the close approach state
      */
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
+
+    /**
+     * @brief The command to shut down all communication 
+     * from spacecraft with ground when set to 127.
+     */
+    WritableStateField<unsigned char> kill_switch_f;
+    TRACKED_CONSTANT_SC(unsigned char, kill_switch_value, 127);
 
     /**
      * @brief Number of times the satellite has booted
