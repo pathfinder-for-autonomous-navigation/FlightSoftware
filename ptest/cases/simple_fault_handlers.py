@@ -50,16 +50,8 @@ class ADCSWheelFaultHandler(SingleSatCase):
 
 class LowBattFaultHandler(SingleSatCase):
     @property
-    def sim_duration(self):
-        return 0
-
-    @property
     def initial_state(self):
         return "standby"
-
-    @property
-    def fast_boot(self):
-        return True
 
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)

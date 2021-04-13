@@ -9,10 +9,6 @@ class PropStateMachineCase(SingleSatCase):
     def initial_state(self):
         return "manual"
 
-    @property
-    def fast_boot(self):
-        return True
-
     def setup_post_bootsetup(self):
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(

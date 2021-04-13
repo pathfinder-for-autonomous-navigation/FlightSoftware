@@ -5,35 +5,10 @@ from .utils import Enums, TestCaseFailure
 
 
 class QFHTest(SingleSatCase):
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
-
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def sim_duration(self):
-        return float("inf")
 
     @property
     def desired_initial_state(self):
         return "standby"
-
-    @property
-    def fast_boot(self):
-        return True
 
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
