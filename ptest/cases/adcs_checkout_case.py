@@ -28,6 +28,7 @@ class ADCSCheckoutCase(SingleSatCase):
                 f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
 
     def post_boot(self):
+        self.ws("pan.state", Enums.mission_state["manual"])
         self.print_header("Begin ADCS Checkout Case")
 
         self.ws("cycle.auto", False)
