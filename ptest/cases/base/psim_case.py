@@ -200,20 +200,11 @@ class PSimCase(PTestCase):
         '''
         ret = self.psim_rs(name)
         self.logger.put(f"{name} is {ret}")
-
-# class CppSimulation(object):
-#     """
-#     Full mission simulation, including both spacecraft.
-#     """
-#     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-#     sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name, device_config):
-
+        
     def configure(self):
         self.actuator_commands_follower = {}
         prefix = "lib/common/psim/config/parameters/"
         postfix = ".txt"
-
-        print("[ sim ] Overwriting Initial Sim Conditions...")
 
         self.dt = self.__sim["truth.dt.ns"]/1e9
 

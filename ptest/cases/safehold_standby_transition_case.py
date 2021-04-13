@@ -17,20 +17,6 @@ class SafeholdStandbyTransitionCase(SingleSatCase):
   tempTime = 0
   
   @property
-  def sim_configs(self):
-    configs = ["truth/ci", "truth/base"]
-    configs += ["sensors/base"]
-    return configs
-
-  @property
-  def sim_model(self):
-    return SingleAttitudeOrbitGnc
-
-  @property
-  def sim_mapping(self):
-    return "ci_mapping.json"
-
-  @property
   def debug_to_console(self):
     return True
 

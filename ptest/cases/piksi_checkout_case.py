@@ -4,10 +4,11 @@ from .utils import Enums, mag_of, sum_of_differentials, TestCaseFailure
 import math
     
 class PiksiCheckoutCase(SingleSatCase):
-    @property
-    def debug_to_console(self):
-        return True 
-        
+    def __init__(self, *args, **kwargs):
+        super(PiksiCheckoutCase, self).__init__(*args, **kwargs)
+
+        self.debug_to_console = True
+     
     def print_piksi_state(self):
         st = self.rs("piksi.state")
         self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")

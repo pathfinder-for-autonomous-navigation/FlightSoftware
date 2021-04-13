@@ -1,5 +1,6 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
 from .base import DualSatCase
+from .base import PSimCase
 from .utils import Enums, TestCaseFailure
 from psim.sims import DualAttitudeOrbitGnc
 
@@ -12,38 +13,15 @@ class DualEmptyCase(DualSatCase):
     def initial_state_follower(self):
         return "startup"
 
-    @property
-    def fast_boot_leader(self):
-        return True
-    @property
-    def fast_boot_follower(self):
-        return True
-
-    def run_case_fullmission(self):
+    def run(self):
         self.finish()
 
-class DualEmptySimCase(DualEmptyCase):
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
+class DualEmptySimCase(DualSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(DualEmptySimCase, self).__init__(*args, **kwargs)
 
-    @property
-    def sim_model(self):
-        return DualAttitudeOrbitGnc
+        self.debug_to_console = True
+        self.psim_configs += ["truth/deployment"]
 
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def scrape_uplinks(self):
-        return True
-
-    def run_case_fullmission(self):
-        pass
+    def run(self):
+        self.cycle()
