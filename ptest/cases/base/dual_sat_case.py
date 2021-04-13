@@ -89,6 +89,14 @@ class DualSatCase(PTestCase):
         """
         pass
 
+    def cycle(self):
+        """Step the flight controllers forward by one CC
+        """
+        super(DualSatCase, self).cycle()
+
+        self.flight_controller_leader.write_state('cycle.start', 'true')
+        self.flight_controller_follower.write_state('cycle.start', 'true')
+
     @property
     def mission_state_leader(self):
         return Enums.mission_states[int(self.flight_controller_leader.read_state("pan.state"))]

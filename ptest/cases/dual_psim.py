@@ -71,7 +71,8 @@ class DualPSim(DualSatCase, PSimCase):
         for psim_state in psim_states:
             self.rs_psim(psim_state)
         
-    def run_case_fullmission(self):
+    def run(self):
+        self.cycle()
 
         self.log_fc_data(self.flight_controller_leader)
         self.log_fc_data(self.flight_controller_follower)
