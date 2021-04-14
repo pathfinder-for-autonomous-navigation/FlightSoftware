@@ -22,7 +22,7 @@ class GyroHeaterDiagCase(SingleSatCase):
         self.print_ws("adcs_cmd.havt_disable18", True) # disable heater
         self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
 
         self.print_rs("adcs_monitor.functional")
 

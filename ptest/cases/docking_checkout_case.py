@@ -59,7 +59,7 @@ class DockingCheckoutCase(SingleSatCase):
       cycles_taken = int(self.read_state("pan.cycle_no")) - start_cycle
       self.logger.put("Successfully finished docking config command in " + str(cycles_taken) + " cycles\n")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.read_state("pan.cycle_no")
         self.write_state("dcdc.SpikeDock_cmd", "true")
         assert(self.read_state("dcdc.SpikeDock_cmd") =="true")

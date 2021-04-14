@@ -30,7 +30,7 @@ class GomspaceLog(SingleSatCase):
       self.rs("gomspace.battmode")
       self.rs("gomspace.pptmode")
 
-    def run_case_singlesat(self):
+    def run(self):
         
         self.ws("cycle.auto", False)
         self.cycle()

@@ -6,11 +6,7 @@ class SafeholdReboot(SingleSatCase):
     def initial_state(self):
         return "standby"
 
-    @property
-    def fast_boot(self):
-        return False
-
-    def run_case_singlesat(self):
+    def run(self):
         if not hasattr(self, "test_stage"):
             self.test_stage = "force_fault"
 

@@ -18,7 +18,7 @@ class ResetforFlight(SingleSatCase):
       self.failed = True
     self.logger.put("Reset " + str(field) + " to " + str(value))
     
-  def run_case_singlesat(self):
+  def run(self):
     self.print_header("Starting Reset")
     self.ws( "cycle.auto", False )
     self.set_confirm("gomspace.pptmode_cmd", 1)

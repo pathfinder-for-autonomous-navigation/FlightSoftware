@@ -34,7 +34,7 @@ class ADCSWheelFaultHandler(SingleSatCase):
         self.cycle()
         self.assert_safehold()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.fail_wheel(1)
         self.fail_wheel(2)
         self.fail_wheel(3)
@@ -56,7 +56,7 @@ class LowBattFaultHandler(SingleSatCase):
     def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
-    def run_case_singlesat(self):
+    def run(self):
         self.logger.put("Deliberately reducing the Gomspace battery voltage to below the safehold minimum.")
         self.ws("gomspace.low_batt.suppress", False)
 

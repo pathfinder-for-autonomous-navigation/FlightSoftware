@@ -326,7 +326,7 @@ class ADCSCheckoutCase(SingleSatCase):
         self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
             "SSA voltage readings did not vary across readings.") 
 
-    def run_case_singlesat(self):
+    def run(self):
         
         self.print_rs("adcs_monitor.functional")
 

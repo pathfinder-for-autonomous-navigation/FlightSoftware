@@ -37,7 +37,7 @@ class DitlCase(SingleSatCase):
         self.ws("adcs_cmd.rwa_speed_cmd", [15.0,10.0,10.0]); self.cycle()
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"]); self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         # Run until the battery voltage drops below 7100 mV
         while self.rs("gomspace.vbatt") > 7100:
             self.rs("gomspace.cursys")

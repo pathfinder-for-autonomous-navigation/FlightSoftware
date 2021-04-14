@@ -30,7 +30,7 @@ class DeploymentToStandby(SingleSatCase):
         self.sim.mock_sensor_validity = True
         return
 
-    def run_case_singlesat(self):
+    def run(self):
         if self.rs("pan.cycle_no") > 300:
             raise TestCaseFailure("Nominal detumbling for ci should take < 300 cycles")
         self.finish()

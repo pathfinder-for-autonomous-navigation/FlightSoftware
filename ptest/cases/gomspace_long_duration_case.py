@@ -8,7 +8,7 @@ class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
         self.setup_hardware()
         self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.rs("pan.cycle_no")
         self.fire_valves()
         edu_vbatt_threshold = 7000

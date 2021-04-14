@@ -120,7 +120,7 @@ class MTorquerCase(SingleSatCase):
         self.torque_test( 0.056668)
 
 
-    def run_case_singlesat(self):
+    def run(self):
         self.print_header( "Begin ADCS Magnetorquers Case" )
         self.ws( "cycle.auto", False )
 

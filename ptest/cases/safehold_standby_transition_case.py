@@ -42,7 +42,7 @@ class SafeholdStandbyTransitionCase(SingleSatCase):
     self.rs("attitude_estimator.fro_P")
     self.rs("adcs_cmd.rwa_torque_cmd")
   
-  def run_case_singlesat(self):
+  def run(self):
     self.rs_psim("truth.t.ns")
     self.rs_psim("truth.dt.ns")
     self.rs_psim("truth.leader.attitude.w")

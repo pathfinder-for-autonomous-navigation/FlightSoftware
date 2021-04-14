@@ -14,7 +14,7 @@ class GomspaceCheckoutCase(SingleSatCase):
         else:
             raise ValueError
 
-    def run_case_singlesat(self):
+    def run(self):
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
 
@@ -172,7 +172,7 @@ class GomspaceCheckoutCase(SingleSatCase):
         self.finish()
 
 class CheckBatteryLevel(SingleSatCase):
-    def run_case_singlesat(self):
+    def run(self):
         voltage = float(self.read_state("gomspace.vbatt"))
         self.logger.put("                                 ")
         self.logger.put("=================================")

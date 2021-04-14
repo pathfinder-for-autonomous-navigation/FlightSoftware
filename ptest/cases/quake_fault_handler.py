@@ -27,7 +27,7 @@ class QuakeFaultHandler(SingleSatCase):
         self.powercycle_happening = self.rs("gomspace.power_cycle_output3_cmd")
         self.rs("pan.cycle_no")
 
-    def run_case_singlesat(self):
+    def run(self):
         if not self.finished:
             self.collect_diagnostic_data()
 

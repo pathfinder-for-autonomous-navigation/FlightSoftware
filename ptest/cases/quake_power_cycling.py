@@ -74,7 +74,7 @@ class QuakePowerCycling(SingleSatCase):
         self.read_state("gomspace.power_cycle_output3_cmd")
         self.read_state("pan.state")
 
-    def run_case_singlesat(self):
+    def run(self):
         # The satellite has been in a blackout since startup. Cycle count starts at 1.
         self.cycles_since_blackout_start = self.rs("pan.cycle_no") - 1
 
