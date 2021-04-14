@@ -1,6 +1,6 @@
 from .base import SingleSatCase, PSimCase
 from .utils import TestCaseFailure
-
+import lin
 
 class BootToStartupCase(SingleSatCase, PSimCase):
 
@@ -39,6 +39,8 @@ class BootToStandbyCase(SingleSatCase, PSimCase):
         super(BootToStandbyCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.071,-0.01])
+
         self.initial_state = "standby"
         self.skip_deployment_wait = True
 
