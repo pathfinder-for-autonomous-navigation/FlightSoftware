@@ -22,7 +22,7 @@ class EmptySimCase(SingleSatCase, PSimCase):
 
 class FailingEmptySimCase(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
-        super(EmptySimCase, self).__init__(*args, **kwargs)
+        super(FailingEmptySimCase, self).__init__(*args, **kwargs)
         self.psim_configs += ['truth/deployment']
 
     def run(self):

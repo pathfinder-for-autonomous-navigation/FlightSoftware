@@ -1,14 +1,15 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import SingleSatCase
+from .base import SingleSatCase, PSimCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 
-class QFHTest(SingleSatCase):
+class QFHTest(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(QFHTest, self).__init__(*args, **kwargs)
 
-    @property
-    def desired_initial_state(self):
-        return "standby"
+        self.initial_state = "standby"
+        self.psim_configs += ["truth/standby"]
 
     def post_boot(self):
         self.ws("fault_handler.enabled", True)
@@ -29,7 +30,7 @@ class QFHTest(SingleSatCase):
             if (self.cycles_since_blackout_start >= time):
                 break
 
-    def run_case_singlesat(self):
+    def run(self):
       # The satellite has been in a blackout since startup. Cycle count starts at 1.
         self.cycles_since_blackout_start = self.rs("pan.cycle_no") - 1
         self.ws("radio.state",0)
@@ -41,14 +42,14 @@ class QFHTest(SingleSatCase):
             self.cycle()
             self.diagnostics()
             self.cycles_since_blackout_start += 1
-            
+
         # Reset cycles
         self.cycles_since_blackout_start = 0
 
         # Simulate second day of no comms
         self.logger.put(f"Creating another comms blackout of 24 hours, starting on control cycle: {self.rs('pan.cycle_no')}")
         self.advance_to_next_qfh_state(self.one_day_ccno)
-       
+
         # Reset cycles
         self.logger.put(f"Power cycle 1, starting on control cycle: {self.rs('pan.cycle_no')}")
         self.cycles_since_blackout_start = 0

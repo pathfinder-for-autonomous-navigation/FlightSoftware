@@ -5,11 +5,11 @@ import time
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatCase):
-    @property
-    def initial_state(self):
-        return "manual"
-
     def post_boot(self):
+        self.flight_controller.write_state(
+            "pan.state", Enums.mission_states["manual"])
+        self.cycle()
+
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])
@@ -277,7 +277,7 @@ class PropStateMachineCase(SingleSatCase):
             raise TestCaseFailure("state != idle")
         return
 
-    def run_case_singlesat(self):
+    def run(self):
         print("------------------------------------------------")
         self.test_disabled_to_idle()
         print("------------------------------------------------")

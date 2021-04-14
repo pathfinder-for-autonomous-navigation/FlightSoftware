@@ -25,6 +25,8 @@ class PiksiCheckoutCase(SingleSatCase):
 
         self.most_common_mode = Enums.piksi_modes["no_fix"]
 
+        self.mission_state = "manual"
+
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
             self.cycle()
@@ -78,7 +80,7 @@ class PiksiCheckoutCase(SingleSatCase):
         self.check_vectors("baseline", self.baselines, 0, 105*1000) # simulator max distance is 100 meters
         self.print_header("PIKSI RTK")    
 
-    def run_case_singlesat(self):
+    def run(self):
 
         # Take 10 readings just for observation
         self.print_header("10 Readings for observation: ")

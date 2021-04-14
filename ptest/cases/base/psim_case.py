@@ -111,8 +111,6 @@ class PSimCase(PTestCase):
         print("Configuring simulation took %0.2fs." % elapsed_time)
 
     def cycle(self, *args, **kwargs):
-        """
-        """
         super(PSimCase, self).cycle(*args, **kwargs)
         
         for device in self.devices:
@@ -168,7 +166,6 @@ class PSimCase(PTestCase):
         # for device in self.devices:
         #     if self.devices[device].scrape:
         #         self.devices[device].scrape_uplink()
-        print("FINISH PSIM CYCLE")
 
     def rs_psim(self, name: str):
         '''

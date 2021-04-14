@@ -1,11 +1,14 @@
-from .base import SingleSatCase
+from .base import SingleSatCase, PSimCase
 from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
-class PropFaultHandler(SingleSatCase):
+class PropFaultHandler(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(PropFaultHandler, self).__init__(*args, **kwargs)
+
+        self.initial_state = "standby"
+        self.psim_configs += ["truth/standby"]
 
         self.tank2_pressure = 12.0
         self.tank2_temp = 25.0
@@ -17,18 +20,13 @@ class PropFaultHandler(SingleSatCase):
 
         self.fault_name = "prop.pressurize_fail"
 
-    @property
-    def initial_state(self):
-        return "leader"
-
-    @property
-    def fast_boot(self):
-        return True
-
     def pre_boot(self):
         self.powercycle_happening = None
 
     def post_boot(self):
+        self.mission_state = "leader"
+        self.cycle()
+
         self.ws("fault_handler.enabled", True)
         
         self.ws("prop.overpressured.suppress", "false")
@@ -167,7 +165,7 @@ class PropFaultHandler(SingleSatCase):
 # --------------------------------------------------------------------------------------
 # Test Case
 # --------------------------------------------------------------------------------------
-    def run_case_singlesat(self):
+    def run(self):
         self.fault_name = "prop.pressurize_fail"
         self.test_pressurize_fail()
 
