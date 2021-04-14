@@ -43,12 +43,12 @@ class PSimDebug(SingleSatCase, PSimCase):
         
 
     def run(self):
-    """
-    Log/compute all the things necessary to monitor performance
-    """
+        """
+        Log/compute all the things necessary to monitor performance
+        """
 
         """
-        This call is necessary to step FSW, simulate psim,
+        The below call is necessary to step FSW, simulate psim,
         as well as call any autotelem/dbtelem
         """
         self.cycle()
