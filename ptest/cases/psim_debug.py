@@ -3,6 +3,7 @@ from .base import SingleSatCase
 from .base import PSimCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, mag_of, sum_of_differentials
+import lin
 
 class PSimDebug(SingleSatCase, PSimCase):
     """
@@ -12,7 +13,8 @@ class PSimDebug(SingleSatCase, PSimCase):
         super(PSimDebug, self).__init__(*args, **kwargs)
         self.initial_state = "startup"
         self.psim_configs += ['truth/deployment']
-        
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0738,-0.01])
+
     def data_logs(self):
         
         self.rs("pan.deployment.elapsed")
