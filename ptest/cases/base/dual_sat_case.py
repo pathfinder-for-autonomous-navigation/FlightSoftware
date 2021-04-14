@@ -67,7 +67,7 @@ class DualSatCase(PTestCase):
         self.logger.put("[TESTCASE] Boot Util waiting to reach initial states")
         while leader_state != leader_initial_state or follower_state != follower_initial_state:
             if cycles > self.initial_state_timeout:
-                raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}")
+                raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}, was {leader_state} and {follower_state}")
 
             self.cycle()
 

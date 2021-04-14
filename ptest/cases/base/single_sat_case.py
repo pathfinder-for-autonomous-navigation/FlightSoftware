@@ -61,7 +61,7 @@ class SingleSatCase(PTestCase):
         while state != initial_state:
             
             if cycles > self.initial_state_timeout:
-                raise TestCaseFailure(f"Failed to reach desired state of {initial_state}")
+                raise TestCaseFailure(f"Failed to reach desired state of {initial_state}, was {state}")
 
             self.cycle()
 
