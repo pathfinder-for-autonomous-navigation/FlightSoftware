@@ -13,9 +13,7 @@ class QuakePowerCycling(SingleSatCase):
 
     def post_boot(self):
         self.mission_state = "follower"
-        self.cycle()
         self.ws("fault_handler.enabled", True)
-        self.cycle()
 
     def check_powercycle(self):
         return self.rs("gomspace.power_cycle_output3_cmd")
