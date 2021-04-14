@@ -12,14 +12,7 @@ class PSimDebug(SingleSatCase, PSimCase):
         super(PSimDebug, self).__init__(*args, **kwargs)
         self.initial_state = "startup"
         self.psim_configs += ['truth/deployment']
-
-    def post_boot(self):
-        # self.print_ws("pan.state", Enums.mission_states['standby'])
-        # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
-        self.sim.mock_sensor_validity = True
         
-        return
-
     def data_logs(self):
         
         self.rs("pan.deployment.elapsed")
