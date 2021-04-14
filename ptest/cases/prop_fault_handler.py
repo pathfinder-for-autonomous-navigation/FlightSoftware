@@ -9,6 +9,7 @@ class PropFaultHandler(SingleSatCase, PSimCase):
 
         self.initial_state = "standby"
         self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
         self.tank2_pressure = 12.0
         self.tank2_temp = 25.0
