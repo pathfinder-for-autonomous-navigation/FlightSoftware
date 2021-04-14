@@ -1,5 +1,6 @@
 from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
+import lin
 
 class ADCSWheelFaultHandler(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
