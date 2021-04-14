@@ -11,7 +11,7 @@ from ..gpstime import GPSTime
 class OrbitData(NamedTuple):
     pos: list
     vel: list
-    time: GPSTime
+    time: list
 
 
 class AutonomousMissionController(MissionCase):
@@ -68,7 +68,7 @@ class AutonomousMissionController(MissionCase):
     def readDownlinkData(self, satellite):
         pos = str_to_val(satellite.read_state("orbit.pos"))
         vel = str_to_val(satellite.read_state("orbit.vel"))
-        time = GPSTime(*(str_to_val(satellite.read_state("time.gps"))))
+        time = GPSTime(*(str_to_val(satellite.read_state("time.gps")))).to_list()
         return OrbitData(pos, vel, time)
 
     def writeUplinkData(self, satellite, orbit):
@@ -77,7 +77,6 @@ class AutonomousMissionController(MissionCase):
             "rel_orbit.uplink.vel",
             "rel_orbit.uplink.time",
         ]
-        print(list(orbit))
         satellite.write_multiple_states(uplink_orbit_data_fields, list(orbit))
 
     # default forward propagation time of 10 minutes
@@ -92,7 +91,7 @@ class AutonomousMissionController(MissionCase):
         # update values to current (sim assumes leader, works equally for follower)
         config["truth.leader.orbit.r"] = lin.Vector3(orbit.pos)
         config["truth.leader.orbit.v"] = lin.Vector3(orbit.vel)
-        config["truth.t.ns"] = orbit.time.to_pan_ns()  # what are the units on this
+        config["truth.t.ns"] = GPSTime(*(orbit.time)).to_pan_ns()  # what are the units on this
 
         # step sim to desired time
         sim = Simulation(SingleOrbitGnc, config)
@@ -103,7 +102,7 @@ class AutonomousMissionController(MissionCase):
         propagatedOrbit = OrbitData(
             list(sim["truth.leader.orbit.r"]),
             list(sim["truth.leader.orbit.v"]),
-            GPSTime(sim["truth.t.ns"]),
+            GPSTime(sim["truth.t.ns"]).to_list(),
         )
         return propagatedOrbit
 
