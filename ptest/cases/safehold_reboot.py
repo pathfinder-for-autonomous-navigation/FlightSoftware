@@ -7,6 +7,7 @@ class SafeholdReboot(SingleSatCase, PSimCase):
         super(SafeholdReboot, self).__init__(*args, **kwargs)
         self.initial_state = "standby"
         self.psim_configs += ['truth/standby']
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
     def post_boot(self):
         self.ws('fault_handler.enabled', True)
