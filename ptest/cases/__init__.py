@@ -5,7 +5,6 @@
 # Testcases that require simulation
 from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
-from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
@@ -39,5 +38,4 @@ from .reset_for_flight import ResetforFlight
 from .safehold_standby_transition_case import SafeholdStandbyTransitionCase
 from .gomspacelogger import GomspaceLog
 from .reboot_utility import Reboot
-from .qfh_test import QFHTest
 from .quake_power_cycling import QuakePowerCycling
