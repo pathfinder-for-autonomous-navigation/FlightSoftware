@@ -159,7 +159,7 @@ class PTest(object):
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
-        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all)
+        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all, self.testcase)
         try:
             self.cmd_prompt.cmdloop()
         except (KeyboardInterrupt, SystemExit):
