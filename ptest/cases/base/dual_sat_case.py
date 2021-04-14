@@ -64,11 +64,12 @@ class DualSatCase(PTestCase):
         leader_state = self.flight_controller_leader.smart_read("pan.state")
         follower_initial_state = Enums.mission_states[self.follower_initial_state]
         follower_state = self.flight_controller_follower.smart_read("pan.state")
-        while leader_state != leader_initial_state and follower_state != follower_initial_state:
+        self.logger.put("[TESTCASE] Boot Util waiting to reach initial states")
+        while leader_state != leader_initial_state or follower_state != follower_initial_state:
             if cycles > self.initial_state_timeout:
                 raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}")
 
-            super(DualSatCase, self).cycle()
+            self.cycle()
 
             cycles = cycles + 1
             leader_state = self.flight_controller_leader.smart_read("pan.state")

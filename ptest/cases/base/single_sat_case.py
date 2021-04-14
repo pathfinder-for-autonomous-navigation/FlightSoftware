@@ -57,11 +57,13 @@ class SingleSatCase(PTestCase):
         cycles = 0
         initial_state = Enums.mission_states[self.initial_state]
         state = self.flight_controller.smart_read("pan.state")
-        while cycles < self.initial_state_timeout and state != initial_state:
+        self.logger.put("[TESTCASE] Boot Util waiting to reach initial state")
+        while state != initial_state:
+            
             if cycles > self.initial_state_timeout:
                 raise TestCaseFailure(f"Failed to reach desired state of {initial_state}")
 
-            super(SingleSatCase, self).cycle()
+            self.cycle()
 
             cycles = cycles + 1
             state = self.flight_controller.smart_read("pan.state")
