@@ -83,4 +83,3 @@ jobs:
     - name: Mission Checkout Cases
       run: |
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DeploymentToInitHold -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DeploymentToStandby -ni
