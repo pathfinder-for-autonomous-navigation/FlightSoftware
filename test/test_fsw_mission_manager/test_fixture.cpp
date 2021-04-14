@@ -70,7 +70,6 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     deployment_wait_elapsed_fp = registry.find_readable_field_t<unsigned int>(
         "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
-    piksi_off_fp = registry.find_writable_field_t<bool>("gomspace.piksi_off");
 
 
     // Replace fault handler with a mock.

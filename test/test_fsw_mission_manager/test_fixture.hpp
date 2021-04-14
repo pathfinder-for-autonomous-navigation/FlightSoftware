@@ -52,6 +52,7 @@ public:
 
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
+  std::shared_ptr<WritableStateField<bool>> piksi_off_fp;
 
   std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
 
@@ -68,7 +69,6 @@ public:
   ReadableStateField<bool> *is_deployed_fp;
   ReadableStateField<unsigned int> *deployment_wait_elapsed_fp;
   WritableStateField<unsigned char> *sat_designation_fp;
-  WritableStateField<bool> *piksi_off_fp;
 
   TestFixture(mission_state_t initial_state = mission_state_t::startup, unsigned int bootcount = 0);
 

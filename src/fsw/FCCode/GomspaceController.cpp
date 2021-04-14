@@ -317,6 +317,10 @@ void GomspaceController::execute() {
     if(piksi_off_f.get()){
         gs.set_single_output(0,0); // (output port = OUT-1, 0 for off)
     }
+    else {
+        if (!output1_f.get()) power_cycle_output1_cmd_f.set(false);
+        gs.set_single_output(0,1);
+    }
 }
 
 void GomspaceController::power_cycle_outputs() {

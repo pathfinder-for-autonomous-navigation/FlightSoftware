@@ -360,6 +360,7 @@ void test_task_execute() {
 
     // Test the reset commands one by one, starting with the power cycle outputs command
 
+    tf.piksi_off_fp->set(false);
     tf.power_cycle_output1_cmd_fp->set(true);
 
     tf.gs_controller->execute();
