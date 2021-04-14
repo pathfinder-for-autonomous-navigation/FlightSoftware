@@ -1,7 +1,19 @@
 #include "OrbitController.hpp"
+#include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
+#include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
 const constexpr double OrbitController::valve_time_lin_reg_slope;
 const constexpr double OrbitController::valve_time_lin_reg_intercept;
+
+// Firing nodes
+constexpr double pi = gnc::constant::pi;
+static constexpr std::array<double, 3> firing_nodes_far = {pi/3, pi, -pi/3};
+static constexpr std::array<double, 18> firing_nodes_near = {pi/18, pi/6, pi*(5/18), pi*(7/18), pi/2, pi*(11/18), 
+                                pi*(13/18), pi*(5/6), pi*(17/18), -pi*(17/18),
+                                -pi*(5/6), -pi*(13/18), -pi*(11/18), -pi/2,
+                                -pi*(7/18), -pi*(5/18), -pi/6, -pi/18};
+
+auto gain_factor = (double)(firing_nodes_near.size() / firing_nodes_far.size());
 
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
@@ -18,16 +30,20 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
-    sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000))
+    sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
+    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,10,100))
+
 {
     add_writable_field(sched_valve1_f);
     add_writable_field(sched_valve2_f);
     add_writable_field(sched_valve3_f);
     add_writable_field(sched_valve4_f);
+    add_writable_field(J_ecef_f);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
     sched_valve4_f.set(0);
+    J_ecef_f.set(0.0);
 }
 
 void OrbitController::init() {
@@ -101,6 +117,9 @@ void OrbitController::execute() {
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
+        // Save J_ecef to statefield
+        J_ecef_f.set(J_ecef);
+
         // Transform the impulse from ecef frame to the eci frame
         lin::Vector4d q_eci_ecef;
         gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
@@ -120,24 +139,36 @@ void OrbitController::execute() {
 }
 
 double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel) {
+
+
+    // Collect Relative Orbit Estimator State
+    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
+
     // Calculate angular velocity (w = v/r)
     double ang_vel = lin::norm(vel)/lin::norm(pos);
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
     double min_time = std::numeric_limits<double>::max();
-    for (size_t i=0; i < 3; i++) {
-        double time_til_node = (firing_nodes[i] - theta) / ang_vel;
-        if (time_til_node > 0 && time_til_node < min_time) {
-            min_time = time_til_node;
-        }
-    }
 
-    // Return the smallest positive time
-    return min_time;
+    auto next_node = [&](auto const &arr) -> double {
+        for (auto i = 0; i < arr.size(); i++) {
+            double time_til_node = (arr[i] - theta) / ang_vel;
+            if (time_til_node > 0 && time_til_node < min_time) {
+                min_time = time_til_node;
+            }
+        }
+        return min_time;
+    };
+
+    return (rel_orbit_state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) ? 
+            next_node(firing_nodes_near) : next_node(firing_nodes_far);
 }
 
 lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
     const lin::Vector3d &dr, const lin::Vector3d &dv) {
+
+    // Collects Relative Orbit Estimator state
+    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
 
     // Assemble the input Orbit Controller data struct
     data.t = t;
@@ -145,6 +176,19 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
     data.v_ecef = v;
     data.dr_ecef = dr;
     data.dv_ecef = dv;
+
+    // Sets Orbit Controller gains depending on whether satellites are in near or far-field 
+    if (rel_orbit_state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
+        data.p = gnc::constant::K_p / gain_factor;  
+        data.d = gnc::constant::K_d / gain_factor;
+        data.energy_gain = gnc::constant::K_e / gain_factor;   // Energy gain                   (J)
+        data.h_gain = gnc::constant::K_h / gain_factor;        // Angular momentum gain         (kg m^2/sec)
+    } else {
+        data.p = gnc::constant::K_p;
+        data.d = gnc::constant::K_d;
+        data.energy_gain = gnc::constant::K_e;   // Energy gain                   (J)
+        data.h_gain = gnc::constant::K_h;        // Angular momentum gain         (kg m^2/sec)
+    }
 
     gnc::control_orbit(state, data, actuation);
 

@@ -55,10 +55,6 @@ public:
      */
     void schedule_valves(lin::Vector3d J_body);
 
-    // Firing nodes
-    double pi = gnc::constant::pi;
-    double firing_nodes[3] = {pi/3, pi, -pi/3};
-
     // Orbit Controller
     gnc::OrbitControllerData data;
     gnc::OrbitControllerState state;
@@ -92,5 +88,6 @@ public:
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
     WritableStateField<unsigned int> sched_valve4_f;
+    WritableStateField<lin::Vector3d> J_ecef_f;
 
 };
