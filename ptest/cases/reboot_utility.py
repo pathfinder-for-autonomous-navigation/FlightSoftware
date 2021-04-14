@@ -4,7 +4,11 @@ from .utils import Enums, TestCaseFailure
 import os
 
 class Reboot(SingleSatCase):
+
     def run(self):
+        self.mission_state = "manual"
+        self.cycle()
+
         self.ws("gomspace.gs_reset_cmd", True)
         self.cycle()
         self.finish()

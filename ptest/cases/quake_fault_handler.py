@@ -1,19 +1,23 @@
-from .base import SingleSatCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
-class QuakeFaultHandler(SingleSatCase):
+class QuakeFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(QuakeFaultHandler, self).__init__(*args, **kwargs)
 
-    @property
-    def initial_state(self):
-        return "leader"
+        self.psim_configs += ["truth/standby"]
+        self.initial_state = "standby"
 
     def pre_boot(self):
         self.qfh_state = None
         self.powercycle_happening = None
 
     def post_boot(self):
+        self.mission_state = "leader"
+        self.cycle()
         self.ws("fault_handler.enabled", True)
+        self.cycle()
 
     def check_quake_powercycled(self):
         if not self.powercycle_happening:
