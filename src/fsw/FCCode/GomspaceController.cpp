@@ -197,6 +197,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
 
+
     //Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
@@ -317,10 +318,7 @@ void GomspaceController::execute() {
     if(piksi_off_f.get()){
         gs.set_single_output(0,0); // (output port = OUT-1, 0 for off)
     }
-    else {
-        if (!output1_f.get()) power_cycle_output1_cmd_f.set(false);
-        gs.set_single_output(0,1);
-    }
+
 }
 
 void GomspaceController::power_cycle_outputs() {
@@ -330,6 +328,7 @@ void GomspaceController::power_cycle_outputs() {
          int idx)
     {
         if (cmd_f.get()) {
+
             // TODO add powercycling event
             if (output_f.get()) {
                 gs.set_single_output(idx,0);
@@ -342,7 +341,10 @@ void GomspaceController::power_cycle_outputs() {
     };
 
     // Power cycle output channels
-    powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+    if(!piksi_off_f.get()){
+        powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+
+    }
     powercycle_logic(power_cycle_output2_cmd_f, output2_f, 1);
     powercycle_logic(power_cycle_output3_cmd_f, output3_f, 2);
     powercycle_logic(power_cycle_output4_cmd_f, output4_f, 3);

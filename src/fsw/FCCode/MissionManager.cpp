@@ -81,6 +81,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
     piksi_off_fp = find_writable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+    piksi_powercycle_fp = find_writable_field<bool>("gomspace.power_cycle_output1_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -95,7 +96,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
-    piksi_off_fp->set(false);
 }
 
 void MissionManager::execute()
@@ -192,11 +192,10 @@ void MissionManager::dispatch_startup()
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
-        else{
-            // Resume power to Piksi if it is not on already
-            piksi_off_fp->set(false);
     }
-    }
+
+    piksi_off_fp->set(false);
+
 
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup

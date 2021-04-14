@@ -236,6 +236,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+    tf.piksi_off_fp->set(false);
 
     // Set the control cycle count to 1 so that the control task will initialize the Gomspace output values
     TimedControlTaskBase::control_cycle_count=1;
@@ -359,11 +360,12 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());    
 
     // Test the reset commands one by one, starting with the power cycle outputs command
-
-    tf.piksi_off_fp->set(false);
+    TimedControlTaskBase::control_cycle_count = 352;
     tf.power_cycle_output1_cmd_fp->set(true);
+    tf.piksi_off_fp->set(false);
 
     tf.gs_controller->execute();
+
     TEST_ASSERT_EQUAL(false, tf.output1_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output3_fp->get());

@@ -211,6 +211,11 @@ protected:
      */
     WritableStateField<bool> *piksi_off_fp;
 
+    /**
+     * @brief True if Gomspace should power cycle piksi port
+     */
+    WritableStateField<bool> *piksi_powercycle_fp;
+
 private:
     /**
      * @brief Computes magnitude of baseline position vector.

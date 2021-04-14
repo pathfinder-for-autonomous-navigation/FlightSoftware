@@ -53,6 +53,7 @@ public:
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
   std::shared_ptr<WritableStateField<bool>> piksi_off_fp;
+  std::shared_ptr<WritableStateField<bool>> piksi_powercycle_fp;
 
   std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
 
