@@ -1,14 +1,11 @@
-from .base import SingleSatCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 
-class ADCSWheelFaultHandler(SingleSatCase):
-    @property
-    def initial_state(self):
-        return "standby"
-
-    @property
-    def fast_boot(self):
-        return True
+class ADCSWheelFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(ADCSWheelFaultHandler, self).__init__(*args, **kwargs)
+        self.initial_state = "standby"
+        self.psim_configs = ['truth/standby']
 
     def post_boot(self):
         self.ws("fault_handler.enabled", True)
