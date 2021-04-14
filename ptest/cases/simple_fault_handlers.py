@@ -46,10 +46,12 @@ class ADCSWheelFaultHandler(SingleSatCase, PSimCase):
 
         self.finish()
 
-class LowBattFaultHandler(SingleSatCase):
-    @property
-    def initial_state(self):
-        return "standby"
+class LowBattFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(LowBattFaultHandler, self).__init__(*args, **kwargs)
+        self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
+        self.initial_state = "standby"
 
     def post_boot(self):
         self.ws("fault_handler.enabled", True)
