@@ -5,7 +5,6 @@
 # Testcases that require simulation
 from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
-from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController

@@ -4,7 +4,6 @@ rm -rf .pio
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t EmptyCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t EmptySimCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t NothingCase -ni
-time python -m ptest runsim --clean -c ptest/configs/ci.json -t DeploymentToStandby -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t PropStateMachineCase -ni
