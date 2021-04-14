@@ -77,6 +77,7 @@ class AutonomousMissionController(MissionCase):
             "rel_orbit.uplink.vel",
             "rel_orbit.uplink.time",
         ]
+        time.sleep(10)
         satellite.write_multiple_states(uplink_orbit_data_fields, list(orbit))
 
     # default forward propagation time of 10 minutes
@@ -91,7 +92,7 @@ class AutonomousMissionController(MissionCase):
         # update values to current (sim assumes leader, works equally for follower)
         config["truth.leader.orbit.r"] = lin.Vector3(orbit.pos)
         config["truth.leader.orbit.v"] = lin.Vector3(orbit.vel)
-        config["truth.t.ns"] = GPSTime(*(orbit.time)).to_pan_ns()  # what are the units on this
+        config["truth.t.ns"] = GPSTime(*(orbit.time)).to_pan_ns() 
 
         # step sim to desired time
         sim = Simulation(SingleOrbitGnc, config)
