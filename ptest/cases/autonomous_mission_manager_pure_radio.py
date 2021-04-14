@@ -135,8 +135,8 @@ class AutonomousMissionController(MissionCase):
         self.comms_time_threshold = 60 * 5  # currently 5 minutes for testing
 
         # Pass telemetry between spacecraft
-        # while(self.continue_mission()):
-        while 1:
+        #while(self.continue_mission()):    #for running mission
+        while 1: #for testing purposes
             # wait for data from both spacecrafts to come down from Iridium
             while "Unable to find" in self.leader.read_state(
                 "time.valid"
