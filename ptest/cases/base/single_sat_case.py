@@ -33,7 +33,7 @@ class SingleSatCase(PTestCase):
         super(SingleSatCase, self).__init__(*args, **kwargs)
 
         self.initial_state = "startup"
-        self.initial_state_timeout = 25
+        self.initial_state_timeout = 1000
         self.skip_deployment_wait = False
         self.suppress_faults = True
 
