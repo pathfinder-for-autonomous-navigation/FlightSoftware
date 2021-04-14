@@ -56,6 +56,12 @@ jobs:
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptyCase -ni)
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptySimCase -ni)
 
+    - name: Boot Utility Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/hootl.json -t BootToStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t BootToDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t BootToStandbyCase -ni
+
     - name: Hardware Checkout Cases
       run: |
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DCDCCheckoutCase -ni

@@ -8,7 +8,6 @@ from .dual_empty_case import DualEmptySimCase
 from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
-from .autonomous_mission_manager_case import AutonomousMissionManagerCase
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
 # from .base import *
@@ -17,6 +16,7 @@ from .psim_debug import PSimDebug
 from .dual_psim import DualPSim
 
 # Testcases that don't require simulation
+from .boot_to import BootToStartupCase, BootToDetumbleCase, BootToStandbyCase
 from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
