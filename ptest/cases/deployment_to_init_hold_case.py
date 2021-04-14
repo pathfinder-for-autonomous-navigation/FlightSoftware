@@ -2,10 +2,10 @@ from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
 class DeploymentToInitHold(SingleSatCase):    
-    @property
-    def initial_state(self):
-        return "startup"
-
+    """
+    Not overriding the constructor, causes default initial state to be startup
+    """
+    
     @property
     def adcs_is_functional(self): 
         return self.flight_controller.read_state("adcs_monitor.functional")
@@ -63,7 +63,7 @@ class DeploymentToInitHold(SingleSatCase):
             self.cycle()
         self.logger.put("Completed deployment wait.")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.run_case_all_functional()
         self.run_case_adcs_failure()
         self.run_case_wheel1_failure()
