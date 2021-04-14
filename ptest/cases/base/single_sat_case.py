@@ -66,6 +66,7 @@ class SingleSatCase(PTestCase):
             cycles = cycles + 1
             state = self.flight_controller.smart_read("pan.state")
 
+        self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
         self.post_boot()
 
     def pre_boot(self):

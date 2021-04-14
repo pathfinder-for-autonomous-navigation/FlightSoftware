@@ -10,6 +10,7 @@ class QFHTest(SingleSatCase, PSimCase):
 
         self.initial_state = "standby"
         self.psim_configs += ["truth/standby"]
+        self.one_day_ccno = 1000
 
     def post_boot(self):
         self.ws("fault_handler.enabled", True)

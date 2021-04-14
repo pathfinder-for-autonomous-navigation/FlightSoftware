@@ -74,6 +74,8 @@ class DualSatCase(PTestCase):
             leader_state = self.flight_controller_leader.smart_read("pan.state")
             follower_state = self.flight_controller_follower.smart_read("pan.state")
 
+        self.leader_one_day_ccno = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+        self.follower_one_day_ccno = self.flight_controller_follower.smart_read("pan.one_day_ccno")
         self.post_boot()
 
     def pre_boot(self):
