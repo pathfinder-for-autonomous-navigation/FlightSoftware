@@ -5,6 +5,9 @@ import time
 
 class SpinMotorsCase(SingleSatCase):
     def post_boot(self):
+        self.mission_state = "manual"
+        self.cycle()
+
         self.ws("dcdc.ADCSMotor_cmd", True)
         self.cycle()
 

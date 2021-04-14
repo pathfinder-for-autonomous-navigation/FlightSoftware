@@ -5,7 +5,6 @@ import time
 
 class MTorquerCase(SingleSatCase):
 
-    
     def avg_list(self, inputList):
         """
         averages list measurements of magnetometers
@@ -119,6 +118,9 @@ class MTorquerCase(SingleSatCase):
         #Test for max value: from src/adcs/constants.hpp (truncated)
         self.torque_test( 0.056668)
 
+    def post_boot(self):
+        self.mission_state = "manual"
+        self.cycle()
 
     def run(self):
         self.print_header( "Begin ADCS Magnetorquers Case" )
