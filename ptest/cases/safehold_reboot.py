@@ -8,12 +8,12 @@ class SafeholdReboot(SingleSatCase, PSimCase):
         self.initial_state = "standby"
         self.psim_configs += ['truth/standby']
 
-    # def post_boot(self):
-    #     self.ws('fault_handler.enabled', True)
+    def post_boot(self):
+        self.ws('fault_handler.enabled', True)
 
     def run(self):
         self.cycle()
-
+        
         if not hasattr(self, "test_stage"):
             self.test_stage = "force_fault"
 
