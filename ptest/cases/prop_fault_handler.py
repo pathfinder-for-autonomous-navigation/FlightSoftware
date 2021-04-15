@@ -1,5 +1,6 @@
 from .base import SingleSatCase, PSimCase
 from .utils import Enums, TestCaseFailure
+import lin
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
