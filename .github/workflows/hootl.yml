@@ -56,11 +56,14 @@ jobs:
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptyCase -ni)
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptySimCase -ni)
 
-    - name: Boot Utility Cases
+    - name: Mission Rehearsal Cases
       run: |
-        python -m ptest runsim -c ptest/configs/hootl.json -t BootToStartupCase -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t BootToDetumbleCase -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t BootToStandbyCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
 
     - name: Hardware Checkout Cases
       run: |
