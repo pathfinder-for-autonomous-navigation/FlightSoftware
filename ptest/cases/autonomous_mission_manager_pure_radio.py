@@ -1,4 +1,4 @@
-from .base import DualSatCase
+from .base import AMCCase
 import time
 from psim.sims import DualAttitudeOrbitGnc, SingleOrbitGnc
 from psim import Configuration, Simulation
@@ -13,7 +13,7 @@ class OrbitData(NamedTuple):
     vel: list
     time: list
 
-class AutonomousMissionController(DualSatCase):
+class AutonomousMissionController(AMCCase):
     def state_check(self, satellite, designation):
         satellite_state = satellite.read_state("pan.state")
         if satellite_state == str(Enums.mission_states["standby"]):
@@ -106,7 +106,7 @@ class AutonomousMissionController(DualSatCase):
         )
         return propagatedOrbit
 
-    def run_case_fullmission(self):
+    def run(self):
 
         # setup
         self.leader = self.radio_leader
