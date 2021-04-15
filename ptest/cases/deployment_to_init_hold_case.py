@@ -5,7 +5,10 @@ class DeploymentToInitHold(SingleSatCase):
     """
     Not overriding the constructor, causes default initial state to be startup
     """
-    
+    def __init__(self, *args, **kwargs):
+        super(DeploymentToInitHold, self).__init__(*args, **kwargs)
+        self.suppress_faults = False
+
     @property
     def adcs_is_functional(self): 
         return self.flight_controller.read_state("adcs_monitor.functional")
@@ -25,10 +28,6 @@ class DeploymentToInitHold(SingleSatCase):
     @property
     def wheelpot_is_functional(self):
         return self.flight_controller.read_state("adcs_monitor.havt_device6")
-
-    @property
-    def suppress_faults(self):
-        return False
 
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
@@ -58,6 +57,7 @@ class DeploymentToInitHold(SingleSatCase):
     def post_boot(self):
         # Move to startup and wait the full deployment length
         self.mission_state = "startup"
+        
         self.logger.put("Now in startup. Cycling through deployment wait...")
         for _ in range(self.one_day_ccno // (24 * 2)):
             self.cycle()
