@@ -42,19 +42,19 @@ class DualSatCase(PTestCase):
         super(DualSatCase, self).setup(devices, radios)
 
         if self.leader_suppress_faults:
-            self.logger.put("[TESTCASE] Suppressing leader faults!")
+            self.logger.put("[TESTCASE] Suppressing leader faults.")
             suppress_faults(self.flight_controller_leader, self.logger)
 
         if self.follower_suppress_faults:
-            self.logger.put("[TESTCASE] Suppressing follower faults!")
+            self.logger.put("[TESTCASE] Suppressing follower faults.")
             suppress_faults(self.flight_controller_follower, self.logger)
 
         if self.leader_skip_deployment_wait:
-            self.logger.put("[TESTCASE] Skipping leader deployment wait!")
+            self.logger.put("[TESTCASE] Skipping leader deployment wait.")
             self.flight_controller_leader.write_state("pan.deployment.elapsed", "15000")
 
         if self.follower_skip_deployment_wait:
-            self.logger.put("[TESTCASE] Skipping follower deployment wait!")
+            self.logger.put("[TESTCASE] Skipping follower deployment wait.")
             self.flight_controller_follower.write_state("pan.deployment.elapsed", "15000")
 
         self.pre_boot()
@@ -64,10 +64,10 @@ class DualSatCase(PTestCase):
         leader_state = self.flight_controller_leader.smart_read("pan.state")
         follower_initial_state = Enums.mission_states[self.follower_initial_state]
         follower_state = self.flight_controller_follower.smart_read("pan.state")
-        self.logger.put("[TESTCASE] Boot Util waiting to reach initial states")
+        self.logger.put("[TESTCASE] Boot utility waiting to reach initial states.")
         while leader_state != leader_initial_state or follower_state != follower_initial_state:
             if cycles > self.initial_state_timeout:
-                raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}, was {leader_state} and {follower_state}")
+                raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}, was {leader_state} and {follower_state}.")
 
             self.cycle()
 
@@ -101,8 +101,8 @@ class DualSatCase(PTestCase):
         super(DualSatCase, self).cycle()
 
         for device in self.devices:
-            if device.scrape:
-                device.scrape_uplink()
+            #if device.scrape:
+            #    device.scrape_uplink()
             if device.enable_auto_dbtelem:
                 device.dbtelem()
 

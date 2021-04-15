@@ -9,6 +9,7 @@ class PropFaultHandler(SingleSatCase, PSimCase):
         super(PropFaultHandler, self).__init__(*args, **kwargs)
 
         self.initial_state = "standby"
+        self.skip_deployment_wait = True
         self.psim_configs += ["truth/standby"]
         self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
@@ -111,7 +112,7 @@ class PropFaultHandler(SingleSatCase, PSimCase):
         """Overriden from base.py
         Write sensors at the END because PropController updates sensor values at the end of execution cycle
         """
-        super().cycle()
+        super(PropFaultHandler, self).cycle()
         self.write_sensors()
 
 # --------------------------------------------------------------------------------------

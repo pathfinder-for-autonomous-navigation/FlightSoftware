@@ -45,11 +45,11 @@ class SingleSatCase(PTestCase):
         super(SingleSatCase, self).setup(devices, radios)
 
         if self.suppress_faults:
-            self.logger.put("[TESTCASE] Suppressing Faults!")
+            self.logger.put("[TESTCASE] Suppressing faults.")
             suppress_faults(self.flight_controller, self.logger)
 
         if self.skip_deployment_wait:
-            self.logger.put("[TESTCASE] Skipping deployment wait!")
+            self.logger.put("[TESTCASE] Skipping deployment wait.")
             self.flight_controller.write_state("pan.deployment.elapsed", "15000")
 
         self.pre_boot()
@@ -57,11 +57,11 @@ class SingleSatCase(PTestCase):
         cycles = 0
         initial_state = Enums.mission_states[self.initial_state]
         state = self.flight_controller.smart_read("pan.state")
-        self.logger.put("[TESTCASE] Boot Util waiting to reach initial state")
+        self.logger.put("[TESTCASE] Boot utility waiting to reach initial state.")
         while state != initial_state:
             
             if cycles > self.initial_state_timeout:
-                raise TestCaseFailure(f"Failed to reach desired state of {initial_state}, was {state}")
+                raise TestCaseFailure(f"Failed to reach desired state of {initial_state}, was {state}.")
 
             self.cycle()
 
