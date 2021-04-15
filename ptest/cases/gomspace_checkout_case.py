@@ -17,6 +17,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
+        self.write_state("gomspace.piksi_off", "false")
 
         # readable fields
         vboost = [int(self.read_state("gomspace.vboost.output" + str(i)))
