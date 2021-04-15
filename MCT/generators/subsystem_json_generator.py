@@ -327,3 +327,4 @@ def capFirst(s):
 
 # upon running this file with python it will call the main funciton generate()
 generate()
+print("FlightSoftware/MCT/subsystems/* have been generated")
