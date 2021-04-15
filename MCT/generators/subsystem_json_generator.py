@@ -165,9 +165,167 @@ def removeOldJSON():
     '''
     removes the old json files before it makes the new versions
     '''
-    files = glob.glob(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'subsystems', '*'))
+    files = glob.glob(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'satellites', '*'))
     for file in files:
         os.remove(file)
+
+
+def make_vector(obj, state_data):
+    rawVector = state_data.copy()
+    rawVector['name'] = 'raw'
+    rawVector['key'] = 'raw'
+    rawVector['hints'] = {}
+    rawVector['hints']['range'] = 1
+    rawVector['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(rawVector)
+
+    vectorX = state_data.copy()
+    vectorX['name'] = 'x'
+    vectorX['key'] = 'x'
+    vectorX['hints'] = {}
+    vectorX['hints']['range'] = 1
+    vectorX['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(vectorX)
+
+    vectorY = state_data.copy()
+    vectorY['name'] = 'y'
+    vectorY['key'] = 'y'
+    vectorY['hints'] = {}
+    vectorY['hints']['range'] = 1
+    vectorY['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(vectorY)
+
+    vectorZ = state_data.copy()
+    vectorZ['name'] = 'z'
+    vectorZ['key'] = 'z'
+    vectorZ['hints'] = {}
+    vectorZ['hints']['range'] = 1
+    vectorZ['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(vectorZ)
+
+    # creates a timestamp object
+    timestamp = {}
+    timestamp['key'] = 'utc'
+    timestamp['source'] = 'timestamp'
+    timestamp['name'] = 'Timestamp'
+    timestamp['format'] = 'utc'
+    timestamp['hints'] = {}
+    timestamp['hints']['domain'] = 1
+    # adds the timestamp object ot the containerObject with the state Objects
+    obj['values'].append(timestamp)
+
+    return obj
+    
+
+
+def make_quaternion(obj, state_data):
+    rawQuaternion = state_data.copy()
+    rawQuaternion['name'] = 'raw'
+    rawQuaternion['key'] = 'raw'
+    rawQuaternion['hints'] = {}
+    rawQuaternion['hints']['range'] = 1
+    rawQuaternion['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(rawQuaternion)
+
+    quaternionA = state_data.copy()
+    quaternionA['name'] = 'a'
+    quaternionA['key'] = 'a'
+    quaternionA['hints'] = {}
+    quaternionA['hints']['range'] = 1
+    quaternionA['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(quaternionA)
+
+    quaternionB = state_data.copy()
+    quaternionB['name'] = 'b'
+    quaternionB['key'] = 'b'
+    quaternionB['hints'] = {}
+    quaternionB['hints']['range'] = 1
+    quaternionB['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(quaternionB)
+
+    quaternionC = state_data.copy()
+    quaternionC['name'] = 'c'
+    quaternionC['key'] = 'c'
+    quaternionC['hints'] = {}
+    quaternionC['hints']['range'] = 1
+    quaternionC['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(quaternionC)
+
+    quaternionD = state_data.copy()
+    quaternionD['name'] = 'd'
+    quaternionD['key'] = 'd'
+    quaternionD['hints'] = {}
+    quaternionD['hints']['range'] = 1
+    quaternionD['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(quaternionD)
+
+    # creates a timestamp object
+    timestamp = {}
+    timestamp['key'] = 'utc'
+    timestamp['source'] = 'timestamp'
+    timestamp['name'] = 'Timestamp'
+    timestamp['format'] = 'utc'
+    timestamp['hints'] = {}
+    timestamp['hints']['domain'] = 1
+    # adds the timestamp object ot the containerObject with the state Objects
+    obj['values'].append(timestamp)
+
+    return obj
+
+def make_bool (obj, state_data):
+    rawBool = state_data.copy()
+    rawBool['name'] = 'raw'
+    rawBool['key'] = 'raw'
+    rawBool['hints'] = {}
+    rawBool['hints']['range'] = 1
+    rawBool['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(rawBool)
+
+    intBool = state_data.copy()
+    intBool['name'] = 'intBool'
+    intBool['key'] = 'intBool'
+    intBool['hints'] = {}
+    intBool['hints']['range'] = 1
+    intBool['units'] = '_____'
+
+    # add this to the container object
+    obj['values'].append(intBool)
+
+    # creates a timestamp object
+    timestamp = {}
+    timestamp['key'] = 'utc'
+    timestamp['source'] = 'timestamp'
+    timestamp['name'] = 'Timestamp'
+    timestamp['format'] = 'utc'
+    timestamp['hints'] = {}
+    timestamp['hints']['domain'] = 1
+    # adds the timestamp object ot the containerObject with the state Objects
+    obj['values'].append(timestamp)
+
+    return obj
+
+
+
 
 def createJSON(satellite):
     '''
@@ -176,19 +334,22 @@ def createJSON(satellite):
     f = open(flowDataPath, 'r')
     # gets the dictionary of fields
     d = createDict(createFieldList(f))
-    
+    sat = {}
+
+    # set key, name, and measurements
+    sat['name'] = capFirst(satellite)
+    sat['key'] = satellite
+    sat['measurements'] = []
+
     #iterates through each subsystem in the dictionary
     for sub in d:
 
         #creates subsystem object
-        subsystem = {}
+        
 
         # if the subsystem is actually a dictionary
         if isinstance(d[sub], dict):
-            # set key, name, and measurements
-            subsystem['name'] = capFirst(sub)
-            subsystem['key'] = satellite + '_' + sub
-            subsystem['measurements'] = []
+
         
             # iterates through each object in the subsystem dictionary
             for obj in d[sub]:
@@ -196,12 +357,12 @@ def createJSON(satellite):
                 containerObject = {}
 
                 # set key, name, and values;
-                containerObject['name'] = capFirst(obj)
+                containerObject['name'] = satellite + '_' + sub + '.' + obj
                 containerObject['key'] = satellite + '_' + sub + '.' + obj
                 containerObject['values'] = []
 
                 #add the object to the subsytem
-                subsystem['measurements'].append(containerObject)
+                sat['measurements'].append(containerObject)
 
                 # if the object is actually a dictionary
                 if isinstance(d[sub][obj], dict):
@@ -242,52 +403,52 @@ def createJSON(satellite):
                     #retrieve the fields from the loaded json
                     stateObject = telemetryData['fields'][k]
 
-                    # set key, name, and hints
-                    stateObject['name'] = capFirst(obj)
-                    stateObject['key'] = 'value'
-                    stateObject['hints'] = {}
-                    stateObject['hints']['range'] = 1
+                    if 'vector' in stateObject['type']:
+                        containerObject = make_vector(containerObject, stateObject)
+                    elif 'quaternion' in stateObject['type']:
+                        containerObject = make_quaternion(containerObject, stateObject)
+                    elif 'bool' in stateObject['type']:
+                        containerObject = make_bool(containerObject, stateObject)
+                    else:
+                        # set key, name, and hints
+                        stateObject['name'] = k
+                        stateObject['key'] = 'value'
+                        stateObject['hints'] = {}
+                        stateObject['hints']['range'] = 1
 
-                    # add a units option for every type except boolean since boolean doesn't have units
-                    if stateObject['type'] != 'bool':
-                        stateObject['units'] = '_____'
+                        # add a units option for every type except boolean since boolean doesn't have units
+                        if stateObject['type'] != 'bool':
+                            stateObject['units'] = '_____'
 
-                    # add this to the container object
-                    containerObject['values'].append(stateObject)
+                        # add this to the container object
+                        containerObject['values'].append(stateObject)
 
-                    # creates a timestamp object
-                    timestamp = {}
-                    timestamp['key'] = 'utc'
-                    timestamp['source'] = 'timestamp'
-                    timestamp['name'] = 'Timestamp'
-                    timestamp['format'] = 'utc'
-                    timestamp['hints'] = {}
-                    timestamp['hints']['domain'] = 1
-                    # adds the timestamp object ot the containerObject with the state Objects
-                    containerObject['values'].append(timestamp)
-            # creates a json file in MCT/public/subsystems and dumps the object into it
-            subsystemJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'subsystems', satellite + '_' + sub + '.json'), 'w')
-            json.dump(subsystem, subsystemJSON, indent=4)
+                        # creates a timestamp object
+                        timestamp = {}
+                        timestamp['key'] = 'utc'
+                        timestamp['source'] = 'timestamp'
+                        timestamp['name'] = 'Timestamp'
+                        timestamp['format'] = 'utc'
+                        timestamp['hints'] = {}
+                        timestamp['hints']['domain'] = 1
+                        # adds the timestamp object ot the containerObject with the state Objects
+                        containerObject['values'].append(timestamp)
         # if the subsytem is actually a state variable
         else:
-            # creates a subsystem called Miscellaneous for state values that do not have an object or a subsystem and sets its key, name, and measurements
-            subsystem['name'] = capFirst('Miscellaneous')
-            subsystem['key'] = 'miscellaneous'
-            subsystem['measurements'] = []
             # creates a container Object
             containerObject = {}
             #sets its key, name, and values
-            containerObject['name'] = capFirst(sub)
-            containerObject['key'] = sub
+            containerObject['name'] = satellite + '_' + sub
+            containerObject['key'] = satellite + '_' + sub
             containerObject['values'] = []
             #adds the contianer object to the subsystem object
-            subsystem['measurements'].append(containerObject)
+            
             # get the key value to search the telemetryData json for
             k = sub
             #retrieve the fields from the loaded json
             stateObject = telemetryData['fields'][k]
             # set the key, name, and hints
-            stateObject['name'] = capFirst(obj)
+            stateObject['name'] = capFirst(sub)
             stateObject['key'] = 'value'
             stateObject['hints'] = {}
             stateObject['hints']['range'] = 1
@@ -307,9 +468,11 @@ def createJSON(satellite):
             #adds the timestamp to the container object
             containerObject['values'].append(timestamp)
 
-            # creates a json file called miscellaneous,json in .\MCT\public\subsystems folder and dumps json for subsystem object into it.
-            subsystemJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'subsystems', 'miscellaneous.json'), 'w')
-            json.dump(subsystem, subsystemJSON, indent=4)
+            sat['measurements'].append(containerObject)
+
+    # creates a json file called miscellaneous,json in .\MCT\public\subsystems folder and dumps json for subsystem object into it.
+    satelliteJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'satellites', satellite + '.json'), 'w')
+    json.dump(sat, satelliteJSON, indent=4)
 
                 
 

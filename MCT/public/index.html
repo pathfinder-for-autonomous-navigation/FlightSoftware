@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>PAN Mission Control - OpenMCT</title>
     <script src="/openmct/openmct.js"></script>
@@ -8,6 +9,7 @@
 
 
 </head>
+
 <body>
     <script>
         //indicates the location of the openmct libraries and assets
@@ -18,7 +20,7 @@
         openmct.install(openmct.plugins.Elasticsearch());
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
+        openmct.time.clock('local', { start: -15 * 60 * 1000, end: 0 });
         openmct.time.timeSystem('utc');
         //installs dark theme
         openmct.install(openmct.plugins.Espresso());
@@ -26,47 +28,13 @@
         openmct.install(GenericPlugin("historical"));
         openmct.install(GenericPlugin("realtime"));
         //installs subsystem/domain object plugins using generic-plugin.js
-        openmct.install(GenericPlugin("battery", "follower"));
-        openmct.install(GenericPlugin("battery", "leader"));
-        openmct.install(GenericPlugin("pan", "follower"));
-        openmct.install(GenericPlugin("pan", "leader"));
-        openmct.install(GenericPlugin("orbit", "follower"));
-        openmct.install(GenericPlugin("orbit", "leader"));
-        openmct.install(GenericPlugin("piksi", "leader"));
-        openmct.install(GenericPlugin("piksi", "follower"));
-        openmct.install(GenericPlugin("attitude_estimator", "follower"));
-        openmct.install(GenericPlugin("attitude_estimator", "leader"));
-        openmct.install(GenericPlugin("attitude", "follower"));
-        openmct.install(GenericPlugin("attitude", "leader"));
-        openmct.install(GenericPlugin("adcs_monitor", "follower"));
-        openmct.install(GenericPlugin("adcs_monitor", "leader"));
-        openmct.install(GenericPlugin("prop", "follower"));
-        openmct.install(GenericPlugin("prop", "leader"));
-        openmct.install(GenericPlugin("adcs_command", "follower"));
-        openmct.install(GenericPlugin("adcs_command", "leader"));
-        openmct.install(GenericPlugin("adcs", "follower"));
-        openmct.install(GenericPlugin("adcs", "leader"));
-        openmct.install(GenericPlugin("radio", "follower"));
-        openmct.install(GenericPlugin("radio", "leader"));
-        openmct.install(GenericPlugin("docksys", "follower"));
-        openmct.install(GenericPlugin("docksys", "leader"));
-        openmct.install(GenericPlugin("dcdc", "follower"));
-        openmct.install(GenericPlugin("dcdc", "leader"));
-        openmct.install(GenericPlugin("fault_handler", "follower"));
-        openmct.install(GenericPlugin("fault_handler", "leader"));
-        openmct.install(GenericPlugin("trigger_dist", "follower"));
-        openmct.install(GenericPlugin("trigger_dist", "leader"));
-        openmct.install(GenericPlugin("downlink", "follower"));
-        openmct.install(GenericPlugin("downlink", "leader"));
-        openmct.install(GenericPlugin("timing", "follower"));
-        openmct.install(GenericPlugin("timing", "leader"));
-        openmct.install(GenericPlugin("piksi_fh", "follower"));
-        openmct.install(GenericPlugin("piksi_fh", "leader"));
-        //openmct.install(GenericPlugin("miscellaneous"));
+        openmct.install(GenericPlugin("follower"));
+        openmct.install(GenericPlugin("leader"));
 
 
         //starts OpenMCT once all installs are completed
         openmct.start();
     </script>
 </body>
+
 </html>
