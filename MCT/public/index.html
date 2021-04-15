@@ -15,15 +15,11 @@
         //installs plugins for creation and storage of user objects like layouts (currenlty needs to have CORS enabled - Run MCT/generators/mct_es_config.sh)
         openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
         openmct.install(openmct.plugins.MyItems());
-<<<<<<< HEAD
-        openmct.install(openmct.plugins.Elasticsearch());
-=======
         //installs new plugins for viewing telemetry and analyzing telemetry
         openmct.install(openmct.plugins.AutoflowView({
             type: "telemetry.fixed"
         }));
         openmct.install(openmct.plugins.SummaryWidget());
->>>>>>> master
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
@@ -34,7 +30,6 @@
         openmct.install(GenericPlugin("historical"));
         openmct.install(GenericPlugin("realtime"));
         //installs subsystem/domain object plugins using generic-plugin.js
-<<<<<<< HEAD
         openmct.install(GenericPlugin("battery", "follower"));
         openmct.install(GenericPlugin("battery", "leader"));
         openmct.install(GenericPlugin("pan", "follower"));
@@ -73,27 +68,6 @@
         openmct.install(GenericPlugin("piksi_fh", "leader"));
         //openmct.install(GenericPlugin("miscellaneous"));
 
-=======
-        openmct.install(GenericPlugin("battery"));
-        openmct.install(GenericPlugin("pan"));
-        openmct.install(GenericPlugin("orbit"));
-        openmct.install(GenericPlugin("piksi"));
-        openmct.install(GenericPlugin("attitude_estimator"));
-        openmct.install(GenericPlugin("attitude"));
-        openmct.install(GenericPlugin("adcs_monitor"));
-        openmct.install(GenericPlugin("prop"));
-        openmct.install(GenericPlugin("adcs_command"));
-        openmct.install(GenericPlugin("adcs"));
-        openmct.install(GenericPlugin("radio"));
-        openmct.install(GenericPlugin("docksys"));
-        openmct.install(GenericPlugin("dcdc"));
-   //     openmct.install(GenericPlugin("miscellaneous"));
-        openmct.install(GenericPlugin("fault_handler"));
-        openmct.install(GenericPlugin("trigger_dist"));
-        openmct.install(GenericPlugin("downlink"));
-        openmct.install(GenericPlugin("timing"));
-        openmct.install(GenericPlugin("piksi_fh"));        
->>>>>>> master
 
         //starts OpenMCT once all installs are completed
         openmct.start();
