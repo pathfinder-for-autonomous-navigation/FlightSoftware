@@ -6,8 +6,7 @@ import time
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatCase):
     def post_boot(self):
-        self.flight_controller.write_state(
-            "pan.state", Enums.mission_states["manual"])
+        self.mission_state = 'manual'
         self.cycle()
 
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
