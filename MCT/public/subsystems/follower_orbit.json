@@ -3,22 +3,19 @@
     "key": "follower_orbit",
     "measurements": [
         {
-            "name": "Baseline_pos",
-            "key": "follower_orbit.baseline_pos",
+            "name": "Valid",
+            "key": "follower_orbit.valid",
             "values": [
                 {
-                    "bitsize": 73,
+                    "bitsize": 1,
                     "flow_id": 2,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
+                    "type": "bool",
                     "writable": false,
-                    "name": "Baseline_pos",
+                    "name": "Valid",
                     "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -72,6 +69,64 @@
                     "type": "lin double vector",
                     "writable": false,
                     "name": "Vel",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pos_sigma",
+            "key": "follower_orbit.pos_sigma",
+            "values": [
+                {
+                    "bitsize": 43,
+                    "flow_id": 2,
+                    "max": 100.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Pos_sigma",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Vel_sigma",
+            "key": "follower_orbit.vel_sigma",
+            "values": [
+                {
+                    "bitsize": 43,
+                    "flow_id": 2,
+                    "max": 50.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Vel_sigma",
                     "key": "value",
                     "hints": {
                         "range": 1

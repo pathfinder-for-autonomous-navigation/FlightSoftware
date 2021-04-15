@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 6,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "max": 1440000,
                     "min": 0,
                     "type": "unsigned int",

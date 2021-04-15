@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -22,7 +22,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -51,7 +51,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -65,7 +65,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -89,12 +89,12 @@
             ]
         },
         {
-            "name": "Adcs_estimator",
-            "key": "follower_timing.adcs_estimator",
+            "name": "Estimators",
+            "key": "follower_timing.estimators",
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -108,7 +108,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -137,7 +137,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -151,7 +151,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -180,7 +180,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -194,7 +194,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -223,7 +223,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -237,7 +237,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -266,7 +266,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -280,7 +280,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -309,7 +309,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -323,7 +323,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -352,7 +352,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -366,7 +366,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -395,7 +395,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -409,7 +409,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -438,7 +438,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -452,7 +452,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -481,7 +481,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -495,7 +495,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -524,7 +524,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -538,7 +538,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -567,7 +567,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -581,7 +581,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -610,7 +610,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -624,7 +624,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -653,7 +653,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -667,7 +667,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",

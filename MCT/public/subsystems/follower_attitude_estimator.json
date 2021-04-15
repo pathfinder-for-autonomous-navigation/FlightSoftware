@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 32,
-                    "flow_id": 3,
+                    "flow_id": 4,
                     "type": "lin float quaternion",
                     "writable": false,
                     "name": "Q_body_eci",
@@ -30,17 +30,17 @@
             ]
         },
         {
-            "name": "W_body",
-            "key": "follower_attitude_estimator.w_body",
+            "name": "L_body",
+            "key": "follower_attitude_estimator.L_body",
             "values": [
                 {
-                    "bitsize": 149,
-                    "flow_id": 3,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
+                    "bitsize": 49,
+                    "flow_id": 4,
+                    "max": 0.100000001490116,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "W_body",
+                    "name": "L_body",
                     "key": "value",
                     "hints": {
                         "range": 1

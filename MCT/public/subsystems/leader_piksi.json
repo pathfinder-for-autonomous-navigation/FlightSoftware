@@ -3,39 +3,12 @@
     "key": "leader_piksi",
     "measurements": [
         {
-            "name": "Time",
-            "key": "leader_piksi.time",
-            "values": [
-                {
-                    "bitsize": 62,
-                    "flow_id": 2,
-                    "type": "gps_time_t",
-                    "writable": false,
-                    "name": "Time",
-                    "key": "value",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-        },
-        {
             "name": "State",
             "key": "leader_piksi.state",
             "values": [
                 {
                     "bitsize": 4,
-                    "flow_id": 19,
+                    "flow_id": 20,
                     "max": 14,
                     "min": 0,
                     "type": "unsigned char",
@@ -64,7 +37,7 @@
             "values": [
                 {
                     "bitsize": 103,
-                    "flow_id": 19,
+                    "flow_id": 20,
                     "max": 6921000.0,
                     "min": 6771000.0,
                     "type": "lin double vector",
@@ -93,7 +66,7 @@
             "values": [
                 {
                     "bitsize": 76,
-                    "flow_id": 19,
+                    "flow_id": 20,
                     "max": 7685.0,
                     "min": 7570.0,
                     "type": "lin double vector",
@@ -122,7 +95,7 @@
             "values": [
                 {
                     "bitsize": 73,
-                    "flow_id": 19,
+                    "flow_id": 20,
                     "max": 2000.0,
                     "min": 0.0,
                     "type": "lin double vector",
@@ -151,7 +124,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 19,
+                    "flow_id": 20,
                     "max": 1001,
                     "min": 0,
                     "type": "unsigned int",

@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 17,
+                    "flow_id": 18,
                     "type": "bool",
                     "writable": false,
                     "name": "Docked",
@@ -34,7 +34,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 17,
+                    "flow_id": 18,
                     "type": "bool",
                     "writable": false,
                     "name": "Dock_config",
@@ -60,7 +60,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 35,
+                    "flow_id": 36,
                     "type": "bool",
                     "writable": false,
                     "name": "Is_turning",
@@ -86,7 +86,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 35,
+                    "flow_id": 36,
                     "type": "bool",
                     "writable": true,
                     "name": "Config_cmd",

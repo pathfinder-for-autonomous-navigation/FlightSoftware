@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 20,
+                    "flow_id": 21,
                     "type": "bool",
                     "writable": false,
                     "name": "SpikeDock",
@@ -34,7 +34,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 20,
+                    "flow_id": 21,
                     "type": "bool",
                     "writable": false,
                     "name": "ADCSMotor",
@@ -60,7 +60,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
                     "name": "ADCSMotor_cmd",
@@ -86,7 +86,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
                     "name": "SpikeDock_cmd",
@@ -112,7 +112,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
                     "name": "Disable_cmd",
@@ -138,7 +138,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
                     "name": "Reset_cmd",

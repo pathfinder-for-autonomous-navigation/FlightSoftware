@@ -8,7 +8,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -37,7 +37,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -66,7 +66,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
