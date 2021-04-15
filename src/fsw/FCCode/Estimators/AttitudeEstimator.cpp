@@ -35,7 +35,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_w_bias_body_sigma_f("attitude_estimator.w_bias_sigma_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
-      attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>())
+      attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
+      attitude_estimator_fault("attitude_estimator.fault", 1)
 {
     add_internal_field(attitude_estimator_b_valid_f);
     add_internal_field(attitude_estimator_b_body_f);
@@ -48,6 +49,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     add_readable_field(attitude_estimator_L_body_f);
     add_writable_field(attitude_estimator_reset_cmd_f);
     add_writable_field(attitude_estimator_mag_flag_f);
+    add_fault(attitude_estimator_fault);
 
     attitude_estimator_valid_f.set(false);
     attitude_estimator_b_body_f.set(lin::zeros<lin::Vector3f>());
@@ -107,6 +109,7 @@ void AttitudeEstimator::execute()
         {
             attitude_estimator_valid_f.set(false);
             attitude_estimator_reset_cmd_f.set(false);
+            attitude_estimator_fault.evaluate(false);
 
             _state = gnc::AttitudeEstimatorState();
             _estimate = gnc::AttitudeEstimate();
@@ -153,6 +156,7 @@ void AttitudeEstimator::execute()
     /* Populate outputs of the attitude estimator if valid.
      */
     attitude_estimator_valid_f.set(_estimate.is_valid);
+    attitude_estimator_fault.evaluate(_estimate.is_valid);
     if (_estimate.is_valid)
     {
         attitude_estimator_q_body_eci_f.set(_estimate.q_body_eci);
