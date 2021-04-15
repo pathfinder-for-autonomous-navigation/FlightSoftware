@@ -1,0 +1,11 @@
+#ifndef rel_orbit_state_t_enum_
+#define rel_orbit_state_t_enum_
+
+// rel_orbit.state
+enum class rel_orbit_state_t : unsigned char {
+    invalid = 0,
+    propagating,
+    estimating
+};
+
+#endif

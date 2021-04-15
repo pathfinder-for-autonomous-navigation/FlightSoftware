@@ -10,6 +10,7 @@ from elasticsearch import Elasticsearch
 from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
 from .uplink_timer import UplinkTimer
+from .cases.utils import str_to_val
 
 import email
 import imaplib
@@ -89,6 +90,11 @@ class RadioSession(object):
         except Exception as e:
             print("Not connected to email")
 
+        if os.path.exists("uplink.json"):
+            os.remove("uplink.json")
+        if os.path.exists("http_uplink.json"):
+            os.remove("http_uplink.json")
+
     def check_queue(self, queue):
         '''
         Continuously reads and carries out requests
@@ -155,14 +161,14 @@ class RadioSession(object):
         assert len(fields) == len(vals)
 
         for i in range(len(fields)):
-            self.statefield_dict[fields[i]] = self.uplink_console.get_val(vals[i])
+            self.statefield_dict[fields[i]] = str_to_val(vals[i]) if type(vals[i])==str else vals[i]
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.
         # make the uplink.json file so we know there is data to send and http_cmd
         # can see it as well
         if not os.path.exists("uplink.json"):   
-            with open('uplink.json', 'w'): pass    
+            with open('uplink.json', 'w'): pass 
             t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
             t.start()
 
@@ -223,7 +229,7 @@ class RadioSession(object):
 
         if success:
             # Send the uplink to Iridium
-            to = "data@sbd.iridium.com"
+            to = "pan.ssds.qlocate@gmail.com"
             sender = "pan.ssds.qlocate@gmail.com"
             subject = self.imei
             msgHtml = ""

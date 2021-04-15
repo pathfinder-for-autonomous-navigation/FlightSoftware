@@ -7,7 +7,6 @@ corresponding psim statefield names. Replace leader or follower with 'sat'.
 Please similarly define "fc_vs_sim_a" which is a dictionary of the mappings for actuators.
     
 "fc_vs_sim_s":{
-    "orbit.time": "truth.t.s",
     "orbit.pos": "truth.sat.orbit.r.ecef",
     "orbit.vel": "truth.sat.orbit.v.ecef",
     "adcs_monitor.ssa_vec":  "truth.sat.environment.s.body",

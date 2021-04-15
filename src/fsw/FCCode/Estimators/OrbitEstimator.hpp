@@ -35,8 +35,8 @@ class OrbitEstimator : public ControlTask<void>
     void execute() override;
 
   protected:
-    /* Take position, velocity, relative position, time, time delay, and current
-     * static readings in from Piksi.
+    /* Take position, velocity, time, time delay, and current state readings in
+     * from Piksi.
      */
     ReadableStateField<unsigned char> const *const piksi_state_fp;
     ReadableStateField<unsigned int> const *const piksi_microdelta_fp;
@@ -46,8 +46,8 @@ class OrbitEstimator : public ControlTask<void>
     /* Take the current time estimate from the time estimator.
      */
     ReadableStateField<bool> const *const time_valid_fp;
-    InternalStateField<double> const *const time_s_fp;
     InternalStateField<unsigned long long> const *const time_ns_fp;
+    InternalStateField<lin::Vector3d> const *const time_earth_w_fp;
 
     /* Outputs for current position and velocity estimates of this satellite.
      */

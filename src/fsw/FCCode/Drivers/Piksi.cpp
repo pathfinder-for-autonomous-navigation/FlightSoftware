@@ -233,6 +233,9 @@ void Piksi::set_baseline_flag(const unsigned char flag){
 void Piksi::set_read_return(const unsigned int out){
     _read_return = out;
 }
+void Piksi::set_microdelta(unsigned long udelta){
+    microdelta = udelta;
+}
 #endif
 
 unsigned int Piksi::get_iar() { return _iar.num_hyps; }

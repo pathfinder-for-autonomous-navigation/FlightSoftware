@@ -1,20 +1,25 @@
 #include "../StateFieldRegistryMock.hpp"
-#include <fsw/FCCode/OrbitController.hpp>
-#include <fsw/FCCode/AttitudeEstimator.hpp>
-#include <fsw/FCCode/PropController.hpp>
 #include "../custom_assertions.hpp"
+
 #include <common/constant_tracker.hpp>
+
+#include <fsw/FCCode/OrbitController.hpp>
+#include <fsw/FCCode/PropController.hpp>
 
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
 
         // Inputs to orbit controller
-        std::shared_ptr<ReadableStateField<double>> time_fp;
+        std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
+        std::shared_ptr<InternalStateField<double>> time_s_fp;
+        std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_fp;
+        std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_pos_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_vel_fp;
+        std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
         std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
 
         std::unique_ptr<OrbitController> orbit_controller;
@@ -28,14 +33,18 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
-                time_fp = registry.create_readable_field<double>("orbit.time", 0, 1, 1);
+                time_valid_fp = registry.create_readable_field<bool>("time.valid");
+                time_s_fp = registry.create_internal_field<double>("time.s");
+                orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
                 pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 1);
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 1);
-                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 1, 1);
-                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 1, 1);
+                rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 3);
+                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 1);
+                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_vel", 0, 1, 1);
+                attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
-                orbit_controller = std::make_unique<OrbitController>(registry, 0);  
+                orbit_controller = std::make_unique<OrbitController>(registry, 0);
                 prop_controller = std::make_unique<PropController>(registry, 0);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
