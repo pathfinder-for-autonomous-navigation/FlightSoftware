@@ -34,7 +34,7 @@ def generate():
     createJSON("follower")
     createJSON("leader")
 
-def createFieldList(file):
+def createFieldList():
     '''
     populates and returns list 'fields' with lists of each telemetry point in file seperated into sections of its state and parents object(s) including subsystem
     
@@ -42,13 +42,10 @@ def createFieldList(file):
 
     if file contains a.b.c, [a, b, c] wil be added to 'fields'
 
-        Parameters: 
-            file (File): The flow_data.cpp file that will be scanned
-
         Returns:
             fields (list): list of all telemetry points seperated into lists of their state and parents object(s) including subsystem
     '''
-    
+    file = open(flowDataPath, 'r')
     fields = []
     lines = file.readlines()
     file.close()
@@ -173,9 +170,8 @@ def createJSON(satellite):
     '''
     creates all the JSON subsystem/domain object files and puts them in ./public/subsystems
     '''
-    f = open(flowDataPath, 'r')
-    # gets the dictionary of fields
-    d = createDict(createFieldList(f))
+
+    d = createDict(createFieldList())
     
     #iterates through each subsystem in the dictionary
     for sub in d:
