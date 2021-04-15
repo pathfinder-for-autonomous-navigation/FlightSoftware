@@ -326,4 +326,4 @@ def actionAtIndex(s1, s2, i, action):
     
 # upon running this file with python it will call the main funciton generate()
 generate()
-
+print("FlightSoftware/MCT/server-files/state-variables.js has been generated")
