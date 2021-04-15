@@ -223,7 +223,6 @@ def writeStateVariables(d):
 
     #removes the old state-variables file and creates a new one
     os.remove(stateVariablesPath)
-    print("opening")
     sv = open(stateVariablesPath, "x")
 
     #sets the stdout to the state-variables file, prints out the dictionary, and then makes the stdout the original again

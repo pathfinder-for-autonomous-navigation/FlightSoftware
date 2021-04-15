@@ -5,5 +5,5 @@ node_modules
 *.pem
 
 # subsystem files
-public/subsystems/*
+public/satellites/*
 public/server-files/state-variables.js
