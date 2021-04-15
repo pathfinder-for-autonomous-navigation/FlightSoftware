@@ -111,25 +111,7 @@ def createDict(l):
             telemObject = telemPoint[1]
             telemState = telemPoint[2]
             # retrieve the value of the telem point from initialTelemValue()
-            if 'vector' in get_type(telemSubsystem + '.' + telemObject + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['x'] = 0
-                telemValue['y'] = 0
-                telemValue['z'] = 0
-            elif 'quaternion' in get_type(telemSubsystem + '.' + telemObject + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['a'] = 0
-                telemValue['b'] = 0
-                telemValue['c'] = 0
-                telemValue['c'] = 0
-            elif 'bool' in get_type(telemSubsystem + '.' + telemObject + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = 0
-                telemValue['intBool'] = 0
-            else:
-                telemValue = initialTelemValue(telemSubsystem + '.' + telemObject + '.' + telemState)
+            telemValue = initialTelemValue(telemSubsystem + '.' + telemObject + '.' + telemState)
             
             # checks to see if subsystem and then object are alreay in the dictionary
             if telemSubsystem in telem:
@@ -153,25 +135,7 @@ def createDict(l):
             telemSubsystem = telemPoint[0]
             telemState = telemPoint[1]
             # retrieve the value of the telem point from initialTelemValue()
-            if 'vector' in get_type(telemSubsystem + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['x'] = 0
-                telemValue['y'] = 0
-                telemValue['z'] = 0
-            elif 'quaternion' in get_type(telemSubsystem + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['a'] = 0
-                telemValue['b'] = 0
-                telemValue['c'] = 0
-                telemValue['c'] = 0
-            elif 'bool' in get_type(telemSubsystem + '.' + telemState):
-                telemValue = {}
-                telemValue['raw'] = 0
-                telemValue['intBool'] = 0
-            else:
-                telemValue = initialTelemValue(telemSubsystem + '.' + telemState)
+            telemValue = initialTelemValue(telemSubsystem + '.' + telemState)
             
             # checks to see if subsystem and then state are alreay in the dictoinary
             if telemSubsystem in telem:
@@ -187,25 +151,7 @@ def createDict(l):
             # initialize of the state
             telemState = telemPoint[0]
             # retrieve the value of the telem point from initialTelemValue()
-            if 'vector' in get_type(telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['x'] = 0
-                telemValue['y'] = 0
-                telemValue['z'] = 0
-            elif 'quaternion' in get_type(telemState):
-                telemValue = {}
-                telemValue['raw'] = '0'
-                telemValue['a'] = 0
-                telemValue['b'] = 0
-                telemValue['c'] = 0
-                telemValue['c'] = 0
-            elif 'bool' in get_type(telemState):
-                telemValue = {}
-                telemValue['raw'] = 0
-                telemValue['intBool'] = 0
-            else:
-                telemValue = initialTelemValue(telemState)
+            telemValue = initialTelemValue(telemState)
             
 
             if (telemState in telem) == False: # finally it adds the state to the empty dictionary using the value initialized earlier
@@ -267,40 +213,6 @@ def initialTelemValue(state):
     # returns the initial values for the state
     return defaultValue
 
-def get_type(state):
-    '''
-    returns the type of a specific piece of state telemetry
-
-        Parameters: 
-            state (str): the key for a telemetry state
-        Returns: the type of that telemetry
-    '''
-
-    # opens telemetry
-    t = open(telemetryPath, 'r')
-
-    lines = t.readlines()
-    t.close()
-
-    # first look for the state in all the lines
-    stateFound = False
-    for line in lines:
-        if stateFound  == False:
-            if line.find(state) != -1 and line.find('{') != -1:
-                stateFound = True
-
-        # once found, look for type field
-        else:
-            if line.find('type') !=-1:
-                index = line.rfind("\"") # extract the type from the line
-                type = line[:index]
-                index = type.rfind("\"")
-                type = type[index+1:]
-                return type
-    
-    # returns the initial values for the state
-    return "unknown"
-
 
 def writeStateVariables(d):
     '''
@@ -311,6 +223,7 @@ def writeStateVariables(d):
 
     #removes the old state-variables file and creates a new one
     os.remove(stateVariablesPath)
+    print("opening")
     sv = open(stateVariablesPath, "x")
 
     #sets the stdout to the state-variables file, prints out the dictionary, and then makes the stdout the original again
@@ -415,4 +328,4 @@ def actionAtIndex(s1, s2, i, action):
     
 # upon running this file with python it will call the main funciton generate()
 generate()
-
+print("FlightSoftware/MCT/server-files/state-variables.js has been generated")

@@ -5,6 +5,8 @@
 
 #include <gnc/config.hpp>
 #include <gnc/constants.hpp>
+#include <gnc/environment.hpp>
+#include <gnc/utilities.hpp>
 
 TimeEstimator::TimeEstimator(StateFieldRegistry &registry)
     : ControlTask<void>(registry),
@@ -15,12 +17,18 @@ TimeEstimator::TimeEstimator(StateFieldRegistry &registry)
       time_gps_f("time.gps", Serializer<gps_time_t>()),
       time_ns_f("time.ns"),
       time_s_f("time.s"),
+      time_earth_w_f("time.earth.w"),
+      time_earth_q_ecef_eci_f("time.earth.q_ecef_eci"),
+      time_earth_q_eci_ecef_f("time.earth.q_eci_ecef"),
       time_reset_cmd_f("time.reset_cmd", Serializer<bool>())
 {
     add_readable_field(time_valid_f);
     add_internal_field(time_s_f);
     add_internal_field(time_ns_f);
     add_readable_field(time_gps_f);
+    add_internal_field(time_earth_w_f);
+    add_internal_field(time_earth_q_ecef_eci_f);
+    add_internal_field(time_earth_q_eci_ecef_f);
     add_writable_field(time_reset_cmd_f);
 
     time_valid_f.set(false);
@@ -58,7 +66,30 @@ void TimeEstimator::execute()
             break;
     }
 
-    // Update the other fields (means nothing it time is invalid anyway)
-    time_ns_f.set(static_cast<unsigned long long>(time_gps_f.get()) - gps_epoch_ns);
-    time_s_f.set(static_cast<double>(time_ns_f.get()) * 1.0e-9);
+    if (time_valid_f.get())
+    {
+        time_ns_f.set(static_cast<unsigned long long>(time_gps_f.get()) - gps_epoch_ns);
+        time_s_f.set(static_cast<double>(time_ns_f.get()) * 1.0e-9);
+
+        auto const time_s = time_s_f.get();
+        auto const earth_w = [](double t) {
+            lin::Vector3d w;
+            gnc::env::earth_angular_rate(t, w);
+            return w;
+        }(time_s);        
+        auto const earth_q_ecef_eci = [](double t) {
+            lin::Vector4d q;
+            gnc::env::earth_attitude(t, q);
+            return q;
+        }(time_s);
+        auto const earth_q_eci_ecef = [](lin::Vector4d const &q) {
+            lin::Vector4d p;
+            gnc::utl::quat_conj(q, p);
+            return p;
+        }(earth_q_ecef_eci);
+
+        time_earth_w_f.set(earth_w);
+        time_earth_q_ecef_eci_f.set(earth_q_ecef_eci);
+        time_earth_q_eci_ecef_f.set(earth_q_eci_ecef);
+    }
 }

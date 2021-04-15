@@ -10,7 +10,7 @@
 #include "PiksiControlTask.hpp"
 #include "ADCSBoxMonitor.hpp"
 #include "ADCSBoxController.hpp"
-#include "AttitudeEstimator.hpp"
+#include "Estimators.hpp"
 #include "AttitudeController.hpp"
 #include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
@@ -40,7 +40,7 @@ class MainControlLoop : public ControlTask<void> {
 
     DebugTask debug_task;
 
-    AttitudeEstimator attitude_estimator;
+    Estimators estimators;
 
     Devices::Gomspace::eps_hk_t hk;
     Devices::Gomspace::eps_config_t config; 
@@ -102,7 +102,7 @@ class MainControlLoop : public ControlTask<void> {
     TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
     TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
     TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
-    TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, estimators_offset          ,  35500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  71600 + test_offset);

@@ -40,24 +40,11 @@
                     "flow_id": 1,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "pan.deployed",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 1,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -129,64 +116,72 @@
             ]
         },
         {
-            "name": "follower_orbit.baseline_pos",
-            "key": "follower_orbit.baseline_pos",
+            "name": "follower_time.valid",
+            "key": "follower_time.valid",
             "values": [
                 {
-                    "bitsize": 73,
+                    "bitsize": 1,
                     "flow_id": 2,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
+                    "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "time.valid",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_time.gps",
+            "key": "follower_time.gps",
+            "values": [
+                {
+                    "bitsize": 62,
+                    "flow_id": 2,
+                    "type": "gps_time_t",
+                    "writable": false,
+                    "name": "time.gps",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
                     "units": "_____"
                 },
                 {
-                    "bitsize": 73,
-                    "flow_id": 2,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
                     "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_orbit.valid",
+            "key": "follower_orbit.valid",
+            "values": [
                 {
-                    "bitsize": 73,
+                    "bitsize": 1,
                     "flow_id": 2,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
+                    "type": "bool",
                     "writable": false,
-                    "name": "y",
-                    "key": "y",
+                    "name": "orbit.valid",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 73,
-                    "flow_id": 2,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -210,50 +205,8 @@
                     "min": 6771000.0,
                     "type": "lin double vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 2,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 2,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 2,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "orbit.pos",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -281,76 +234,7 @@
                     "min": 7570.0,
                     "type": "lin double vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 2,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 2,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 2,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-        },
-        {
-            "name": "follower_piksi.time",
-            "key": "follower_piksi.time",
-            "values": [
-                {
-                    "bitsize": 62,
-                    "flow_id": 2,
-                    "type": "gps_time_t",
-                    "writable": false,
-                    "name": "piksi.time",
+                    "name": "orbit.vel",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -369,17 +253,75 @@
             ]
         },
         {
-            "name": "follower_piksi.state",
-            "key": "follower_piksi.state",
+            "name": "follower_orbit.pos_sigma",
+            "key": "follower_orbit.pos_sigma",
             "values": [
                 {
-                    "bitsize": 4,
-                    "flow_id": 19,
-                    "max": 14,
+                    "bitsize": 43,
+                    "flow_id": 2,
+                    "max": 100.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "orbit.pos_sigma",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_orbit.vel_sigma",
+            "key": "follower_orbit.vel_sigma",
+            "values": [
+                {
+                    "bitsize": 43,
+                    "flow_id": 2,
+                    "max": 50.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "orbit.vel_sigma",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_rel_orbit.state",
+            "key": "follower_rel_orbit.state",
+            "values": [
+                {
+                    "bitsize": 2,
+                    "flow_id": 3,
+                    "max": 2,
                     "min": 0,
                     "type": "unsigned char",
                     "writable": false,
-                    "name": "piksi.state",
+                    "name": "rel_orbit.state",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -398,60 +340,18 @@
             ]
         },
         {
-            "name": "follower_piksi.pos",
-            "key": "follower_piksi.pos",
+            "name": "follower_rel_orbit.rel_pos",
+            "key": "follower_rel_orbit.rel_pos",
             "values": [
                 {
-                    "bitsize": 103,
-                    "flow_id": 19,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
+                    "bitsize": 73,
+                    "flow_id": 3,
+                    "max": 2000.0,
+                    "min": 0.0,
                     "type": "lin double vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 19,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 19,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 103,
-                    "flow_id": 19,
-                    "max": 6921000.0,
-                    "min": 6771000.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "rel_orbit.rel_pos",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -469,60 +369,18 @@
             ]
         },
         {
-            "name": "follower_piksi.vel",
-            "key": "follower_piksi.vel",
+            "name": "follower_rel_orbit.rel_vel",
+            "key": "follower_rel_orbit.rel_vel",
             "values": [
                 {
-                    "bitsize": 76,
-                    "flow_id": 19,
-                    "max": 7685.0,
-                    "min": 7570.0,
+                    "bitsize": 49,
+                    "flow_id": 3,
+                    "max": 11.0,
+                    "min": 0.0,
                     "type": "lin double vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 19,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 19,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 76,
-                    "flow_id": 19,
-                    "max": 7685.0,
-                    "min": 7570.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "rel_orbit.rel_vel",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -540,60 +398,18 @@
             ]
         },
         {
-            "name": "follower_piksi.baseline_pos",
-            "key": "follower_piksi.baseline_pos",
+            "name": "follower_rel_orbit.rel_pos_sigma",
+            "key": "follower_rel_orbit.rel_pos_sigma",
             "values": [
                 {
-                    "bitsize": 73,
-                    "flow_id": 19,
-                    "max": 2000.0,
+                    "bitsize": 43,
+                    "flow_id": 3,
+                    "max": 10.0,
                     "min": 0.0,
                     "type": "lin double vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 73,
-                    "flow_id": 19,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 73,
-                    "flow_id": 19,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 73,
-                    "flow_id": 19,
-                    "max": 2000.0,
-                    "min": 0.0,
-                    "type": "lin double vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "rel_orbit.rel_pos_sigma",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -611,17 +427,17 @@
             ]
         },
         {
-            "name": "follower_piksi.fix_error_count",
-            "key": "follower_piksi.fix_error_count",
+            "name": "follower_rel_orbit.rel_vel_sigma",
+            "key": "follower_rel_orbit.rel_vel_sigma",
             "values": [
                 {
-                    "bitsize": 10,
-                    "flow_id": 19,
-                    "max": 1001,
-                    "min": 0,
-                    "type": "unsigned int",
+                    "bitsize": 43,
+                    "flow_id": 3,
+                    "max": 1.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
                     "writable": false,
-                    "name": "piksi.fix_error_count",
+                    "name": "rel_orbit.rel_vel_sigma",
                     "key": "value",
                     "hints": {
                         "range": 1
@@ -645,59 +461,11 @@
             "values": [
                 {
                     "bitsize": 32,
-                    "flow_id": 3,
+                    "flow_id": 4,
                     "type": "lin float quaternion",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 32,
-                    "flow_id": 3,
-                    "type": "lin float quaternion",
-                    "writable": false,
-                    "name": "a",
-                    "key": "a",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 32,
-                    "flow_id": 3,
-                    "type": "lin float quaternion",
-                    "writable": false,
-                    "name": "b",
-                    "key": "b",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 32,
-                    "flow_id": 3,
-                    "type": "lin float quaternion",
-                    "writable": false,
-                    "name": "c",
-                    "key": "c",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 32,
-                    "flow_id": 3,
-                    "type": "lin float quaternion",
-                    "writable": false,
-                    "name": "d",
-                    "key": "d",
+                    "name": "attitude_estimator.q_body_eci",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -715,60 +483,18 @@
             ]
         },
         {
-            "name": "follower_attitude_estimator.w_body",
-            "key": "follower_attitude_estimator.w_body",
+            "name": "follower_attitude_estimator.L_body",
+            "key": "follower_attitude_estimator.L_body",
             "values": [
                 {
-                    "bitsize": 149,
-                    "flow_id": 3,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
+                    "bitsize": 49,
+                    "flow_id": 4,
+                    "max": 0.100000001490116,
+                    "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 3,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 3,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 3,
-                    "max": 2.181661605834961,
-                    "min": -2.181661605834961,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "attitude_estimator.L_body",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -791,7 +517,7 @@
             "values": [
                 {
                     "bitsize": 2,
-                    "flow_id": 3,
+                    "flow_id": 4,
                     "max": 2,
                     "min": 0,
                     "type": "unsigned char",
@@ -820,7 +546,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -831,7 +557,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -842,7 +568,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -856,7 +582,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -867,7 +593,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -893,7 +619,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -904,7 +630,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -915,7 +641,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -929,7 +655,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -940,7 +666,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -966,7 +692,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -977,7 +703,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -988,7 +714,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -1002,7 +728,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -1013,7 +739,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -1039,7 +765,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -1050,7 +776,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -1061,7 +787,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -1075,7 +801,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -1086,7 +812,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 4,
+                    "flow_id": 5,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -1112,55 +838,13 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 7,
+                    "flow_id": 8,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.rwa_speed_rd",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -1183,55 +867,13 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 7,
+                    "flow_id": 8,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 7,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.rwa_torque_rd",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -1254,27 +896,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.functional",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 13,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1293,7 +922,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -1304,7 +933,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -1315,7 +944,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -1329,7 +958,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -1340,7 +969,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -1366,27 +995,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device0",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1405,27 +1021,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device1",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1444,27 +1047,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device2",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1483,27 +1073,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device3",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1522,27 +1099,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device4",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1561,27 +1125,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device5",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1600,27 +1151,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device6",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1639,27 +1177,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device7",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1678,27 +1203,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device8",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1717,27 +1229,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device9",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1756,27 +1255,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device10",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1795,27 +1281,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device11",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1834,27 +1307,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device12",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1873,27 +1333,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device13",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1912,27 +1359,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device14",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1951,27 +1385,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device15",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -1990,27 +1411,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device16",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2029,27 +1437,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 15,
+                    "flow_id": 16,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.havt_device17",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 15,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2068,27 +1463,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 18,
+                    "flow_id": 19,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.gyr_vec_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 18,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2107,27 +1489,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 18,
+                    "flow_id": 19,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.mag1_vec_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 18,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2146,27 +1515,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 18,
+                    "flow_id": 19,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.mag2_vec_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 18,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2185,27 +1541,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 18,
+                    "flow_id": 19,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.speed_rd_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 18,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2224,27 +1567,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 18,
+                    "flow_id": 19,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.torque_rd_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 18,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -2263,7 +1593,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2292,7 +1622,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2321,7 +1651,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2350,7 +1680,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2379,7 +1709,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2408,7 +1738,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2437,7 +1767,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2466,7 +1796,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2495,7 +1825,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2524,7 +1854,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2553,7 +1883,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2582,7 +1912,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2611,7 +1941,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2640,7 +1970,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2669,7 +1999,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2698,7 +2028,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2727,7 +2057,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2756,7 +2086,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2785,7 +2115,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2814,7 +2144,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 25,
+                    "flow_id": 26,
                     "max": 3.299999952316284,
                     "min": 0.0,
                     "type": "float",
@@ -2843,7 +2173,7 @@
             "values": [
                 {
                     "bitsize": 16,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "max": 153.0,
                     "min": -103.0,
                     "type": "float",
@@ -2872,55 +2202,13 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.gyr_vec",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -2943,55 +2231,13 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.mag1_vec",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -3014,55 +2260,13 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 10,
-                    "flow_id": 24,
-                    "max": 1.0,
-                    "min": 0.0,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.mag2_vec",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -3085,55 +2289,13 @@
             "values": [
                 {
                     "bitsize": 31,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "max": 1.000100016593933,
                     "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 24,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 24,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 24,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_monitor.ssa_vec",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -3156,27 +2318,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 24,
+                    "flow_id": 25,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_monitor.gyr_temp_flag",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 24,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -3195,7 +2344,7 @@
             "values": [
                 {
                     "bitsize": 4,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "max": 9,
                     "min": 0,
                     "type": "unsigned int",
@@ -3224,7 +2373,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -3235,7 +2384,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -3246,7 +2395,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -3260,7 +2409,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -3271,7 +2420,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -3297,7 +2446,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -3308,7 +2457,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -3319,7 +2468,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -3333,7 +2482,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -3344,7 +2493,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 5,
+                    "flow_id": 6,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -3370,7 +2519,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "max": 9000,
                     "min": 5000,
                     "type": "unsigned int",
@@ -3399,7 +2548,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -3410,7 +2559,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -3421,7 +2570,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -3435,7 +2584,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -3446,7 +2595,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -3472,7 +2621,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
@@ -3483,7 +2632,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
@@ -3494,7 +2643,7 @@
                 },
                 {
                     "bitsize": 16,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "max": 65535,
                     "min": 0,
                     "type": "unsigned int",
@@ -3508,7 +2657,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
@@ -3519,7 +2668,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 6,
+                    "flow_id": 7,
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
@@ -3545,7 +2694,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 9500,
                     "min": 5000,
                     "type": "unsigned int",
@@ -3574,7 +2723,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 3000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3603,7 +2752,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3632,7 +2781,7 @@
             "values": [
                 {
                     "bitsize": 9,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -3646,7 +2795,7 @@
                 },
                 {
                     "bitsize": 9,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -3660,7 +2809,7 @@
                 },
                 {
                     "bitsize": 9,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -3689,7 +2838,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 6000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3703,7 +2852,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 6000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3717,7 +2866,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 9,
+                    "flow_id": 10,
                     "max": 6000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3746,7 +2895,7 @@
             "values": [
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3760,7 +2909,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3774,7 +2923,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3788,7 +2937,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3802,7 +2951,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3816,7 +2965,7 @@
                 },
                 {
                     "bitsize": 10,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "max": 12000,
                     "min": 0,
                     "type": "unsigned int",
@@ -3845,7 +2994,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output1",
@@ -3856,7 +3005,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output2",
@@ -3867,7 +3016,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output3",
@@ -3878,7 +3027,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output4",
@@ -3889,7 +3038,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output5",
@@ -3900,7 +3049,7 @@
                 },
                 {
                     "bitsize": 1,
-                    "flow_id": 10,
+                    "flow_id": 11,
                     "type": "bool",
                     "writable": false,
                     "name": "Output6",
@@ -3926,7 +3075,7 @@
             "values": [
                 {
                     "bitsize": 32,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -3955,7 +3104,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 125,
                     "min": -40,
                     "type": "signed int",
@@ -3969,7 +3118,7 @@
                 },
                 {
                     "bitsize": 8,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 125,
                     "min": -40,
                     "type": "signed int",
@@ -3983,7 +3132,7 @@
                 },
                 {
                     "bitsize": 8,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 125,
                     "min": -40,
                     "type": "signed int",
@@ -3997,7 +3146,7 @@
                 },
                 {
                     "bitsize": 8,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 125,
                     "min": -40,
                     "type": "signed int",
@@ -4026,7 +3175,7 @@
             "values": [
                 {
                     "bitsize": 4,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 8,
                     "min": 0,
                     "type": "unsigned char",
@@ -4055,7 +3204,7 @@
             "values": [
                 {
                     "bitsize": 3,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 4,
                     "min": 0,
                     "type": "unsigned char",
@@ -4084,7 +3233,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 11,
+                    "flow_id": 12,
                     "max": 2,
                     "min": 1,
                     "type": "unsigned char",
@@ -4113,27 +3262,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output1_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4152,27 +3288,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output2_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4191,27 +3314,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output3_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4230,27 +3340,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output4_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4269,27 +3366,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output5_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4308,27 +3392,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 12,
+                    "flow_id": 13,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.power_cycle_output6_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4347,27 +3418,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 28,
+                    "flow_id": 29,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.heater",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 28,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4386,27 +3444,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.heater_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 30,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4425,7 +3470,7 @@
             "values": [
                 {
                     "bitsize": 7,
-                    "flow_id": 29,
+                    "flow_id": 30,
                     "max": 99,
                     "min": 0,
                     "type": "unsigned int",
@@ -4454,7 +3499,7 @@
             "values": [
                 {
                     "bitsize": 32,
-                    "flow_id": 29,
+                    "flow_id": 30,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -4483,27 +3528,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.gs_reboot_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 30,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4522,27 +3554,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.gs_reset_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 30,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4561,7 +3580,7 @@
             "values": [
                 {
                     "bitsize": 9,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -4590,7 +3609,7 @@
             "values": [
                 {
                     "bitsize": 9,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -4619,7 +3638,7 @@
             "values": [
                 {
                     "bitsize": 9,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "max": 8500,
                     "min": 0,
                     "type": "unsigned int",
@@ -4648,7 +3667,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "max": 2,
                     "min": 1,
                     "type": "unsigned char",
@@ -4677,27 +3696,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 30,
+                    "flow_id": 31,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "gomspace.counter_reset_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 30,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -4716,55 +3722,13 @@
             "values": [
                 {
                     "bitsize": 149,
-                    "flow_id": 7,
+                    "flow_id": 8,
                     "max": 680.677978515625,
                     "min": -680.677978515625,
                     "type": "std float vector",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 680.677978515625,
-                    "min": -680.677978515625,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 680.677978515625,
-                    "min": -680.677978515625,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 680.677978515625,
-                    "min": -680.677978515625,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_cmd.rwa_speed_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -4787,55 +3751,13 @@
             "values": [
                 {
                     "bitsize": 149,
-                    "flow_id": 7,
+                    "flow_id": 8,
                     "max": 0.004187500569969,
                     "min": -0.004187500569969,
                     "type": "std float vector",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 0.004187500569969,
-                    "min": -0.004187500569969,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 0.004187500569969,
-                    "min": -0.004187500569969,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 7,
-                    "max": 0.004187500569969,
-                    "min": -0.004187500569969,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_cmd.rwa_torque_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -4858,55 +3780,13 @@
             "values": [
                 {
                     "bitsize": 149,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "max": 0.056668501347303,
                     "min": -0.056668501347303,
                     "type": "std float vector",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 13,
-                    "max": 0.056668501347303,
-                    "min": -0.056668501347303,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 13,
-                    "max": 0.056668501347303,
-                    "min": -0.056668501347303,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 149,
-                    "flow_id": 13,
-                    "max": 0.056668501347303,
-                    "min": -0.056668501347303,
-                    "type": "std float vector",
-                    "writable": true,
-                    "name": "z",
-                    "key": "z",
+                    "name": "adcs_cmd.mtr_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -4929,7 +3809,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -4958,7 +3838,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 85.0,
                     "min": -40.0,
                     "type": "float",
@@ -4987,7 +3867,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -5016,7 +3896,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 255,
                     "min": 0,
                     "type": "unsigned char",
@@ -5045,7 +3925,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -5074,7 +3954,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1,
                     "min": 0,
                     "type": "unsigned char",
@@ -5103,7 +3983,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1,
                     "min": 0,
                     "type": "unsigned char",
@@ -5132,7 +4012,7 @@
             "values": [
                 {
                     "bitsize": 16,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 0.056668501347303,
                     "min": -0.056668501347303,
                     "type": "float",
@@ -5161,7 +4041,7 @@
             "values": [
                 {
                     "bitsize": 2,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 2,
                     "min": 0,
                     "type": "unsigned char",
@@ -5190,7 +4070,7 @@
             "values": [
                 {
                     "bitsize": 2,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 2,
                     "min": 0,
                     "type": "unsigned char",
@@ -5219,7 +4099,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -5248,7 +4128,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -5277,7 +4157,7 @@
             "values": [
                 {
                     "bitsize": 8,
-                    "flow_id": 23,
+                    "flow_id": 24,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "float",
@@ -5306,27 +4186,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable0",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5345,27 +4212,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable1",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5384,27 +4238,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable2",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5423,27 +4264,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable3",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5462,27 +4290,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable4",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5501,27 +4316,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable5",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5540,27 +4342,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable6",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5579,27 +4368,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable7",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5618,27 +4394,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable8",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5657,27 +4420,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable9",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5696,27 +4446,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable10",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5735,27 +4472,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable11",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5774,27 +4498,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable12",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5813,27 +4524,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable13",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5852,27 +4550,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable14",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5891,27 +4576,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable15",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5930,27 +4602,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable16",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -5969,27 +4628,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable17",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6008,27 +4654,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_disable18",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6047,27 +4680,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset0",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6086,27 +4706,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset1",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6125,27 +4732,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset2",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6164,27 +4758,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset3",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6203,27 +4784,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset4",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6242,27 +4810,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset5",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6281,27 +4836,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset6",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6320,27 +4862,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset7",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6359,27 +4888,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset8",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6398,27 +4914,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset9",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6437,27 +4940,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset10",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6476,27 +4966,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset11",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6515,27 +4992,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset12",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6554,27 +5018,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset13",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6593,27 +5044,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset14",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6632,27 +5070,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset15",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6671,27 +5096,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset16",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6710,27 +5122,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset17",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6749,27 +5148,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 33,
+                    "flow_id": 34,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "adcs_cmd.havt_reset18",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 33,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -6788,7 +5174,7 @@
             "values": [
                 {
                     "bitsize": 4,
-                    "flow_id": 13,
+                    "flow_id": 14,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -6817,55 +5203,13 @@
             "values": [
                 {
                     "bitsize": 31,
-                    "flow_id": 14,
+                    "flow_id": 15,
                     "max": 1.000100016593933,
                     "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "attitude.pointer_vec1_current",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -6888,55 +5232,13 @@
             "values": [
                 {
                     "bitsize": 31,
-                    "flow_id": 14,
+                    "flow_id": 15,
                     "max": 1.000100016593933,
                     "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "z",
-                    "key": "z",
+                    "name": "attitude.pointer_vec1_desired",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -6959,55 +5261,13 @@
             "values": [
                 {
                     "bitsize": 31,
-                    "flow_id": 14,
+                    "flow_id": 15,
                     "max": 1.000100016593933,
                     "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": false,
-                    "name": "z",
-                    "key": "z",
+                    "name": "attitude.pointer_vec2_current",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -7030,55 +5290,13 @@
             "values": [
                 {
                     "bitsize": 31,
-                    "flow_id": 14,
+                    "flow_id": 15,
                     "max": 1.000100016593933,
                     "min": 0.999899983406067,
                     "type": "lin float vector",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "x",
-                    "key": "x",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "y",
-                    "key": "y",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 31,
-                    "flow_id": 14,
-                    "max": 1.000100016593933,
-                    "min": 0.999899983406067,
-                    "type": "lin float vector",
-                    "writable": true,
-                    "name": "z",
-                    "key": "z",
+                    "name": "attitude.pointer_vec2_desired",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -7101,7 +5319,7 @@
             "values": [
                 {
                     "bitsize": 7,
-                    "flow_id": 16,
+                    "flow_id": 17,
                     "max": 10,
                     "min": -90,
                     "type": "signed int",
@@ -7130,7 +5348,7 @@
             "values": [
                 {
                     "bitsize": 20,
-                    "flow_id": 34,
+                    "flow_id": 35,
                     "max": 720000,
                     "min": 0,
                     "type": "unsigned int",
@@ -7159,7 +5377,7 @@
             "values": [
                 {
                     "bitsize": 20,
-                    "flow_id": 34,
+                    "flow_id": 35,
                     "max": 720000,
                     "min": 0,
                     "type": "unsigned int",
@@ -7188,27 +5406,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 17,
+                    "flow_id": 18,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "docksys.docked",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 17,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7227,27 +5432,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 17,
+                    "flow_id": 18,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "docksys.dock_config",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 17,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7266,27 +5458,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 35,
+                    "flow_id": 36,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "docksys.is_turning",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 35,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7305,23 +5484,155 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 35,
+                    "flow_id": 36,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "docksys.config_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_piksi.state",
+            "key": "follower_piksi.state",
+            "values": [
+                {
+                    "bitsize": 4,
+                    "flow_id": 20,
+                    "max": 14,
+                    "min": 0,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "piksi.state",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
                     "units": "_____"
                 },
                 {
-                    "bitsize": 1,
-                    "flow_id": 35,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_piksi.pos",
+            "key": "follower_piksi.pos",
+            "values": [
+                {
+                    "bitsize": 103,
+                    "flow_id": 20,
+                    "max": 6921000.0,
+                    "min": 6771000.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "piksi.pos",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_piksi.vel",
+            "key": "follower_piksi.vel",
+            "values": [
+                {
+                    "bitsize": 76,
+                    "flow_id": 20,
+                    "max": 7685.0,
+                    "min": 7570.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "piksi.vel",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_piksi.baseline_pos",
+            "key": "follower_piksi.baseline_pos",
+            "values": [
+                {
+                    "bitsize": 73,
+                    "flow_id": 20,
+                    "max": 2000.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "piksi.baseline_pos",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "follower_piksi.fix_error_count",
+            "key": "follower_piksi.fix_error_count",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 20,
+                    "max": 1001,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "piksi.fix_error_count",
+                    "key": "value",
                     "hints": {
                         "range": 1
                     },
@@ -7344,27 +5655,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 20,
+                    "flow_id": 21,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.SpikeDock",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 20,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7383,27 +5681,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 20,
+                    "flow_id": 21,
                     "type": "bool",
                     "writable": false,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.ADCSMotor",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 20,
-                    "type": "bool",
-                    "writable": false,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7422,27 +5707,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.ADCSMotor_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 22,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7461,27 +5733,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.SpikeDock_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 22,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7500,27 +5759,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.disable_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 22,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7539,27 +5785,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 22,
+                    "flow_id": 23,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "dcdc.reset_cmd",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 22,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7578,7 +5811,7 @@
             "values": [
                 {
                     "bitsize": 7,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "max": 1.0,
                     "min": 0.0,
                     "type": "double",
@@ -7607,7 +5840,7 @@
             "values": [
                 {
                     "bitsize": 6,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "max": 1440000,
                     "min": 0,
                     "type": "unsigned int",
@@ -7636,27 +5869,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "fault_handler.enabled",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 26,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",
@@ -7675,7 +5895,7 @@
             "values": [
                 {
                     "bitsize": 13,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "max": 5000.0,
                     "min": 0.0,
                     "type": "double",
@@ -7704,7 +5924,7 @@
             "values": [
                 {
                     "bitsize": 14,
-                    "flow_id": 26,
+                    "flow_id": 27,
                     "max": 100.0,
                     "min": 0.0,
                     "type": "double",
@@ -7733,7 +5953,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -7762,7 +5982,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -7791,7 +6011,7 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 27,
+                    "flow_id": 28,
                     "max": 10,
                     "min": 0,
                     "type": "unsigned char",
@@ -7820,7 +6040,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -7834,7 +6054,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -7863,7 +6083,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -7877,7 +6097,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -7901,12 +6121,12 @@
             ]
         },
         {
-            "name": "follower_timing.adcs_estimator",
-            "key": "follower_timing.adcs_estimator",
+            "name": "follower_timing.estimators",
+            "key": "follower_timing.estimators",
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -7920,7 +6140,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -7949,7 +6169,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -7963,7 +6183,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -7992,7 +6212,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8006,7 +6226,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8035,7 +6255,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8049,7 +6269,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8078,7 +6298,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8092,7 +6312,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8121,7 +6341,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8135,7 +6355,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 31,
+                    "flow_id": 32,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8164,7 +6384,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8178,7 +6398,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8207,7 +6427,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8221,7 +6441,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8250,7 +6470,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8264,7 +6484,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8293,7 +6513,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8307,7 +6527,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8336,7 +6556,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8350,7 +6570,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8379,7 +6599,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8393,7 +6613,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8422,7 +6642,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8436,7 +6656,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8465,7 +6685,7 @@
             "values": [
                 {
                     "bitsize": 18,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 120000.0,
                     "min": 0.0,
                     "type": "float",
@@ -8479,7 +6699,7 @@
                 },
                 {
                     "bitsize": 32,
-                    "flow_id": 32,
+                    "flow_id": 33,
                     "max": 4294967295,
                     "min": 0,
                     "type": "unsigned int",
@@ -8508,7 +6728,7 @@
             "values": [
                 {
                     "bitsize": 20,
-                    "flow_id": 36,
+                    "flow_id": 37,
                     "max": 720000,
                     "min": 0,
                     "type": "unsigned int",
@@ -8537,7 +6757,7 @@
             "values": [
                 {
                     "bitsize": 20,
-                    "flow_id": 36,
+                    "flow_id": 37,
                     "max": 720000,
                     "min": 0,
                     "type": "unsigned int",
@@ -8566,27 +6786,14 @@
             "values": [
                 {
                     "bitsize": 1,
-                    "flow_id": 36,
+                    "flow_id": 37,
                     "type": "bool",
                     "writable": true,
-                    "name": "raw",
-                    "key": "raw",
+                    "name": "piksi_fh.enabled",
+                    "key": "value",
                     "hints": {
                         "range": 1
-                    },
-                    "units": "_____"
-                },
-                {
-                    "bitsize": 1,
-                    "flow_id": 36,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "intBool",
-                    "key": "intBool",
-                    "hints": {
-                        "range": 1
-                    },
-                    "units": "_____"
+                    }
                 },
                 {
                     "key": "utc",

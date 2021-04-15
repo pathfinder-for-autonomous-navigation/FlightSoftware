@@ -2,268 +2,95 @@
 module.exports = {
 pan: {
 state: 0,
-
-deployed: {
-raw: 0,
-intBool: 0},
+deployed: false,
 sat_designation: 0,
 bootcount: 0},
 
+time: {
+valid: false,
+gps: ''},
+
 orbit: {
-baseline_pos: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
+valid: false,
+pos: 0.0,
+vel: 0.0,
+pos_sigma: 0.0,
+vel_sigma: 0.0},
 
-pos: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-vel: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0}},
-
-piksi: {
-time: '',
+rel_orbit: {
 state: 0,
-
-pos: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-vel: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-baseline_pos: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-fix_error_count: 0},
+rel_pos: 0.0,
+rel_vel: 0.0,
+rel_pos_sigma: 0.0,
+rel_vel_sigma: 0.0},
 
 attitude_estimator: {
-q_body_eci: {
-raw: 0,
-a: 0,
-b: 0,
-c: 0},
-
-w_body: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0}},
+q_body_eci: '',
+L_body: 0.0},
 
 adcs_monitor: {
 ssa_mode: 0,
 
 wheel1_fault: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 
 wheel2_fault: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 
 wheel3_fault: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 
 wheel_pot_fault: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
-
-rwa_speed_rd: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-rwa_torque_rd: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-functional: {
-raw: 0,
-intBool: 0},
+suppress: false,
+unsignal: false},
+rwa_speed_rd: 0.0,
+rwa_torque_rd: 0.0,
+functional: false,
 
 functional_fault: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
-
-havt_device0: {
-raw: 0,
-intBool: 0},
-
-havt_device1: {
-raw: 0,
-intBool: 0},
-
-havt_device2: {
-raw: 0,
-intBool: 0},
-
-havt_device3: {
-raw: 0,
-intBool: 0},
-
-havt_device4: {
-raw: 0,
-intBool: 0},
-
-havt_device5: {
-raw: 0,
-intBool: 0},
-
-havt_device6: {
-raw: 0,
-intBool: 0},
-
-havt_device7: {
-raw: 0,
-intBool: 0},
-
-havt_device8: {
-raw: 0,
-intBool: 0},
-
-havt_device9: {
-raw: 0,
-intBool: 0},
-
-havt_device10: {
-raw: 0,
-intBool: 0},
-
-havt_device11: {
-raw: 0,
-intBool: 0},
-
-havt_device12: {
-raw: 0,
-intBool: 0},
-
-havt_device13: {
-raw: 0,
-intBool: 0},
-
-havt_device14: {
-raw: 0,
-intBool: 0},
-
-havt_device15: {
-raw: 0,
-intBool: 0},
-
-havt_device16: {
-raw: 0,
-intBool: 0},
-
-havt_device17: {
-raw: 0,
-intBool: 0},
-
-gyr_vec_flag: {
-raw: 0,
-intBool: 0},
-
-mag1_vec_flag: {
-raw: 0,
-intBool: 0},
-
-mag2_vec_flag: {
-raw: 0,
-intBool: 0},
-
-speed_rd_flag: {
-raw: 0,
-intBool: 0},
-
-torque_rd_flag: {
-raw: 0,
-intBool: 0},
+suppress: false,
+unsignal: false},
+havt_device0: false,
+havt_device1: false,
+havt_device2: false,
+havt_device3: false,
+havt_device4: false,
+havt_device5: false,
+havt_device6: false,
+havt_device7: false,
+havt_device8: false,
+havt_device9: false,
+havt_device10: false,
+havt_device11: false,
+havt_device12: false,
+havt_device13: false,
+havt_device14: false,
+havt_device15: false,
+havt_device16: false,
+havt_device17: false,
+gyr_vec_flag: false,
+mag1_vec_flag: false,
+mag2_vec_flag: false,
+speed_rd_flag: false,
+torque_rd_flag: false,
 ssa_voltage0: 0.0,
 ssa_voltage1: 0.0,
 ssa_voltage2: 0.0,
@@ -285,112 +112,45 @@ ssa_voltage17: 0.0,
 ssa_voltage18: 0.0,
 ssa_voltage19: 0.0,
 gyr_temp: 0.0,
-
-gyr_vec: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-mag1_vec: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-mag2_vec: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-ssa_vec: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-gyr_temp_flag: {
-raw: 0,
-intBool: 0}},
+gyr_vec: 0.0,
+mag1_vec: 0.0,
+mag2_vec: 0.0,
+ssa_vec: 0.0,
+gyr_temp_flag: false},
 
 prop: {
 state: 0,
 
 overpressured: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 
 pressurize_fail: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}}},
+suppress: false,
+unsignal: false}},
 
 gomspace: {
 batt_threshold: 0,
 
 low_batt: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 
 get_hk: {
-base: {
-raw: 0,
-intBool: 0},
-
-override: {
-raw: 0,
-intBool: 0},
+base: false,
+override: false,
 persistence: 0,
-
-suppress: {
-raw: 0,
-intBool: 0},
-
-unsignal: {
-raw: 0,
-intBool: 0}},
+suppress: false,
+unsignal: false},
 vbatt: 0,
 cursun: 0,
 cursys: 0,
@@ -414,29 +174,12 @@ output5: 0,
 output6: 0},
 
 output: {
-output1: {
-raw: 0,
-intBool: 0},
-
-output2: {
-raw: 0,
-intBool: 0},
-
-output3: {
-raw: 0,
-intBool: 0},
-
-output4: {
-raw: 0,
-intBool: 0},
-
-output5: {
-raw: 0,
-intBool: 0},
-
-output6: {
-raw: 0,
-intBool: 0}},
+output1: false,
+output2: false,
+output3: false,
+output4: false,
+output5: false,
+output6: false},
 counter_boot: 0,
 
 temp: {
@@ -447,75 +190,28 @@ output4: 0},
 bootcause: 0,
 battmode: 0,
 pptmode: 0,
-
-power_cycle_output1_cmd: {
-raw: 0,
-intBool: 0},
-
-power_cycle_output2_cmd: {
-raw: 0,
-intBool: 0},
-
-power_cycle_output3_cmd: {
-raw: 0,
-intBool: 0},
-
-power_cycle_output4_cmd: {
-raw: 0,
-intBool: 0},
-
-power_cycle_output5_cmd: {
-raw: 0,
-intBool: 0},
-
-power_cycle_output6_cmd: {
-raw: 0,
-intBool: 0},
-
-heater: {
-raw: 0,
-intBool: 0},
-
-heater_cmd: {
-raw: 0,
-intBool: 0},
+power_cycle_output1_cmd: false,
+power_cycle_output2_cmd: false,
+power_cycle_output3_cmd: false,
+power_cycle_output4_cmd: false,
+power_cycle_output5_cmd: false,
+power_cycle_output6_cmd: false,
+heater: false,
+heater_cmd: false,
 wdt_i2c_time_left: 0,
 counter_wdt_i2c: 0,
-
-gs_reboot_cmd: {
-raw: 0,
-intBool: 0},
-
-gs_reset_cmd: {
-raw: 0,
-intBool: 0},
+gs_reboot_cmd: false,
+gs_reset_cmd: false,
 pv1_cmd: 0,
 pv2_cmd: 0,
 pv3_cmd: 0,
 pptmode_cmd: 0,
-
-counter_reset_cmd: {
-raw: 0,
-intBool: 0}},
+counter_reset_cmd: false},
 
 adcs_cmd: {
-rwa_speed_cmd: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-rwa_torque_cmd: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-mtr_cmd: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
+rwa_speed_cmd: 0.0,
+rwa_torque_cmd: 0.0,
+mtr_cmd: 0.0,
 imu_gyr_filter: 0.0,
 imu_gyr_temp_desired: 0.0,
 imu_gyr_temp_filter: 0.0,
@@ -529,186 +225,53 @@ rwa_mode: 0,
 rwa_ramp_filter: 0.0,
 rwa_speed_filter: 0.0,
 ssa_voltage_filter: 0.0,
-
-havt_disable0: {
-raw: 0,
-intBool: 0},
-
-havt_disable1: {
-raw: 0,
-intBool: 0},
-
-havt_disable2: {
-raw: 0,
-intBool: 0},
-
-havt_disable3: {
-raw: 0,
-intBool: 0},
-
-havt_disable4: {
-raw: 0,
-intBool: 0},
-
-havt_disable5: {
-raw: 0,
-intBool: 0},
-
-havt_disable6: {
-raw: 0,
-intBool: 0},
-
-havt_disable7: {
-raw: 0,
-intBool: 0},
-
-havt_disable8: {
-raw: 0,
-intBool: 0},
-
-havt_disable9: {
-raw: 0,
-intBool: 0},
-
-havt_disable10: {
-raw: 0,
-intBool: 0},
-
-havt_disable11: {
-raw: 0,
-intBool: 0},
-
-havt_disable12: {
-raw: 0,
-intBool: 0},
-
-havt_disable13: {
-raw: 0,
-intBool: 0},
-
-havt_disable14: {
-raw: 0,
-intBool: 0},
-
-havt_disable15: {
-raw: 0,
-intBool: 0},
-
-havt_disable16: {
-raw: 0,
-intBool: 0},
-
-havt_disable17: {
-raw: 0,
-intBool: 0},
-
-havt_disable18: {
-raw: 0,
-intBool: 0},
-
-havt_reset0: {
-raw: 0,
-intBool: 0},
-
-havt_reset1: {
-raw: 0,
-intBool: 0},
-
-havt_reset2: {
-raw: 0,
-intBool: 0},
-
-havt_reset3: {
-raw: 0,
-intBool: 0},
-
-havt_reset4: {
-raw: 0,
-intBool: 0},
-
-havt_reset5: {
-raw: 0,
-intBool: 0},
-
-havt_reset6: {
-raw: 0,
-intBool: 0},
-
-havt_reset7: {
-raw: 0,
-intBool: 0},
-
-havt_reset8: {
-raw: 0,
-intBool: 0},
-
-havt_reset9: {
-raw: 0,
-intBool: 0},
-
-havt_reset10: {
-raw: 0,
-intBool: 0},
-
-havt_reset11: {
-raw: 0,
-intBool: 0},
-
-havt_reset12: {
-raw: 0,
-intBool: 0},
-
-havt_reset13: {
-raw: 0,
-intBool: 0},
-
-havt_reset14: {
-raw: 0,
-intBool: 0},
-
-havt_reset15: {
-raw: 0,
-intBool: 0},
-
-havt_reset16: {
-raw: 0,
-intBool: 0},
-
-havt_reset17: {
-raw: 0,
-intBool: 0},
-
-havt_reset18: {
-raw: 0,
-intBool: 0}},
+havt_disable0: false,
+havt_disable1: false,
+havt_disable2: false,
+havt_disable3: false,
+havt_disable4: false,
+havt_disable5: false,
+havt_disable6: false,
+havt_disable7: false,
+havt_disable8: false,
+havt_disable9: false,
+havt_disable10: false,
+havt_disable11: false,
+havt_disable12: false,
+havt_disable13: false,
+havt_disable14: false,
+havt_disable15: false,
+havt_disable16: false,
+havt_disable17: false,
+havt_disable18: false,
+havt_reset0: false,
+havt_reset1: false,
+havt_reset2: false,
+havt_reset3: false,
+havt_reset4: false,
+havt_reset5: false,
+havt_reset6: false,
+havt_reset7: false,
+havt_reset8: false,
+havt_reset9: false,
+havt_reset10: false,
+havt_reset11: false,
+havt_reset12: false,
+havt_reset13: false,
+havt_reset14: false,
+havt_reset15: false,
+havt_reset16: false,
+havt_reset17: false,
+havt_reset18: false},
 
 adcs: {
 state: 0},
 
 attitude: {
-pointer_vec1_current: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-pointer_vec1_desired: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-pointer_vec2_current: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0},
-
-pointer_vec2_desired: {
-raw: 0,
-x: 0,
-y: 0,
-z: 0}},
+pointer_vec1_current: 0.0,
+pointer_vec1_desired: 0.0,
+pointer_vec2_current: 0.0,
+pointer_vec2_desired: 0.0},
 
 radio: {
 err: 0,
@@ -716,53 +279,30 @@ max_transceive: 0,
 max_wait: 0},
 
 docksys: {
-docked: {
-raw: 0,
-intBool: 0},
+docked: false,
+dock_config: false,
+is_turning: false,
+config_cmd: false},
 
-dock_config: {
-raw: 0,
-intBool: 0},
-
-is_turning: {
-raw: 0,
-intBool: 0},
-
-config_cmd: {
-raw: 0,
-intBool: 0}},
+piksi: {
+state: 0,
+pos: 0.0,
+vel: 0.0,
+baseline_pos: 0.0,
+fix_error_count: 0},
 
 dcdc: {
-SpikeDock: {
-raw: 0,
-intBool: 0},
-
-ADCSMotor: {
-raw: 0,
-intBool: 0},
-
-ADCSMotor_cmd: {
-raw: 0,
-intBool: 0},
-
-SpikeDock_cmd: {
-raw: 0,
-intBool: 0},
-
-disable_cmd: {
-raw: 0,
-intBool: 0},
-
-reset_cmd: {
-raw: 0,
-intBool: 0}},
+SpikeDock: false,
+ADCSMotor: false,
+ADCSMotor_cmd: false,
+SpikeDock_cmd: false,
+disable_cmd: false,
+reset_cmd: false},
 detumble_safety_factor: 0.0,
 docking_timeout_limit: 0,
 
 fault_handler: {
-enabled: {
-raw: 0,
-intBool: 0}},
+enabled: false},
 
 trigger_dist: {
 close_approach: 0.0,
@@ -782,7 +322,7 @@ adcs_controller: {
 avg_wait: 0.0,
 num_lates: 0},
 
-adcs_estimator: {
+estimators: {
 avg_wait: 0.0,
 num_lates: 0},
 
@@ -841,7 +381,4 @@ num_lates: 0}},
 piksi_fh: {
 no_cdpgs_max_wait: 0,
 cdpgs_delay_max_wait: 0,
-
-enabled: {
-raw: 0,
-intBool: 0}}}
+enabled: false}}

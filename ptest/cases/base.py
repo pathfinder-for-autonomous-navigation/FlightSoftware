@@ -146,7 +146,7 @@ class PTestCase(object):
             self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
             isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, 
-            self.sim_mapping, self.scrape_uplinks, self.device_config)
+            self.sim_mapping, self.device_config)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()

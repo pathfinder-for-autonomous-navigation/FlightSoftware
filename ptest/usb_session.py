@@ -155,7 +155,7 @@ class USBSession(object):
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
-                    print("\n" + logline)
+                    # print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
@@ -397,10 +397,10 @@ class USBSession(object):
         if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("uplink.json") 
+            os.remove("uplink.http") 
             return success
         else:
-            if os.path.exists("uplink.json"): os.remove("uplink.json") 
+            if os.path.exists("uplink.json"): os.remove("uplink.http") 
             return False
 
     def parsetelem(self):
@@ -438,14 +438,14 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print(f"Error parsing telemetry on {self.device_name}")            
+            # print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time": str(datetime.datetime.now().isoformat())
+                "time.downlink_recieved": str(datetime.datetime.now().isoformat())
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
@@ -460,7 +460,7 @@ class USBSession(object):
         directly to the Flight computer.
         '''
         while self.scrape == True and self.mail != None:
-            self.scrape()
+            self.scrape_uplink()
 
     def scrape_uplink(self):
         '''
@@ -468,7 +468,12 @@ class USBSession(object):
         uplinks directed to this satellite to the Flight Computer
         '''
         #look for all new emails from iridium
-        self.mail.select('"[Gmail]/Sent Mail"')
+        try:
+            self.mail.select('"[Gmail]/Sent Mail"')
+        except:
+            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+            self.mail.login(self.username, self.password)
+            self.mail.select('"[Gmail]/Sent Mail"')
         _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
@@ -482,7 +487,7 @@ class USBSession(object):
             for response_part in data:
                 if isinstance(response_part, tuple):
                     # converts message from byte literal to string removing b''
-                    msg = email.message_from_string(response_part[1].decode('utf-8'))
+                    msg = email.message_from_bytes(response_part[1])
                     email_subject = msg['subject']
                     
                     if email_subject.isdigit():

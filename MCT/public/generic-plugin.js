@@ -40,6 +40,7 @@ function requestJSON(j) {
  * This enables the plugin to be used generically for all subsystems/domain objects
  * 
  * @param {*} config A string matching the key of one of the config data objects
+ * @param {*} satellite A string designating either "Follower" or "Leader"
  */
 function GenericPlugin(config) {
     return function install(openmct) {
@@ -144,19 +145,19 @@ function GenericPlugin(config) {
 
             //Adds the taxonomy namespace and key to MCT using the configData
             openmct.objects.addRoot({
-                namespace: generalConfigData.namespace,
+                namespace:  generalConfigData.namespace,
                 key: generalConfigData.key
             });
 
             //creates the object provider from the json file coorisponding with the domain object
-            openmct.objects.addProvider(generalConfigData.namespace, {
+            openmct.objects.addProvider( generalConfigData.namespace, {
                 get: function (identifier) {
                     return requestJSON('/satellites' + '/' + generalConfigData.jsonFile).then(function (generic) {
                         //Sets up the folder path for the domain object and the Root
                         if (identifier.key === generalConfigData.key) {
                             return {
                                 identifier: identifier,
-                                name: generic.name,
+                                name: satellite.charAt(0).toUpperCase() + satellite.slice(1) + ' ' + generic.name,
                                 type: 'folder',
                                 location: 'ROOT'
                             };
@@ -174,7 +175,7 @@ function GenericPlugin(config) {
                                 telemetry: {
                                     values: measurement.values
                                 },
-                                location: generalConfigData.namespace + ':' + generalConfigData.key
+                                location:  generalConfigData.namespace + ':' + generalConfigData.key
                             };
                         }
                     });
@@ -195,7 +196,7 @@ function GenericPlugin(config) {
                         .then(function (generic) {
                             return generic.measurements.map(function (m) {
                                 return {
-                                    namespace: generalConfigData.namespace,
+                                    namespace:  generalConfigData.namespace,
                                     key: m.key
                                 };
                             });

@@ -14,10 +14,14 @@
     <script>
         //indicates the location of the openmct libraries and assets
         openmct.setAssetPath('openmct');
-        //installs plugins for creation and storage of user objects like layouts (only local in browser cache currently)
-        openmct.install(openmct.plugins.LocalStorage());
+        //installs plugins for creation and storage of user objects like layouts (currenlty needs to have CORS enabled - Run MCT/generators/mct_es_config.sh)
+        openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
         openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.Elasticsearch());
+        //installs new plugins for viewing telemetry and analyzing telemetry
+        openmct.install(openmct.plugins.AutoflowView({
+            type: "telemetry.fixed"
+        }));
+        openmct.install(openmct.plugins.SummaryWidget());
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.time.clock('local', { start: -15 * 60 * 1000, end: 0 });

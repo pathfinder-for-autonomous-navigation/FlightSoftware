@@ -8,6 +8,7 @@ import timeit
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
+from .cases.utils import str_to_val
 import csv
 
 def USBSessionOnly(fn):
@@ -72,21 +73,35 @@ class StateCmdPrompt(Cmd):
 
     def do_switchcomp(self, args):
         '''
+        
         Switches the Teensy that the user is controlling by the command line.
+
+        If no args are presented, it attempts to automatically switch 
+        to the other sat
+
+        Otherwise, the full name must be specified.
         '''
         args = args.split()
+        if len(self.devices) == 2:
+            if len(args) < 1:
+                list_of_names = [x for x,y in self.devices.items()]
+                if self.cmded_device.device_name == self.devices[list_of_names[0]].device_name:
+                    self.cmded_device = self.devices[list_of_names[1]]
+                else:
+                    self.cmded_device = self.devices[list_of_names[0]]
 
-        if len(args) < 1:
-            print('Need to specify a device to command')
-            return
+                print(f"Switched to {self.cmded_device.device_name}")                
+                
+            else:
+                try:
+                    self.cmded_device = self.devices[args[0]]
+                    print(f"Switched to {self.cmded_device.device_name}")                
 
-        try:
-            self.cmded_device = self.devices[args[0]]
-        except KeyError:
-            print('Invalid device specified')
-            return
-
-        print(f"Switched to {self.cmded_device.device_name}")
+                except KeyError:
+                    print('Invalid device specified')
+            
+        else:
+            print("Can't switchcomp in SingleSatCase")
 
     def do_rs(self, args):
         '''
@@ -99,11 +114,17 @@ class StateCmdPrompt(Cmd):
             return
 
         start_time = timeit.default_timer()
-        read_result = self.cmded_device.read_state(args[0])
+        try:
+            read_result = self.cmded_device.smart_read(args[0])
+        except NameError:
+            read_result = None
+            print('Field with that name does not exist!')
+            return 
+            
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
 
         try:
-            human_readable_result = Enums()[args[0]]
+            human_readable_result = Enums()[args[0]][read_result]
             print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
         except KeyError:
             # args[0] is not an enum field.
@@ -271,7 +292,7 @@ class StateCmdPrompt(Cmd):
             return
 
         fields = [args[x] for x in range(0, len(args), 2)]
-        vals = [args[x] for x in range(1, len(args), 2)]
+        vals = [str_to_val(args[x]) for x in range(1, len(args), 2)]
 
         start_time = timeit.default_timer()
         uplink_succeeded = self.cmded_device.uplink(fields, vals)
