@@ -90,7 +90,7 @@ function Telemetry(configuration) {
     setInterval(function () {
         this.updateState();
         this.generateTelemetry();
-    }.bind(this), 1000);
+    }.bind(this), 3000);
 
     console.log("Now reading spacecraft telemetry from leader and follower")
 
