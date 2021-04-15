@@ -26,6 +26,8 @@
 
 This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates.
 
+To configure the code base to run MCT, run **```./MCT/generators/mct_setup.sh```** from the FlightSoftware directory
+
 The openMCT web server is run using the **```npm start```** command in terminal after navigating to the /MCT directory and installing the node.js modules with **```npm install```**.
 
 Running **```npm start```** default to using the ci.json configuration file. you can specify the configuration file that you want MCT to use by appending an argument containing the path relative to FlightSoftware root directory.
