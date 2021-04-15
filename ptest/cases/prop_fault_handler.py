@@ -31,7 +31,7 @@ class PropFaultHandler(SingleSatCase, PSimCase):
         self.cycle()
 
         self.ws("fault_handler.enabled", True)
-        
+
         self.ws("prop.overpressured.suppress", "false")
         self.logger.put("Releasing overpressured suppress")
 
@@ -196,7 +196,7 @@ class PropFaultHandler(SingleSatCase, PSimCase):
         self.ws("prop.sched_valve1", 800)
         self.ws("prop.cycles_until_firing", self.min_num_cycles)
         self.cycle()
-        self.check_prop_state("pressurizing")   
+        self.check_prop_state("pressurizing")
 
         # Cause the fault to happen:
         #   Keep cycling but don't change the pressure

@@ -55,8 +55,12 @@ def suppress_faults(fc, logger):
     fc.write_state("fault_handler.enabled", "false")
     logger.put("Turning off fault_handler")
 
+    fc.write_state("piksi_fh.enabled", "false")
+    logger.put("Turning off piksi_fh")
+
     faults = [
         "gomspace.low_batt",
+        "gomspace.get_hk.base",
         "prop.overpressured",
         "prop.tank2_temp_high",
         "prop.tank1_temp_high",
@@ -69,7 +73,6 @@ def suppress_faults(fc, logger):
     for fault in faults:
         fc.write_state(fault + ".suppress", "true")
         logger.put(f"Supressing {fault}")
-
 
 def str_to_val(field):
     '''
