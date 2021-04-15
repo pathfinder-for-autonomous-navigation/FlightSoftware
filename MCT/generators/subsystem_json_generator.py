@@ -19,9 +19,6 @@ telemetryPath = os.path.join(FlightSoftwareDirectory, 'telemetry')
 #the initial stdout before changing it to a file
 original_stdout = sys.stdout
 
-# flow_data.cpp file
-f = open(flowDataPath, 'r')
-
 # telemetry file
 j = open(telemetryPath, 'r')
 
@@ -34,9 +31,10 @@ def generate():
     this is the main function that is run to generate the dictoinary file from flow_data.cpp and then convert that into json subsystem/domain object files for every subsystem
     '''
     removeOldJSON()
-    createJSON()
+    createJSON("follower")
+    createJSON("leader")
 
-def createFieldList(file):
+def createFieldList():
     '''
     populates and returns list 'fields' with lists of each telemetry point in file seperated into sections of its state and parents object(s) including subsystem
     
@@ -44,16 +42,13 @@ def createFieldList(file):
 
     if file contains a.b.c, [a, b, c] wil be added to 'fields'
 
-        Parameters: 
-            file (File): The flow_data.cpp file that will be scanned
-
         Returns:
             fields (list): list of all telemetry points seperated into lists of their state and parents object(s) including subsystem
     '''
-    
+    file = open(flowDataPath, 'r')
     fields = []
     lines = file.readlines()
-
+    file.close()
     # ignores all the lines before the line the variable is declared in when searching for field matches
     if lines[0].startswith("const"):
         canStartSearching = True
@@ -171,13 +166,12 @@ def removeOldJSON():
     for file in files:
         os.remove(file)
 
-def createJSON():
+def createJSON(satellite):
     '''
     creates all the JSON subsystem/domain object files and puts them in ./public/subsystems
     '''
 
-    # gets the dictionary of fields
-    d = createDict(createFieldList(f))
+    d = createDict(createFieldList())
     
     #iterates through each subsystem in the dictionary
     for sub in d:
@@ -189,7 +183,7 @@ def createJSON():
         if isinstance(d[sub], dict):
             # set key, name, and measurements
             subsystem['name'] = capFirst(sub)
-            subsystem['key'] = sub
+            subsystem['key'] = satellite + '_' + sub
             subsystem['measurements'] = []
         
             # iterates through each object in the subsystem dictionary
@@ -199,7 +193,7 @@ def createJSON():
 
                 # set key, name, and values;
                 containerObject['name'] = capFirst(obj)
-                containerObject['key'] = sub + '.' + obj
+                containerObject['key'] = satellite + '_' + sub + '.' + obj
                 containerObject['values'] = []
 
                 #add the object to the subsytem
@@ -225,7 +219,7 @@ def createJSON():
                         # add a units option for every type except boolean since boolean doesn't have units
                         if stateObject['type'] != 'bool':
                             stateObject['units'] = '_____'
-                        # add this to the container object
+                        # add this to the container satellite + '_' + object
                         containerObject['values'].append(stateObject)
                     # creates a timestamp object
                     timestamp = {}
@@ -268,7 +262,7 @@ def createJSON():
                     # adds the timestamp object ot the containerObject with the state Objects
                     containerObject['values'].append(timestamp)
             # creates a json file in MCT/public/subsystems and dumps the object into it
-            subsystemJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'subsystems', sub + '.json'), 'w')
+            subsystemJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'subsystems', satellite + '_' + sub + '.json'), 'w')
             json.dump(subsystem, subsystemJSON, indent=4)
         # if the subsytem is actually a state variable
         else:
@@ -329,3 +323,4 @@ def capFirst(s):
 
 # upon running this file with python it will call the main funciton generate()
 generate()
+print("FlightSoftware/MCT/subsystems/* have been generated")

@@ -3,3 +3,7 @@ node_modules
 
 # certificates
 *.pem
+
+# subsystem files
+public/subsystems/*
+public/server-files/state-variables.js

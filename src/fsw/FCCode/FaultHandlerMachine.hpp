@@ -8,13 +8,19 @@
 
 /**
  * @brief Abstract class for fault handler state machines, which must
- * return a recommended mission state from their execute function.
+ *        return a recommended mission state from their execute function.
  */
 class FaultHandlerMachine : public ControlTask<fault_response_t> {
   public:
-    explicit FaultHandlerMachine(StateFieldRegistry& r) : ControlTask<fault_response_t>(r) {}
-    FaultHandlerMachine& operator=(const FaultHandlerMachine& other) = delete;
-    FaultHandlerMachine& operator=(FaultHandlerMachine&& other) = delete;
+    FaultHandlerMachine() = delete;
+    FaultHandlerMachine(FaultHandlerMachine const &) = delete;
+    FaultHandlerMachine(FaultHandlerMachine &&) = delete;
+    FaultHandlerMachine &operator=(FaultHandlerMachine const &) = delete;
+    FaultHandlerMachine &operator=(FaultHandlerMachine &&) = delete;
+
+    virtual ~FaultHandlerMachine() = default;
+
+    explicit FaultHandlerMachine(StateFieldRegistry& r) : ControlTask(r) {}
     virtual fault_response_t execute() = 0;
 };
 
