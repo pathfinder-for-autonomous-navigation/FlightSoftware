@@ -30,10 +30,10 @@ class StateCmdPrompt(Cmd):
     Teensies and simulation devices.
     '''
 
-    def __init__(self, devices, radios, exit_fn):
+    def __init__(self, devices, radios, exit_fn, testcase):
         self.devices = {**devices, **radios}
         self.exit_fn = exit_fn
-
+        self.testcase = testcase
         if not self.devices:
             # There's no flight controller to connect with.
             self.do_exit(None)
@@ -155,7 +155,7 @@ class StateCmdPrompt(Cmd):
         '''
         Start a control cycle.
         '''
-        self.do_ws("cycle.start true")
+        self.testcase.cycle()
 
     @USBSessionOnly
     def do_cyclecount(self, args):

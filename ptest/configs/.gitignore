@@ -1,7 +1,10 @@
 *
-!ci.json
-!ci_realtime.json
-!hitl_singlesat.json
+!hootl.json
+!hootl_speedup.json
+!hitl.json
+!hootl_hootl.json
+!hootl_hootl_autotelem.json
+!hootl_hitl_autotelem.json
 !schemas.py
 !README.md
 !tlm_empty.json
