@@ -15,6 +15,7 @@ class GomspaceCheckoutCase(SingleSatCase):
             raise ValueError
 
     def run(self):
+        self.flight_controller.write_state('gomspace.piksi_off', False)
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
         self.write_state("gomspace.piksi_off", "false")
