@@ -26,8 +26,8 @@ class ConstexprMap {
           return (k == kv.first);
         });
 
-      if (it != data.cend()) return it->second;
-      else throw std::range_error("Key not found");
+      if (it == data.cend()) throw std::range_error("Key not found");
+      return it->second;
     }
 };
 
