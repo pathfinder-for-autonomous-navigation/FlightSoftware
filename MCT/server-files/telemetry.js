@@ -11,6 +11,7 @@ const variables = require('./state-variables.js')
 const request = require('request');
 var path = require('path');
 const { config } = require('process');
+const { pan } = require('./state-variables.js');
 
 /**
  * The URL of the Elastic Search database
@@ -89,7 +90,7 @@ function Telemetry(configuration) {
     setInterval(function () {
         this.updateState();
         this.generateTelemetry();
-    }.bind(this), 3000);
+    }.bind(this), 7000);
 
     console.log("Now reading spacecraft telemetry from leader and follower")
 
@@ -123,6 +124,7 @@ Telemetry.prototype.updateState = async function () {
       new_id = id.substr(id.indexOf('_') + 1);
       //send a request to Elastic Search for the field
       let res = await this.getValue(searchURl, this.followerIndex, new_id);
+      if (new_id === 'pan.state'){console.log("follower: " + res)}
       this.follower_state[id] = res;//update state
     }
 
@@ -144,8 +146,9 @@ Telemetry.prototype.updateState = async function () {
     //if the value for the key of the state entry is a primitive
     else{
       new_id = id.substr(id.indexOf('_') + 1);
-      //send a request to Elastic Search for the field
+      //send a request to Elastic Search for the field 
       let res = await this.getValue(searchURl, this.leaderIndex, new_id);
+      console.log(res)
       this.leader_state[id] = res;//update state
     }
 
@@ -242,7 +245,6 @@ Telemetry.prototype.generateTelemetry = function () {
 
       //generate telemetry point primitve state
       var telempoint = { timestamp: timestamp, value: this.leader_state[id], id: id };
-
       //notify the realtime server and push the datapoint to the history server
       this.notify(telempoint);
       this.history[id].push(telempoint);
