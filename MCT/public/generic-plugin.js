@@ -40,7 +40,6 @@ function requestJSON(j) {
  * This enables the plugin to be used generically for all subsystems/domain objects
  * 
  * @param {*} config A string matching the key of one of the config data objects
- * @param {*} satellite A string designating either "Follower" or "Leader"
  */
 function GenericPlugin(config) {
     return function install(openmct) {
@@ -157,7 +156,7 @@ function GenericPlugin(config) {
                         if (identifier.key === generalConfigData.key) {
                             return {
                                 identifier: identifier,
-                                name: satellite.charAt(0).toUpperCase() + satellite.slice(1) + ' ' + generic.name,
+                                name: generic.name,
                                 type: 'folder',
                                 location: 'ROOT'
                             };
