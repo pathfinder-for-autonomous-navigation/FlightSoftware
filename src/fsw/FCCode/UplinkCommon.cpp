@@ -1,6 +1,6 @@
 #include "UplinkCommon.h"
 
-Uplink::Uplink(StateFieldRegistry const &r) : registry(r), index_size(0)
+Uplink::Uplink(StateFieldRegistry& r) : registry(r), index_size(0)
 {
 }
 
