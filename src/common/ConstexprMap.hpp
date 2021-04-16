@@ -6,9 +6,7 @@
 #include <stdexcept>
 #include <tuple>
 
-/** @author Kyle Krol
- *
- *  @brief Simple map intended for use in constexpr contexts.
+/** @brief Simple map intended for use in constexpr contexts.
  *
  *  See this video for details: https://www.youtube.com/watch?v=INn3xa4pMfg.
  */
