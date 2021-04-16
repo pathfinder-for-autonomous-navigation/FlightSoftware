@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <stdexcept>
 #include <tuple>
 
@@ -27,6 +28,7 @@ class ConstexprMap {
         });
 
       if (it == data.cend()) throw std::range_error("Key not found");
+      assert(it != data.cend());
       return it->second;
     }
 };
