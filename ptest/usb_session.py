@@ -31,7 +31,7 @@ class USBSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks, enable_auto_dbtelem):
         '''
         Initializes state session with a device.
         '''
@@ -65,6 +65,8 @@ class USBSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
         self.mail = None
+
+        self.enable_auto_dbtelem = enable_auto_dbtelem
 
         if self.username != "":
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)

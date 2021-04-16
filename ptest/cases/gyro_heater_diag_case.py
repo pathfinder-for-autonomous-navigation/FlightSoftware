@@ -1,10 +1,11 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
-from .base import SingleSatOnlyCase, TestCaseFailure, Enums
+from .base import SingleSatCase
+from .utils import TestCaseFailure, Enums
 import time
     
-class GyroHeaterDiagCase(SingleSatOnlyCase):
+class GyroHeaterDiagCase(SingleSatCase):
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
         self.ws("pan.state", Enums.mission_states["manual"])
@@ -21,7 +22,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_ws("adcs_cmd.havt_disable18", True) # disable heater
         self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
 
         self.print_rs("adcs_monitor.functional")
 

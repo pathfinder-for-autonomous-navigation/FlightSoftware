@@ -1,7 +1,11 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class ActuateHardwareCase(SingleSatOnlyCase):
+class ActuateHardwareCase(SingleSatCase):
+    def post_boot(self):
+        self.mission_state = "manual"
+        self.cycle()
+
     def setup_hardware(self):
         self.docking_spin_motor_setup()
         self.prop_valves_setup()
@@ -57,12 +61,14 @@ class ActuateHardwareCase(SingleSatOnlyCase):
             self.ws("docksys.config_cmd", True)
 
 class HardwareStressCheckoutCase(ActuateHardwareCase):
-    def setup_post_bootsetup(self):
+    def post_boot(self):
+        super(HardwareStressCheckoutCase, self).post_boot()
+
         self.print_header("Begin Hardware Stress Test Checkout Case")
         self.setup_hardware()
         self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.rs("pan.cycle_no")
         self.logger.put("Turning on wheels at speed 680.")
         self.spin_motors(680)

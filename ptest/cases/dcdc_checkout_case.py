@@ -1,7 +1,7 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
-class DCDCCheckoutCase(SingleSatOnlyCase):
+class DCDCCheckoutCase(SingleSatCase):
 
     def __init__(self, *args, **kwargs):
         super(DCDCCheckoutCase, self).__init__(*args, **kwargs)
@@ -109,7 +109,7 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
                 not self.prop_command or not self.prop or self.reset_command:
             self.abort("Failed to reset the DCDCs.")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle()
 
         if self.adcs_command or self.adcs or self.prop or self.prop_command or \

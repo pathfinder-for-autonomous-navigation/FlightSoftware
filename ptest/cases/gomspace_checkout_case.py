@@ -1,10 +1,10 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
 
-class GomspaceCheckoutCase(SingleSatOnlyCase):
+class GomspaceCheckoutCase(SingleSatCase):
 
     def str_to_bool(self, string):
         if string == "true":
@@ -14,7 +14,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
         else:
             raise ValueError
 
-    def run_case_singlesat(self):
+    def run(self):
+        self.flight_controller.write_state('gomspace.piksi_off', False)
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
         self.write_state("gomspace.piksi_off", "false")
@@ -172,8 +173,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
 
         self.finish()
 
-class CheckBatteryLevel(SingleSatOnlyCase):
-    def run_case_singlesat(self):
+class CheckBatteryLevel(SingleSatCase):
+    def run(self):
         voltage = float(self.read_state("gomspace.vbatt"))
         self.logger.put("                                 ")
         self.logger.put("=================================")
