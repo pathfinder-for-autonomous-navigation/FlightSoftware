@@ -87,22 +87,6 @@ class PSimCase(PTestCase):
         '''
         self.mock_sensor_validity = True
 
-        # # if the json config has devices, and the string 'autotelem' is somewhere in the dictionary
-        # if self.device_config != None and 'autotelem' in str(self.device_config):
-        #     print('[PTEST-SIM] Autotelem ACTIVE!')
-        #     self.enable_autotelem = True
-        # else:
-        #     print('[PTEST-SIM] Autotelem INACTIVE!')
-        #     self.enable_autotelem = False
-
-        # if self.is_single_sat_sim:
-        #     print('[PTEST-SIM] Singlesat sim!')
-        #     self.flight_controller = self.devices['FlightController']
-        # elif self.devices:
-        #     print('[PTEST-SIM] Dualsat sim!')
-        #     self.flight_controller_leader = self.devices['FlightControllerLeader']
-        #     self.flight_controller_follower = self.devices['FlightControllerFollower']
-
         print("Configuring simulation (please be patient)...")
         start_time = timeit.default_timer()
         self.running = True
@@ -116,7 +100,7 @@ class PSimCase(PTestCase):
         for device in self.devices:
             self.read_actuators(device)
         
-        # Step 5. Read the actuators from the flight computer(s) and send to psim
+        # Step 0. Read the actuators from the flight computer(s) and send to psim
         self.send_to_sim()
 
         # Step 1. Generate dynamics
@@ -125,7 +109,7 @@ class PSimCase(PTestCase):
         # Step 2. Load sensor data from psim into ptest
         self.update_sensors()
                     
-        # Step 3.1 Mock sensor validity flags and states if requested
+        # Step 3 Mock sensor validity flags and states if requested
         if self.mock_sensor_validity:
             for device in self.devices:
                 self.mock_piksi_state(device)
@@ -137,35 +121,12 @@ class PSimCase(PTestCase):
 
         ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
 
-        # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
+        # Step 4. Send the sensor data from ptest to FCs
         for device in self.devices:
             self.write_sensor_inputs(device)
 
-        # Step 3 Simulate Flight Computers if need be
+        # Step 5 Simulate Flight Computers if need be
         self.simulate_flight_computers()
-
-        # # Step 3.3. Allow test case to do its own meddling with the flight computer.
-        # self.testcase.run_case()
-
-        # # Step 3.4. Step the flight computer forward.
-        # if self.is_single_sat_sim:
-        #     self.flight_controller.write_state("cycle.start", "true")
-        # else:
-        #     self.flight_controller_follower.write_state("cycle.start", "true")
-        #     self.flight_controller_leader.write_state("cycle.start", "true")
-
-        # # Step 4. Send telemetry to database
-        # if self.enable_autotelem:
-        #     if self.is_single_sat_sim:
-        #         self.flight_controller.dbtelem()
-        #     else:
-        #         self.flight_controller_follower.dbtelem()
-        #         self.flight_controller_leader.dbtelem()
-
-        # # Step 6. Read incoming uplinks
-        # for device in self.devices:
-        #     if self.devices[device].scrape:
-        #         self.devices[device].scrape_uplink()
 
     def rs_psim(self, name: str):
         '''

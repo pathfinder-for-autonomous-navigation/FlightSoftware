@@ -49,6 +49,26 @@ class DualSatCase(PTestCase):
             self.logger.put("[TESTCASE] Suppressing follower faults.")
             suppress_faults(self.flight_controller_follower, self.logger)
 
+        if self.flight_controller_leader.enable_auto_dbtelem:
+            self.logger.put("[TESTCASE] Leader: Auto-dbtelem ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Leader: Auto-dbtelem INACTIVE")
+
+        if self.flight_controller_follower.enable_auto_dbtelem:
+            self.logger.put("[TESTCASE] Follower: Auto-dbtelem ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Follower: Auto-dbtelem INACTIVE")
+
+        if self.flight_controller_leader.scrape_uplink:
+            self.logger.put("[TESTCASE] Leader: Scrape-uplink ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Leader: Scrape-uplink INACTIVE")
+
+        if self.flight_controller_follower.scrape_uplink:
+            self.logger.put("[TESTCASE] Follower: Scrape-uplink ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Follower: Scrape-uplink INACTIVE")
+
         if self.leader_skip_deployment_wait:
             self.logger.put("[TESTCASE] Skipping leader deployment wait.")
             self.flight_controller_leader.write_state("pan.deployment.elapsed", "15000")

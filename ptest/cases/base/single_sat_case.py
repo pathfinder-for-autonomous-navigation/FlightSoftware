@@ -52,6 +52,16 @@ class SingleSatCase(PTestCase):
             self.logger.put("[TESTCASE] Skipping deployment wait.")
             self.flight_controller.write_state("pan.deployment.elapsed", "15000")
 
+        if self.flight_controller.enable_auto_dbtelem:
+            self.logger.put("[TESTCASE] Auto-dbtelem ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Auto-dbtelem INACTIVE")
+
+        if self.flight_controller.scrape_uplink:
+            self.logger.put("[TESTCASE] Scrape-uplink ACTIVE")
+        else:
+            self.logger.put("[TESTCASE] Scrape-uplink INACTIVE")
+
         self.pre_boot()
 
         cycles = 0
