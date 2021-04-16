@@ -20,7 +20,9 @@ class TestFixture
 public:
   StateFieldRegistryMock registry;
   // Input state fields to mission manager
-  std::shared_ptr<ReadableStateField<lin::Vector3f>> adcs_w_body_est_fp;
+  std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
+  std::shared_ptr<ReadableStateField<lin::Vector3f>> attitude_estimator_L_body_fp;
+
   std::shared_ptr<WritableStateField<bool>> adcs_paired_fp;
 
   std::shared_ptr<ReadableStateField<unsigned char>> radio_state_fp;
@@ -28,7 +30,8 @@ public:
 
   std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
 
-  std::shared_ptr<ReadableStateField<lin::Vector3d>> propagated_baseline_pos_fp;
+  std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
+  std::shared_ptr<ReadableStateField<lin::Vector3d>> rel_orbit_rel_pos_fp;
 
   std::shared_ptr<WritableStateField<bool>> reset_fp;
   std::shared_ptr<WritableStateField<bool>> power_cycle_radio_fp;
@@ -49,6 +52,8 @@ public:
 
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
+  std::shared_ptr<WritableStateField<bool>> piksi_off_fp;
+  std::shared_ptr<WritableStateField<bool>> piksi_powercycle_fp;
 
   std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
 

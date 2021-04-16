@@ -82,7 +82,7 @@ class StateFieldPlotter(object):
         if field_data[0][1].count(",") == 2:
             # It's a GPS time
             data_vals = [
-                GPSTime(datapoint[1]).to_ns() for datapoint in field_data
+                GPSTime(int(datapoint[1])).to_ns() for datapoint in field_data
             ]
             plt.plot(data_t, data_vals, label=field, marker='o', markersize=2)
         elif field_data[0][1].count(",") == 3:
