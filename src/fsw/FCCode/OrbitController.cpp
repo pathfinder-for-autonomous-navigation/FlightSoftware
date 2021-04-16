@@ -1,4 +1,5 @@
 #include "OrbitController.hpp"
+#include <lin/generators.hpp>
 #include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
 #include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
@@ -31,7 +32,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
     sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
-    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,10,100))
+    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.1,10))
 
 {
     add_writable_field(sched_valve1_f);
@@ -148,8 +149,6 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
     double ang_vel = lin::norm(vel)/lin::norm(pos);
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
-    double min_time = std::numeric_limits<double>::max();
-
     auto next_node = [&](auto const &arr) -> double {
         auto min_time = std::numeric_limits<double>::max();
         for (auto const node : arr) {
