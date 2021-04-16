@@ -44,6 +44,8 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
     last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
+    piksi_off_fp = registry.create_writable_field<bool>("gomspace.piksi_off");
+    piksi_powercycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
 
     // Initialize these variables
     attitude_estimator_valid_fp->set(false);
@@ -69,6 +71,7 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     deployment_wait_elapsed_fp = registry.find_readable_field_t<unsigned int>(
         "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
+
 
     // Replace fault handler with a mock.
     mission_manager->main_fault_handler = std::make_unique<FaultHandlerMachineMock>(registry);

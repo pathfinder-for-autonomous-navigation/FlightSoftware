@@ -206,6 +206,16 @@ protected:
      */
     ReadableStateField<unsigned int> *bootcount_fp;
 
+    /**
+     * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)
+     */
+    WritableStateField<bool> *piksi_off_fp;
+
+    /**
+     * @brief True if Gomspace should power cycle piksi port
+     */
+    WritableStateField<bool> *piksi_powercycle_fp;
+
 private:
     /**
      * @brief Computes magnitude of baseline position vector.
