@@ -86,12 +86,12 @@ class TestFixture {
 
     ReadableStateField<unsigned char>* pptmode_fp;
 
-    WritableStateField<unsigned char>* power_cycle_output1_cmd_fp;
-    WritableStateField<unsigned char>* power_cycle_output2_cmd_fp;
-    WritableStateField<unsigned char>* power_cycle_output3_cmd_fp;
-    WritableStateField<unsigned char>* power_cycle_output4_cmd_fp;
-    WritableStateField<unsigned char>* power_cycle_output5_cmd_fp;
-    WritableStateField<unsigned char>* power_cycle_output6_cmd_fp;
+    WritableStateField<bool>* power_cycle_output1_cmd_fp;
+    WritableStateField<bool>* power_cycle_output2_cmd_fp;
+    WritableStateField<bool>* power_cycle_output3_cmd_fp;
+    WritableStateField<bool>* power_cycle_output4_cmd_fp;
+    WritableStateField<bool>* power_cycle_output5_cmd_fp;
+    WritableStateField<bool>* power_cycle_output6_cmd_fp;
 
     WritableStateField<unsigned int>* pv1_output_cmd_fp;
     WritableStateField<unsigned int>* pv2_output_cmd_fp;
@@ -154,12 +154,12 @@ class TestFixture {
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
 
-        power_cycle_output1_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output1_cmd");
-        power_cycle_output2_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output2_cmd");
-        power_cycle_output3_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output3_cmd");
-        power_cycle_output4_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output4_cmd");
-        power_cycle_output5_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output5_cmd");
-        power_cycle_output6_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output6_cmd");
+        power_cycle_output1_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output1_cmd");
+        power_cycle_output2_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output2_cmd");
+        power_cycle_output3_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output3_cmd");
+        power_cycle_output4_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output4_cmd");
+        power_cycle_output5_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output5_cmd");
+        power_cycle_output6_cmd_fp = registry.find_writable_field_t<bool>("gomspace.power_cycle_output6_cmd");
 
         pv1_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv1_cmd");
         pv2_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv2_cmd");
