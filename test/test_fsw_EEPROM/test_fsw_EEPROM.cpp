@@ -18,7 +18,6 @@ class TestFixture {
     //Create the statefields that the EEPROM will eventually collect and store
     std::shared_ptr<ReadableStateField<unsigned char>> mission_mode_fp;
     std::shared_ptr<ReadableStateField<bool>> is_deployed_fp;
-    std::shared_ptr<ReadableStateField<unsigned char>> sat_designation_fp;
     std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 
     std::unique_ptr<EEPROMController> eeprom_controller;
@@ -37,9 +36,6 @@ class TestFixture {
 
         is_deployed_fp = registry.create_readable_field<bool, 3>("pan.deployed");
         is_deployed_fp->set(false);
-
-        sat_designation_fp = registry.create_readable_field<unsigned char, 5>("pan.sat_designation");
-        sat_designation_fp->set(3);
 
         control_cycle_count_fp = registry.create_readable_field<unsigned int, 7>("pan.cycle_no");
         control_cycle_count_fp->set(4);
@@ -109,12 +105,10 @@ void test_task_initialization() {
 
     TEST_ASSERT_EQUAL(1, tf.get_ptr<unsigned char>(0)->get());
     TEST_ASSERT_FALSE(tf.get_ptr<bool>(1)->get());
-    TEST_ASSERT_EQUAL(3, tf.get_ptr<unsigned char>(2)->get());
-    TEST_ASSERT_EQUAL(4, tf.get_ptr<unsigned int>(3)->get());
+    TEST_ASSERT_EQUAL(4, tf.get_ptr<unsigned char>(2)->get());
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
-    TEST_ASSERT_EQUAL(3, tf.sat_designation_fp->get());
     TEST_ASSERT_EQUAL(4, tf.control_cycle_count_fp->get());
 }
 
@@ -124,7 +118,6 @@ void test_task_execute() {
     // Set the statefields to new values.
     tf.mission_mode_fp->set(5);
     tf.is_deployed_fp->set(true);
-    tf.sat_designation_fp->set(7);
     tf.control_cycle_count_fp->set(8);
 
     // Test that each of the values are written after the appropriate number of control cycles has passed
@@ -136,7 +129,6 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(5, tf.read(0));
     TEST_ASSERT_EQUAL(255, tf.read(1));
     TEST_ASSERT_EQUAL(255, tf.read(2));
-    TEST_ASSERT_EQUAL(255, tf.read(3));
 
     // At the 9th control cycle, the EEPROM should write the value of deployment mode (period=3)
     TimedControlTaskBase::control_cycle_count=9;
@@ -144,23 +136,13 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(5, tf.read(0));
     TEST_ASSERT_EQUAL(1, tf.read(1));
     TEST_ASSERT_EQUAL(255, tf.read(2));
-    TEST_ASSERT_EQUAL(255, tf.read(3));
-
-    // At the 25th control cycle, the EEPROM should write the value of sat designation (period=5)
-    TimedControlTaskBase::control_cycle_count=25;
-    tf.eeprom_controller->execute();
-    TEST_ASSERT_EQUAL(5, tf.read(0));
-    TEST_ASSERT_EQUAL(1, tf.read(1));
-    TEST_ASSERT_EQUAL(7, tf.read(2));
-    TEST_ASSERT_EQUAL(255, tf.read(3));
 
     // At the 49th control cycle, the EEPROM should write the value of cycle number (period=7)
     TimedControlTaskBase::control_cycle_count=49;
     tf.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(5, tf.read(0));
     TEST_ASSERT_EQUAL(1, tf.read(1));
-    TEST_ASSERT_EQUAL(7, tf.read(2));
-    TEST_ASSERT_EQUAL(8, tf.read(3));
+    TEST_ASSERT_EQUAL(8, tf.read(2));
 
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
     // eeprom control task is instantiated.
@@ -172,14 +154,12 @@ void test_task_execute() {
     // was not a docking or docked state, though, it should not be saved.
     TEST_ASSERT_EQUAL(1, tf2.get_ptr<unsigned char>(0)->get());
     TEST_ASSERT_TRUE(tf2.get_ptr<bool>(1)->get());
-    TEST_ASSERT_EQUAL(7, tf2.get_ptr<unsigned char>(2)->get());
-    TEST_ASSERT_EQUAL(8, tf2.get_ptr<unsigned int>(3)->get());
+    TEST_ASSERT_EQUAL(8, tf2.get_ptr<unsigned int>(2)->get());
 
     // Let the statefield values change over time. We'll set the mission manager
     // value to "docked" so that it actually gets saved by the EEPROM.
     tf2.mission_mode_fp->set(9);
     tf2.is_deployed_fp->set(false);
-    tf2.sat_designation_fp->set(11);
     tf2.control_cycle_count_fp->set(12);
 
     // At the 210th control cycle, all the new values should be written to the EEPROM (210=2*3*5*7)
@@ -189,22 +169,19 @@ void test_task_execute() {
     tf2.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(9, tf.read(0));
     TEST_ASSERT_EQUAL(0, tf.read(1));
-    TEST_ASSERT_EQUAL(11, tf.read(2));
-    TEST_ASSERT_EQUAL(12, tf.read(3));
+    TEST_ASSERT_EQUAL(12, tf.read(2));
 
     // Now we let a few more control cycles pass, but not a whole period for any statefield (211 is a prime number)
     TimedControlTaskBase::control_cycle_count=211;
     tf2.mission_mode_fp->set(13);
     tf2.is_deployed_fp->set(true);
-    tf2.sat_designation_fp->set(15);
     tf2.control_cycle_count_fp->set(16);
 
     // Check that these values are NOT written to the EEPROM
     tf2.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(9, tf.read(0));
     TEST_ASSERT_EQUAL(0, tf.read(1));
-    TEST_ASSERT_EQUAL(11, tf.read(2));
-    TEST_ASSERT_EQUAL(12, tf.read(3));
+    TEST_ASSERT_EQUAL(12, tf.read(2));
 }
 
 int test_control_task() {

@@ -176,7 +176,11 @@ class CppSimulation(object):
         based on a psim flag value
         '''
         psim_sat_name = self.fc_to_role_map[fc_name]
-        cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.active"]
+        try:
+            cdgps_active = self.mysim["sensors."+psim_sat_name+".cdgps.valid"]
+        except RuntimeError:
+            # sim does not support this field, probably a single sat setup
+            cdgps_active = 0
 
         fsw_piksi_state = -1
 
@@ -211,6 +215,12 @@ class CppSimulation(object):
             fsw_ssa_mode = Enums.ssa_modes['SSA_COMPLETE']
 
         fc_device.write_state('adcs_monitor.ssa_mode', fsw_ssa_mode)
+
+    def transfer_piksi_time(self, fc_name, fc_device):
+        psim_time_ns = self.mysim['truth.t.ns']
+        python_time = GPSTime(psim_time_ns)
+
+        fc_device.write_state('piksi.time', python_time.to_list())
 
     def write_adcs_estimator_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
@@ -293,6 +303,11 @@ class CppSimulation(object):
                     self.mock_piksi_state(device_name, device)
                     self.mock_adcs_havt(device_name, device)
                     self.mock_ssa_mode(device_name, device)
+
+            for device_name, device in self.devices.items():
+                self.transfer_piksi_time(device_name, device)
+
+            ### BEGIN SECTION OF CODE FOR STATEFIELDS THAT ARE EASY TRANSFERS
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             for device_name, device in self.devices.items():

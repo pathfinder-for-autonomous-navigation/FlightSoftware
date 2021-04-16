@@ -162,6 +162,10 @@ build.log
 cmake*
 CMakeListsPrivate.txt
 CMakeLists.txt
+
+# tlm_secret.json
+*tlm_secret.json
+
 # Temporary EEPROM file created by HOOTL
 eeprom.json
 

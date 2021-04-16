@@ -30,7 +30,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
       debug_task(registry, debug_task_offset),
-      attitude_estimator(registry, attitude_estimator_offset),
+      estimators(registry, estimators_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       docksys(),
@@ -111,7 +111,7 @@ void MainControlLoop::execute() {
     #endif
 
     uplink_consumer.execute_on_time();
-    attitude_estimator.execute_on_time();
+    estimators.execute_on_time();
     mission_manager.execute_on_time();
     dcdc_controller.execute_on_time();
     attitude_controller.execute_on_time();

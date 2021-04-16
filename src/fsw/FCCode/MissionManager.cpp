@@ -12,23 +12,34 @@ const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
 const constexpr unsigned int MissionManager::initial_docking_timeout_limit;
 const constexpr unsigned int MissionManager::deployment_wait;
+const constexpr unsigned char MissionManager::kill_switch_value;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
-MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset) : TimedControlTask<void>(registry, "mission_ct", offset),
-                                                                                    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
-                                                                                    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
-                                                                                    docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
-                                                                                    docking_timeout_limit_f("docking_timeout_limit",
-                                                                                                            Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
-                                                                                    adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
-                                                                                    docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-                                                                                    enter_docking_cycle_f("docksys.enter_docking"),
-                                                                                    mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
-                                                                                    is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
-                                                                                    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
-                                                                                    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
-                                                                                    enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
+MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset)
+    : TimedControlTask<void>(registry, "mission_ct", offset),
+      detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
+      close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
+      docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
+      docking_timeout_limit_f("docking_timeout_limit",
+                              Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
+      main_fault_handler(std::make_unique<MainFaultHandler>(registry)),
+      adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
+      docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
+      enter_docking_cycle_f("docksys.enter_docking"),
+      low_batt_fault_fp(FIND_FAULT(gomspace.low_batt.base)),
+      adcs_functional_fault_fp(FIND_FAULT(adcs_monitor.functional_fault.base)),
+      wheel1_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel1_fault.base)),
+      wheel2_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel2_fault.base)),
+      wheel3_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel3_fault.base)),
+      wheel_pot_fault_fp(FIND_FAULT(adcs_monitor.wheel_pot_fault.base)),
+      pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
+      mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
+      is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
+      deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
+      sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
+      enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
+      kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -42,36 +53,33 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
     add_internal_field(enter_close_approach_ccno_f);
+    add_writable_field(kill_switch_f);
 
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
-    bootcount_fp->set(bootcount_fp->get()+1);
+    bootcount_fp->set(bootcount_fp->get() + 1);
 
-    main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
 
-    adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
+    attitude_estimator_valid_fp = FIND_READABLE_FIELD(bool, attitude_estimator.valid);
+    attitude_estimator_L_body_fp = FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.L_body);
 
     radio_state_fp = find_readable_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_readable_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
     prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
-    propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
+    rel_orbit_state_fp = FIND_READABLE_FIELD(unsigned char, rel_orbit.state);
+    rel_orbit_rel_pos_fp = FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.rel_pos);
 
     reset_fp = find_writable_field<bool>("gomspace.gs_reset_cmd", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
-    low_batt_fault_fp = find_fault("gomspace.low_batt.base", __FILE__, __LINE__);
-    adcs_functional_fault_fp = find_fault("adcs_monitor.functional_fault.base", __FILE__, __LINE__);
-    wheel1_adc_fault_fp = find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__);
-    wheel2_adc_fault_fp = find_fault("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__);
-    wheel3_adc_fault_fp = find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__);
-    wheel_pot_fault_fp = find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__);
-    pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
-
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
+
+    piksi_off_fp = find_writable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+    piksi_powercycle_fp = find_writable_field<bool>("gomspace.power_cycle_output1_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -100,15 +108,13 @@ void MissionManager::execute()
         if (fault_response == fault_response_t::safehold)
         {
             transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            set(sat_designation_t::undecided);
             return;
         }
-        else if (fault_response == fault_response_t::standby
-            && state != mission_state_t::safehold
-            && state != mission_state_t::initialization_hold
-            && state != mission_state_t::detumble
-            && state != mission_state_t::standby)
+        else if (fault_response == fault_response_t::standby && state != mission_state_t::safehold && state != mission_state_t::initialization_hold && state != mission_state_t::detumble && state != mission_state_t::standby)
         {
             transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+            set(sat_designation_t::undecided);
             return;
         }
     }
@@ -166,14 +172,29 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
+    // Step 0. If kill switch flag is set, shuts down radio connection
+    if (kill_switch_f.get() == kill_switch_value)
+    {
+        while (true)
+        {
+            //This will cause gomspace to reboot the spacecraft and we will get stuck in this loop forever
+        }
+    }
+
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1) { 
+    if (bootcount_fp->get() == 1) {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
+            // Stop power to Piksi if it is not off already
+            piksi_off_fp->set(true); 
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
     }
+
+    piksi_off_fp->set(false);
+
+
 
     // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
     // Turn radio on, and check for hardware faults that would necessitate
@@ -187,7 +208,7 @@ void MissionManager::dispatch_startup()
     {
         transition_to(mission_state_t::initialization_hold,
                       adcs_state_t::detumble,
-                        prop_state_t::idle);
+                      prop_state_t::idle);
     }
     else
     {
@@ -200,17 +221,20 @@ void MissionManager::dispatch_startup()
 
 void MissionManager::dispatch_detumble()
 {
-    // Detumble until satellite angular rate is below an allowable threshold
-    const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
-    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
-
-    if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
+    if (attitude_estimator_valid_fp->get())
     {
-        if(!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
-            adcs_dcdc_fp->set(true);
-        else
-            transition_to(mission_state_t::standby, adcs_state_t::point_standby);
+        // Detumble until satellite angular rate is below an allowable threshold
+        const float momentum = lin::fro(attitude_estimator_L_body_fp->get());
+        const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
+
+        if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
+        {
+            if (!adcs_dcdc_fp->get()) // cause a cycle where DCDC is turned on then wheels turn on
+                adcs_dcdc_fp->set(true);
+            else
+                transition_to(mission_state_t::standby, adcs_state_t::point_standby);
             // dcdc will be reasserted to true but that's ok
+        }
     }
 }
 
@@ -334,11 +358,7 @@ void MissionManager::dispatch_manual()
 
 double MissionManager::distance_to_other_sat() const
 {
-    const lin::Vector3d dr = propagated_baseline_pos_fp->get();
-    if (std::isnan(dr(0)))
-        return dr(0);
-    else
-        return lin::norm(dr);
+    return rel_orbit_state_fp->get() ? lin::norm(rel_orbit_rel_pos_fp->get()) : gnc::constant::nan;
 }
 
 bool MissionManager::too_long_in_docking() const
@@ -383,8 +403,8 @@ void MissionManager::set(sat_designation_t designation)
 void MissionManager::transition_to(mission_state_t mission_state,
                                    adcs_state_t adcs_state)
 {
-   if (mission_state == mission_state_t::safehold)
-   {
+    if (mission_state == mission_state_t::safehold)
+    {
         adcs_dcdc_fp->set(false);
     }
     // all other transitions shall leave the DCDC's alone
