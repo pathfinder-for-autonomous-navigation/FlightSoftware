@@ -26,8 +26,10 @@ class PiksiCheckoutCase(SingleSatCase):
         self.most_common_mode = Enums.piksi_modes["no_fix"]
 
         self.mission_state = "manual"
+
+        # Just in case this is ever run in a HITL unit
         self.flight_controller.write_state("gomspace.piksi_off", False)
-        
+
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
             self.cycle()
