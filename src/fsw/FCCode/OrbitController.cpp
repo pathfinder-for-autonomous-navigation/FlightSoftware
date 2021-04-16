@@ -32,7 +32,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
     sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
-    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.1,10))
+    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.025,10))
 
 {
     add_writable_field(sched_valve1_f);
