@@ -9,7 +9,7 @@
  */
 class Uplink {
   public:
-  Uplink(StateFieldRegistry& r);
+  Uplink(StateFieldRegistry const &r);
 
   /**
    * registry is not assumed to be populated when this constructor is called
@@ -26,7 +26,7 @@ class Uplink {
   /**
    * @brief Reference to registry so that we can update and read fields
    */
-   StateFieldRegistry& registry;
+   StateFieldRegistry const& registry;
 
   /**
    * @brief The number of bits to represent an index

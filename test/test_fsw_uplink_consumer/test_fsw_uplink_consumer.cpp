@@ -40,10 +40,10 @@ class TestFixture {
 
     // Test Helper function will map field names to indices
     std::map<std::string, size_t> field_map;
-   
+
    // Make external fields
     char mt_buffer[350];
-    
+
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture() : registry() {
         srand(1);
@@ -63,17 +63,15 @@ class TestFixture {
         uplink_consumer = std::make_unique<UplinkConsumer>(registry, 0);
 
         radio_mt_packet_fp->set(mt_buffer);
-        field_map = std::map<std::string, size_t>();
+        uplink_consumer->init_uplink();
 
         // Setup field_map and assign some values
         for (size_t i = 0; i < registry.writable_fields.size(); ++i)
         {
             auto w = registry.writable_fields[i];
-            field_map[w->name().c_str()] = i;
-            w->name();
+            field_map[w->name()] = i;
             from_ull(w, rand()); // no seed so should be the same each time
         }
-        uplink_consumer->init_uplink();
     }
     /**
      * @param out The uplink packet as a bitstream
@@ -129,7 +127,7 @@ void test_create_uplink()
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
-    expect[0] = 0;
+    expect[0] = 1;
     expect[1] = 1;
     expect[2] = 0;
     expect[3] = 0;
@@ -170,7 +168,7 @@ void test_create_uplink_other()
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
-    expect[0] = 0;
+    expect[0] = 1;
     expect[1] = 1;
     expect[2] = 0;
     expect[3] = 0;

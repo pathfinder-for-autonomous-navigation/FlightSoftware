@@ -48,8 +48,8 @@ class UplinkConsumer : public TimedControlTask<void>, public Uplink {
      * @param registry State field registry
      * @param offset Offset from the start of the cycle (TimedControlTask)
      */
-    UplinkConsumer(StateFieldRegistry& registry, unsigned int offset);
-    
+    UplinkConsumer(StateFieldRegistry &registry, unsigned int offset);
+
     /**
      * @brief Checks radio_mt_packet_len_f to see if QuakeManager has received a new
      * uplink. If a new uplink has been received, UplinkConsumer expects the

@@ -1,6 +1,7 @@
 #ifndef STATE_FIELD_REGISTRY_MOCK_HPP_
 #define STATE_FIELD_REGISTRY_MOCK_HPP_
 
+#include <common/casts.hpp>
 #include <common/StateFieldRegistry.hpp>
 
 #ifdef DESKTOP
@@ -66,7 +67,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     InternalStateField<T>* find_internal_field_t(const std::string& name) {
-        auto ptr = static_cast<InternalStateField<T>*>(find_internal_field(name));
+        auto *const ptr = DYNAMIC_CAST(InternalStateField<T> *, find_internal_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -76,7 +77,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     ReadableStateField<T>* find_readable_field_t(const std::string& name) {
-        auto ptr = static_cast<ReadableStateField<T>*>(find_readable_field(name));
+        auto *const ptr = DYNAMIC_CAST(ReadableStateField<T> *, find_readable_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -86,7 +87,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     WritableStateField<T>* find_writable_field_t(const std::string& name) {
-        auto ptr = static_cast<WritableStateField<T>*>(find_writable_field(name));
+        auto *const ptr = DYNAMIC_CAST(WritableStateField<T> *, find_writable_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -95,7 +96,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @brief Finds an event of the given name.
      */
     Event* find_event_t(const std::string& name) {
-        auto ptr = static_cast<Event*>(find_event(name));
+        auto ptr = find_event(name);
         check_field_exists(ptr, name);
         return ptr;
     }
