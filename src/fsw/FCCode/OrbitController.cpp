@@ -13,7 +13,7 @@ static constexpr std::array<double, 18> firing_nodes_near = {pi/18, pi/6, pi*(5/
                                 -pi*(5/6), -pi*(13/18), -pi*(11/18), -pi/2,
                                 -pi*(7/18), -pi*(5/18), -pi/6, -pi/18};
 
-auto gain_factor = (double)(firing_nodes_near.size() / firing_nodes_far.size());
+static constexpr auto gain_factor = static_cast<double>(firing_nodes_near.size()) / firing_nodes_far.size();
 
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
@@ -43,7 +43,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
     sched_valve4_f.set(0);
-    J_ecef_f.set(0.0);
+    J_ecef_f.set(lin::zeros<lin::Vector3d>());
 }
 
 void OrbitController::init() {
@@ -151,8 +151,9 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
     double min_time = std::numeric_limits<double>::max();
 
     auto next_node = [&](auto const &arr) -> double {
-        for (auto i = 0; i < arr.size(); i++) {
-            double time_til_node = (arr[i] - theta) / ang_vel;
+        auto min_time = std::numeric_limits<double>::max();
+        for (auto const node : arr) {
+            auto const time_til_node = (node - theta) / ang_vel;
             if (time_til_node > 0 && time_til_node < min_time) {
                 min_time = time_til_node;
             }
@@ -178,16 +179,16 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
     data.dv_ecef = dv;
 
     // Sets Orbit Controller gains depending on whether satellites are in near or far-field 
+    data.p = gnc::constant::K_p;
+    data.d = gnc::constant::K_d;
+    data.energy_gain = gnc::constant::K_e;   // Energy gain                   (J)
+    data.h_gain = gnc::constant::K_h;        // Angular momentum gain         (kg m^2/sec)
+    
     if (rel_orbit_state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-        data.p = gnc::constant::K_p / gain_factor;  
-        data.d = gnc::constant::K_d / gain_factor;
-        data.energy_gain = gnc::constant::K_e / gain_factor;   // Energy gain                   (J)
-        data.h_gain = gnc::constant::K_h / gain_factor;        // Angular momentum gain         (kg m^2/sec)
-    } else {
-        data.p = gnc::constant::K_p;
-        data.d = gnc::constant::K_d;
-        data.energy_gain = gnc::constant::K_e;   // Energy gain                   (J)
-        data.h_gain = gnc::constant::K_h;        // Angular momentum gain         (kg m^2/sec)
+        data.p /= gain_factor;  
+        data.d /= gain_factor;
+        data.energy_gain /= gain_factor;
+        data.h_gain /= gain_factor;
     }
 
     gnc::control_orbit(state, data, actuation);
