@@ -18,9 +18,6 @@ from .mission import (
     DualSatStandbyCase
 )
 
-from .psim_debug import PSimDebug
-from .dual_psim import DualPSim
-
 from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
