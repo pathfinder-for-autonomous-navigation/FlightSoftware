@@ -26,7 +26,7 @@ class Uplink {
   /**
    * @brief Reference to registry so that we can update and read fields
    */
-   StateFieldRegistry const& registry;
+   StateFieldRegistry const &registry;
 
   /**
    * @brief The number of bits to represent an index
