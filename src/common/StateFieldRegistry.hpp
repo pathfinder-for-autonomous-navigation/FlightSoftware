@@ -1,11 +1,11 @@
 #ifndef STATE_FIELD_REGISTRY_HPP_
 #define STATE_FIELD_REGISTRY_HPP_
 
-#include <memory>
-#include <set>
 #include "StateField.hpp"
 #include "Event.hpp"
 #include "Fault.hpp"
+
+#include <vector>
 
 /**
  * @brief Registry of state fields and which tasks have read/write access to
@@ -49,7 +49,6 @@ class StateFieldRegistry {
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
-
 
     /**
      * @brief Find an EEPROM-saveable field of a given name within the state registry

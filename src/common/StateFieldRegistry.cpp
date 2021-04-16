@@ -1,67 +1,73 @@
 #include "StateFieldRegistry.hpp"
 
+#include <algorithm>
+
+template <typename T>
+static auto lower_bound(std::vector<T *> const &ts, std::string const &name) {
+    return std::lower_bound(ts.cbegin(), ts.cend(), name,
+            [](auto const *e, auto const &name) -> bool {
+                return e->name() < name;
+            });
+}
+
+template <typename T>
+static bool add(std::vector<T *> &ts, T *t) {
+    auto const it = lower_bound(ts, t->name());
+
+    // If the lower bound isn't end and is "equal" the name has already been
+    // taken.
+    if (it != ts.cend() && (*it)->name() == t->name()) return false;
+
+    // Otherwise, we insert the new entry at it's lower bound inserting at the
+    // end if the new element is the largest.
+    ts.insert(it, t);
+    assert(std::is_sorted(ts.cbegin(), ts.cend(),
+            [](auto const *t, auto const *u) -> bool {
+                return t->name() == u->name();
+            }));
+    return true;
+}
+
+template <typename T>
+static T *find(std::vector<T *> const &ts, std::string const &name) {
+    auto const it = lower_bound(ts, name);
+    return (it != ts.cend() && (*it)->name() == name) ? *it : nullptr;
+}
+
 StateFieldRegistry::StateFieldRegistry() {}
 
 InternalStateFieldBase*
 StateFieldRegistry::find_internal_field(const std::string &name) const {
-    for (InternalStateFieldBase* field : internal_fields) {
-        if (name == field->name()) {
-            return field;
-        }
-    }
-
-    return nullptr;
+    return find(internal_fields, name);
 }
 
 ReadableStateFieldBase*
 StateFieldRegistry::find_readable_field(const std::string &name) const {
-    for (ReadableStateFieldBase* field : readable_fields) {
-        if (name == field->name()) return field;
-    }
-
-    return nullptr;
+    return find(readable_fields, name);
 }
 
 WritableStateFieldBase*
 StateFieldRegistry::find_writable_field(const std::string &name) const {
-    for (WritableStateFieldBase* field : writable_fields) {
-        if (name == field->name()) return field;
-    }
-
-    return nullptr;
+    return find(writable_fields, name);
 }
 
 SerializableStateFieldBase*
 StateFieldRegistry::find_eeprom_saved_field(const std::string &name) const {
-    for (ReadableStateFieldBase* field : eeprom_saved_fields) {
-        if (name == field->name()) return field;
-    }
-
-    return nullptr;
+    return find(eeprom_saved_fields, name);
 }
 
 Event*
 StateFieldRegistry::find_event(const std::string &name) const {
-    for (Event* event : events) {
-        if (name == event->name()) return event;
-    }
-
-    return nullptr;
+    return find(events, name);
 }
 
 Fault*
 StateFieldRegistry::find_fault(const std::string &name) const {
-    for (Fault* fault : faults) {
-        if (name == fault->name()) return fault;
-    }
-
-    return nullptr;
+    return find(faults, name);
 }
 
 bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
-    if (find_internal_field(field->name())) return false;
-    internal_fields.push_back(field);
-    return true;
+    return add(internal_fields, field);
 }
 
 bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
@@ -70,21 +76,16 @@ bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
         if (find_eeprom_saved_field(field->name())) return false;
         else eeprom_saved_fields.push_back(field);
     }
-    readable_fields.push_back(field);
-    return true;
+    return add(readable_fields, field);
 }
 
 bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
     if (!add_readable_field(field)) return false;
-    if (find_writable_field(field->name())) return false;
-    writable_fields.push_back(field);
-    return true;
+    return add(writable_fields, field);
 }
 
 bool StateFieldRegistry::add_event(Event* event) {
-    if (find_event(event->name())) return false;
-    events.push_back(event);
-    return true;
+    return add(events, event);
 }
 
 bool StateFieldRegistry::add_fault(Fault* fault) {
@@ -95,6 +96,5 @@ bool StateFieldRegistry::add_fault(Fault* fault) {
     if (!add_writable_field(&fault->unsignal_f)) return false;
     if (!add_writable_field(&fault->persistence_f)) return false;
 
-    faults.push_back(fault);
-    return true;
+    return add(faults, fault);
 }
