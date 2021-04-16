@@ -107,6 +107,8 @@ class TestFixture {
 
     WritableStateField<bool>* gs_reboot_cmd_fp;
 
+    WritableStateField<bool>* piksi_off_fp;
+
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         Fault::cc = &TimedControlTaskBase::control_cycle_count;
 
@@ -174,6 +176,8 @@ class TestFixture {
         gs_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reset_cmd");
 
         gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
+
+        piksi_off_fp = registry.find_writable_field_t<bool>("gomspace.piksi_off");
     }
 };
 
@@ -232,6 +236,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+    tf.piksi_off_fp->set(false);
 
     // Set the control cycle count to 1 so that the control task will initialize the Gomspace output values
     TimedControlTaskBase::control_cycle_count=1;
@@ -355,10 +360,12 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());    
 
     // Test the reset commands one by one, starting with the power cycle outputs command
-
+    TimedControlTaskBase::control_cycle_count = 352;
     tf.power_cycle_output1_cmd_fp->set(true);
+    tf.piksi_off_fp->set(false);
 
     tf.gs_controller->execute();
+
     TEST_ASSERT_EQUAL(false, tf.output1_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output3_fp->get());

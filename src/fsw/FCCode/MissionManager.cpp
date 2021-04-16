@@ -78,6 +78,9 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
 
+    piksi_off_fp = find_writable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+    piksi_powercycle_fp = find_writable_field<bool>("gomspace.power_cycle_output1_cmd", __FILE__, __LINE__);
+
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
     close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
@@ -178,9 +181,8 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1)
-    {
+    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
+    if (bootcount_fp->get() == 1) {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -188,10 +190,11 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
-    // Turn radio on, and check for hardware faults that would necessitate
-    // going into an initialization hold. If faults exist, go into
-    // initialization hold, otherwise detumble.
+    // Step 2. Once we've complete the deployment wait, if any, we want to turn
+    // the radio on if it isn't already and enable to piksi. We also check for
+    // hardware faults that would necessitate going into an initialization hold.
+    // If such faults exist, go into initialization hold, otherwise detumble.
+    piksi_off_fp->set(false);
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {
         set(radio_state_t::config);

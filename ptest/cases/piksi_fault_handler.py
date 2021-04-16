@@ -1,40 +1,24 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
-class PiksiFaultHandler(SingleSatOnlyCase):
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
+class PiksiFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(PiksiFaultHandler, self).__init__(*args, **kwargs)
 
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
+        self.initial_state = "standby"
+        self.psim_configs += ["truth/standby"]
 
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def initial_state(self):
-        return "leader"
-
-    @property
-    def fast_boot(self):
-        return True
+    def post_boot(self):
+        self.mission_state = "leader"
+        self.cycle()
 
     def collect_diagnostic_data(self):
         self.rs("piksi.state")
         self.rs("pan.state")
         self.rs("pan.cycle_no")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.collect_diagnostic_data()
 
         # TODO implement testcase here.
