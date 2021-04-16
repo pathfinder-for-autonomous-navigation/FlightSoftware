@@ -1,5 +1,8 @@
 #include "debug_console.hpp"
+
+#include "ConstexprMap.hpp"
 #include <ArduinoJson.h>
+
 #include <array>
 #include <cstdarg>
 
@@ -9,26 +12,31 @@
     #include <Arduino.h>
 #endif
 
-std::map<debug_severity, const char*> debug_console::severity_strs{
-    {debug_severity::debug, "DEBUG"},   {debug_severity::info, "INFO"},
-    {debug_severity::notice, "NOTICE"}, {debug_severity::warning, "WARNING"},
-    {debug_severity::error, "ERROR"},   {debug_severity::critical, "CRITICAL"},
-    {debug_severity::alert, "ALERT"},   {debug_severity::emergency, "EMERGENCY"},
-};
+static constexpr ConstexprMap<debug_console::severity, char const *, 8> severity_strs {{{
+    {debug_console::severity::debug, "DEBUG"},
+    {debug_console::severity::info, "INFO"},
+    {debug_console::severity::notice, "NOTICE"},
+    {debug_console::severity::warning, "WARNING"},
+    {debug_console::severity::error, "ERROR"},
+    {debug_console::severity::critical, "CRITICAL"},
+    {debug_console::severity::alert, "ALERT"},
+    {debug_console::severity::emergency, "EMERGENCY"},
+}}};
 
-std::map<debug_console::state_field_error, const char*> debug_console::state_field_error_strs{
-    {state_field_error::invalid_field_name, "invalid field name"},
-    {state_field_error::missing_mode, "missing mode specification"},
-    {state_field_error::invalid_mode_not_char, "mode value is not a character"},
-    {state_field_error::invalid_mode, "mode value is not 'r' or 'w'"},
-    {state_field_error::missing_field_val, "missing value of field to be written"},
-    {state_field_error::invalid_field_val, "field value was invalid"}};
+static constexpr ConstexprMap<debug_console::state_field_error, char const *, 7> state_field_error_strs {{{
+    {debug_console::state_field_error::invalid_field_name, "invalid field name"},
+    {debug_console::state_field_error::missing_mode, "missing mode specification"},
+    {debug_console::state_field_error::invalid_mode_not_char, "mode value is not a character"},
+    {debug_console::state_field_error::invalid_mode, "mode value is not 'r' or 'w'"},
+    {debug_console::state_field_error::missing_field_val, "missing value of field to be written"},
+    {debug_console::state_field_error::invalid_field_val, "field value was invalid"}
+}}};
 
-std::map<debug_console::state_cmd_mode, const char*> debug_console::state_cmd_mode_strs{
-    {state_cmd_mode::unspecified_mode, "perform unspecified operation with"},
-    {state_cmd_mode::read_mode, "read"},
-    {state_cmd_mode::write_mode, "write"},
-};
+static constexpr ConstexprMap<debug_console::state_cmd_mode, char const *, 3> state_cmd_mode_strs {{{
+    {debug_console::state_cmd_mode::unspecified_mode, "perform unspecified operation with"},
+    {debug_console::state_cmd_mode::read_mode, "read"},
+    {debug_console::state_cmd_mode::write_mode, "write"}
+}}};
 
 bool debug_console::is_initialized = false;
 #ifndef DESKTOP
@@ -84,7 +92,7 @@ void debug_console::init() {
 #ifdef DESKTOP
         std::cin.tie(nullptr);
         running = true;
-        reader_thd = std::make_shared<std::thread>([this] { this->_reader(); });
+        reader_thd = std::thread([&](){ this->_reader(); });
 #else
         Serial.begin(115200);
         pinMode(13, OUTPUT);
@@ -360,7 +368,8 @@ debug_console::~debug_console() {
 #ifdef DESKTOP
     if(running) {
         running = false;
-        reader_thd->join();
+        if (reader_thd.joinable())
+            reader_thd.join();
     }
 #endif
 }
