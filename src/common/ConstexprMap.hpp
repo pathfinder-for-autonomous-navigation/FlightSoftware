@@ -3,9 +3,12 @@
 
 #include <algorithm>
 #include <array>
-#include <cassert>
 #include <stdexcept>
 #include <tuple>
+
+#if !(defined(__cpp_exceptions) && (1 == __cpp_exceptions))
+  #include <cassert>
+#endif
 
 /** @brief Simple map intended for use in constexpr contexts.
  *
@@ -27,7 +30,12 @@ class ConstexprMap {
           return (k == kv.first);
         });
 
+#if defined(__cpp_exceptions) && (1 == __cpp_exceptions)
       if (it == data.cend()) throw std::range_error("Key not found");
+#else
+      assert(it != data.cend());
+#endif
+
       return it->second;
     }
 };
