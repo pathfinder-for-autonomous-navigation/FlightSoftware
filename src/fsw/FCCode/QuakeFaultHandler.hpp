@@ -84,6 +84,8 @@ protected:
    ReadableStateField<unsigned char> *radio_state_fp;
    const ReadableStateField<unsigned int> *last_checkin_cycle_fp;
    WritableStateField<bool> *radio_power_cycle_fp;
+   // Flag that can be used by HOOTL/HITL to disable/enable fault handling
+   WritableStateField<bool> fault_handler_enabled_f;
 
    /**
      * @brief Helper functions for if-statements, to make them look cleaner.
