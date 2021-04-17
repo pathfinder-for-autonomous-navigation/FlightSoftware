@@ -1675,6 +1675,22 @@
             "type": "unsigned int",
             "writable": false
         },
+        "orbit.control.J_ecef": {
+            "bitsize": 37,
+            "flow_id": "undefined",
+            "max": 0.025,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "orbit.control.alpha": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 1.0,
+            "min": 0.0,
+            "type": "double",
+            "writable": true
+        },
         "orbit.control.valve1": {
             "bitsize": 10,
             "flow_id": "undefined",
