@@ -90,10 +90,10 @@ class RadioSession(object):
         except Exception as e:
             print("Not connected to email")
 
-        if os.path.exists("uplink.json"):
-            os.remove("uplink.json")
-        if os.path.exists("http_uplink.json"):
-            os.remove("http_uplink.json")
+        if os.path.exists("uplink"+self.imei+".json"):
+            os.remove("uplink"+self.imei+".json")
+        if os.path.exists("http_uplink"+self.imei+".json"):
+            os.remove("http_uplink"+self.imei+".json")
 
     def check_queue(self, queue):
         '''
@@ -127,10 +127,10 @@ class RadioSession(object):
                     queue.put("Unable to resume timer")
 
             elif msg == "view":
-                if not os.path.exists("uplink.json"):
+                if not os.path.exists("uplink"+self.imei+".json"):
                     queue.put("No queued uplink")
                 else:
-                    with open('uplink.json', 'r') as telem_file:
+                    with open('uplink'+self.imei+'.json', 'r') as telem_file:
                         queued_uplink = json.load(telem_file)
                     queue.put(queued_uplink)
 
@@ -167,8 +167,8 @@ class RadioSession(object):
         # configured send queue duration.
         # make the uplink.json file so we know there is data to send and http_cmd
         # can see it as well
-        if not os.path.exists("uplink.json"):   
-            with open('uplink.json', 'w'): pass 
+        if not os.path.exists("uplink"+self.imei+".json"):   
+            with open('uplink'+self.imei+'.json', 'w'): pass 
             t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
             t.start()
 
@@ -207,12 +207,12 @@ class RadioSession(object):
 
     def send_uplink(self):
         # Check there is an uplink to send
-        if not os.path.exists("uplink.json"):
+        if not os.path.exists("uplink"+self.imei+".json"):
             return False
 
-        if os.path.exists("http_uplink.json"):
+        if os.path.exists("http_uplink"+self.imei+".json"):
             # Extract the json telemetry data from the queued http uplink json file
-            with open("http_uplink.json", 'r') as http_uplink:
+            with open("http_uplink"+self.imei+".json", 'r') as http_uplink:
                 queued_http_uplink = json.load(http_uplink)
 
             # Get an updated list of the field and values from http endpoint and update the dictionary
@@ -221,11 +221,11 @@ class RadioSession(object):
 
         #merged and updated fields to send
         fields, vals = self.statefield_dict.keys(), self.statefield_dict.values()
-        with open('uplink.json', 'w') as telem_file:
+        with open('uplink'+self.imei+'.json', 'w') as telem_file:
                     json.dump(self.statefield_dict, telem_file)
 
         # Create an uplink packet
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.json") and os.path.exists("uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink"+self.imei+".sbd", "uplink"+self.imei+".json") and os.path.exists("uplink"+self.imei+".sbd")
 
         if success:
             # Send the uplink to Iridium
@@ -234,19 +234,19 @@ class RadioSession(object):
             subject = self.imei
             msgHtml = ""
             msgPlain = ""
-            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink'+self.imei+'.sbd')
 
             # Remove uplink files/cleanup
-            os.remove("uplink.sbd")
-            os.remove("uplink.json")
-            if os.path.exists("http_uplink.json"):
-                os.remove("http_uplink.json")
+            os.remove("uplink"+self.imei+".sbd")
+            os.remove("uplink"+self.imei+".json")
+            if os.path.exists("http_uplink"+self.imei+".json"):
+                os.remove("http_uplink"+self.imei+".json")
             self.statefield_dict = {}
             return True
         else:
-            os.remove("uplink.json")
-            if os.path.exists("http_uplink.json"):
-                os.remove("http_uplink.json")
+            os.remove("uplink"+self.imei+".json")
+            if os.path.exists("http_uplink"+self.imei+".json"):
+                os.remove("http_uplink"+self.imei+".json")
             self.statefield_dict = {}
             return False
 

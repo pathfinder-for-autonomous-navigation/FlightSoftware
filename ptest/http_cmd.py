@@ -73,7 +73,7 @@ def create_radio_session_endpoint(radio_session, queue):
         requested_changes = request.get_json()
 
         # Get the queued uplink
-        with open('http_uplink.json', 'r') as telem_file:
+        with open('http_uplink'+radio_session.imei+'.json', 'r') as telem_file:
             queued_uplink = json.load(telem_file)
 
         # Remove listed fields from the queued uplink
@@ -82,7 +82,7 @@ def create_radio_session_endpoint(radio_session, queue):
             queued_uplink.pop(field)
 
         # Add the edited telemetry to the queued uplink
-        with open('http_uplink.json', 'w') as telem_file:
+        with open('http_uplink'+radio_session.imei+'.json', 'w') as telem_file:
             json.dump(queued_uplink, telem_file)
 
         return queued_uplink
@@ -98,19 +98,19 @@ def create_radio_session_endpoint(radio_session, queue):
         # Check if an uplink is queued by RadioSession,
         # if so write fields to a file to merge and send
         # when the timer runs out
-        if os.path.exists("uplink.json"):
-            if os.path.exists("http_uplink.json"):
+        if os.path.exists("uplink"+radio_session.imei+".json"):
+            if os.path.exists("http_uplink"+radio_session.imei+""+radio_session.imei+".json"):
                 # Organize the requested telemetry into a json object
                 requested_telem = {}
                 for field_val in uplink:
                     requested_telem[field_val["field"]] = field_val["value"]
 
                 # Get the queued uplink
-                with open('http_uplink.json', 'r') as telem_file:
+                with open('http_uplink'+radio_session.imei+'.json', 'r') as telem_file:
                     queued_uplink = json.load(telem_file)
 
                 # Add the requested telemetry to the queued uplink
-                with open('http_uplink.json', 'w') as telem_file:
+                with open('http_uplink'+radio_session.imei+'.json', 'w') as telem_file:
                     queued_uplink.update(requested_telem)
                     json.dump(queued_uplink, telem_file)
             else:
@@ -118,7 +118,7 @@ def create_radio_session_endpoint(radio_session, queue):
                 uplink_dict = {}
                 for field_val in uplink:
                     uplink_dict[field_val["field"]] = field_val["value"]
-                with open('http_uplink.json', 'w') as telem_file:
+                with open('http_uplink'+radio_session.imei+'.json', 'w') as telem_file:
                     json.dump(uplink_dict, telem_file)
             return "Added telemetry"
 
@@ -129,7 +129,7 @@ def create_radio_session_endpoint(radio_session, queue):
             vals.append(field_val["value"])
 
          # Create a new uplink packet
-        success = uplink_console.create_uplink(fields, vals, "http_uplink.sbd", "http_uplink.json") and os.path.exists("http_uplink.sbd")
+        success = uplink_console.create_uplink(fields, vals, "http_uplink"+radio_session.imei+".sbd", "http_uplink"+radio_session.imei+".json") and os.path.exists("http_uplink"+radio_session.imei+".sbd")
         if not success:
             return "Unable to send telemetry"
 
@@ -138,15 +138,15 @@ def create_radio_session_endpoint(radio_session, queue):
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
 
-        SendMessage(sender, to, subject, "", "", 'http_uplink.sbd')
+        SendMessage(sender, to, subject, "", "", 'http_uplink'+radio_session.imei+'.sbd')
 
         #### FOR AMC TESTING ONLY!!! #####
         if radio_session.username!="":
             radio_session.mark_message_unseen()
 
          # Remove uplink files/cleanup
-        os.remove("http_uplink.sbd")
-        os.remove("http_uplink.json")
+        os.remove("http_uplink"+radio_session.imei+".sbd")
+        os.remove("http_uplink"+radio_session.imei+".json")
 
         return "Successfully sent telemetry to Iridium"
 
@@ -172,15 +172,15 @@ def create_usb_session_endpoint(usb_session):
             vals.append(field_val["value"])
 
         uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "http_uplink.sbd", "http_uplink.json") and os.path.exists("http_uplink.sbd")
+        success = uplink_console.create_uplink(fields, vals, "http_uplink"+radio_session.imei+".sbd", "http_uplink"+radio_session.imei+".json") and os.path.exists("http_uplink"+radio_session.imei+".sbd")
 
         # If the uplink packet is successfully created, then send it to the Flight Computer
         if not success: return "Unable to send telemetry"
-        success = usb_session.send_uplink("uplink.sbd")
+        success = usb_session.send_uplink("uplink"+radio_session.imei+".sbd")
 
         # Get rid of uplink files/cleanup
-        os.remove("http_uplink.sbd")
-        os.remove("http_uplink.json")
+        os.remove("http_uplink"+radio_session.imei+".sbd")
+        os.remove("http_uplink"+radio_session.imei+".json")
 
         if success:
             return "Successfully sent telemetry to State Session"
