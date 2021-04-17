@@ -2,20 +2,23 @@
 # - tools/alltest.sh
 # - .github/workflows/hootl.yml
 
-# Testcases that require simulation
 from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
-from .deployment_to_standby import DeploymentToStandby
-from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
-from .autonomous_mission_manager_case import AutonomousMissionManagerCase
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 
-from .psim_debug import PsimDebug
-from .dual_psim import DualPsim
+# Testcases intended for use with mission rehearsals and general telemetry
+# testing.
+from .mission import (
+    SingleSatStartupCase,
+    DualSatStartupCase,
+    SingleSatDetumbleCase,
+    DualSatDetumbleCase,
+    SingleSatStandbyCase,
+    DualSatStandbyCase
+)
 
-# Testcases that don't require simulation
-from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel

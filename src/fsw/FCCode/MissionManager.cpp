@@ -181,25 +181,20 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
+    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
     if (bootcount_fp->get() == 1) {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
-            // Stop power to Piksi if it is not off already
-            piksi_off_fp->set(true); 
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
             return;
         }
     }
 
+    // Step 2. Once we've complete the deployment wait, if any, we want to turn
+    // the radio on if it isn't already and enable to piksi. We also check for
+    // hardware faults that would necessitate going into an initialization hold.
+    // If such faults exist, go into initialization hold, otherwise detumble.
     piksi_off_fp->set(false);
-
-
-
-    // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
-    // Turn radio on, and check for hardware faults that would necessitate
-    // going into an initialization hold. If faults exist, go into
-    // initialization hold, otherwise detumble.
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {
         set(radio_state_t::config);
