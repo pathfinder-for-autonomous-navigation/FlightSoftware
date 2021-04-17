@@ -216,8 +216,8 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
             field_list.push_back(field_ptr);
         }
         else {
-            printf(debug_severity::error, 
-                "Field %s was not found in registry when constructing flows.",
+            fprintf(stderr,
+                "Field %s was not found in registry when constructing flows.\n",
                 field_name.c_str());
             assert(false);
         }

@@ -6,10 +6,10 @@
 
 const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {1, true, {"pan.state", "pan.deployed", "pan.sat_designation", "pan.bootcount", "pan.deployment.elapsed", "pan.cycle_no"}},
-{2, true, {"time.valid", "time.gps", "orbit.valid", "orbit.pos", "orbit.vel", "attitude_estimator.b_valid", "attitude_estimator.valid", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
+{2, true, {"time.valid", "time.gps", "orbit.valid", "orbit.pos", "orbit.vel", "attitude_estimator.valid", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
 {3, false, {"orbit.pos_sigma", "orbit.vel_sigma"}},
-{4, false, {"rel_orbit.pos", "rel_orbit.vel", "rel_orbit.pos_sigma", "rel_orbit.vel_sigma"}},
-{5, false, {"attitude_estimator.b_body", "attitude_estimator.w_bias_body", "attitude_estimator.p_body_eci_sigma_f", "attitude_estimator.w_bias_sigma_body", "attitude_estimator.mag_flag"}},
+{4, false, {"rel_orbit.pos", "rel_orbit.vel", "rel_orbit.rel_pos_sigma", "rel_orbit.rel_vel_sigma"}},
+{5, false, {"attitude_estimator.w_bias_body", "attitude_estimator.p_body_eci_sigma_f", "attitude_estimator.w_bias_sigma_body", "attitude_estimator.mag_flag"}},
 {6, true, {"adcs_monitor.functional_fault.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel_pot_fault.base", "prop.overpressured.base", "prop.pressurize_fail.base", "prop.tank2_temp_high.base", "prop.tank1_temp_high.base", "gomspace.low_batt.base", "gomspace.get_hk.base"}},
 {7, true, {"gomspace.vbatt", "gomspace.cursun", "gomspace.cursys", "gomspace.temp.output1", "gomspace.temp.output2", "gomspace.temp.output3", "gomspace.temp.output4"}},
 {8, false, {"gomspace.vboost.output1", "gomspace.vboost.output2", "gomspace.vboost.output3", "gomspace.curin.output1", "gomspace.curin.output2", "gomspace.curin.output3"}},
@@ -24,7 +24,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {17, true, {"radio.err", "radio.last_comms_ccno"}},
 {18, true, {"adcs_monitor.mag1_vec.x", "adcs_monitor.mag1_vec.y", "adcs_monitor.mag1_vec.z", "adcs_monitor.mag2_vec.x", "adcs_monitor.mag2_vec.y", "adcs_monitor.mag2_vec.z", "adcs_monitor.gyr_vec.x", "adcs_monitor.gyr_vec.y", "adcs_monitor.gyr_vec.z"}},
 {19, true, {"adcs_monitor.speed_rd_flag", "adcs_monitor.torque_rd_flag", "adcs_monitor.mag1_vec_flag", "adcs_monitor.mag2_vec_flag", "adcs_monitor.gyr_vec_flag", "adcs_monitor.gyr_temp_flag"}},
-{20, false, {"piksi.pos", "piksi.vel", "piksi.baseline_pos", "piksi.fix_error_count", "piksi.time", "piksi.microdelta", "piksi.last_rtkfix_ccno"}},
+{20, false, {"piksi.pos", "piksi.vel", "piksi.baseline_pos", "piksi.fix_error_count", "piksi.time", "piksi.microdelta"}},
 {21, false, {"dcdc.SpikeDock", "dcdc.ADCSMotor"}},
 {22, false, {"adcs_monitor.ssa_voltage0", "adcs_monitor.ssa_voltage1", "adcs_monitor.ssa_voltage2", "adcs_monitor.ssa_voltage3", "adcs_monitor.ssa_voltage4", "adcs_monitor.ssa_voltage5", "adcs_monitor.ssa_voltage6", "adcs_monitor.ssa_voltage7", "adcs_monitor.ssa_voltage8", "adcs_monitor.ssa_voltage9", "adcs_monitor.ssa_voltage10", "adcs_monitor.ssa_voltage11", "adcs_monitor.ssa_voltage12", "adcs_monitor.ssa_voltage13", "adcs_monitor.ssa_voltage14", "adcs_monitor.ssa_voltage15", "adcs_monitor.ssa_voltage16", "adcs_monitor.ssa_voltage17", "adcs_monitor.ssa_voltage18", "adcs_monitor.ssa_voltage19"}},
 {23, true, {"docksys.docked"}},
