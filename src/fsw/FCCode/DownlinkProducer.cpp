@@ -216,8 +216,8 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
             field_list.push_back(field_ptr);
         }
         else {
-            fprintf(stderr,
-                "Field %s was not found in registry when constructing flows.\n",
+            printf(debug_severity::error, 
+                "Field %s was not found in registry when constructing flows.",
                 field_name.c_str());
             assert(false);
         }
@@ -225,8 +225,8 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
 
     const bool flow_too_large = get_packet_size() > num_bits_in_packet - 1 - 32;
     if (flow_too_large) {
-        fprintf(stderr, 
-            "Flow %d is too large, with a size of %lu bits.\n",
+        printf(debug_severity::error, 
+            "Flow %d is too large, with a size of %d bits.",
             flow_data.id, get_packet_size());
         assert(false);
     }
