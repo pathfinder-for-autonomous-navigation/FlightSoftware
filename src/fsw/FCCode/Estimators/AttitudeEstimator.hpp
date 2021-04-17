@@ -92,6 +92,10 @@ class AttitudeEstimator : public ControlTask<void>
     WritableStateField<bool> attitude_estimator_reset_cmd_f;
     WritableStateField<bool> attitude_estimator_mag_flag_f;
 
+    /*
+     */
+    Fault attitude_estimator_fault;
+
   private:
     gnc::AttitudeEstimatorData _data;
     gnc::AttitudeEstimatorState _state;

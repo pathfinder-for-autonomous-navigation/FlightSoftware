@@ -38,6 +38,7 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
     pressurize_fail_fp = registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp = registry.create_fault("prop.overpressured", 1);
+    attitude_estimator_fp = registry.create_fault("attitude_estimator.fault", 1);
 
     sph_dcdc_fp = registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
     adcs_dcdc_fp = registry.create_writable_field<bool>("dcdc.ADCSMotor_cmd");

@@ -59,6 +59,14 @@ const std::vector<std::vector<mission_state_t>> SimpleFaultHandler::active_state
         mission_state_t::follower_close_approach,
         mission_state_t::leader_close_approach,
         mission_state_t::docked
+    },
+    // List 3 is used by the attitude estimator fault
+    {
+        mission_state_t::standby,
+        mission_state_t::follower,
+        mission_state_t::leader,
+        mission_state_t::follower_close_approach,
+        mission_state_t::leader_close_approach,
     }
 };
 
