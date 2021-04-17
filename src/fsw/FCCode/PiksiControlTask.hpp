@@ -16,8 +16,8 @@ public:
     TRACKED_CONSTANT_SC(unsigned int, PIKSI_MD_THRESHOLD, 100000);
 
     PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
-
-    Devices::Piksi &piksi;
+    
+    Devices::Piksi& piksi;
     /** 
     * execute is overriden from TimedControlTask 
     */
