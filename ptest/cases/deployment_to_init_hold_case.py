@@ -1,10 +1,13 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
-class DeploymentToInitHold(SingleSatOnlyCase):    
-    @property
-    def initial_state(self):
-        return "startup"
+class DeploymentToInitHold(SingleSatCase):    
+    """
+    Not overriding the constructor, causes default initial state to be startup
+    """
+    def __init__(self, *args, **kwargs):
+        super(DeploymentToInitHold, self).__init__(*args, **kwargs)
+        self.suppress_faults = False
 
     @property
     def adcs_is_functional(self): 
@@ -25,10 +28,6 @@ class DeploymentToInitHold(SingleSatOnlyCase):
     @property
     def wheelpot_is_functional(self):
         return self.flight_controller.read_state("adcs_monitor.havt_device6")
-
-    @property
-    def suppress_faults(self):
-        return False
 
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
@@ -55,15 +54,16 @@ class DeploymentToInitHold(SingleSatOnlyCase):
         assert(value == "true" or value == "false")
         self.flight_controller.write_state("adcs_monitor.havt_device6", value)
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         # Move to startup and wait the full deployment length
         self.mission_state = "startup"
+        
         self.logger.put("Now in startup. Cycling through deployment wait...")
         for _ in range(self.one_day_ccno // (24 * 2)):
             self.cycle()
         self.logger.put("Completed deployment wait.")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.run_case_all_functional()
         self.run_case_adcs_failure()
         self.run_case_wheel1_failure()

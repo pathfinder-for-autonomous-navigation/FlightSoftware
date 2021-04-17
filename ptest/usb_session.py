@@ -31,7 +31,7 @@ class USBSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks, enable_auto_dbtelem):
         '''
         Initializes state session with a device.
         '''
@@ -65,6 +65,8 @@ class USBSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
         self.mail = None
+
+        self.enable_auto_dbtelem = enable_auto_dbtelem
 
         if self.username != "":
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
@@ -155,7 +157,7 @@ class USBSession(object):
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
-                    print("\n" + logline)
+                    # print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
@@ -438,7 +440,7 @@ class USBSession(object):
 
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print(f"Error parsing telemetry on {self.device_name}")            
+            # print(f"Error parsing telemetry on {self.device_name}")            
             return False
         failed = False
         for field in jsonObj:
