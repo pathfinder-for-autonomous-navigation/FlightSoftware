@@ -4,8 +4,8 @@
 #include <EEPROM.h>
 #include "mission_state_t.enum"
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "eeprom_ct", offset)
+EEPROMController::EEPROMController(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "eeprom_ct")
 {}
 
 void EEPROMController::read_EEPROM(){

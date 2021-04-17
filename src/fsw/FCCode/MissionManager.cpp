@@ -15,7 +15,7 @@ const constexpr unsigned int MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
-MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset) : TimedControlTask<void>(registry, "mission_ct", offset),
+MissionManager::MissionManager(StateFieldRegistry &registry) : TimedControlTask<void>(registry, "mission_ct"),
                                                                                     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
                                                                                     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
                                                                                     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),

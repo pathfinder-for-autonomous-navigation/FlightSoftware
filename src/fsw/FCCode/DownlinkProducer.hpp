@@ -30,13 +30,12 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Construct a new Downlink Producer.
      * 
      * @param registry State field registry.
-     * @param offset Offset, in microseconds, from the beginning of the control
+      Offset, in microseconds, from the beginning of the control
      *               task.
      * @param flow_data An initializer list of flow data. The order of the flows
      *                  determines their initial priority.
      */
-    DownlinkProducer(StateFieldRegistry& registry,
-                     const unsigned int offset);
+    DownlinkProducer(StateFieldRegistry& registry);
 
     /**
      * @brief Initialize flows for the Downlink Producer. This function

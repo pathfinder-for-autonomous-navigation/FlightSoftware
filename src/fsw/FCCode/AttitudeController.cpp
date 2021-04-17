@@ -16,8 +16,8 @@
 
 #include <iostream>
 
-AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
-    TimedControlTask<void>(registry, "attitude_controller", offset),
+AttitudeController::AttitudeController(StateFieldRegistry &registry) :
+    TimedControlTask<void>(registry, "attitude_controller"),
     w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
     b_body_rd_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.b_body)),
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),

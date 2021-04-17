@@ -3,8 +3,8 @@
 const constexpr double OrbitController::valve_time_lin_reg_slope;
 const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
-OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
-    TimedControlTask<void>(r, "orbit_control_ct", offset),
+OrbitController::OrbitController(StateFieldRegistry &r) : 
+    TimedControlTask<void>(r, "orbit_control_ct"),
     time_fp(FIND_READABLE_FIELD(double, orbit.time)),
     pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),

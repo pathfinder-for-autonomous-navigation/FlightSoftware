@@ -1,7 +1,7 @@
 #include "DebugTask.hpp"
 
-DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "debug", offset),
+DebugTask::DebugTask(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "debug"),
       start_cycle_f("cycle.start", Serializer<bool>(), 1 ),
       auto_cycle_f("cycle.auto", Serializer<bool>(), 1 ) {
   add_writable_field(start_cycle_f);

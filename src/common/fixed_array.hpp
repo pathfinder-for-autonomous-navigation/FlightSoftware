@@ -240,7 +240,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      * @brief Writes bitset to the provided array of bytes.
      *
      * @param str Byte array to modify.
-     * @param offset The bit offset at which to begin writing
+      The bit offset at which to begin writing
      *               in the bitset, relative to the beginning
      *               of the byte array.
      * @param start Parameter specifying where to start in the

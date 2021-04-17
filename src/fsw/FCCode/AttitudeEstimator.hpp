@@ -35,10 +35,8 @@ class AttitudeEstimator : public TimedControlTask<void> {
     /**
      * @brief Construct a new Attitude Estimator.
      * 
-     * @param registry
-     * @param offset
-     */
-    AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
+     * @param registry     */
+    AttitudeEstimator(StateFieldRegistry& registry);
 
     /** @brief Attempts to either initialize or update the attitude filter.
      *

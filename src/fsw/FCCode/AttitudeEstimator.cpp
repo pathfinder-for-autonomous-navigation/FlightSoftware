@@ -10,9 +10,8 @@
 #include <lin/math.hpp>
 #include <lin/queries.hpp>
 
-AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
-    unsigned int offset) 
-    : TimedControlTask<void>(registry, "adcs_estimator", offset),
+AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry) 
+    : TimedControlTask<void>(registry, "adcs_estimator"),
     time_fp(FIND_READABLE_FIELD(double, orbit.time)),
     pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     mag1_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag1_vec)),

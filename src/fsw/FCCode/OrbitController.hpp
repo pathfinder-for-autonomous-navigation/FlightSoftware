@@ -17,7 +17,7 @@ public:
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
 
-    OrbitController(StateFieldRegistry &registry, unsigned int offset);
+    OrbitController(StateFieldRegistry &registry);
 
     /**
      * @brief Collect prop planner state's state field.

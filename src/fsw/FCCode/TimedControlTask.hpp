@@ -41,7 +41,7 @@ class TimedControlTaskBase {
     /**
      * @brief The time at which the current control cycle started.
      */
-    static sys_time_t control_cycle_start_time;
+    static sys_time_t control_task_end_time;
     
 
   public:
@@ -109,12 +109,6 @@ template<typename T>
 class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
   private:
     /**
-     * @brief The start time of this control task, relative
-     * to the start of any control cycle, in microseconds.
-     */
-    systime_duration_t offset;
-
-    /**
      * @brief Number of times a timed control task has not had
      * any time to wait.
      */
@@ -128,7 +122,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     ReadableStateField<float> avg_wait_f;
 
     /**
-     * @brief Time it takes for a control task to execute
+     * @brief Time it takes for a control task to execute (calculated in seconds)
      */
     std::string ct_duration_field_name;
     ReadableStateField<unsigned int> ct_duration_f;
@@ -142,15 +136,17 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * @param control_cycle_start_time System time for the start of the control task.
      * @return T Value returned by execute().
      */
-    T execute_on_time() {
-      sys_time_t earliest_start_time = 
-        TimedControlTaskBase::control_cycle_start_time + offset;
-      wait_until_time(earliest_start_time);
+    T execute_on_time(unsigned int duration_us) {
+      wait_until_time(TimedControlTaskBase::control_task_end_time);
+
+      systime_duration_t duration = us_to_duration(duration_us);
+      TimedControlTaskBase::control_task_end_time += duration;
+      
       sys_time_t now = get_system_time();
       this->execute();
       sys_time_t later = get_system_time();
-      signed int delta_ct = (signed int) duration_to_us(later - now);
-      ct_duration_f.set((unsigned int) delta_ct);
+      unsigned int delta_ct = duration_to_us(later - now);
+      ct_duration_f.set(delta_ct);
       return;
     }
 
@@ -164,7 +160,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     void wait_until_time(const sys_time_t& time) {
       // Compute timing statistics and publish them to state fields
       const signed int delta_t = (signed int) duration_to_us(time - get_system_time());
-      if (delta_t <= 0) {
+      if (delta_t < 0) {
         num_lates_f.set(num_lates_f.get() + 1);
       }
       const unsigned int wait_time = std::max(delta_t, 0);
@@ -180,14 +176,12 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * 
      * @param registry State field registry
      * @param name Name of control task (used in producing state fields for timing statistics)
-     * @param offset Time offset of start of this task from the beginning of a
+      Time offset of start of this task from the beginning of a
      *               control cycle, in microseconds.
      */
     TimedControlTask(StateFieldRegistry& registry,
-                     const std::string& name,
-                     const unsigned int _offset) :
+                     const std::string& name) :
         ControlTask<T>(registry),
-        offset(us_to_duration(_offset + 1)),
         num_lates_field_name("timing." + name + ".num_lates"),
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),

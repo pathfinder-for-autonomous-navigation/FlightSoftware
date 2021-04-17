@@ -5,9 +5,8 @@
 #include <lin/core.hpp>
 #include <lin/views.hpp>
 
-PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, 
-    unsigned int offset, Devices::Piksi &_piksi) 
-    : TimedControlTask<void>(registry, "piksi", offset),
+PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, Devices::Piksi &_piksi) 
+    : TimedControlTask<void>(registry, "piksi"),
     piksi(_piksi),
     pos_f("piksi.pos", Serializer<lin::Vector3d>(6771000,6921000,28)),
     vel_f("piksi.vel", Serializer<lin::Vector3d>(7570,7685,19)),

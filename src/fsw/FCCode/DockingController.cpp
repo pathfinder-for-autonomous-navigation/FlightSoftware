@@ -1,8 +1,8 @@
 #include "DockingController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
+DockingController::DockingController(StateFieldRegistry &registry,
     Devices::DockingSystem &_docksys)
-    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
+    : TimedControlTask<void>(registry, "docking_ct"), docksys(_docksys),
       docking_step_angle_f("docksys.step_angle", Serializer<float>(0, 180, 16)),
       docking_step_delay_f("docksys.step_delay", Serializer<unsigned int>()),
       docked_f("docksys.docked", Serializer<bool>()),

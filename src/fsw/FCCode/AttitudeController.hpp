@@ -15,10 +15,8 @@ class AttitudeController : public TimedControlTask<void> {
     /**
      * @brief Construct a new attitude controller.
      *
-     * @param registry
-     * @param offset
-     */
-    AttitudeController(StateFieldRegistry &registry, unsigned int offset);
+     * @param registry     */
+    AttitudeController(StateFieldRegistry &registry);
 
     /**
      * @brief Update the attitude controllers suggestion for ADCS actuations.

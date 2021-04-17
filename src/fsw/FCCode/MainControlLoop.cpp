@@ -26,30 +26,30 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
       PIKSI_INITIALIZATION,
-      piksi_control_task(registry, piksi_control_task_offset, piksi),
+      piksi_control_task(registry, piksi),
       ADCS_INITIALIZATION,
-      adcs_monitor(registry, adcs_monitor_offset, adcs),
-      debug_task(registry, debug_task_offset),
-      attitude_estimator(registry, attitude_estimator_offset),
+      adcs_monitor(registry, adcs),
+      debug_task(registry),
+      attitude_estimator(registry),
       gomspace(&hk, &config, &config2),
-      gomspace_controller(registry, gomspace_controller_offset, gomspace),
+      gomspace_controller(registry, gomspace),
       docksys(),
-      docking_controller(registry, docking_controller_offset, docksys),
-      downlink_producer(registry, downlink_producer_offset),
-      quake_manager(registry, quake_manager_offset),
-      uplink_consumer(registry, uplink_consumer_offset),
+      docking_controller(registry, docksys),
+      downlink_producer(registry),
+      quake_manager(registry),
+      uplink_consumer(registry),
       dcdc("dcdc"),
-      dcdc_controller(registry, dcdc_controller_offset, dcdc),
-      eeprom_controller(registry, eeprom_controller_offset),
+      dcdc_controller(registry, dcdc),
+      eeprom_controller(registry),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       one_day_ccno_f("pan.one_day_ccno", Serializer<unsigned int>()),
       control_cycle_ms_f("pan.cc_ms", Serializer<unsigned int>()),
-      prop_controller(registry, prop_controller_offset),
-      mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
-      attitude_controller(registry, attitude_controller_offset),
-      adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
-      orbit_controller(registry, orbit_controller_offset)
+      prop_controller(registry),
+      mission_manager(registry), // This item is initialized near-last so it has access to all state fields
+      attitude_controller(registry),
+      adcs_commander(registry), // needs inputs from attitude computer
+      adcs_box_controller(registry, adcs),
+      orbit_controller(registry)
 {
     
     docking_controller.init();
@@ -100,33 +100,49 @@ void MainControlLoop::execute() {
     memory_use_f.set(&top - reinterpret_cast<char*>(sbrk(0)));
     #endif
 
+    TRACKED_CONSTANT_SC(unsigned int, piksi_duration, 6400);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_duration, 28000);
+    TRACKED_CONSTANT_SC(unsigned int, debug_duration, 50000);
+    TRACKED_CONSTANT_SC(unsigned int, gomspace_duration, 15000);
+    TRACKED_CONSTANT_SC(unsigned int, uplink_duration, 10000);
+    TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_duration, 5000);
+    TRACKED_CONSTANT_SC(unsigned int, mission_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, dcdc_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, attitude_controller_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_commander_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_duration, 10000);
+    TRACKED_CONSTANT_SC(unsigned int, orbit_duration, 5000);
+    TRACKED_CONSTANT_SC(unsigned int, prop_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, downlink_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, quake_duration, 30000);
+    TRACKED_CONSTANT_SC(unsigned int, docking_duration, 10000);
+    TRACKED_CONSTANT_SC(unsigned int, eeprom_duration, 10000);
+
     clock_manager.execute();
 
-    piksi_control_task.execute_on_time();
-    gomspace_controller.execute_on_time();
-    adcs_monitor.execute_on_time();
+    piksi_control_task.execute_on_time(piksi_duration);
+    gomspace_controller.execute_on_time(gomspace_duration);
+    adcs_monitor.execute_on_time(adcs_monitor_duration);
+    
+    debug_task.execute_on_time(debug_duration);
 
-    #ifndef FLIGHT
-    debug_task.execute_on_time();
-    #endif
-
-    uplink_consumer.execute_on_time();
-    attitude_estimator.execute_on_time();
-    mission_manager.execute_on_time();
-    dcdc_controller.execute_on_time();
-    attitude_controller.execute_on_time();
-    adcs_commander.execute_on_time();
-    adcs_box_controller.execute_on_time();
-    orbit_controller.execute_on_time();
-    prop_controller.execute_on_time();
-    downlink_producer.execute_on_time();
-    quake_manager.execute_on_time();
-    docking_controller.execute_on_time();
+    uplink_consumer.execute_on_time(uplink_duration);
+    attitude_estimator.execute_on_time(attitude_estimator_duration);
+    mission_manager.execute_on_time(mission_duration);
+    dcdc_controller.execute_on_time(dcdc_duration);
+    attitude_controller.execute_on_time(attitude_controller_duration);
+    adcs_commander.execute_on_time(adcs_commander_duration);
+    adcs_box_controller.execute_on_time(adcs_box_controller_duration);
+    orbit_controller.execute_on_time(orbit_duration);
+    prop_controller.execute_on_time(prop_duration);
+    downlink_producer.execute_on_time(downlink_duration);
+    quake_manager.execute_on_time(quake_duration);
+    docking_controller.execute_on_time(docking_duration);
     
     #ifdef DESKTOP
-        eeprom_controller.execute_on_time();
+        eeprom_controller.execute_on_time(eeprom_duration);
     #else
-        eeprom_controller.execute_on_time();
+        eeprom_controller.execute_on_time(eeprom_duration);
         // Commented to save EEPROM Cycles
     #endif
 }
