@@ -12,16 +12,13 @@ class MainFaultHandler : public FaultHandlerMachine {
   #endif
 
   public:
-    /**
-     * @brief Construct a new Fault Handler
-     * 
-     * @param r State field registry.
-     */
-    explicit MainFaultHandler(StateFieldRegistry& r);
+    ~MainFaultHandler() = default;
+
+    explicit MainFaultHandler(StateFieldRegistry &registry);
 
     /**
-     * @brief Acquire state fields that hadn't already been added to the registry
-     * upon the time of thew fault handler's construction.
+     * @brief Acquire state fields that hadn't already been added to the
+     *        registry upon the time of thew fault handler's construction.
      */
     void init();
 
@@ -33,7 +30,7 @@ class MainFaultHandler : public FaultHandlerMachine {
      * we immediately return that state. Otherwise, recommend standby if any fault
      * machine recommends standby. Otherwise, return no recommendation.
      */
-    fault_response_t execute();
+    fault_response_t execute() override;
 
   protected:
     std::vector<std::unique_ptr<FaultHandlerMachine>> fault_handler_machines;

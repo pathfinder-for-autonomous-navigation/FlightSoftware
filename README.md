@@ -1,7 +1,7 @@
 # FlightSoftware
 
-[![Build Status](https://travis-ci.org/pathfinder-for-autonomous-navigation/FlightSoftware.svg?branch=master)](https://travis-ci.org/pathfinder-for-autonomous-navigation/FlightSoftware)
-[![Coverage Status](https://coveralls.io/repos/github/pathfinder-for-autonomous-navigation/FlightSoftware/badge.svg?branch=master)](https://coveralls.io/github/pathfinder-for-autonomous-navigation/FlightSoftware?branch=master)
+![HOOTL Tests](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/actions/workflows/hootl.yml/badge.svg?branch=master)
+![Unit Tests](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/actions/workflows/unit_tests.yml/badge.svg?branch=master)
 
 Repository for all flight software, ground software, and test infastructure for Pathfinder for Autonomous Navigation.
 PAN's simulation software lives in [psim](https://github.com/pathfinder-for-autonomous-navigation/psim).

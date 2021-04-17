@@ -1,58 +1,22 @@
 # Runs mission from startup state to standby state.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
+from .base import PSimCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, mag_of, sum_of_differentials
+import lin
 
-class PsimDebug(SingleSatOnlyCase):
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
-
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def debug_to_console(self):
-        return True
-
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def initial_state(self):
-        return "startup"
-
-    @property
-    def fast_boot(self):
-        return True
-
-    @property
-    def sim_initial_state(self):
-        return "startup"
-
-    @property
-    def sim_ic_map(self):
-        ret = {}
-        ret["truth.t.ns"] = 420000000*10
-        return ret
-
-    def setup_post_bootsetup(self):
-        # self.print_ws("pan.state", Enums.mission_states['standby'])
-        # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
-        self.sim.mock_sensor_validity = True
-        
-        return
+class PSimDebug(SingleSatCase, PSimCase):
+    """
+    comments
+    """
+    def __init__(self, *args, **kwargs):
+        super(PSimDebug, self).__init__(*args, **kwargs)
+        self.initial_state = "startup"
+        self.psim_configs += ['truth/deployment']
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0738,-0.01])
 
     def data_logs(self):
-
+        
         self.rs("pan.deployment.elapsed")
         self.rs("pan.state")
         self.rs("radio.state")
@@ -76,8 +40,19 @@ class PsimDebug(SingleSatOnlyCase):
         self.rs("attitude_estimator.valid"),
         self.rs("attitude_estimator.w_bias_body"),
         self.rs("orbit.valid")
+        
 
-    def run_case_singlesat(self):
+    def run(self):
+        """
+        Log/compute all the things necessary to monitor performance
+        """
+
+        """
+        The below call is necessary to step FSW, simulate psim,
+        as well as call any autotelem/dbtelem
+        """
+        self.cycle()
+
         self.rs_psim("truth.leader.attitude.w")
         self.rs_psim("truth.t.ns")
         self.rs_psim("truth.dt.ns")

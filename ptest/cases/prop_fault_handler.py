@@ -1,11 +1,17 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from .utils import Enums, TestCaseFailure
+import lin
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
-class PropFaultHandler(SingleSatOnlyCase):
+class PropFaultHandler(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(PropFaultHandler, self).__init__(*args, **kwargs)
+
+        self.initial_state = "standby"
+        self.skip_deployment_wait = True
+        self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
         self.tank2_pressure = 12.0
         self.tank2_temp = 25.0
@@ -17,20 +23,15 @@ class PropFaultHandler(SingleSatOnlyCase):
 
         self.fault_name = "prop.pressurize_fail"
 
-    @property
-    def initial_state(self):
-        return "leader"
-
-    @property
-    def fast_boot(self):
-        return True
-
-    def setup_pre_bootsetup(self):
+    def pre_boot(self):
         self.powercycle_happening = None
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
+        self.mission_state = "leader"
+        self.cycle()
+
         self.ws("fault_handler.enabled", True)
-        
+
         self.ws("prop.overpressured.suppress", "false")
         self.logger.put("Releasing overpressured suppress")
 
@@ -111,7 +112,7 @@ class PropFaultHandler(SingleSatOnlyCase):
         """Overriden from base.py
         Write sensors at the END because PropController updates sensor values at the end of execution cycle
         """
-        super().cycle()
+        super(PropFaultHandler, self).cycle()
         self.write_sensors()
 
 # --------------------------------------------------------------------------------------
@@ -167,7 +168,7 @@ class PropFaultHandler(SingleSatOnlyCase):
 # --------------------------------------------------------------------------------------
 # Test Case
 # --------------------------------------------------------------------------------------
-    def run_case_singlesat(self):
+    def run(self):
         self.fault_name = "prop.pressurize_fail"
         self.test_pressurize_fail()
 
@@ -195,7 +196,7 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("prop.sched_valve1", 800)
         self.ws("prop.cycles_until_firing", self.min_num_cycles)
         self.cycle()
-        self.check_prop_state("pressurizing")   
+        self.check_prop_state("pressurizing")
 
         # Cause the fault to happen:
         #   Keep cycling but don't change the pressure

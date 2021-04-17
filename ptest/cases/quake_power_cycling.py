@@ -1,19 +1,18 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, TestCaseFailure
 
 
-class QuakePowerCycling(SingleSatOnlyCase):
-    @property
-    def initial_state(self):
-        return "follower"
+class QuakePowerCycling(SingleSatCase):
+    def __init__(self, *args, **kwargs):
+        super(QuakePowerCycling, self).__init__(*args, **kwargs)
 
-    @property
-    def fast_boot(self):
-        return True
+#        self.psim_configs += ["truth/standby"]
+#        self.initial_state = "standby"
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
+        self.mission_state = "follower"
         self.ws("fault_handler.enabled", True)
 
     def check_powercycle(self):
@@ -78,7 +77,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
         self.read_state("gomspace.power_cycle_output3_cmd")
         self.read_state("pan.state")
 
-    def run_case_singlesat(self):
+    def run(self):
         # The satellite has been in a blackout since startup. Cycle count starts at 1.
         self.cycles_since_blackout_start = self.rs("pan.cycle_no") - 1
 
@@ -91,7 +90,7 @@ class QuakePowerCycling(SingleSatOnlyCase):
         self.advance_to_next_qfh_state(self.one_day_ccno)
         if not self.mission_state == "standby":
             raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
-            
+
         # Reset cycles
         self.cycles_since_blackout_start = 0
 

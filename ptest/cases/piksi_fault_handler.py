@@ -1,34 +1,16 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
 
+class PiksiFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(PiksiFaultHandler, self).__init__(*args, **kwargs)
+        self.initial_state = "standby"
+        self.psim_configs += ["truth/standby"]
 
-class PiksiFaultHandler(SingleSatOnlyCase):
-    @property
-    def sim_configs(self):
-        configs = ["truth/ci", "truth/base"]
-        configs += ["sensors/base"]
-        return configs
-
-    @property
-    def sim_model(self):
-        return SingleAttitudeOrbitGnc
-
-    @property
-    def sim_mapping(self):
-        return "ci_mapping.json"
-
-    @property
-    def sim_duration(self):
-        return 0
-
-    @property
-    def initial_state(self):
-        return "leader"       
-
-    @property
-    def fast_boot(self):
-        return True
+    def post_boot(self):
+        self.mission_state = "leader"
+        self.cycle()
 
     @property
     def debug_to_console(self):
@@ -79,9 +61,7 @@ class PiksiFaultHandler(SingleSatOnlyCase):
             if mode == "set_rtk":
                 self.set_fixed_rtk()
 
-    def run_case_singlesat(self):
-        ######################## TEST 1 ########################
-        # Setup initial states
+    def run(self):
         self.collect_diagnostic_data()
         self.set_fixed_rtk()
         self.check_is_leader()

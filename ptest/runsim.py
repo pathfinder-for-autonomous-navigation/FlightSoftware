@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from .cases.base import PTestCase
+from .cases.base.ptest_case import PTestCase
 from .configs.schemas import *
 from .usb_session import USBSession
 from .radio_session import RadioSession
@@ -99,7 +99,7 @@ class PTest(object):
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
             device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, 
-                self.tlm_config, device['imei'], device["scrape_uplinks"])
+                self.tlm_config, device['imei'], device["scrape_uplinks"], device["enable_auto_dbtelem"])
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -155,11 +155,11 @@ class PTest(object):
         print(f"Running mission testcase {self.testcase_name}.")
 
         self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.device_config)
-        self.testcase.setup_case(self.devices, self.radios)
+        self.testcase.setup(self.devices, self.radios)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
-        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all)
+        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all, self.testcase)
         try:
             self.cmd_prompt.cmdloop()
         except (KeyboardInterrupt, SystemExit):
