@@ -26,7 +26,7 @@ class AttitudeFaultHandlerCase(SingleSatStandbyCase):
                     "The attitude estimator shouldn't be valid after disabling the gyroscope")
 
         # Step for nine more cycles
-        for _ in range(19):
+        for _ in range(self.rs("attitude_estimator.fault.persistence")):
             self.cycle()
 
         # The attitude estimator fault should be tripped
