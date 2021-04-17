@@ -114,7 +114,7 @@ void AttitudeEstimator::execute()
         {
             attitude_estimator_valid_f.set(false);
             attitude_estimator_reset_cmd_f.set(false);
-            attitude_estimator_fault.evaluate(false);
+            attitude_estimator_fault.evaluate(true);
 
             _state = gnc::AttitudeEstimatorState();
             _estimate = gnc::AttitudeEstimate();
@@ -161,7 +161,7 @@ void AttitudeEstimator::execute()
     /* Populate outputs of the attitude estimator if valid.
      */
     attitude_estimator_valid_f.set(_estimate.is_valid);
-    attitude_estimator_fault.evaluate(_estimate.is_valid);
+    attitude_estimator_fault.evaluate(!_estimate.is_valid);
     if (_estimate.is_valid)
     {
         attitude_estimator_q_body_eci_f.set(_estimate.q_body_eci);

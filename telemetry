@@ -1073,6 +1073,38 @@
             "type": "lin float vector",
             "writable": false
         },
+        "attitude_estimator.fault.base": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.fault.override": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.fault.persistence": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 65535,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "attitude_estimator.fault.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.fault.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "attitude_estimator.mag_flag": {
             "bitsize": 1,
             "flow_id": 5,

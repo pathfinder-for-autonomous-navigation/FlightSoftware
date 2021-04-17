@@ -79,6 +79,7 @@ jobs:
     - name: Fault Handling Cases
       run: |
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSWheelFaultHandler -ni
+        python -m ptest runsim -c ptest.configs/hootl.json -t AttitudeFaultHandler -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t LowBattFaultHandler -ni
         python -m ptest runsim -c ptest/configs/hootl.json -t PropFaultHandler -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t QuakePowerCycling -ni
