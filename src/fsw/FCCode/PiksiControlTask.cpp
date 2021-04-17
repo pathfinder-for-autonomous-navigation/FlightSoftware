@@ -55,7 +55,7 @@ void PiksiControlTask::execute()
         fix_error_count_f.set(0);
     }
         
-    //if we haven't had a good reading in ~120 seconds the piksi is probably dead
+    //if we haven't had a good reading in (1000 * cc_no duration) seconds the piksi is probably dead
     //eventually replace with HAVT logic
     if(fix_error_count_f.get() > DEAD_CYCLE_COUNT){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::dead));

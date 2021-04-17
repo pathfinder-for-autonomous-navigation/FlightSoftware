@@ -69,6 +69,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
+    fix_error_count_fp = FIND_READABLE_FIELD(unsigned int, piksi.fix_error_count);
+
     low_batt_fault_fp = find_fault("gomspace.low_batt.base", __FILE__, __LINE__);
     adcs_functional_fault_fp = find_fault("adcs_monitor.functional_fault.base", __FILE__, __LINE__);
     wheel1_adc_fault_fp = find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__);
@@ -171,6 +173,10 @@ bool MissionManager::check_adcs_hardware_faults() const
 
 void MissionManager::dispatch_startup()
 {
+    // Step -1. Hacky fix to keep piksi dead from cropping up;
+    // Essentially stop it from incrementing while in startup.
+    fix_error_count_fp->set(0);
+
     // Step 0. If kill switch flag is set, shuts down radio connection
     if (kill_switch_f.get() == kill_switch_value)
     {

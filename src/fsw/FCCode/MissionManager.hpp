@@ -206,6 +206,10 @@ protected:
      */
     ReadableStateField<unsigned int> *bootcount_fp;
 
+    /**
+     * @brief Number of times the piksi has had a consecutive error
+     */
+    ReadableStateField<unsigned int> *fix_error_count_fp;
 private:
     /**
      * @brief Computes magnitude of baseline position vector.
