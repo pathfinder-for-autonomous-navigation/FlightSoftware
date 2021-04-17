@@ -5,7 +5,6 @@ const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
 OrbitController::OrbitController(StateFieldRegistry &r) : 
     TimedControlTask<void>(r, "orbit_control_ct"),
-    time_fp(FIND_READABLE_FIELD(double, orbit.time)),
     time_fp(FIND_INTERNAL_FIELD(double, time.s)),
     time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),  
     orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),

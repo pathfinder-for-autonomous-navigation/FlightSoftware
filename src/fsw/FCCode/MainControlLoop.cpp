@@ -28,15 +28,9 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi),
       ADCS_INITIALIZATION,
-<<<<<<< HEAD
       adcs_monitor(registry, adcs),
       debug_task(registry),
-      attitude_estimator(registry),
-=======
-      adcs_monitor(registry, adcs_monitor_offset, adcs),
-      debug_task(registry, debug_task_offset),
-      estimators(registry, estimators_offset),
->>>>>>> master
+       estimators(registry),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace),
       docksys(),
@@ -132,9 +126,8 @@ void MainControlLoop::execute() {
     
     debug_task.execute_on_time(debug_duration);
 
-<<<<<<< HEAD
     uplink_consumer.execute_on_time(uplink_duration);
-    attitude_estimator.execute_on_time(attitude_estimator_duration);
+    estimators.execute_on_time(attitude_estimator_duration);
     mission_manager.execute_on_time(mission_duration);
     dcdc_controller.execute_on_time(dcdc_duration);
     attitude_controller.execute_on_time(attitude_controller_duration);
@@ -145,20 +138,6 @@ void MainControlLoop::execute() {
     downlink_producer.execute_on_time(downlink_duration);
     quake_manager.execute_on_time(quake_duration);
     docking_controller.execute_on_time(docking_duration);
-=======
-    uplink_consumer.execute_on_time();
-    estimators.execute_on_time();
-    mission_manager.execute_on_time();
-    dcdc_controller.execute_on_time();
-    attitude_controller.execute_on_time();
-    adcs_commander.execute_on_time();
-    adcs_box_controller.execute_on_time();
-    orbit_controller.execute_on_time();
-    prop_controller.execute_on_time();
-    downlink_producer.execute_on_time();
-    quake_manager.execute_on_time();
-    docking_controller.execute_on_time();
->>>>>>> master
     
     #ifdef DESKTOP
         eeprom_controller.execute_on_time(eeprom_duration);

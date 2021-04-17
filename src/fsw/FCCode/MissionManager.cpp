@@ -23,8 +23,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
         docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
         docking_timeout_limit_f("docking_timeout_limit",
                                 Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
-        adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
         main_fault_handler(std::make_unique<MainFaultHandler>(registry)),
+        adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         enter_docking_cycle_f("docksys.enter_docking"),
         low_batt_fault_fp(FIND_FAULT(gomspace.low_batt.base)),
@@ -38,7 +38,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
         is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
         deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
         sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
-        enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
+        enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
         kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
 {
     add_writable_field(detumble_safety_factor_f);
