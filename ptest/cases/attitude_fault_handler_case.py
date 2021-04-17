@@ -1,4 +1,4 @@
-from . import SingleSatStandbyCase
+from .mission import SingleSatStandbyCase
 from .utils import TestCaseFailure
 
 
