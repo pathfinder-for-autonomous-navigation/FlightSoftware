@@ -112,7 +112,7 @@ def createDict(l):
             telemState = telemPoint[2]
             # retrieve the value of the telem point from initialTelemValue()
             telemValue = initialTelemValue(telemSubsystem + '.' + telemObject + '.' + telemState)
-
+            
             # checks to see if subsystem and then object are alreay in the dictionary
             if telemSubsystem in telem:
                 if telemObject in telem[telemSubsystem]:
@@ -136,7 +136,7 @@ def createDict(l):
             telemState = telemPoint[1]
             # retrieve the value of the telem point from initialTelemValue()
             telemValue = initialTelemValue(telemSubsystem + '.' + telemState)
-
+            
             # checks to see if subsystem and then state are alreay in the dictoinary
             if telemSubsystem in telem:
                 if (telemState in telem[telemSubsystem]) == False: # finally it checks whether or not the state was added to the dictionary and if it wasn't it adds it using the value initialized earlier
@@ -152,6 +152,7 @@ def createDict(l):
             telemState = telemPoint[0]
             # retrieve the value of the telem point from initialTelemValue()
             telemValue = initialTelemValue(telemState)
+            
 
             if (telemState in telem) == False: # finally it adds the state to the empty dictionary using the value initialized earlier
                 telem[telemState] = telemValue
@@ -326,4 +327,4 @@ def actionAtIndex(s1, s2, i, action):
     
 # upon running this file with python it will call the main funciton generate()
 generate()
-
+print("FlightSoftware/MCT/server-files/state-variables.js has been generated")

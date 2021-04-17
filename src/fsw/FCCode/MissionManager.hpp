@@ -145,15 +145,15 @@ protected:
     InternalStateField<unsigned int> enter_docking_cycle_f;
 
     // True if the battery is below the threshold for safehold.
-    Fault *low_batt_fault_fp;
+    Fault *const low_batt_fault_fp;
     // Fault flags for ADCS motor ADCs and potentiometer.
-    Fault *adcs_functional_fault_fp;
-    Fault *wheel1_adc_fault_fp;
-    Fault *wheel2_adc_fault_fp;
-    Fault *wheel3_adc_fault_fp;
-    Fault *wheel_pot_fault_fp;
+    Fault *const adcs_functional_fault_fp;
+    Fault *const wheel1_adc_fault_fp;
+    Fault *const wheel2_adc_fault_fp;
+    Fault *const wheel3_adc_fault_fp;
+    Fault *const wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault *pressurize_fail_fp;
+    Fault *const pressurize_fail_fp;
 
     /**
      * @brief DCDC control flag for Spike and Hold and docking system.
@@ -205,6 +205,16 @@ protected:
      * @brief Number of times the satellite has booted
      */
     ReadableStateField<unsigned int> *bootcount_fp;
+
+    /**
+     * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)
+     */
+    WritableStateField<bool> *piksi_off_fp;
+
+    /**
+     * @brief True if Gomspace should power cycle piksi port
+     */
+    WritableStateField<bool> *piksi_powercycle_fp;
 
 private:
     /**

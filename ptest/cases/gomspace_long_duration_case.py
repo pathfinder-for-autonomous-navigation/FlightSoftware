@@ -1,14 +1,14 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 from .hardware_stress_test_case import ActuateHardwareCase
 
 class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Gomspace Long Duration Checkout Case")
         self.setup_hardware()
         self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.rs("pan.cycle_no")
         self.fire_valves()
         edu_vbatt_threshold = 7000
