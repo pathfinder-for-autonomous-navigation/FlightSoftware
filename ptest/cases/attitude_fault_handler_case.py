@@ -1,8 +1,6 @@
 from . import SingleSatStandbyCase
 from .utils import TestCaseFailure
 
-import lin
-
 
 class AttitudeFaultHandlerCase(SingleSatStandbyCase):
     """Test the basic functionality of the attitude estimator fault handler.
