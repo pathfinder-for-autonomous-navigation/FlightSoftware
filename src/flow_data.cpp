@@ -10,7 +10,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {3, false, {"orbit.pos_sigma", "orbit.vel_sigma"}},
 {4, false, {"rel_orbit.pos", "rel_orbit.vel", "rel_orbit.rel_pos_sigma", "rel_orbit.rel_vel_sigma"}},
 {5, false, {"attitude_estimator.w_bias_body", "attitude_estimator.p_body_eci_sigma_f", "attitude_estimator.w_bias_sigma_body", "attitude_estimator.mag_flag"}},
-{6, true, {"adcs_monitor.functional_fault.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel_pot_fault.base", "prop.overpressured.base", "prop.pressurize_fail.base", "prop.tank2_temp_high.base", "prop.tank1_temp_high.base", "gomspace.low_batt.base", "gomspace.get_hk.base"}},
+{6, true, {"adcs_monitor.functional_fault.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel_pot_fault.base", "prop.overpressured.base", "prop.pressurize_fail.base", "prop.tank2_temp_high.base", "prop.tank1_temp_high.base", "gomspace.low_batt.base", "gomspace.get_hk.base", "attitude_estimator.fault.base"}},
 {7, true, {"gomspace.vbatt", "gomspace.cursun", "gomspace.cursys", "gomspace.temp.output1", "gomspace.temp.output2", "gomspace.temp.output3", "gomspace.temp.output4"}},
 {8, false, {"gomspace.vboost.output1", "gomspace.vboost.output2", "gomspace.vboost.output3", "gomspace.curin.output1", "gomspace.curin.output2", "gomspace.curin.output3"}},
 {9, false, {"gomspace.curout.output1", "gomspace.curout.output2", "gomspace.curout.output3", "gomspace.curout.output4", "gomspace.curout.output5", "gomspace.curout.output6", "gomspace.output.output1", "gomspace.output.output2", "gomspace.output.output3", "gomspace.output.output4", "gomspace.output.output5", "gomspace.output.output6"}},
