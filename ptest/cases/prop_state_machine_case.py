@@ -1,19 +1,14 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 import time
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
-class PropStateMachineCase(SingleSatOnlyCase):
-    @property
-    def initial_state(self):
-        return "manual"
+class PropStateMachineCase(SingleSatCase):
+    def post_boot(self):
+        self.mission_state = 'manual'
+        self.cycle()
 
-    @property
-    def fast_boot(self):
-        return True
-
-    def setup_post_bootsetup(self):
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])
@@ -281,7 +276,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
             raise TestCaseFailure("state != idle")
         return
 
-    def run_case_singlesat(self):
+    def run(self):
         print("------------------------------------------------")
         self.test_disabled_to_idle()
         print("------------------------------------------------")

@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from .cases.base import PTestCase
+from .cases.base.ptest_case import PTestCase
 from .configs.schemas import *
 from .usb_session import USBSession
 from .radio_session import RadioSession
@@ -9,6 +9,9 @@ from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
 from . import get_pio_asset
 import json, sys, os, time, threading
+import multiprocessing
+multiprocessing.set_start_method('fork') 
+
 
 try:
     import pty, subprocess
@@ -17,7 +20,7 @@ except ImportError:
     pass
 
 class PTest(object):
-    def __init__(self, config_data, testcase_name, data_dir, is_interactive, scrape_uplinks):
+    def __init__(self, config_data, testcase_name, data_dir, is_interactive):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
@@ -31,8 +34,6 @@ class PTest(object):
         self.tlm_config = config_data["tlm"]
 
         self.is_interactive = is_interactive
-
-        self.scrape_uplinks = scrape_uplinks
 
         self.devices = {}
         self.radios = {}
@@ -97,7 +98,8 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, self.tlm_config, device['imei'], self.scrape_uplinks)
+            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir, 
+                self.tlm_config, device['imei'], device["scrape_uplinks"], device["enable_auto_dbtelem"])
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -153,11 +155,11 @@ class PTest(object):
         print(f"Running mission testcase {self.testcase_name}.")
 
         self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir, self.device_config)
-        self.testcase.setup_case(self.devices, self.radios)
+        self.testcase.setup(self.devices, self.radios)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
-        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all)
+        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all, self.testcase)
         try:
             self.cmd_prompt.cmdloop()
         except (KeyboardInterrupt, SystemExit):
@@ -215,11 +217,11 @@ def main(args):
                         default = "EmptyCase")
 
     parser.add_argument('-c', '--conf', action='store', help='JSON file listing serial ports and Teensy computer names.', required=True)
+    parser.add_argument('-tlm', '--tlmconfig', action='store', help='Custom secret tlm config, otherwise defaults to secret', required=False, default = 'ptest/configs/tlm_secret.json')
 
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
     parser.add_argument('--clean', dest='clean', action='store_true', help='Starts a fresh run if in HOOTL (deletes the EEPROM file.)')
-    parser.add_argument('--scrape', action='store_true', help='USB Session scrapes emails sent to Iridium if there is no physical radio connected')
     parser.set_defaults(interactive=True)
 
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -239,7 +241,7 @@ def main(args):
         with open(args.conf, 'r') as config_file:
             config_data = json.load(config_file)
             validate_config(config_data, ptest_config_schema)
-
+            
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
         sys.exit(1)
@@ -247,5 +249,22 @@ def main(args):
         print("Malformed config file. Exiting.")
         sys.exit(1)
 
-    test = PTest(config_data, args.testcase, args.data_dir, args.interactive, args.scrape)
+    try:
+        with open(args.tlmconfig, 'r') as config_file:
+            tlm_config_data = json.load(config_file)
+            config_data = {**tlm_config_data, **config_data}
+
+    except json.JSONDecodeError:
+        print("Could not load config file. Exiting.")
+        sys.exit(1)
+    except KeyError:
+        print("Malformed config file. Exiting.")
+        sys.exit(1)
+    except FileNotFoundError:
+        print("WARNING TLM CONFIG NOT FOUND. DEFAULTING TO EMPTY TLM CONFIG")
+        with open('ptest/configs/tlm_empty.json', 'r') as config_file:
+            tlm_config_data = json.load(config_file)
+            config_data = {**tlm_config_data, **config_data}
+        
+    test = PTest(config_data, args.testcase, args.data_dir, args.interactive)
     test.start()

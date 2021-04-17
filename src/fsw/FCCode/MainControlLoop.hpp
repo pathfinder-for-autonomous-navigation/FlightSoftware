@@ -10,7 +10,7 @@
 #include "PiksiControlTask.hpp"
 #include "ADCSBoxMonitor.hpp"
 #include "ADCSBoxController.hpp"
-#include "AttitudeEstimator.hpp"
+#include "Estimators.hpp"
 #include "AttitudeController.hpp"
 #include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
@@ -40,7 +40,7 @@ class MainControlLoop : public ControlTask<void> {
 
     DebugTask debug_task;
 
-    AttitudeEstimator attitude_estimator;
+    Estimators estimators;
 
     Devices::Gomspace::eps_hk_t hk;
     Devices::Gomspace::eps_config_t config; 

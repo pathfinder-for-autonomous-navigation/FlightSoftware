@@ -5,13 +5,13 @@
         "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
-        "pan.sat_designation": 1,
+        "pan.kill_switch": 100,
         "pan.state": 1
     },
     "fields": {
         "adcs.state": {
             "bitsize": 4,
-            "flow_id": 13,
+            "flow_id": 12,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -19,235 +19,235 @@
         },
         "adcs_cmd.havt_disable0": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable1": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable10": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable11": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable12": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable13": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable14": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable15": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable16": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable17": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable18": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable2": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable3": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable4": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable5": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable6": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable7": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable8": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable9": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 37,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset0": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset1": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset10": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset11": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset12": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset13": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset14": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset15": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset16": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset17": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset18": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset2": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset3": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset4": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset5": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset6": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset7": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset8": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset9": {
             "bitsize": 1,
-            "flow_id": 33,
+            "flow_id": 38,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.imu_gyr_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -255,7 +255,7 @@
         },
         "adcs_cmd.imu_gyr_temp_desired": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 85.0,
             "min": -40.0,
             "type": "float",
@@ -263,7 +263,7 @@
         },
         "adcs_cmd.imu_gyr_temp_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -271,7 +271,7 @@
         },
         "adcs_cmd.imu_gyr_temp_pwm": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 255,
             "min": 0,
             "type": "unsigned char",
@@ -279,7 +279,7 @@
         },
         "adcs_cmd.imu_mag_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -287,7 +287,7 @@
         },
         "adcs_cmd.mag1_mode": {
             "bitsize": 1,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -295,7 +295,7 @@
         },
         "adcs_cmd.mag2_mode": {
             "bitsize": 1,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -303,7 +303,7 @@
         },
         "adcs_cmd.mtr_cmd": {
             "bitsize": 149,
-            "flow_id": 13,
+            "flow_id": 27,
             "max": 0.056668501347303,
             "min": -0.056668501347303,
             "type": "std float vector",
@@ -311,7 +311,7 @@
         },
         "adcs_cmd.mtr_limit": {
             "bitsize": 16,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 0.056668501347303,
             "min": -0.056668501347303,
             "type": "float",
@@ -319,7 +319,7 @@
         },
         "adcs_cmd.mtr_mode": {
             "bitsize": 2,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -327,7 +327,7 @@
         },
         "adcs_cmd.rwa_mode": {
             "bitsize": 2,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -335,7 +335,7 @@
         },
         "adcs_cmd.rwa_ramp_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -343,7 +343,7 @@
         },
         "adcs_cmd.rwa_speed_cmd": {
             "bitsize": 149,
-            "flow_id": 7,
+            "flow_id": 27,
             "max": 680.677978515625,
             "min": -680.677978515625,
             "type": "std float vector",
@@ -351,7 +351,7 @@
         },
         "adcs_cmd.rwa_speed_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -359,7 +359,7 @@
         },
         "adcs_cmd.rwa_torque_cmd": {
             "bitsize": 149,
-            "flow_id": 7,
+            "flow_id": 27,
             "max": 0.004187500569969,
             "min": -0.004187500569969,
             "type": "std float vector",
@@ -367,7 +367,7 @@
         },
         "adcs_cmd.ssa_voltage_filter": {
             "bitsize": 8,
-            "flow_id": 23,
+            "flow_id": 31,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -375,45 +375,45 @@
         },
         "adcs_monitor.functional": {
             "bitsize": 1,
-            "flow_id": 13,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.functional_fault.base": {
             "bitsize": 1,
-            "flow_id": 13,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.override": {
             "bitsize": 1,
-            "flow_id": 13,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.persistence": {
-            "bitsize": 16,
-            "flow_id": 13,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "adcs_monitor.functional_fault.suppress": {
             "bitsize": 1,
-            "flow_id": 13,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.unsignal": {
             "bitsize": 1,
-            "flow_id": 13,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.gyr_temp": {
             "bitsize": 16,
-            "flow_id": 24,
+            "flow_id": "undefined",
             "max": 153.0,
             "min": -103.0,
             "type": "float",
@@ -421,13 +421,13 @@
         },
         "adcs_monitor.gyr_temp_flag": {
             "bitsize": 1,
-            "flow_id": 24,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.gyr_vec": {
             "bitsize": 10,
-            "flow_id": 24,
+            "flow_id": "undefined",
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -435,7 +435,7 @@
         },
         "adcs_monitor.gyr_vec.x": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 2.181661605834961,
             "min": -2.181661605834961,
             "type": "float",
@@ -443,7 +443,7 @@
         },
         "adcs_monitor.gyr_vec.y": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 2.181661605834961,
             "min": -2.181661605834961,
             "type": "float",
@@ -451,7 +451,7 @@
         },
         "adcs_monitor.gyr_vec.z": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 2.181661605834961,
             "min": -2.181661605834961,
             "type": "float",
@@ -459,67 +459,67 @@
         },
         "adcs_monitor.gyr_vec_flag": {
             "bitsize": 1,
-            "flow_id": 18,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device0": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device1": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device10": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device11": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device12": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device13": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device14": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device15": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device16": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device17": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
@@ -531,55 +531,55 @@
         },
         "adcs_monitor.havt_device2": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device3": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device4": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device5": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device6": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device7": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device8": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.havt_device9": {
             "bitsize": 1,
-            "flow_id": 15,
+            "flow_id": 13,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.mag1_vec": {
             "bitsize": 10,
-            "flow_id": 24,
+            "flow_id": "undefined",
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -587,7 +587,7 @@
         },
         "adcs_monitor.mag1_vec.x": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.004999999888241,
             "min": -0.004999999888241,
             "type": "float",
@@ -595,7 +595,7 @@
         },
         "adcs_monitor.mag1_vec.y": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.004999999888241,
             "min": -0.004999999888241,
             "type": "float",
@@ -603,7 +603,7 @@
         },
         "adcs_monitor.mag1_vec.z": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.004999999888241,
             "min": -0.004999999888241,
             "type": "float",
@@ -611,13 +611,13 @@
         },
         "adcs_monitor.mag1_vec_flag": {
             "bitsize": 1,
-            "flow_id": 18,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.mag2_vec": {
             "bitsize": 10,
-            "flow_id": 24,
+            "flow_id": "undefined",
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -625,7 +625,7 @@
         },
         "adcs_monitor.mag2_vec.x": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.003199999919161,
             "min": -0.003199999919161,
             "type": "float",
@@ -633,7 +633,7 @@
         },
         "adcs_monitor.mag2_vec.y": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.003199999919161,
             "min": -0.003199999919161,
             "type": "float",
@@ -641,7 +641,7 @@
         },
         "adcs_monitor.mag2_vec.z": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 18,
             "max": 0.003199999919161,
             "min": -0.003199999919161,
             "type": "float",
@@ -649,13 +649,13 @@
         },
         "adcs_monitor.mag2_vec_flag": {
             "bitsize": 1,
-            "flow_id": 18,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.rwa_speed_rd": {
             "bitsize": 10,
-            "flow_id": 7,
+            "flow_id": "undefined",
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -663,7 +663,7 @@
         },
         "adcs_monitor.rwa_speed_rd.x": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 1047.199951171875,
             "min": -1047.199951171875,
             "type": "float",
@@ -671,7 +671,7 @@
         },
         "adcs_monitor.rwa_speed_rd.y": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 1047.199951171875,
             "min": -1047.199951171875,
             "type": "float",
@@ -679,7 +679,7 @@
         },
         "adcs_monitor.rwa_speed_rd.z": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 1047.199951171875,
             "min": -1047.199951171875,
             "type": "float",
@@ -687,7 +687,7 @@
         },
         "adcs_monitor.rwa_torque_rd": {
             "bitsize": 10,
-            "flow_id": 7,
+            "flow_id": "undefined",
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -695,7 +695,7 @@
         },
         "adcs_monitor.rwa_torque_rd.x": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 0.004187500569969,
             "min": -0.004187500569969,
             "type": "float",
@@ -703,7 +703,7 @@
         },
         "adcs_monitor.rwa_torque_rd.y": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 0.004187500569969,
             "min": -0.004187500569969,
             "type": "float",
@@ -711,7 +711,7 @@
         },
         "adcs_monitor.rwa_torque_rd.z": {
             "bitsize": 12,
-            "flow_id": "undefined",
+            "flow_id": 14,
             "max": 0.004187500569969,
             "min": -0.004187500569969,
             "type": "float",
@@ -719,13 +719,13 @@
         },
         "adcs_monitor.speed_rd_flag": {
             "bitsize": 1,
-            "flow_id": 18,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.ssa_mode": {
             "bitsize": 2,
-            "flow_id": 3,
+            "flow_id": 14,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -733,7 +733,7 @@
         },
         "adcs_monitor.ssa_vec": {
             "bitsize": 31,
-            "flow_id": 24,
+            "flow_id": 18,
             "max": 1.000100016593933,
             "min": 0.999899983406067,
             "type": "lin float vector",
@@ -741,7 +741,7 @@
         },
         "adcs_monitor.ssa_voltage0": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -749,7 +749,7 @@
         },
         "adcs_monitor.ssa_voltage1": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -757,7 +757,7 @@
         },
         "adcs_monitor.ssa_voltage10": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -765,7 +765,7 @@
         },
         "adcs_monitor.ssa_voltage11": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -773,7 +773,7 @@
         },
         "adcs_monitor.ssa_voltage12": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -781,7 +781,7 @@
         },
         "adcs_monitor.ssa_voltage13": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -789,7 +789,7 @@
         },
         "adcs_monitor.ssa_voltage14": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -797,7 +797,7 @@
         },
         "adcs_monitor.ssa_voltage15": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -805,7 +805,7 @@
         },
         "adcs_monitor.ssa_voltage16": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -813,7 +813,7 @@
         },
         "adcs_monitor.ssa_voltage17": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -821,7 +821,7 @@
         },
         "adcs_monitor.ssa_voltage18": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -829,7 +829,7 @@
         },
         "adcs_monitor.ssa_voltage19": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 23,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -837,7 +837,7 @@
         },
         "adcs_monitor.ssa_voltage2": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -845,7 +845,7 @@
         },
         "adcs_monitor.ssa_voltage3": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -853,7 +853,7 @@
         },
         "adcs_monitor.ssa_voltage4": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -861,7 +861,7 @@
         },
         "adcs_monitor.ssa_voltage5": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -869,7 +869,7 @@
         },
         "adcs_monitor.ssa_voltage6": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -877,7 +877,7 @@
         },
         "adcs_monitor.ssa_voltage7": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -885,7 +885,7 @@
         },
         "adcs_monitor.ssa_voltage8": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -893,7 +893,7 @@
         },
         "adcs_monitor.ssa_voltage9": {
             "bitsize": 8,
-            "flow_id": 25,
+            "flow_id": 22,
             "max": 3.299999952316284,
             "min": 0.0,
             "type": "float",
@@ -901,141 +901,141 @@
         },
         "adcs_monitor.torque_rd_flag": {
             "bitsize": 1,
-            "flow_id": 18,
+            "flow_id": 19,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.wheel1_fault.base": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.override": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.persistence": {
-            "bitsize": 16,
-            "flow_id": 4,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.suppress": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.unsignal": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.base": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.override": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.persistence": {
-            "bitsize": 16,
-            "flow_id": 4,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.suppress": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.unsignal": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.base": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.override": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.persistence": {
-            "bitsize": 16,
-            "flow_id": 4,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.suppress": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.unsignal": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.base": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.override": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.persistence": {
-            "bitsize": 16,
-            "flow_id": 4,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.suppress": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.unsignal": {
             "bitsize": 1,
-            "flow_id": 4,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "attitude.pointer_vec1_current": {
             "bitsize": 31,
-            "flow_id": 14,
+            "flow_id": 16,
             "max": 1.000100016593933,
             "min": 0.999899983406067,
             "type": "lin float vector",
@@ -1043,7 +1043,7 @@
         },
         "attitude.pointer_vec1_desired": {
             "bitsize": 31,
-            "flow_id": 14,
+            "flow_id": 16,
             "max": 1.000100016593933,
             "min": 0.999899983406067,
             "type": "lin float vector",
@@ -1051,7 +1051,7 @@
         },
         "attitude.pointer_vec2_current": {
             "bitsize": 31,
-            "flow_id": 14,
+            "flow_id": 16,
             "max": 1.000100016593933,
             "min": 0.999899983406067,
             "type": "lin float vector",
@@ -1059,36 +1059,96 @@
         },
         "attitude.pointer_vec2_desired": {
             "bitsize": 31,
-            "flow_id": 14,
+            "flow_id": 16,
             "max": 1.000100016593933,
             "min": 0.999899983406067,
             "type": "lin float vector",
             "writable": true
         },
-        "attitude_estimator.fro_P": {
-            "bitsize": 32,
-            "flow_id": "undefined",
+        "attitude_estimator.L_body": {
+            "bitsize": 49,
+            "flow_id": 2,
             "max": 0.100000001490116,
             "min": 0.0,
-            "type": "float",
+            "type": "lin float vector",
             "writable": false
         },
-        "attitude_estimator.mag_flag": {
+        "attitude_estimator.fault.base": {
+            "bitsize": 1,
+            "flow_id": 6,
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.fault.override": {
             "bitsize": 1,
             "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
+        "attitude_estimator.fault.persistence": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "attitude_estimator.fault.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.fault.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.mag_flag": {
+            "bitsize": 1,
+            "flow_id": 5,
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.p_body_eci_sigma_f": {
+            "bitsize": 49,
+            "flow_id": 5,
+            "max": 0.5,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
         "attitude_estimator.q_body_eci": {
             "bitsize": 32,
-            "flow_id": 3,
+            "flow_id": 2,
             "type": "lin float quaternion",
             "writable": false
         },
-        "attitude_estimator.w_body": {
-            "bitsize": 37,
-            "flow_id": 3,
-            "max": 0.261799395084381,
+        "attitude_estimator.reset_cmd": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.valid": {
+            "bitsize": 1,
+            "flow_id": 2,
+            "type": "bool",
+            "writable": false
+        },
+        "attitude_estimator.w_bias_body": {
+            "bitsize": 49,
+            "flow_id": 5,
+            "max": 0.349999994039536,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude_estimator.w_bias_sigma_body": {
+            "bitsize": 49,
+            "flow_id": 5,
+            "max": 0.100000001490116,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
@@ -1107,43 +1167,43 @@
         },
         "dcdc.ADCSMotor": {
             "bitsize": 1,
-            "flow_id": 20,
+            "flow_id": 21,
             "type": "bool",
             "writable": false
         },
         "dcdc.ADCSMotor_cmd": {
             "bitsize": 1,
-            "flow_id": 22,
+            "flow_id": 30,
             "type": "bool",
             "writable": true
         },
         "dcdc.SpikeDock": {
             "bitsize": 1,
-            "flow_id": 20,
+            "flow_id": 21,
             "type": "bool",
             "writable": false
         },
         "dcdc.SpikeDock_cmd": {
             "bitsize": 1,
-            "flow_id": 22,
+            "flow_id": 30,
             "type": "bool",
             "writable": true
         },
         "dcdc.disable_cmd": {
             "bitsize": 1,
-            "flow_id": 22,
+            "flow_id": 30,
             "type": "bool",
             "writable": true
         },
         "dcdc.reset_cmd": {
             "bitsize": 1,
-            "flow_id": 22,
+            "flow_id": 30,
             "type": "bool",
             "writable": true
         },
         "detumble_safety_factor": {
             "bitsize": 7,
-            "flow_id": 26,
+            "flow_id": 32,
             "max": 1.0,
             "min": 0.0,
             "type": "double",
@@ -1151,7 +1211,7 @@
         },
         "docking_timeout_limit": {
             "bitsize": 6,
-            "flow_id": 26,
+            "flow_id": 32,
             "max": 1440000,
             "min": 0,
             "type": "unsigned int",
@@ -1159,31 +1219,31 @@
         },
         "docksys.config_cmd": {
             "bitsize": 1,
-            "flow_id": 35,
+            "flow_id": 42,
             "type": "bool",
             "writable": true
         },
         "docksys.dock_config": {
             "bitsize": 1,
-            "flow_id": 17,
+            "flow_id": 42,
             "type": "bool",
             "writable": false
         },
         "docksys.docked": {
             "bitsize": 1,
-            "flow_id": 17,
+            "flow_id": 24,
             "type": "bool",
             "writable": false
         },
         "docksys.is_turning": {
             "bitsize": 1,
-            "flow_id": 35,
+            "flow_id": 42,
             "type": "bool",
             "writable": false
         },
         "docksys.step_angle": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 42,
             "max": 180.0,
             "min": 0.0,
             "type": "float",
@@ -1191,7 +1251,7 @@
         },
         "docksys.step_delay": {
             "bitsize": 32,
-            "flow_id": "undefined",
+            "flow_id": 42,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1199,7 +1259,7 @@
         },
         "downlink.shift_id1": {
             "bitsize": 1,
-            "flow_id": 27,
+            "flow_id": 33,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1207,7 +1267,7 @@
         },
         "downlink.shift_id2": {
             "bitsize": 1,
-            "flow_id": 27,
+            "flow_id": 33,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1215,7 +1275,7 @@
         },
         "downlink.toggle_id": {
             "bitsize": 1,
-            "flow_id": 27,
+            "flow_id": 33,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1223,13 +1283,13 @@
         },
         "fault_handler.enabled": {
             "bitsize": 1,
-            "flow_id": 26,
+            "flow_id": 32,
             "type": "bool",
             "writable": true
         },
         "gomspace.batt_threshold": {
             "bitsize": 10,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "max": 9000,
             "min": 5000,
             "type": "unsigned int",
@@ -1237,7 +1297,7 @@
         },
         "gomspace.battmode": {
             "bitsize": 3,
-            "flow_id": 11,
+            "flow_id": 10,
             "max": 4,
             "min": 0,
             "type": "unsigned char",
@@ -1245,7 +1305,7 @@
         },
         "gomspace.bootcause": {
             "bitsize": 4,
-            "flow_id": 11,
+            "flow_id": 10,
             "max": 8,
             "min": 0,
             "type": "unsigned char",
@@ -1253,7 +1313,7 @@
         },
         "gomspace.counter_boot": {
             "bitsize": 32,
-            "flow_id": 11,
+            "flow_id": 10,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1261,13 +1321,13 @@
         },
         "gomspace.counter_reset_cmd": {
             "bitsize": 1,
-            "flow_id": 30,
+            "flow_id": 36,
             "type": "bool",
             "writable": true
         },
         "gomspace.counter_wdt_i2c": {
             "bitsize": 32,
-            "flow_id": 29,
+            "flow_id": 35,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1275,7 +1335,7 @@
         },
         "gomspace.curin.output1": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 8,
             "max": 6000,
             "min": 0,
             "type": "unsigned int",
@@ -1283,7 +1343,7 @@
         },
         "gomspace.curin.output2": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 8,
             "max": 6000,
             "min": 0,
             "type": "unsigned int",
@@ -1291,7 +1351,7 @@
         },
         "gomspace.curin.output3": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 8,
             "max": 6000,
             "min": 0,
             "type": "unsigned int",
@@ -1299,7 +1359,7 @@
         },
         "gomspace.curout.output1": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1307,7 +1367,7 @@
         },
         "gomspace.curout.output2": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1315,7 +1375,7 @@
         },
         "gomspace.curout.output3": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1323,7 +1383,7 @@
         },
         "gomspace.curout.output4": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1331,7 +1391,7 @@
         },
         "gomspace.curout.output5": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1339,7 +1399,7 @@
         },
         "gomspace.curout.output6": {
             "bitsize": 10,
-            "flow_id": 10,
+            "flow_id": 9,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1347,7 +1407,7 @@
         },
         "gomspace.cursun": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 7,
             "max": 3000,
             "min": 0,
             "type": "unsigned int",
@@ -1355,7 +1415,7 @@
         },
         "gomspace.cursys": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 7,
             "max": 12000,
             "min": 0,
             "type": "unsigned int",
@@ -1369,51 +1429,51 @@
         },
         "gomspace.get_hk.override": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.get_hk.persistence": {
-            "bitsize": 16,
-            "flow_id": 6,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "gomspace.get_hk.suppress": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.get_hk.unsignal": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.gs_reboot_cmd": {
             "bitsize": 1,
-            "flow_id": 30,
+            "flow_id": 36,
             "type": "bool",
             "writable": true
         },
         "gomspace.gs_reset_cmd": {
             "bitsize": 1,
-            "flow_id": 30,
+            "flow_id": 36,
             "type": "bool",
             "writable": true
         },
         "gomspace.heater": {
             "bitsize": 1,
-            "flow_id": 28,
+            "flow_id": 34,
             "type": "bool",
             "writable": false
         },
         "gomspace.heater_cmd": {
             "bitsize": 1,
-            "flow_id": 30,
+            "flow_id": 36,
             "type": "bool",
             "writable": true
         },
@@ -1425,99 +1485,105 @@
         },
         "gomspace.low_batt.override": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.persistence": {
-            "bitsize": 16,
-            "flow_id": 6,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "gomspace.low_batt.suppress": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.unsignal": {
             "bitsize": 1,
-            "flow_id": 6,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "gomspace.output.output1": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
         "gomspace.output.output2": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
         "gomspace.output.output3": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
         "gomspace.output.output4": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
         "gomspace.output.output5": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
         "gomspace.output.output6": {
             "bitsize": 1,
-            "flow_id": 10,
+            "flow_id": 9,
             "type": "bool",
             "writable": false
         },
+        "gomspace.piksi_off": {
+            "bitsize": 1,
+            "flow_id": 11,
+            "type": "bool",
+            "writable": true
+        },
         "gomspace.power_cycle_output1_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output2_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output3_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output4_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output5_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output6_cmd": {
             "bitsize": 1,
-            "flow_id": 12,
+            "flow_id": 11,
             "type": "bool",
             "writable": true
         },
@@ -1531,7 +1597,7 @@
         },
         "gomspace.pptmode": {
             "bitsize": 1,
-            "flow_id": 11,
+            "flow_id": 10,
             "max": 2,
             "min": 1,
             "type": "unsigned char",
@@ -1539,7 +1605,7 @@
         },
         "gomspace.pptmode_cmd": {
             "bitsize": 1,
-            "flow_id": 30,
+            "flow_id": 36,
             "max": 2,
             "min": 1,
             "type": "unsigned char",
@@ -1547,7 +1613,7 @@
         },
         "gomspace.pv1_cmd": {
             "bitsize": 9,
-            "flow_id": 30,
+            "flow_id": 36,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
@@ -1555,7 +1621,7 @@
         },
         "gomspace.pv2_cmd": {
             "bitsize": 9,
-            "flow_id": 30,
+            "flow_id": 36,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
@@ -1563,7 +1629,7 @@
         },
         "gomspace.pv3_cmd": {
             "bitsize": 9,
-            "flow_id": 30,
+            "flow_id": 36,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
@@ -1571,7 +1637,7 @@
         },
         "gomspace.temp.output1": {
             "bitsize": 8,
-            "flow_id": 11,
+            "flow_id": 7,
             "max": 125,
             "min": -40,
             "type": "signed int",
@@ -1579,7 +1645,7 @@
         },
         "gomspace.temp.output2": {
             "bitsize": 8,
-            "flow_id": 11,
+            "flow_id": 7,
             "max": 125,
             "min": -40,
             "type": "signed int",
@@ -1587,7 +1653,7 @@
         },
         "gomspace.temp.output3": {
             "bitsize": 8,
-            "flow_id": 11,
+            "flow_id": 7,
             "max": 125,
             "min": -40,
             "type": "signed int",
@@ -1595,7 +1661,7 @@
         },
         "gomspace.temp.output4": {
             "bitsize": 8,
-            "flow_id": 11,
+            "flow_id": 7,
             "max": 125,
             "min": -40,
             "type": "signed int",
@@ -1603,31 +1669,31 @@
         },
         "gomspace.vbatt": {
             "bitsize": 10,
-            "flow_id": 9,
+            "flow_id": 7,
             "max": 9500,
             "min": 5000,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.vboost.output1": {
-            "bitsize": 9,
-            "flow_id": 9,
+            "bitsize": 6,
+            "flow_id": 8,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.vboost.output2": {
-            "bitsize": 9,
-            "flow_id": 9,
+            "bitsize": 6,
+            "flow_id": 8,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.vboost.output3": {
-            "bitsize": 9,
-            "flow_id": 9,
+            "bitsize": 6,
+            "flow_id": 8,
             "max": 8500,
             "min": 0,
             "type": "unsigned int",
@@ -1635,31 +1701,15 @@
         },
         "gomspace.wdt_i2c_time_left": {
             "bitsize": 7,
-            "flow_id": 29,
+            "flow_id": 35,
             "max": 99,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
-        "orbit.baseline_pos": {
-            "bitsize": 73,
-            "flow_id": 2,
-            "max": 2000.0,
-            "min": 0.0,
-            "type": "lin double vector",
-            "writable": false
-        },
-        "orbit.baseline_vel": {
-            "bitsize": 49,
-            "flow_id": "undefined",
-            "max": 11.0,
-            "min": 0.0,
-            "type": "lin double vector",
-            "writable": false
-        },
         "orbit.control.valve1": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1667,7 +1717,7 @@
         },
         "orbit.control.valve2": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1675,7 +1725,7 @@
         },
         "orbit.control.valve3": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1683,7 +1733,7 @@
         },
         "orbit.control.valve4": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1697,43 +1747,39 @@
             "type": "lin double vector",
             "writable": false
         },
-        "orbit.time": {
-            "bitsize": 64,
-            "flow_id": "undefined",
-            "max": 1.8446744073709552e+19,
+        "orbit.pos_sigma": {
+            "bitsize": 43,
+            "flow_id": 3,
+            "max": 100.0,
             "min": 0.0,
-            "type": "double",
+            "type": "lin double vector",
             "writable": false
         },
-        "orbit.uplink_pos": {
-            "bitsize": 103,
+        "orbit.reset_cmd": {
+            "bitsize": 1,
             "flow_id": "undefined",
-            "max": 6921000.0,
-            "min": 6771000.0,
-            "type": "lin double vector",
+            "type": "bool",
             "writable": true
         },
-        "orbit.uplink_t": {
-            "bitsize": 64,
-            "flow_id": "undefined",
-            "max": 1.8446744073709552e+19,
-            "min": 0.0,
-            "type": "double",
-            "writable": true
-        },
-        "orbit.uplink_vel": {
-            "bitsize": 76,
-            "flow_id": "undefined",
-            "max": 7685.0,
-            "min": 7570.0,
-            "type": "lin double vector",
-            "writable": true
+        "orbit.valid": {
+            "bitsize": 1,
+            "flow_id": 2,
+            "type": "bool",
+            "writable": false
         },
         "orbit.vel": {
             "bitsize": 76,
             "flow_id": 2,
             "max": 7685.0,
             "min": 7570.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "orbit.vel_sigma": {
+            "bitsize": 43,
+            "flow_id": 3,
+            "max": 50.0,
+            "min": 0.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1755,7 +1801,7 @@
         },
         "pan.cycle_no": {
             "bitsize": 32,
-            "flow_id": "undefined",
+            "flow_id": 1,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1769,11 +1815,19 @@
         },
         "pan.deployment.elapsed": {
             "bitsize": 14,
-            "flow_id": "undefined",
+            "flow_id": 1,
             "max": 15000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
+        },
+        "pan.kill_switch": {
+            "bitsize": 8,
+            "flow_id": "undefined",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": true
         },
         "pan.one_day_ccno": {
             "bitsize": 32,
@@ -1801,7 +1855,7 @@
         },
         "piksi.baseline_pos": {
             "bitsize": 73,
-            "flow_id": 19,
+            "flow_id": 20,
             "max": 2000.0,
             "min": 0.0,
             "type": "lin double vector",
@@ -1809,7 +1863,7 @@
         },
         "piksi.fix_error_count": {
             "bitsize": 10,
-            "flow_id": 19,
+            "flow_id": 20,
             "max": 1001,
             "min": 0,
             "type": "unsigned int",
@@ -1817,7 +1871,7 @@
         },
         "piksi.microdelta": {
             "bitsize": 32,
-            "flow_id": "undefined",
+            "flow_id": 20,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1825,7 +1879,7 @@
         },
         "piksi.pos": {
             "bitsize": 103,
-            "flow_id": 19,
+            "flow_id": 20,
             "max": 6921000.0,
             "min": 6771000.0,
             "type": "lin double vector",
@@ -1833,7 +1887,7 @@
         },
         "piksi.state": {
             "bitsize": 4,
-            "flow_id": 19,
+            "flow_id": 12,
             "max": 14,
             "min": 0,
             "type": "unsigned char",
@@ -1841,13 +1895,13 @@
         },
         "piksi.time": {
             "bitsize": 62,
-            "flow_id": 2,
+            "flow_id": 20,
             "type": "gps_time_t",
             "writable": false
         },
         "piksi.vel": {
             "bitsize": 76,
-            "flow_id": 19,
+            "flow_id": 20,
             "max": 7685.0,
             "min": 7570.0,
             "type": "lin double vector",
@@ -1855,7 +1909,7 @@
         },
         "piksi_fh.cdpgs_delay_max_wait": {
             "bitsize": 20,
-            "flow_id": 36,
+            "flow_id": 40,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -1863,37 +1917,37 @@
         },
         "piksi_fh.enabled": {
             "bitsize": 1,
-            "flow_id": 36,
+            "flow_id": 40,
             "type": "bool",
             "writable": true
         },
         "piksi_fh.no_cdpgs_max_wait": {
             "bitsize": 20,
-            "flow_id": 36,
+            "flow_id": 40,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "pointer.mtr_cmd": {
-            "bitsize": 149,
+            "bitsize": 25,
             "flow_id": "undefined",
-            "max": 0.056668501347303,
-            "min": -0.056668501347303,
+            "max": 0.098152726888657,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": true
         },
         "pointer.rwa_torque_cmd": {
-            "bitsize": 149,
+            "bitsize": 31,
             "flow_id": "undefined",
-            "max": 0.004187500569969,
-            "min": -0.004187500569969,
+            "max": 0.007252963725477,
+            "min": 0.0,
             "type": "lin float vector",
             "writable": true
         },
         "prop.ctrl_cycles_per_closing": {
             "bitsize": 6,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1901,7 +1955,7 @@
         },
         "prop.ctrl_cycles_per_cooling": {
             "bitsize": 7,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 100,
             "min": 0,
             "type": "unsigned int",
@@ -1909,7 +1963,7 @@
         },
         "prop.ctrl_cycles_per_filling": {
             "bitsize": 5,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 25,
             "min": 0,
             "type": "unsigned int",
@@ -1917,7 +1971,7 @@
         },
         "prop.cycles_until_firing": {
             "bitsize": 16,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 48000,
             "min": 0,
             "type": "unsigned int",
@@ -1925,7 +1979,7 @@
         },
         "prop.max_pressurizing_cycles": {
             "bitsize": 6,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1933,7 +1987,7 @@
         },
         "prop.max_venting_cycles": {
             "bitsize": 6,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1941,7 +1995,7 @@
         },
         "prop.num_prop_firings": {
             "bitsize": 32,
-            "flow_id": "undefined",
+            "flow_id": 15,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1949,71 +2003,71 @@
         },
         "prop.overpressured.base": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.override": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.persistence": {
-            "bitsize": 16,
-            "flow_id": 5,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "prop.overpressured.suppress": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.unsignal": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.base": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.override": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.persistence": {
-            "bitsize": 16,
-            "flow_id": 5,
-            "max": 65535,
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "prop.pressurize_fail.suppress": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.unsignal": {
             "bitsize": 1,
-            "flow_id": 5,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": true
         },
         "prop.sched_intertank1": {
             "bitsize": 11,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 2000,
             "min": 0,
             "type": "unsigned int",
@@ -2021,7 +2075,7 @@
         },
         "prop.sched_intertank2": {
             "bitsize": 11,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 2000,
             "min": 0,
             "type": "unsigned int",
@@ -2029,7 +2083,7 @@
         },
         "prop.sched_valve1": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2037,7 +2091,7 @@
         },
         "prop.sched_valve2": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2045,7 +2099,7 @@
         },
         "prop.sched_valve3": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2053,7 +2107,7 @@
         },
         "prop.sched_valve4": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 26,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2061,7 +2115,7 @@
         },
         "prop.state": {
             "bitsize": 4,
-            "flow_id": 5,
+            "flow_id": 12,
             "max": 9,
             "min": 0,
             "type": "unsigned int",
@@ -2069,7 +2123,7 @@
         },
         "prop.tank1.temp": {
             "bitsize": 8,
-            "flow_id": "undefined",
+            "flow_id": 15,
             "max": 155.0,
             "min": -60.0,
             "type": "float",
@@ -2077,7 +2131,7 @@
         },
         "prop.tank1.valve_choice": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 15,
             "max": 1,
             "min": 0,
             "type": "unsigned int",
@@ -2085,7 +2139,7 @@
         },
         "prop.tank1_temp_high.base": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
@@ -2096,9 +2150,9 @@
             "writable": true
         },
         "prop.tank1_temp_high.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2117,7 +2171,7 @@
         },
         "prop.tank2.pressure": {
             "bitsize": 8,
-            "flow_id": "undefined",
+            "flow_id": 15,
             "max": 150.0,
             "min": 0.0,
             "type": "float",
@@ -2125,7 +2179,7 @@
         },
         "prop.tank2.temp": {
             "bitsize": 8,
-            "flow_id": "undefined",
+            "flow_id": 15,
             "max": 155.0,
             "min": -60.0,
             "type": "float",
@@ -2133,7 +2187,7 @@
         },
         "prop.tank2_temp_high.base": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
@@ -2144,9 +2198,9 @@
             "writable": true
         },
         "prop.tank2_temp_high.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2165,7 +2219,7 @@
         },
         "prop.threshold_firing_pressure": {
             "bitsize": 6,
-            "flow_id": "undefined",
+            "flow_id": 41,
             "max": 50.0,
             "min": 10.0,
             "type": "float",
@@ -2173,7 +2227,7 @@
         },
         "qfh.state": {
             "bitsize": 3,
-            "flow_id": "undefined",
+            "flow_id": 12,
             "max": 5,
             "min": 0,
             "type": "unsigned char",
@@ -2181,7 +2235,7 @@
         },
         "radio.err": {
             "bitsize": 7,
-            "flow_id": 16,
+            "flow_id": 17,
             "max": 10,
             "min": -90,
             "type": "signed int",
@@ -2189,7 +2243,7 @@
         },
         "radio.last_comms_ccno": {
             "bitsize": 32,
-            "flow_id": "undefined",
+            "flow_id": 17,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2197,7 +2251,7 @@
         },
         "radio.max_transceive": {
             "bitsize": 20,
-            "flow_id": 34,
+            "flow_id": 39,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -2205,7 +2259,7 @@
         },
         "radio.max_wait": {
             "bitsize": 20,
-            "flow_id": 34,
+            "flow_id": 39,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -2213,10 +2267,94 @@
         },
         "radio.state": {
             "bitsize": 8,
-            "flow_id": "undefined",
+            "flow_id": 12,
             "max": 255,
             "min": 0,
             "type": "unsigned char",
+            "writable": false
+        },
+        "rel_orbit.pos": {
+            "bitsize": 103,
+            "flow_id": 4,
+            "max": 6921000.0,
+            "min": 6771000.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "rel_orbit.rel_pos": {
+            "bitsize": 73,
+            "flow_id": "undefined",
+            "max": 2000.0,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "rel_orbit.rel_pos_sigma": {
+            "bitsize": 43,
+            "flow_id": 4,
+            "max": 10.0,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "rel_orbit.rel_vel": {
+            "bitsize": 49,
+            "flow_id": "undefined",
+            "max": 11.0,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "rel_orbit.rel_vel_sigma": {
+            "bitsize": 43,
+            "flow_id": 4,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "rel_orbit.reset_cmd": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "rel_orbit.state": {
+            "bitsize": 2,
+            "flow_id": 2,
+            "max": 2,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": false
+        },
+        "rel_orbit.uplink.pos": {
+            "bitsize": 103,
+            "flow_id": "undefined",
+            "max": 6921000.0,
+            "min": 6771000.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "rel_orbit.uplink.time": {
+            "bitsize": 62,
+            "flow_id": "undefined",
+            "type": "gps_time_t",
+            "writable": true
+        },
+        "rel_orbit.uplink.vel": {
+            "bitsize": 76,
+            "flow_id": "undefined",
+            "max": 7685.0,
+            "min": 7570.0,
+            "type": "lin double vector",
+            "writable": true
+        },
+        "rel_orbit.vel": {
+            "bitsize": 76,
+            "flow_id": 4,
+            "max": 7685.0,
+            "min": 7570.0,
+            "type": "lin double vector",
             "writable": false
         },
         "sys.memory_use": {
@@ -2233,9 +2371,27 @@
             "type": "bool",
             "writable": true
         },
+        "time.gps": {
+            "bitsize": 62,
+            "flow_id": 2,
+            "type": "gps_time_t",
+            "writable": false
+        },
+        "time.reset_cmd": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "time.valid": {
+            "bitsize": 1,
+            "flow_id": 2,
+            "type": "bool",
+            "writable": false
+        },
         "timing.adcs_commander.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2243,7 +2399,7 @@
         },
         "timing.adcs_commander.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2251,7 +2407,7 @@
         },
         "timing.adcs_controller.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2259,23 +2415,7 @@
         },
         "timing.adcs_controller.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
-            "max": 4294967295,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": false
-        },
-        "timing.adcs_estimator.avg_wait": {
-            "bitsize": 18,
-            "flow_id": 31,
-            "max": 120000.0,
-            "min": 0.0,
-            "type": "float",
-            "writable": false
-        },
-        "timing.adcs_estimator.num_lates": {
-            "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2283,7 +2423,7 @@
         },
         "timing.adcs_monitor.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2291,7 +2431,7 @@
         },
         "timing.adcs_monitor.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2299,7 +2439,7 @@
         },
         "timing.attitude_controller.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2307,7 +2447,7 @@
         },
         "timing.attitude_controller.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2315,7 +2455,7 @@
         },
         "timing.clock_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2323,7 +2463,7 @@
         },
         "timing.clock_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2331,7 +2471,7 @@
         },
         "timing.dcdc_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2339,7 +2479,7 @@
         },
         "timing.dcdc_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2347,7 +2487,7 @@
         },
         "timing.debug.avg_wait": {
             "bitsize": 18,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2355,7 +2495,7 @@
         },
         "timing.debug.num_lates": {
             "bitsize": 32,
-            "flow_id": 31,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2363,7 +2503,7 @@
         },
         "timing.docking_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2371,7 +2511,7 @@
         },
         "timing.docking_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2379,7 +2519,7 @@
         },
         "timing.downlink_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2387,7 +2527,7 @@
         },
         "timing.downlink_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2395,7 +2535,7 @@
         },
         "timing.eeprom_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2403,7 +2543,23 @@
         },
         "timing.eeprom_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "timing.estimators.avg_wait": {
+            "bitsize": 18,
+            "flow_id": 28,
+            "max": 120000.0,
+            "min": 0.0,
+            "type": "float",
+            "writable": false
+        },
+        "timing.estimators.num_lates": {
+            "bitsize": 32,
+            "flow_id": 28,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2411,7 +2567,7 @@
         },
         "timing.gomspace_rd.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2419,7 +2575,7 @@
         },
         "timing.gomspace_rd.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2427,7 +2583,7 @@
         },
         "timing.mission_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2435,7 +2591,7 @@
         },
         "timing.mission_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2459,7 +2615,7 @@
         },
         "timing.piksi.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2467,7 +2623,7 @@
         },
         "timing.piksi.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2491,7 +2647,7 @@
         },
         "timing.quake.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2499,7 +2655,7 @@
         },
         "timing.quake.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2507,7 +2663,7 @@
         },
         "timing.uplink_ct.avg_wait": {
             "bitsize": 18,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
@@ -2515,7 +2671,7 @@
         },
         "timing.uplink_ct.num_lates": {
             "bitsize": 32,
-            "flow_id": 32,
+            "flow_id": 29,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -2523,7 +2679,7 @@
         },
         "trigger_dist.close_approach": {
             "bitsize": 13,
-            "flow_id": 26,
+            "flow_id": 32,
             "max": 5000.0,
             "min": 0.0,
             "type": "double",
@@ -2531,7 +2687,7 @@
         },
         "trigger_dist.docking": {
             "bitsize": 14,
-            "flow_id": 26,
+            "flow_id": 32,
             "max": 100.0,
             "min": 0.0,
             "type": "double",
@@ -2545,7 +2701,9 @@
                 "pan.state",
                 "pan.deployed",
                 "pan.sat_designation",
-                "pan.bootcount"
+                "pan.bootcount",
+                "pan.deployment.elapsed",
+                "pan.cycle_no"
             ],
             "id": 1,
             "priority": 0
@@ -2553,65 +2711,46 @@
         {
             "active": true,
             "fields": [
-                "orbit.baseline_pos",
+                "time.valid",
+                "time.gps",
+                "orbit.valid",
                 "orbit.pos",
                 "orbit.vel",
-                "piksi.time"
+                "attitude_estimator.valid",
+                "attitude_estimator.q_body_eci",
+                "attitude_estimator.L_body",
+                "rel_orbit.state"
             ],
             "id": 2,
             "priority": 1
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "attitude_estimator.q_body_eci",
-                "attitude_estimator.w_body",
-                "adcs_monitor.ssa_mode"
+                "orbit.pos_sigma",
+                "orbit.vel_sigma"
             ],
             "id": 3,
             "priority": 2
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "adcs_monitor.wheel1_fault.base",
-                "adcs_monitor.wheel1_fault.override",
-                "adcs_monitor.wheel1_fault.persistence",
-                "adcs_monitor.wheel1_fault.suppress",
-                "adcs_monitor.wheel1_fault.unsignal",
-                "adcs_monitor.wheel2_fault.base",
-                "adcs_monitor.wheel2_fault.override",
-                "adcs_monitor.wheel2_fault.persistence",
-                "adcs_monitor.wheel2_fault.suppress",
-                "adcs_monitor.wheel2_fault.unsignal",
-                "adcs_monitor.wheel3_fault.base",
-                "adcs_monitor.wheel3_fault.override",
-                "adcs_monitor.wheel3_fault.persistence",
-                "adcs_monitor.wheel3_fault.suppress",
-                "adcs_monitor.wheel3_fault.unsignal",
-                "adcs_monitor.wheel_pot_fault.base",
-                "adcs_monitor.wheel_pot_fault.override",
-                "adcs_monitor.wheel_pot_fault.persistence",
-                "adcs_monitor.wheel_pot_fault.suppress",
-                "adcs_monitor.wheel_pot_fault.unsignal"
+                "rel_orbit.pos",
+                "rel_orbit.vel",
+                "rel_orbit.rel_pos_sigma",
+                "rel_orbit.rel_vel_sigma"
             ],
             "id": 4,
             "priority": 3
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "prop.state",
-                "prop.overpressured.base",
-                "prop.overpressured.override",
-                "prop.overpressured.persistence",
-                "prop.overpressured.suppress",
-                "prop.overpressured.unsignal",
-                "prop.pressurize_fail.base",
-                "prop.pressurize_fail.override",
-                "prop.pressurize_fail.persistence",
-                "prop.pressurize_fail.suppress",
-                "prop.pressurize_fail.unsignal"
+                "attitude_estimator.w_bias_body",
+                "attitude_estimator.p_body_eci_sigma_f",
+                "attitude_estimator.w_bias_sigma_body",
+                "attitude_estimator.mag_flag"
             ],
             "id": 5,
             "priority": 4
@@ -2619,17 +2758,17 @@
         {
             "active": true,
             "fields": [
-                "gomspace.batt_threshold",
+                "adcs_monitor.functional_fault.base",
+                "adcs_monitor.wheel2_fault.base",
+                "adcs_monitor.wheel3_fault.base",
+                "adcs_monitor.wheel_pot_fault.base",
+                "prop.overpressured.base",
+                "prop.pressurize_fail.base",
+                "prop.tank2_temp_high.base",
+                "prop.tank1_temp_high.base",
                 "gomspace.low_batt.base",
-                "gomspace.low_batt.override",
-                "gomspace.low_batt.persistence",
-                "gomspace.low_batt.suppress",
-                "gomspace.low_batt.unsignal",
                 "gomspace.get_hk.base",
-                "gomspace.get_hk.override",
-                "gomspace.get_hk.persistence",
-                "gomspace.get_hk.suppress",
-                "gomspace.get_hk.unsignal"
+                "attitude_estimator.fault.base"
             ],
             "id": 6,
             "priority": 5
@@ -2637,27 +2776,20 @@
         {
             "active": true,
             "fields": [
-                "adcs_monitor.rwa_speed_rd",
-                "adcs_monitor.rwa_torque_rd",
-                "adcs_cmd.rwa_speed_cmd",
-                "adcs_cmd.rwa_torque_cmd",
-                "adcs_cmd.mtr_cmd"
+                "gomspace.vbatt",
+                "gomspace.cursun",
+                "gomspace.cursys",
+                "gomspace.temp.output1",
+                "gomspace.temp.output2",
+                "gomspace.temp.output3",
+                "gomspace.temp.output4"
             ],
             "id": 7,
             "priority": 6
         },
         {
-            "active": true,
-            "fields": [],
-            "id": 8,
-            "priority": 7
-        },
-        {
-            "active": true,
+            "active": false,
             "fields": [
-                "gomspace.vbatt",
-                "gomspace.cursun",
-                "gomspace.cursys",
                 "gomspace.vboost.output1",
                 "gomspace.vboost.output2",
                 "gomspace.vboost.output3",
@@ -2665,11 +2797,11 @@
                 "gomspace.curin.output2",
                 "gomspace.curin.output3"
             ],
-            "id": 9,
-            "priority": 8
+            "id": 8,
+            "priority": 7
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
                 "gomspace.curout.output1",
                 "gomspace.curout.output2",
@@ -2684,20 +2816,30 @@
                 "gomspace.output.output5",
                 "gomspace.output.output6"
             ],
+            "id": 9,
+            "priority": 8
+        },
+        {
+            "active": false,
+            "fields": [
+                "gomspace.counter_boot",
+                "gomspace.bootcause",
+                "gomspace.battmode",
+                "gomspace.pptmode"
+            ],
             "id": 10,
             "priority": 9
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "gomspace.counter_boot",
-                "gomspace.temp.output1",
-                "gomspace.temp.output2",
-                "gomspace.temp.output3",
-                "gomspace.temp.output4",
-                "gomspace.bootcause",
-                "gomspace.battmode",
-                "gomspace.pptmode"
+                "gomspace.power_cycle_output1_cmd",
+                "gomspace.power_cycle_output2_cmd",
+                "gomspace.power_cycle_output3_cmd",
+                "gomspace.power_cycle_output4_cmd",
+                "gomspace.power_cycle_output5_cmd",
+                "gomspace.power_cycle_output6_cmd",
+                "gomspace.piksi_off"
             ],
             "id": 11,
             "priority": 10
@@ -2705,41 +2847,14 @@
         {
             "active": true,
             "fields": [
-                "gomspace.power_cycle_output1_cmd",
-                "gomspace.power_cycle_output2_cmd",
-                "gomspace.power_cycle_output3_cmd",
-                "gomspace.power_cycle_output4_cmd",
-                "gomspace.power_cycle_output5_cmd",
-                "gomspace.power_cycle_output6_cmd"
+                "adcs.state",
+                "prop.state",
+                "radio.state",
+                "piksi.state",
+                "qfh.state"
             ],
             "id": 12,
             "priority": 11
-        },
-        {
-            "active": true,
-            "fields": [
-                "adcs.state",
-                "adcs_monitor.functional",
-                "adcs_monitor.functional_fault.base",
-                "adcs_monitor.functional_fault.override",
-                "adcs_monitor.functional_fault.persistence",
-                "adcs_monitor.functional_fault.suppress",
-                "adcs_monitor.functional_fault.unsignal",
-                "adcs_cmd.mtr_cmd"
-            ],
-            "id": 13,
-            "priority": 12
-        },
-        {
-            "active": true,
-            "fields": [
-                "attitude.pointer_vec1_current",
-                "attitude.pointer_vec1_desired",
-                "attitude.pointer_vec2_current",
-                "attitude.pointer_vec2_desired"
-            ],
-            "id": 14,
-            "priority": 13
         },
         {
             "active": true,
@@ -2763,13 +2878,42 @@
                 "adcs_monitor.havt_device16",
                 "adcs_monitor.havt_device17"
             ],
+            "id": 13,
+            "priority": 12
+        },
+        {
+            "active": true,
+            "fields": [
+                "adcs_monitor.rwa_speed_rd.x",
+                "adcs_monitor.rwa_speed_rd.y",
+                "adcs_monitor.rwa_speed_rd.z",
+                "adcs_monitor.rwa_torque_rd.x",
+                "adcs_monitor.rwa_torque_rd.y",
+                "adcs_monitor.rwa_torque_rd.z",
+                "adcs_monitor.ssa_mode"
+            ],
+            "id": 14,
+            "priority": 13
+        },
+        {
+            "active": false,
+            "fields": [
+                "prop.tank1.valve_choice",
+                "prop.tank2.pressure",
+                "prop.tank2.temp",
+                "prop.tank1.temp",
+                "prop.num_prop_firings"
+            ],
             "id": 15,
             "priority": 14
         },
         {
             "active": true,
             "fields": [
-                "radio.err"
+                "attitude.pointer_vec1_current",
+                "attitude.pointer_vec1_desired",
+                "attitude.pointer_vec2_current",
+                "attitude.pointer_vec2_desired"
             ],
             "id": 16,
             "priority": 15
@@ -2777,8 +2921,8 @@
         {
             "active": true,
             "fields": [
-                "docksys.docked",
-                "docksys.dock_config"
+                "radio.err",
+                "radio.last_comms_ccno"
             ],
             "id": 17,
             "priority": 16
@@ -2786,59 +2930,51 @@
         {
             "active": true,
             "fields": [
-                "adcs_monitor.gyr_vec_flag",
-                "adcs_monitor.mag1_vec_flag",
-                "adcs_monitor.mag2_vec_flag",
-                "adcs_monitor.speed_rd_flag",
-                "adcs_monitor.torque_rd_flag"
+                "adcs_monitor.mag1_vec.x",
+                "adcs_monitor.mag1_vec.y",
+                "adcs_monitor.mag1_vec.z",
+                "adcs_monitor.mag2_vec.x",
+                "adcs_monitor.mag2_vec.y",
+                "adcs_monitor.mag2_vec.z",
+                "adcs_monitor.gyr_vec.x",
+                "adcs_monitor.gyr_vec.y",
+                "adcs_monitor.gyr_vec.z",
+                "adcs_monitor.ssa_vec"
             ],
             "id": 18,
             "priority": 17
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "piksi.state",
-                "piksi.pos",
-                "piksi.vel",
-                "piksi.baseline_pos",
-                "piksi.fix_error_count"
+                "adcs_monitor.speed_rd_flag",
+                "adcs_monitor.torque_rd_flag",
+                "adcs_monitor.mag1_vec_flag",
+                "adcs_monitor.mag2_vec_flag",
+                "adcs_monitor.gyr_vec_flag",
+                "adcs_monitor.gyr_temp_flag"
             ],
             "id": 19,
             "priority": 18
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "dcdc.SpikeDock",
-                "dcdc.ADCSMotor"
+                "piksi.pos",
+                "piksi.vel",
+                "piksi.baseline_pos",
+                "piksi.fix_error_count",
+                "piksi.time",
+                "piksi.microdelta"
             ],
             "id": 20,
             "priority": 19
         },
         {
-            "active": true,
+            "active": false,
             "fields": [
-                "adcs_monitor.ssa_voltage0",
-                "adcs_monitor.ssa_voltage1",
-                "adcs_monitor.ssa_voltage2",
-                "adcs_monitor.ssa_voltage3",
-                "adcs_monitor.ssa_voltage4",
-                "adcs_monitor.ssa_voltage5",
-                "adcs_monitor.ssa_voltage6",
-                "adcs_monitor.ssa_voltage7",
-                "adcs_monitor.ssa_voltage8",
-                "adcs_monitor.ssa_voltage9",
-                "adcs_monitor.ssa_voltage10",
-                "adcs_monitor.ssa_voltage11",
-                "adcs_monitor.ssa_voltage12",
-                "adcs_monitor.ssa_voltage13",
-                "adcs_monitor.ssa_voltage14",
-                "adcs_monitor.ssa_voltage15",
-                "adcs_monitor.ssa_voltage16",
-                "adcs_monitor.ssa_voltage17",
-                "adcs_monitor.ssa_voltage18",
-                "adcs_monitor.ssa_voltage19"
+                "dcdc.SpikeDock",
+                "dcdc.ADCSMotor"
             ],
             "id": 21,
             "priority": 20
@@ -2846,50 +2982,6 @@
         {
             "active": false,
             "fields": [
-                "dcdc.ADCSMotor_cmd",
-                "dcdc.SpikeDock_cmd",
-                "dcdc.disable_cmd",
-                "dcdc.reset_cmd"
-            ],
-            "id": 22,
-            "priority": 21
-        },
-        {
-            "active": false,
-            "fields": [
-                "adcs_cmd.imu_gyr_filter",
-                "adcs_cmd.imu_gyr_temp_desired",
-                "adcs_cmd.imu_gyr_temp_filter",
-                "adcs_cmd.imu_gyr_temp_pwm",
-                "adcs_cmd.imu_mag_filter",
-                "adcs_cmd.mag1_mode",
-                "adcs_cmd.mag2_mode",
-                "adcs_cmd.mtr_limit",
-                "adcs_cmd.mtr_mode",
-                "adcs_cmd.rwa_mode",
-                "adcs_cmd.rwa_ramp_filter",
-                "adcs_cmd.rwa_speed_filter",
-                "adcs_cmd.ssa_voltage_filter"
-            ],
-            "id": 23,
-            "priority": 22
-        },
-        {
-            "active": false,
-            "fields": [
-                "adcs_monitor.gyr_temp",
-                "adcs_monitor.gyr_vec",
-                "adcs_monitor.mag1_vec",
-                "adcs_monitor.mag2_vec",
-                "adcs_monitor.ssa_vec",
-                "adcs_monitor.gyr_temp_flag"
-            ],
-            "id": 24,
-            "priority": 23
-        },
-        {
-            "active": false,
-            "fields": [
                 "adcs_monitor.ssa_voltage0",
                 "adcs_monitor.ssa_voltage1",
                 "adcs_monitor.ssa_voltage2",
@@ -2899,7 +2991,14 @@
                 "adcs_monitor.ssa_voltage6",
                 "adcs_monitor.ssa_voltage7",
                 "adcs_monitor.ssa_voltage8",
-                "adcs_monitor.ssa_voltage9",
+                "adcs_monitor.ssa_voltage9"
+            ],
+            "id": 22,
+            "priority": 21
+        },
+        {
+            "active": false,
+            "fields": [
                 "adcs_monitor.ssa_voltage10",
                 "adcs_monitor.ssa_voltage11",
                 "adcs_monitor.ssa_voltage12",
@@ -2911,17 +3010,38 @@
                 "adcs_monitor.ssa_voltage18",
                 "adcs_monitor.ssa_voltage19"
             ],
+            "id": 23,
+            "priority": 22
+        },
+        {
+            "active": true,
+            "fields": [
+                "docksys.docked"
+            ],
+            "id": 24,
+            "priority": 23
+        },
+        {
+            "active": true,
+            "fields": [
+                "orbit.control.valve1",
+                "orbit.control.valve2",
+                "orbit.control.valve3",
+                "orbit.control.valve4"
+            ],
             "id": 25,
             "priority": 24
         },
         {
             "active": false,
             "fields": [
-                "detumble_safety_factor",
-                "docking_timeout_limit",
-                "fault_handler.enabled",
-                "trigger_dist.close_approach",
-                "trigger_dist.docking"
+                "prop.cycles_until_firing",
+                "prop.sched_valve1",
+                "prop.sched_valve2",
+                "prop.sched_valve3",
+                "prop.sched_valve4",
+                "prop.sched_intertank1",
+                "prop.sched_intertank2"
             ],
             "id": 26,
             "priority": 25
@@ -2929,45 +3049,12 @@
         {
             "active": false,
             "fields": [
-                "downlink.shift_id1",
-                "downlink.shift_id2",
-                "downlink.toggle_id"
+                "adcs_cmd.rwa_speed_cmd",
+                "adcs_cmd.rwa_torque_cmd",
+                "adcs_cmd.mtr_cmd"
             ],
             "id": 27,
             "priority": 26
-        },
-        {
-            "active": false,
-            "fields": [
-                "gomspace.heater",
-                "gomspace.heater_cmd"
-            ],
-            "id": 28,
-            "priority": 27
-        },
-        {
-            "active": false,
-            "fields": [
-                "gomspace.wdt_i2c_time_left",
-                "gomspace.counter_wdt_i2c"
-            ],
-            "id": 29,
-            "priority": 28
-        },
-        {
-            "active": false,
-            "fields": [
-                "gomspace.gs_reboot_cmd",
-                "gomspace.gs_reset_cmd",
-                "gomspace.heater_cmd",
-                "gomspace.pv1_cmd",
-                "gomspace.pv2_cmd",
-                "gomspace.pv3_cmd",
-                "gomspace.pptmode_cmd",
-                "gomspace.counter_reset_cmd"
-            ],
-            "id": 30,
-            "priority": 29
         },
         {
             "active": false,
@@ -2976,8 +3063,8 @@
                 "timing.adcs_commander.num_lates",
                 "timing.adcs_controller.avg_wait",
                 "timing.adcs_controller.num_lates",
-                "timing.adcs_estimator.avg_wait",
-                "timing.adcs_estimator.num_lates",
+                "timing.estimators.avg_wait",
+                "timing.estimators.num_lates",
                 "timing.adcs_monitor.avg_wait",
                 "timing.adcs_monitor.num_lates",
                 "timing.attitude_controller.avg_wait",
@@ -2989,8 +3076,8 @@
                 "timing.debug.avg_wait",
                 "timing.debug.num_lates"
             ],
-            "id": 31,
-            "priority": 30
+            "id": 28,
+            "priority": 27
         },
         {
             "active": false,
@@ -3012,8 +3099,94 @@
                 "timing.uplink_ct.avg_wait",
                 "timing.uplink_ct.num_lates"
             ],
+            "id": 29,
+            "priority": 28
+        },
+        {
+            "active": false,
+            "fields": [
+                "dcdc.ADCSMotor_cmd",
+                "dcdc.SpikeDock_cmd",
+                "dcdc.disable_cmd",
+                "dcdc.reset_cmd"
+            ],
+            "id": 30,
+            "priority": 29
+        },
+        {
+            "active": false,
+            "fields": [
+                "adcs_cmd.rwa_mode",
+                "adcs_cmd.rwa_speed_filter",
+                "adcs_cmd.rwa_ramp_filter",
+                "adcs_cmd.mtr_mode",
+                "adcs_cmd.mtr_limit",
+                "adcs_cmd.ssa_voltage_filter",
+                "adcs_cmd.mag1_mode",
+                "adcs_cmd.mag2_mode",
+                "adcs_cmd.imu_mag_filter",
+                "adcs_cmd.imu_gyr_filter",
+                "adcs_cmd.imu_gyr_temp_filter",
+                "adcs_cmd.imu_gyr_temp_pwm",
+                "adcs_cmd.imu_gyr_temp_desired"
+            ],
+            "id": 31,
+            "priority": 30
+        },
+        {
+            "active": false,
+            "fields": [
+                "detumble_safety_factor",
+                "docking_timeout_limit",
+                "fault_handler.enabled",
+                "trigger_dist.close_approach",
+                "trigger_dist.docking"
+            ],
             "id": 32,
             "priority": 31
+        },
+        {
+            "active": false,
+            "fields": [
+                "downlink.shift_id1",
+                "downlink.shift_id2",
+                "downlink.toggle_id"
+            ],
+            "id": 33,
+            "priority": 32
+        },
+        {
+            "active": false,
+            "fields": [
+                "gomspace.heater",
+                "gomspace.heater_cmd"
+            ],
+            "id": 34,
+            "priority": 33
+        },
+        {
+            "active": false,
+            "fields": [
+                "gomspace.wdt_i2c_time_left",
+                "gomspace.counter_wdt_i2c"
+            ],
+            "id": 35,
+            "priority": 34
+        },
+        {
+            "active": false,
+            "fields": [
+                "gomspace.gs_reboot_cmd",
+                "gomspace.gs_reset_cmd",
+                "gomspace.heater_cmd",
+                "gomspace.pv1_cmd",
+                "gomspace.pv2_cmd",
+                "gomspace.pv3_cmd",
+                "gomspace.pptmode_cmd",
+                "gomspace.counter_reset_cmd"
+            ],
+            "id": 36,
+            "priority": 35
         },
         {
             "active": false,
@@ -3036,7 +3209,14 @@
                 "adcs_cmd.havt_disable15",
                 "adcs_cmd.havt_disable16",
                 "adcs_cmd.havt_disable17",
-                "adcs_cmd.havt_disable18",
+                "adcs_cmd.havt_disable18"
+            ],
+            "id": 37,
+            "priority": 36
+        },
+        {
+            "active": false,
+            "fields": [
                 "adcs_cmd.havt_reset0",
                 "adcs_cmd.havt_reset1",
                 "adcs_cmd.havt_reset2",
@@ -3057,8 +3237,8 @@
                 "adcs_cmd.havt_reset17",
                 "adcs_cmd.havt_reset18"
             ],
-            "id": 33,
-            "priority": 32
+            "id": 38,
+            "priority": 37
         },
         {
             "active": false,
@@ -3066,17 +3246,8 @@
                 "radio.max_transceive",
                 "radio.max_wait"
             ],
-            "id": 34,
-            "priority": 33
-        },
-        {
-            "active": false,
-            "fields": [
-                "docksys.is_turning",
-                "docksys.config_cmd"
-            ],
-            "id": 35,
-            "priority": 34
+            "id": 39,
+            "priority": 38
         },
         {
             "active": false,
@@ -3085,8 +3256,33 @@
                 "piksi_fh.cdpgs_delay_max_wait",
                 "piksi_fh.enabled"
             ],
-            "id": 36,
-            "priority": 35
+            "id": 40,
+            "priority": 39
+        },
+        {
+            "active": false,
+            "fields": [
+                "prop.max_venting_cycles",
+                "prop.ctrl_cycles_per_closing",
+                "prop.max_pressurizing_cycles",
+                "prop.threshold_firing_pressure",
+                "prop.ctrl_cycles_per_filling",
+                "prop.ctrl_cycles_per_cooling"
+            ],
+            "id": 41,
+            "priority": 40
+        },
+        {
+            "active": false,
+            "fields": [
+                "docksys.is_turning",
+                "docksys.config_cmd",
+                "docksys.step_angle",
+                "docksys.step_delay",
+                "docksys.dock_config"
+            ],
+            "id": 42,
+            "priority": 41
         }
     ]
 }

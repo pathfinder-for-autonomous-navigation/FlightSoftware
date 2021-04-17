@@ -6,10 +6,15 @@ const constexpr double OrbitController::valve_time_lin_reg_intercept;
 OrbitController::OrbitController(StateFieldRegistry &r) : 
     TimedControlTask<void>(r, "orbit_control_ct"),
     time_fp(FIND_READABLE_FIELD(double, orbit.time)),
+    time_fp(FIND_INTERNAL_FIELD(double, time.s)),
+    time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),  
+    orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
+    rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
     pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
-    baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_pos)),
-    baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_vel)),
+    baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.rel_pos)),
+    baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.rel_vel)),
+    attitude_estimator_valid_fp(FIND_READABLE_FIELD(bool, attitude_estimator.valid)),
     q_body_eci_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
@@ -35,6 +40,16 @@ void OrbitController::init() {
 }
 
 void OrbitController::execute() {
+
+    // If we don't have all the information we need, don't calculate a firing
+    if (!time_valid_fp->get() || !orbit_valid_fp->get() || !rel_orbit_valid_fp->get() ||
+            !attitude_estimator_valid_fp->get()) {
+        sched_valve1_f.set(0);
+        sched_valve2_f.set(0);
+        sched_valve3_f.set(0);
+        sched_valve4_f.set(0);
+        return;
+    }
 
     // Collect time, position, velocity
     double t = time_fp->get();
@@ -81,6 +96,7 @@ void OrbitController::execute() {
     }
 
     // Check if the satellite is around a firing point and the prop system is ready to fire
+    // and if the time and orbit data is valid
     if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
 
         // Collect the output of the PD controller and get the needed impulse

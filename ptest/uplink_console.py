@@ -45,13 +45,12 @@ class UplinkConsole(object):
 
         # Create a JSON file with all the fields and values
         telem_json={}
-        for field, val in zip(fields, vals):
-            value = self.get_val(val)
+        for field, value in zip(fields, vals):
             if value is not None:
                 telem_json[field]=value
             else:
                 logline = "Failed:   " + json.dumps(telem_json) + "\n"
-                logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
+                logline += f"Error:    Unable to add {field}: {value} to uplink JSON file"
                 self.logger.put(logline)
                 return False
         with open(json_filename, 'w') as telem_file:

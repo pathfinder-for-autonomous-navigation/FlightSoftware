@@ -161,7 +161,7 @@ class RadioSession(object):
         assert len(fields) == len(vals)
 
         for i in range(len(fields)):
-            self.statefield_dict[fields[i]] = str_to_val(vals[i])
+            self.statefield_dict[fields[i]] = str_to_val(vals[i]) if type(vals[i])==str else vals[i]
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.

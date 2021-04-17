@@ -1,6 +1,8 @@
 name: Flight Software HOOTL Tests
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
     paths-ignore:
@@ -50,31 +52,41 @@ jobs:
 
     - name: CI Checkout Case and Empty case
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t EmptySimCase -ni
-        !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptyCase -ni)
-        !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptySimCase -ni)
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t CICase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t EmptyCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t EmptySimCase -ni
+        !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptyCase -ni)
+        !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptySimCase -ni)
+
+    - name: Mission Rehearsal Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStandbyCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStandbyCase -ni
 
     - name: Hardware Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
-        python -m ptest runsim -c ptest/configs/ci_realtime.json -t GomspaceCheckoutCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t PropStateMachineCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DCDCCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t GomspaceCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t SpinMotorsCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t PiksiCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t PropStateMachineCase -ni
 
     - name: Fault Handling Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t QuakePowerCycling -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSWheelFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t AttitudeFaultHandlerCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t LowBattFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t PropFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t QuakePowerCycling -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t PiksiFaultHandler -ni
 
     # Add quake and piksi fault handler to the above once completed.
 
     - name: Mission Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHold -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToStandby -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DeploymentToInitHold -ni

@@ -2,40 +2,45 @@
 
 #include "adcs_state_t.enum"
 
+#include <adcs/constants.hpp>
+
 #include <gnc/constants.hpp>
 #include <gnc/environment.hpp>
 #include <gnc/utilities.hpp>
 
 #include <lin/core.hpp>
-#include <lin/generators/constants.hpp>
+#include <lin/generators.hpp>
 #include <lin/math.hpp>
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
-
-#include <adcs/constants.hpp>
 
 #include <iostream>
 
 AttitudeController::AttitudeController(StateFieldRegistry &registry) :
     TimedControlTask<void>(registry, "attitude_controller"),
     w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
+    attitude_estimator_b_valid_fp(FIND_INTERNAL_FIELD(bool, attitude_estimator.b_valid)),
     b_body_rd_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.b_body)),
+    attitude_estimator_valid_fp(FIND_READABLE_FIELD(bool, attitude_estimator.valid)),
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
-    w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
+    w_body_est_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.w_body)),
     adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
-    time_fp(FIND_READABLE_FIELD(double, orbit.time)),
+    time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),
+    time_fp(FIND_INTERNAL_FIELD(double, time.s)),
+    orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
-    pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_pos)),
+    rel_orbit_state_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
+    pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, rel_orbit.rel_pos)),
     unit_vector_sr(1-1e-4,1+1e-4,0),
     pointer_vec1_current_f("attitude.pointer_vec1_current", unit_vector_sr),
     pointer_vec2_current_f("attitude.pointer_vec2_current", unit_vector_sr),
     pointer_vec1_desired_f("attitude.pointer_vec1_desired", unit_vector_sr),
     pointer_vec2_desired_f("attitude.pointer_vec2_desired", unit_vector_sr),
-    t_body_cmd_f("pointer.rwa_torque_cmd", 
-        Serializer<lin::Vector3f>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
-    m_body_cmd_f("pointer.mtr_cmd", 
-        Serializer<lin::Vector3f>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
+    t_body_cmd_f("pointer.rwa_torque_cmd",
+        Serializer<lin::Vector3f>(0.0, 1.73205080757*adcs::rwa::max_torque, 8)),
+    m_body_cmd_f("pointer.mtr_cmd",
+        Serializer<lin::Vector3f>(0.0, 1.73205080757*adcs::mtr::max_moment, 6)),
     detumbler_state(),
     pointer_state()
     {
@@ -56,7 +61,7 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry) :
 }
 
 void AttitudeController::execute() {
-    adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
+    auto const state = static_cast<adcs_state_t>(adcs_state_fp->get());
     switch (state) {
         /*
          * While detumbling and in limited attitude control we want to drive our
@@ -112,6 +117,10 @@ void AttitudeController::default_pointing_objectives() {
 }
 
 void AttitudeController::calculate_detumble_controller() {
+    // If the magnetic field from the attitude estimator isn't valid we can't do
+    // anything
+    if (!attitude_estimator_b_valid_fp->get()) return;
+
     // Default all inputs to NaNs and set appropriate fields
     detumbler_data = gnc::DetumbleControllerData();
     detumbler_data.b_body = b_body_rd_fp->get();
@@ -123,7 +132,10 @@ void AttitudeController::calculate_detumble_controller() {
 }
 
 void AttitudeController::calculate_pointing_objectives() {
-    default_pointing_objectives();
+    // If we don't have a valid time estimate, orbit estimate, or attitude
+    // estimator we can't do anything
+    if (!time_valid_fp->get() || !attitude_estimator_valid_fp->get() ||
+            !orbit_valid_fp->get()) return;
 
     lin::Vector3f dr_body = lin::nans<lin::Vector3f>();
     lin::Matrix3x3f DCM_hill_body = lin::nans<lin::Matrix3x3f>();
@@ -132,37 +144,26 @@ void AttitudeController::calculate_pointing_objectives() {
         lin::Vector3f v = vel_ecef_fp->get(); // v = v_ecef
         lin::Vector4f q_body_eci_est = q_body_eci_est_fp->get();
 
-        // Position, velocity, and attitude estimate, must be finite
-        if (lin::any(!(lin::isfinite(r) && lin::isfinite(v))))
-            return;
-        if (lin::any(!(lin::isfinite(q_body_eci_est))))
-            return;
         // Current time since the PAN epoch in seconds
-        double time_s = static_cast<double>(time_fp->get());
-        
-        // time must be finite
-        if(std::isnan(time_s))
-            return;
+        auto const time_s = static_cast<double>(time_fp->get());
 
         lin::Vector4f q_body_ecef;
-        gnc::env::earth_attitude(time_s, q_body_ecef);                    // q_body_ecef = q_ecef_eci
-        gnc::utl::quat_conj(q_body_ecef);                                 // q_body_ecef = q_eci_ecef
+        gnc::env::earth_attitude(time_s, q_body_ecef);          // q_body_ecef = q_ecef_eci
+        gnc::utl::quat_conj(q_body_ecef);                       // q_body_ecef = q_eci_ecef
         gnc::utl::quat_cross_mult(q_body_eci_est, q_body_ecef); // q_body_ecef = q_body_ecef
 
         lin::Vector3f w_earth; // w_earth
-        gnc::env::earth_angular_rate(time_s, w_earth);  // rate of ecef frame in eci
+        gnc::env::earth_angular_rate(time_s, w_earth); // rate of ecef frame in eci
 
-        v = v + lin::cross(w_earth, r);                // v = v_ecef_0, instanteous intertial
+        v = v + lin::cross(w_earth, r); // v = v_ecef_0, instantaneous inertial
 
         gnc::utl::rotate_frame(q_body_ecef, r); // r = r_body_0
         gnc::utl::rotate_frame(q_body_ecef, v); // v = v_body_0
         gnc::utl::dcm(DCM_hill_body, r, v);     // Calculate our DCM
 
-        lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
-
         // Ensure we have a valid relative position
-        if (lin::all(lin::isfinite(dr))) {
-            dr_body = dr;                            // dr_body = dr_ecef
+        if (rel_orbit_state_fp->get()) {
+            dr_body = pos_baseline_ecef_fp->get();        // dr_body = dr_ecef
             gnc::utl::rotate_frame(q_body_ecef, dr_body); // dr_body = dr_body
         }
     }
@@ -178,8 +179,8 @@ void AttitudeController::calculate_pointing_objectives() {
             // Ensure we have a DCM and time
             if (lin::any(!lin::isfinite(DCM_hill_body)))
                 return;
-            pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
-            pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
+            pointer_vec1_current_f.set({1.0f, 0.0f,  0.0f});                        // Antenna face
+            pointer_vec2_current_f.set({0.0f, 0.0f, -1.0f});                        // Docking face
             pointer_vec1_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 1))); // v_hat_body
             pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
             break;
@@ -190,9 +191,9 @@ void AttitudeController::calculate_pointing_objectives() {
         case adcs_state_t::point_docking: {
             if (lin::any(!lin::isfinite(DCM_hill_body)) || lin::any(!lin::isfinite(dr_body)))
                 return;
-            pointer_vec1_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
-            pointer_vec2_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
-            pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));   // dr_hat
+            pointer_vec1_current_f.set({0.0f, 0.0f, -1.0f});                        // Docking face
+            pointer_vec2_current_f.set({1.0f, 0.0f,  0.0f});                        // Antenna face
+            pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));               // dr_hat
             pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
             break;
         }
@@ -204,6 +205,11 @@ void AttitudeController::calculate_pointing_objectives() {
 }
 
 void AttitudeController::calculate_pointing_controller() {
+    // If we don't have a valid orbit estimate or magnetic field reading we
+    // can't do anything
+    if (!attitude_estimator_valid_fp->get() ||
+            !attitude_estimator_b_valid_fp->get()) return;
+
     // Default all inputs to NaNs and set appropriate fields
     pointer_data = gnc::PointingControllerData();
     pointer_data.primary_desired   = pointer_vec1_desired_f.get();
