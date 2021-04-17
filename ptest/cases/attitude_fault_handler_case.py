@@ -1,20 +1,12 @@
-from .base import SingleSatCase, PSimCase
+from . import SingleSatStandbyCase
 from .utils import TestCaseFailure
 
 import lin
 
 
-class AttitudeFaultHandlerCase(SingleSatCase, PSimCase):
+class AttitudeFaultHandlerCase(SingleSatStandbyCase):
     """Test the basic functionality of the attitude estimator fault handler.
     """
-    def __init__(self, *args, **kwargs):
-        super(AttitudeFaultHandlerCase, self).__init__(*args, **kwargs)
-
-        self.psim_configs += ["truth/standby"]
-        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.071,-0.01])
-        self.initial_state = "standby"
-        self.skip_deployment_wait = True
-
     def post_boot(self):
         """We need to enable the attitude estimator fault again and disable the
         gyroscope to simulate a sensor failure.
