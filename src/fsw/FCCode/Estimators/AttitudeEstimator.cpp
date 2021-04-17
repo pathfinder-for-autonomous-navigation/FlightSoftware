@@ -11,6 +11,11 @@
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
 
+/* If the attitude estimator isn't valid for this many cycles while we're trying
+ * to hold attitude the fault will be tripped.
+ */
+TRACKED_CONSTANT_SC(size_t, ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE, 10);
+
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry) 
     : ControlTask<void>(registry),
       time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),
@@ -36,7 +41,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
-      attitude_estimator_fault("attitude_estimator.fault", 1)
+      attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_internal_field(attitude_estimator_b_valid_f);
     add_internal_field(attitude_estimator_b_body_f);

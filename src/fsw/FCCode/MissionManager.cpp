@@ -34,7 +34,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       wheel3_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel3_fault.base)),
       wheel_pot_fault_fp(FIND_FAULT(adcs_monitor.wheel_pot_fault.base)),
       pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
-      attitude_estimator_fault_fp(FIND_FAULT(attitude_estimator.fault)),
       mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),

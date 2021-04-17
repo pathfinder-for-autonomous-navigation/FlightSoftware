@@ -154,9 +154,6 @@ protected:
     Fault *const wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
     Fault *const pressurize_fail_fp;
-    // Flag for if the attitude estimator becomes invalid while controlling
-    // attitude.
-    Fault *const attitude_estimator_fault_fp;
 
     /**
      * @brief DCDC control flag for Spike and Hold and docking system.
