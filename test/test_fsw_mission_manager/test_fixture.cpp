@@ -43,7 +43,6 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     adcs_dcdc_fp = registry.create_writable_field<bool>("dcdc.ADCSMotor_cmd");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
     piksi_off_fp = registry.create_writable_field<bool>("gomspace.piksi_off");
     piksi_powercycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
 

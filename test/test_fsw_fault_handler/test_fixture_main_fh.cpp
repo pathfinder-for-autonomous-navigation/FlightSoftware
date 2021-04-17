@@ -11,7 +11,6 @@ TestFixtureMainFHBase::TestFixtureMainFHBase()
     radio_last_comms_ccno_fp = registry.create_readable_field<unsigned int>("radio.last_comms_ccno");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    piksi_lastfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
     enter_close_approach_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");
 
     quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
