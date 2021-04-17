@@ -1,28 +1,26 @@
 from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
+import lin
 
 class PiksiFaultHandler(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(PiksiFaultHandler, self).__init__(*args, **kwargs)
         self.initial_state = "standby"
         self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.071,-0.01])
+        self.debug_to_console = True
+
+        self.initial_state = "standby"
+        self.skip_deployment_wait = True
 
     def post_boot(self):
         self.mission_state = "leader"
-        self.cycle()
-
-    @property
-    def debug_to_console(self):
-        '''
-        Default false, set to true if you want debug output from flight computer piped to console
-        '''
-        return True
-
-    def setup_post_bootsetup(self):
+        self.mock_sensor_validity = False
         self.ws("fault_handler.enabled", True)
         self.no_cdpgs_max_wait = self.rs("piksi_fh.no_cdpgs_max_wait")
         self.cdpgs_delay_max_wait = self.rs("piksi_fh.cdpgs_delay_max_wait")
+        self.cycle()
 
     def collect_diagnostic_data(self):
         self.rs("piksi.state")
@@ -62,6 +60,7 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
                 self.set_fixed_rtk()
 
     def run(self):
+        ######################## TEST 1 ########################
         self.collect_diagnostic_data()
         self.set_fixed_rtk()
         self.check_is_leader()
@@ -69,7 +68,13 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         # Test 1: Set piksi mode to 'dead'
         self.logger.put("Running first test: Piksi is Dead")
         self.ws("piksi.state",Enums.piksi_modes["dead"])
+
+        print("mission state before: " + str(self.mission_state))
+        print("piksi state before: " + str(self.rs("piksi.state")))
         self.cycle()
+        print("mission state after: " + str(self.mission_state))
+        print("piksi state after: " + str(self.rs("piksi.state")))
+        
 
         # Mission state should be set to safehold
         if self.mission_state != "safehold":
