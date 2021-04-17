@@ -1,11 +1,13 @@
 import pylab as plt
 import json
+import matplotlib
 import matplotlib.dates as mdates
 import mplcursors
 from .gpstime import GPSTime
 import json
 from argparse import ArgumentParser
 import cmd, sys
+# matplotlib.use('TKAgg')
 
 class StateFieldPlotter(object):
     """

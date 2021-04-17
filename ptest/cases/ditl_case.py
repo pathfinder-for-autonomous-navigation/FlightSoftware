@@ -26,18 +26,18 @@ Warning: When running this case the operator must frequently generate plots of
 POC: Kyle Krol
 """
 
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class DitlCase(SingleSatOnlyCase):
+class DitlCase(SingleSatCase):
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("dcdc.ADCSMotor_cmd", True); self.cycle()
         self.ws("adcs.state", Enums.adcs_states["manual"]); self.cycle()
         self.ws("adcs_cmd.rwa_speed_cmd", [15.0,10.0,10.0]); self.cycle()
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"]); self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         # Run until the battery voltage drops below 7100 mV
         while self.rs("gomspace.vbatt") > 7100:
             self.rs("gomspace.cursys")

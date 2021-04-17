@@ -1,33 +1,25 @@
 {
-    "seed": 2,
-    "devices": [
+    "seed" : 2,
+    "devices" : [
         {
             "name": "FlightController",
             "run_mode": "native",
             "pio_target": "fsw_native_leader_realtime",
-            "http_port": 8000,
+            "http_port" : 8000,
             "imei": "",
             "scrape_uplinks": false,
             "enable_auto_dbtelem": false
         }
     ],
-    "radios": [
+    "radios" : [
         {
             "connected_device": "FlightController",
             "imei": "",
             "connect": false,
-            "send_queue_duration": 0,
-            "send_lockout_duration": 0,
+            "send_queue_duration" : 20,
+            "send_lockout_duration" : 0,
             "check_uplink_queue_enable": false,
             "http_port": 8001
         }
-    ],
-    "tlm": {
-        "email_username": "",
-        "email_password": "",
-        "webservice": {
-            "server": "",
-            "port": 0
-        }
-    }
+    ]
 }

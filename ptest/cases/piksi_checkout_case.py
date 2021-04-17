@@ -1,18 +1,19 @@
 # PiksiCheckoutCase. Checks the functionality of the Piksi
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, mag_of, sum_of_differentials, TestCaseFailure
 import math
     
-class PiksiCheckoutCase(SingleSatOnlyCase):
-    @property
-    def debug_to_console(self):
-        return True 
-        
+class PiksiCheckoutCase(SingleSatCase):
+    def __init__(self, *args, **kwargs):
+        super(PiksiCheckoutCase, self).__init__(*args, **kwargs)
+
+        self.debug_to_console = True
+     
     def print_piksi_state(self):
         st = self.rs("piksi.state")
         self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.print_header("Begin Piksi Checkout Case")
 
         self.n = 100
@@ -23,6 +24,11 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.modes_dict = {x:0 for x in Enums.piksi_modes.arr}
 
         self.most_common_mode = Enums.piksi_modes["no_fix"]
+
+        self.mission_state = "manual"
+
+        # Just in case this is ever run in a HITL unit
+        self.flight_controller.write_state("gomspace.piksi_off", False)
 
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
@@ -77,7 +83,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.check_vectors("baseline", self.baselines, 0, 105*1000) # simulator max distance is 100 meters
         self.print_header("PIKSI RTK")    
 
-    def run_case_singlesat(self):
+    def run(self):
 
         # Take 10 readings just for observation
         self.print_header("10 Readings for observation: ")
