@@ -14,7 +14,7 @@
 /* If the attitude estimator isn't valid for this many cycles while we're trying
  * to hold attitude the fault will be tripped.
  */
-TRACKED_CONSTANT_SC(size_t, ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE, 10);
+TRACKED_CONSTANT_SC(size_t, ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE, 150);
 
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry) 
     : ControlTask<void>(registry),
