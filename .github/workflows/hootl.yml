@@ -62,10 +62,10 @@ jobs:
       run: |
         python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
         python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStandbyCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStandbyCase -ni
 
     - name: Hardware Checkout Cases
       run: |
