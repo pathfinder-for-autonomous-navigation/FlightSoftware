@@ -22,7 +22,7 @@ expressWs(app);
 
 //sets default config file to ci.json
 if(myArgs[0] == undefined){
-  myArgs[0] = "ptest/configs/ci.json"
+  myArgs[0] = "ptest/configs/hootl.json"
 }
 
 var spacecraft = new Telemetry(myArgs[0]);
