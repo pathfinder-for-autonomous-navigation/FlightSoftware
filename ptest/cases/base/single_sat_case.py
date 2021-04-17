@@ -69,7 +69,6 @@ class SingleSatCase(PTestCase):
         state = self.flight_controller.smart_read("pan.state")
         self.logger.put("[TESTCASE] Boot utility waiting to reach initial state.")
         while state != initial_state:
-            
             if cycles > self.initial_state_timeout:
                 raise TestCaseFailure(f"Failed to reach desired state of {initial_state}, was {state}.")
 

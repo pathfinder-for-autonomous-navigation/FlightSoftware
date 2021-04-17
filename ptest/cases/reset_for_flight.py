@@ -30,7 +30,7 @@ class ResetforFlight(SingleSatCase):
 
         #ensure autocycling is happening 
         #make sure spacecraft is shut down right after this test case so mission doesnt start executing
-        self.ws( "cycle.auto", True )
+        self.ws( "cycle.auto", False )
         self.cycle()
         self.print_rs("cycle.auto")
 
