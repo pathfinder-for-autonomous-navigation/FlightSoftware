@@ -1075,7 +1075,7 @@
         },
         "attitude_estimator.fault.base": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 6,
             "type": "bool",
             "writable": true
         },
@@ -1086,9 +1086,9 @@
             "writable": true
         },
         "attitude_estimator.fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2767,7 +2767,8 @@
                 "prop.tank2_temp_high.base",
                 "prop.tank1_temp_high.base",
                 "gomspace.low_batt.base",
-                "gomspace.get_hk.base"
+                "gomspace.get_hk.base",
+                "attitude_estimator.fault.base"
             ],
             "id": 6,
             "priority": 5
