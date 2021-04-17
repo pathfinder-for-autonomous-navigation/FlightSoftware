@@ -1,6 +1,8 @@
 name: Flight Software HOOTL Tests
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
     paths-ignore:
