@@ -19,6 +19,7 @@ public:
     std::unique_ptr<QuakeFaultHandler> qfh;
 
     WritableStateField<unsigned char> *qfh_state;
+    WritableStateField<bool>* fault_handler_enabled_fp;
 
     void disable_radio()
     {
@@ -45,6 +46,7 @@ public:
 
         qfh_state = registry.find_writable_field_t<unsigned char>("qfh.state");
         set(initial_state);
+        fault_handler_enabled_fp = registry.find_writable_field_t<bool>("qfh.enabled");
     }
 
     void set(qfh_state_t state) { qfh->cur_state.set(static_cast<unsigned char>(state)); }
@@ -119,7 +121,9 @@ void test_qfh_initialization()
 {
     TestFixtureQFH tf{qfh_state_t::unfaulted};
     TEST_ASSERT_NOT_NULL(tf.qfh_state);
+    TEST_ASSERT_NOT_NULL(tf.fault_handler_enabled_fp);
     TEST_ASSERT_EQUAL(static_cast<unsigned char>(qfh_state_t::unfaulted), tf.qfh_state->get());
+    TEST_ASSERT_EQUAL(true, tf.fault_handler_enabled_fp->get());
 }
 
 void test_qfh_transition()
@@ -279,6 +283,40 @@ void test_qfh_undefined_state()
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
 }
 
+/**
+ * Test that the fault handler will not return any fault responses while
+ * the enable flag is turned off, even if a fault (a day of no comms in this 
+ * case) is triggered.
+ */
+void test_qfh_disable() {
+    // If the qfh is disabled, it doesn't matter how
+    // long we've been without comms. There should be no
+    // transition to a faulted state.
+    {
+        // Set initial conditions
+        TestFixtureQFH tf{qfh_state_t::unfaulted};
+        cc_count = one_day_ccno;
+        tf.set_cur_state_entry_ccno(one_day_ccno);
+
+        // Disable radio within the "24 hour" period of this state.
+        // Verify that the state machine goes back to "unfaulted".
+        // Disable the fault handler
+        tf.fault_handler_enabled_fp->set(false);
+        cc_count = 2 * one_day_ccno - 1;
+        tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
+    }
+
+    // If the qfh is enabled, ensure that there's a transition
+    // to the forced standby state after 24 hours.
+    {
+        TestFixtureQFH tf{qfh_state_t::unfaulted};
+        tf.fault_handler_enabled_fp->set(true);
+        cc_count = one_day_ccno - 1;
+        tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
+    }
+}
+
 void test_quake_fault_handler()
 {
     RUN_TEST(test_qfh_initialization);
@@ -289,4 +327,5 @@ void test_quake_fault_handler()
     RUN_TEST(test_qfh_powercycle_3);
     RUN_TEST(test_qfh_safehold);
     RUN_TEST(test_qfh_undefined_state);
+    RUN_TEST(test_qfh_disable);
 }

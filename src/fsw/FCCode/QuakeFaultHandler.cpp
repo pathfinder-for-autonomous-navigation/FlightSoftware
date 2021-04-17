@@ -18,7 +18,6 @@ QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry &r) : FaultHandlerMachin
 
     cur_state.set(static_cast<unsigned char>(qfh_state_t::unfaulted));
     add_writable_field(cur_state);
-
     add_writable_field(fault_handler_enabled_f);
     // Default enable to true
     fault_handler_enabled_f.set(true);
@@ -26,8 +25,7 @@ QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry &r) : FaultHandlerMachin
 
 fault_response_t QuakeFaultHandler::execute()
 {
-    if (!fault_handler_enabled_f.get())
-        return fault_response_t::none;
+    if (!fault_handler_enabled_f.get()) return fault_response_t::none;
 
     qfh_state_t state = static_cast<qfh_state_t>(cur_state.get());
 
