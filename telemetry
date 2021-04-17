@@ -1513,6 +1513,12 @@
             "type": "bool",
             "writable": false
         },
+        "gomspace.piksi_off": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "gomspace.power_cycle_output1_cmd": {
             "bitsize": 1,
             "flow_id": 13,

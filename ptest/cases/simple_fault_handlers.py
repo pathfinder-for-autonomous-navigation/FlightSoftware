@@ -1,16 +1,15 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
+import lin
 
-class ADCSWheelFaultHandler(SingleSatOnlyCase):
-    @property
-    def initial_state(self):
-        return "standby"
+class ADCSWheelFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(ADCSWheelFaultHandler, self).__init__(*args, **kwargs)
+        self.initial_state = "standby"
+        self.psim_configs += ['truth/standby']
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
-    @property
-    def fast_boot(self):
-        return True
-
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
     def suppress_adcs_faults(self):
@@ -34,7 +33,7 @@ class ADCSWheelFaultHandler(SingleSatOnlyCase):
         self.cycle()
         self.assert_safehold()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.fail_wheel(1)
         self.fail_wheel(2)
         self.fail_wheel(3)
@@ -48,23 +47,17 @@ class ADCSWheelFaultHandler(SingleSatOnlyCase):
 
         self.finish()
 
-class LowBattFaultHandler(SingleSatOnlyCase):
-    @property
-    def sim_duration(self):
-        return 0
+class LowBattFaultHandler(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(LowBattFaultHandler, self).__init__(*args, **kwargs)
+        self.psim_configs += ["truth/standby"]
+        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
+        self.initial_state = "standby"
 
-    @property
-    def initial_state(self):
-        return "standby"
-
-    @property
-    def fast_boot(self):
-        return True
-
-    def setup_post_bootsetup(self):
+    def post_boot(self):
         self.ws("fault_handler.enabled", True)
 
-    def run_case_singlesat(self):
+    def run(self):
         self.logger.put("Deliberately reducing the Gomspace battery voltage to below the safehold minimum.")
         self.ws("gomspace.low_batt.suppress", False)
 

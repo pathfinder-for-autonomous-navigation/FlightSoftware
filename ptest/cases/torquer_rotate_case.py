@@ -1,11 +1,10 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
-from .utils import Enums
+from .base import SingleSatCase
+from .utils import Enums, TestCaseFailure
 import math
 import time
 
-class MTorquerCase(SingleSatOnlyCase):
+class MTorquerCase(SingleSatCase):
 
-    
     def avg_list(self, inputList):
         """
         averages list measurements of magnetometers
@@ -119,8 +118,11 @@ class MTorquerCase(SingleSatOnlyCase):
         #Test for max value: from src/adcs/constants.hpp (truncated)
         self.torque_test( 0.056668)
 
+    def post_boot(self):
+        self.mission_state = "manual"
+        self.cycle()
 
-    def run_case_singlesat(self):
+    def run(self):
         self.print_header( "Begin ADCS Magnetorquers Case" )
         self.ws( "cycle.auto", False )
 

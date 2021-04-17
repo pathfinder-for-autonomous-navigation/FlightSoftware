@@ -6,21 +6,27 @@ deployed: false,
 sat_designation: 0,
 bootcount: 0},
 
-orbit: {
-baseline_pos: 0.0,
-pos: 0.0},
+time: {
+valid: false,
+gps: ''},
 
-piksi: {
-time: '',
-state: 0,
+orbit: {
+valid: false,
 pos: 0.0,
 vel: 0.0,
-baseline_pos: 0.0,
-fix_error_count: 0},
+pos_sigma: 0.0,
+vel_sigma: 0.0},
+
+rel_orbit: {
+state: 0,
+rel_pos: 0.0,
+rel_vel: 0.0,
+rel_pos_sigma: 0.0,
+rel_vel_sigma: 0.0},
 
 attitude_estimator: {
 q_body_eci: '',
-w_body: 0.0},
+L_body: 0.0},
 
 adcs_monitor: {
 ssa_mode: 0,
@@ -278,6 +284,13 @@ dock_config: false,
 is_turning: false,
 config_cmd: false},
 
+piksi: {
+state: 0,
+pos: 0.0,
+vel: 0.0,
+baseline_pos: 0.0,
+fix_error_count: 0},
+
 dcdc: {
 SpikeDock: false,
 ADCSMotor: false,
@@ -309,7 +322,7 @@ adcs_controller: {
 avg_wait: 0.0,
 num_lates: 0},
 
-adcs_estimator: {
+estimators: {
 avg_wait: 0.0,
 num_lates: 0},
 
