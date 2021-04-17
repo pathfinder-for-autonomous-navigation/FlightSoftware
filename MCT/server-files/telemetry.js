@@ -33,6 +33,7 @@ function Telemetry(configuration) {
     this.singleSat = true
   }
   else if (config_json.devices.length > 1) {
+    this.singleSat = false
     let deviceOneFilled = false
     let deviceTwoFilled = false
     if(config_json.devices[0].name.indexOf("Leader") != -1){
