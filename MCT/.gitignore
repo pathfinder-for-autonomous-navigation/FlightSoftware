@@ -6,3 +6,5 @@ node_modules
 
 # subsystem files
 public/server-files/state-variables.js
+public/satellites/*
+!public/satellites/.empty
