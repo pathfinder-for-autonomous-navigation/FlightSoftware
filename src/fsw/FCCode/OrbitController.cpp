@@ -32,7 +32,8 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
     sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
-    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.025,10))
+    J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.025,10)),
+    alpha_f("orbit.control.alpha", Serializer<double>(0,1,10))
 
 {
     add_writable_field(sched_valve1_f);
@@ -40,11 +41,13 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     add_writable_field(sched_valve3_f);
     add_writable_field(sched_valve4_f);
     add_writable_field(J_ecef_f);
+    add_writable_field(alpha_f);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
     sched_valve4_f.set(0);
     J_ecef_f.set(lin::zeros<lin::Vector3d>());
+    alpha_f.set(0.4);
 }
 
 void OrbitController::init() {
@@ -160,7 +163,7 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
         return min_time;
     };
 
-    return (rel_orbit_state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) ? 
+    return (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) ? 
             next_node(firing_nodes_near) : next_node(firing_nodes_far);
 }
 
@@ -170,12 +173,27 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
     // Collects Relative Orbit Estimator state
     unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
 
+    // Applies Exponential Smoothing
+    double alpha = alpha_f.get();
+
+    if (!lin::all(lin::isfinite(dr_smoothed))) {
+        dr_smoothed = dr;
+    } else {
+        dr_smoothed = alpha * dr + (1.0 - alpha) * dr_smoothed;
+    }
+
+    if (!lin::all(lin::isfinite(dv_smoothed))) {
+        dv_smoothed = dv;
+    } else {
+        dv_smoothed = alpha * dv + (1.0 - alpha) * dv_smoothed;
+    }
+
     // Assemble the input Orbit Controller data struct
     data.t = t;
     data.r_ecef = r;
     data.v_ecef = v;
-    data.dr_ecef = dr;
-    data.dv_ecef = dv;
+    data.dr_ecef = dr_smoothed;
+    data.dv_ecef = dv_smoothed;
 
     // Sets Orbit Controller gains depending on whether satellites are in near or far-field 
     data.p = gnc::constant::K_p;
