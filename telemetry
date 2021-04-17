@@ -392,9 +392,9 @@
             "writable": true
         },
         "adcs_monitor.functional_fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -918,9 +918,9 @@
             "writable": true
         },
         "adcs_monitor.wheel1_fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -950,9 +950,9 @@
             "writable": true
         },
         "adcs_monitor.wheel2_fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -982,9 +982,9 @@
             "writable": true
         },
         "adcs_monitor.wheel3_fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1014,9 +1014,9 @@
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1402,9 +1402,9 @@
             "writable": true
         },
         "gomspace.get_hk.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1458,9 +1458,9 @@
             "writable": true
         },
         "gomspace.low_batt.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1982,9 +1982,9 @@
             "writable": true
         },
         "prop.overpressured.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2014,9 +2014,9 @@
             "writable": true
         },
         "prop.pressurize_fail.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2118,9 +2118,9 @@
             "writable": true
         },
         "prop.tank1_temp_high.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2166,9 +2166,9 @@
             "writable": true
         },
         "prop.tank2_temp_high.persistence": {
-            "bitsize": 16,
+            "bitsize": 20,
             "flow_id": "undefined",
-            "max": 65535,
+            "max": 1048575,
             "min": 0,
             "type": "unsigned int",
             "writable": true
