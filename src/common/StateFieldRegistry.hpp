@@ -22,8 +22,6 @@ class StateFieldRegistry {
     std::vector<Event*> events;
     std::vector<Fault*> faults;
 
-    StateFieldRegistry();
-
     /**
      * @brief Find a field of a given name within the state registry and return a pointer to it.
      *

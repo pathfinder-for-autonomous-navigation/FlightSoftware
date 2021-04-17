@@ -34,8 +34,6 @@ static T *find(std::vector<T *> const &ts, std::string const &name) {
     return (it != ts.cend() && (*it)->name() == name) ? *it : nullptr;
 }
 
-StateFieldRegistry::StateFieldRegistry() {}
-
 InternalStateFieldBase*
 StateFieldRegistry::find_internal_field(const std::string &name) const {
     return find(internal_fields, name);
@@ -73,8 +71,7 @@ bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
 bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
     if (find_readable_field(field->name())) return false;
     if (field->eeprom_save_period() > 0) {
-        if (find_eeprom_saved_field(field->name())) return false;
-        else eeprom_saved_fields.push_back(field);
+        if (!add(eeprom_saved_fields, field)) return false;
     }
     return add(readable_fields, field);
 }
