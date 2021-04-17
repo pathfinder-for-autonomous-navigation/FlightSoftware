@@ -20,6 +20,7 @@ from .mission import (
 
 from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
+from .ditl import Ditl
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
