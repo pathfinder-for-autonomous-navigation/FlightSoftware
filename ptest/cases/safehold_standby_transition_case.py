@@ -1,4 +1,4 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums
 from .utils import Enums, TestCaseFailure
@@ -6,7 +6,7 @@ from .utils import Enums, mag_of, sum_of_differentials
 import time, threading
 
 
-class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
+class SafeholdStandbyTransitionCase(SingleSatCase):
 
   #Bool fields so output is not spammed with what state spacecraft is in
   faultTriggered = False
@@ -17,50 +17,17 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
   tempTime = 0
   
   @property
-  def sim_configs(self):
-    configs = ["truth/ci", "truth/base"]
-    configs += ["sensors/base"]
-    return configs
-
-  @property
-  def sim_model(self):
-    return SingleAttitudeOrbitGnc
-
-  @property
-  def sim_mapping(self):
-    return "ci_mapping.json"
-
-  @property
   def debug_to_console(self):
     return True
-
-  @property
-  def sim_duration(self):
-    return float("inf")
 
   @property
   def initial_state(self):
     return "startup"
 
-  @property
-  def fast_boot(self):
-    return True
-
-  @property
-  def sim_initial_state(self):
-    return "startup"
-
-  @property
-  def sim_ic_map(self):
-    ret = {}
-    ret["truth.t.ns"] = 420000000*10
-    ret["truth.leader.attitude.w"] = [0.01, 0.073, -0.01]
-    return ret
-
-  def setup_pre_bootsetup(self):
+  def pre_boot(self):
     self.ws("cycle.auto", False)
       
-  def setup_post_bootsetup(self):
+  def post_boot(self):
     self.ws("fault_handler.enabled", True)
     self.logger.put("[TESTCASE] Fault handler enabled")
 
@@ -75,7 +42,7 @@ class SafeholdStandbyTransitionCase(SingleSatOnlyCase):
     self.rs("attitude_estimator.fro_P")
     self.rs("adcs_cmd.rwa_torque_cmd")
   
-  def run_case_singlesat(self):
+  def run(self):
     self.rs_psim("truth.t.ns")
     self.rs_psim("truth.dt.ns")
     self.rs_psim("truth.leader.attitude.w")

@@ -2,10 +2,10 @@
 # tests that the motor rotates 180 degrees with the initial speed and angle
 # constants and with changes to the fields from ground.
 
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums
 
-class DockingCheckoutCase(SingleSatOnlyCase):
+class DockingCheckoutCase(SingleSatCase):
     def str_to_bool(self, str):
         if str == "true":
             return True
@@ -59,7 +59,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
       cycles_taken = int(self.read_state("pan.cycle_no")) - start_cycle
       self.logger.put("Successfully finished docking config command in " + str(cycles_taken) + " cycles\n")
 
-    def run_case_singlesat(self):
+    def run(self):
         self.cycle_no = self.read_state("pan.cycle_no")
         self.write_state("dcdc.SpikeDock_cmd", "true")
         assert(self.read_state("dcdc.SpikeDock_cmd") =="true")

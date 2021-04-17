@@ -1,5 +1,5 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, mag_of, sum_of_differentials
 import math
 import time
@@ -18,7 +18,7 @@ def list_of_avgs(lists_of_vals):
     len_of_each = len(lists_of_vals[0])
     return [sum_of_each[i]/len_of_each for i in lists_of_vals]
 
-class ADCSCheckoutCase(SingleSatOnlyCase):
+class ADCSCheckoutCase(SingleSatCase):
     def assert_vec_within(self, expected, actual, delta):
         assert(len(expected) == len(actual))
         length = len(expected)
@@ -27,7 +27,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.soft_assert(abs(expected[i]-actual[i]) < delta, 
                 f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
 
-    def setup_post_bootsetup(self):
+    def post_boot(self):
+        self.ws("pan.state", Enums.mission_states["manual"])
         self.print_header("Begin ADCS Checkout Case")
 
         self.ws("cycle.auto", False)
@@ -325,7 +326,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
             "SSA voltage readings did not vary across readings.") 
 
-    def run_case_singlesat(self):
+    def run(self):
         
         self.print_rs("adcs_monitor.functional")
 

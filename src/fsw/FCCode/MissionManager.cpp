@@ -23,16 +23,23 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
       docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
       docking_timeout_limit_f("docking_timeout_limit",
                               Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
+      main_fault_handler(std::make_unique<MainFaultHandler>(registry)),
       adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
       docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
       enter_docking_cycle_f("docksys.enter_docking"),
+      low_batt_fault_fp(FIND_FAULT(gomspace.low_batt.base)),
+      adcs_functional_fault_fp(FIND_FAULT(adcs_monitor.functional_fault.base)),
+      wheel1_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel1_fault.base)),
+      wheel2_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel2_fault.base)),
+      wheel3_adc_fault_fp(FIND_FAULT(adcs_monitor.wheel3_fault.base)),
+      wheel_pot_fault_fp(FIND_FAULT(adcs_monitor.wheel_pot_fault.base)),
+      pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
       mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
       is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
       deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
       sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
       enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
       kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
-
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -51,7 +58,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
     bootcount_fp->set(bootcount_fp->get() + 1);
 
-    main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
 
     attitude_estimator_valid_fp = FIND_READABLE_FIELD(bool, attitude_estimator.valid);
@@ -69,16 +75,11 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
-    low_batt_fault_fp = find_fault("gomspace.low_batt.base", __FILE__, __LINE__);
-    adcs_functional_fault_fp = find_fault("adcs_monitor.functional_fault.base", __FILE__, __LINE__);
-    wheel1_adc_fault_fp = find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__);
-    wheel2_adc_fault_fp = find_fault("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__);
-    wheel3_adc_fault_fp = find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__);
-    wheel_pot_fault_fp = find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__);
-    pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
-
     sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
     adcs_dcdc_fp = find_writable_field<bool>("dcdc.ADCSMotor_cmd", __FILE__, __LINE__);
+
+    piksi_off_fp = find_writable_field<bool>("gomspace.piksi_off", __FILE__, __LINE__);
+    piksi_powercycle_fp = find_writable_field<bool>("gomspace.power_cycle_output1_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -180,9 +181,8 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1)
-    {
+    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
+    if (bootcount_fp->get() == 1) {
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -190,10 +190,11 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 2.  dispatch_startup() will be called upon exiting safehold or startup
-    // Turn radio on, and check for hardware faults that would necessitate
-    // going into an initialization hold. If faults exist, go into
-    // initialization hold, otherwise detumble.
+    // Step 2. Once we've complete the deployment wait, if any, we want to turn
+    // the radio on if it isn't already and enable to piksi. We also check for
+    // hardware faults that would necessitate going into an initialization hold.
+    // If such faults exist, go into initialization hold, otherwise detumble.
+    piksi_off_fp->set(false);
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {
         set(radio_state_t::config);
