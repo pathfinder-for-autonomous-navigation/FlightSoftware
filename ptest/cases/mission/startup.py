@@ -11,14 +11,14 @@ class SingleSatStartupCase(SingleSatCase, PSimCase):
         self.initial_state = "startup"
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             self.finish()
             return
 
         log_fc_data(self.flight_controller)
         log_psim_data(self, "leader")
-
-        self.cycle()
 
 
 class DualSatStartupCase(DualSatCase, PSimCase):
@@ -31,6 +31,8 @@ class DualSatStartupCase(DualSatCase, PSimCase):
         self.follower_initial_state = "startup"
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             self.finish()
             return
@@ -38,5 +40,3 @@ class DualSatStartupCase(DualSatCase, PSimCase):
         log_fc_data(self.flight_controller_leader)
         log_fc_data(self.flight_controller_follower)
         log_psim_data(self, "leader", "follower")
-
-        self.cycle()

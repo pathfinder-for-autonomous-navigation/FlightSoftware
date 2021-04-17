@@ -12,14 +12,14 @@ class SingleSatDetumbleCase(SingleSatCase, PSimCase):
         self.skip_deployment_wait = True
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             self.finish()
             return
 
         log_fc_data(self.flight_controller)
         log_psim_data(self, "leader")
-
-        self.cycle()
 
 
 class DualSatDetumbleCase(DualSatCase, PSimCase):
@@ -34,6 +34,8 @@ class DualSatDetumbleCase(DualSatCase, PSimCase):
         self.follower_skip_deployment_wait = True
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             self.finish()
             return
@@ -41,5 +43,3 @@ class DualSatDetumbleCase(DualSatCase, PSimCase):
         log_fc_data(self.flight_controller_leader)
         log_fc_data(self.flight_controller_follower)
         log_psim_data(self, "leader", "follower")
-
-        self.cycle()

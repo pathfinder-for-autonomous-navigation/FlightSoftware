@@ -16,6 +16,8 @@ class SingleSatStandbyCase(SingleSatCase, PSimCase):
         self.skip_deployment_wait = True
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             if not self.flight_controller.smart_read("attitude_estimator.valid"):
                 raise TestCaseFailure("Attitude estimator failed to initialize.")
@@ -25,8 +27,6 @@ class SingleSatStandbyCase(SingleSatCase, PSimCase):
 
         log_fc_data(self.flight_controller)
         log_psim_data(self, "leader")
-
-        self.cycle()
 
 
 class DualSatStandbyCase(DualSatCase, PSimCase):
@@ -43,6 +43,8 @@ class DualSatStandbyCase(DualSatCase, PSimCase):
         self.follower_skip_deployment_wait = True
 
     def run(self):
+        self.cycle()
+
         if not self.is_interactive:
             if not self.flight_controller_leader.smart_read("attitude_estimator.valid"):
                 raise TestCaseFailure("Leader attitude estimator failed to initialize.")
@@ -55,5 +57,3 @@ class DualSatStandbyCase(DualSatCase, PSimCase):
         log_fc_data(self.flight_controller_leader)
         log_fc_data(self.flight_controller_follower)
         log_psim_data(self, "leader", "follower")
-
-        self.cycle()
