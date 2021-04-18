@@ -48,6 +48,8 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     sched_valve4_f.set(0);
     J_ecef_f.set(lin::zeros<lin::Vector3d>());
     alpha_f.set(0.4);
+    dr_smoothed = lin::nans<lin::Vector3d>();
+    dv_smoothed = lin::nans<lin::Vector3d>();
 }
 
 void OrbitController::init() {
@@ -188,7 +190,7 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
 }
 
 lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
-    const lin::Vector3d &dr_smoothed, const lin::Vector3d &dv_smoothed) {
+    const lin::Vector3d &dr, const lin::Vector3d &dv) {
 
     // Collects Relative Orbit Estimator state
     unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
@@ -197,8 +199,8 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
     data.t = t;
     data.r_ecef = r;
     data.v_ecef = v;
-    data.dr_ecef = dr_smoothed;
-    data.dv_ecef = dv_smoothed;
+    data.dr_ecef = dr;
+    data.dv_ecef = dv;
 
     // Sets Orbit Controller gains depending on whether satellites are in near or far-field 
     data.p = gnc::constant::K_p;
