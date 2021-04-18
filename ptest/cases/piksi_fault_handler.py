@@ -1,14 +1,11 @@
 from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
-from psim.sims import SingleAttitudeOrbitGnc
-import lin
 
 class PiksiFaultHandler(SingleSatCase, PSimCase):
     def __init__(self, *args, **kwargs):
         super(PiksiFaultHandler, self).__init__(*args, **kwargs)
         self.initial_state = "standby"
         self.psim_configs += ["truth/standby"]
-        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.071,-0.01])
         self.debug_to_console = True
 
         self.initial_state = "standby"
