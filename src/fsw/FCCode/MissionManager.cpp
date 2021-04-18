@@ -37,7 +37,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
         mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
         is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
         deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
-        sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
+        sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
         enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
         kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
 {

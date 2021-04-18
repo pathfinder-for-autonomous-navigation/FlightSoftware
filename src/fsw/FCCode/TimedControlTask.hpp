@@ -182,6 +182,9 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     TimedControlTask(StateFieldRegistry& registry,
                      const std::string& name) :
         ControlTask<T>(registry),
+        /** Num_lates is the number of times the control task BEFORE the current one was late
+         * Order of the control tasks is defined in MainControlLoop
+         * **/
         num_lates_field_name("timing." + name + ".num_lates"),
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),
