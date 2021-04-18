@@ -1709,7 +1709,7 @@
         },
         "orbit.control.J_ecef": {
             "bitsize": 37,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 0.025,
             "min": 0.0,
             "type": "lin double vector",
@@ -1717,7 +1717,7 @@
         },
         "orbit.control.alpha": {
             "bitsize": 10,
-            "flow_id": "undefined",
+            "flow_id": 25,
             "max": 1.0,
             "min": 0.0,
             "type": "double",
@@ -3043,7 +3043,9 @@
                 "orbit.control.valve1",
                 "orbit.control.valve2",
                 "orbit.control.valve3",
-                "orbit.control.valve4"
+                "orbit.control.valve4",
+                "orbit.control.J_ecef",
+                "orbit.control.alpha"
             ],
             "id": 25,
             "priority": 24
