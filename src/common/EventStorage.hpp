@@ -25,7 +25,8 @@ public:
   /**
      * @brief Add all stored sub-events to the state field registry.
      * 
-     * @param registry     */
+     * @param registry
+     */
   void add_events_to_registry(StateFieldRegistry &registry);
 
   // The event storage uses the event it currently points to

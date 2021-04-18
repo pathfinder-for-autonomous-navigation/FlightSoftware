@@ -17,7 +17,6 @@ void ClockManager::execute() {
     TimedControlTaskBase::control_task_end_time = get_system_time() + us_to_duration(1100);
     control_cycle_count++;
     control_cycle_count_f.set(control_cycle_count);
-
 }
 
 unsigned int ClockManager::systime_to_cycle(sys_time_t time) {

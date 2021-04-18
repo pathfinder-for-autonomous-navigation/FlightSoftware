@@ -186,8 +186,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),
         avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us, 18)),
-        ct_duration_field_name("timing." + name + ".duration"),
-        ct_duration_f(ct_duration_field_name, Serializer<unsigned int>() )
+        ct_duration_f("timing." + name + ".duration", Serializer<unsigned int>() )
     {
       this->add_readable_field(num_lates_f);
       this->add_readable_field(avg_wait_f);

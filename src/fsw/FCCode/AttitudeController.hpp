@@ -15,7 +15,8 @@ class AttitudeController : public TimedControlTask<void> {
     /**
      * @brief Construct a new attitude controller.
      *
-     * @param registry     */
+     * @param registry
+     */
     AttitudeController(StateFieldRegistry &registry);
 
     /**
