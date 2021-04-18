@@ -69,6 +69,7 @@ def suppress_faults(fc, logger):
         "adcs_monitor.wheel2_fault",
         "adcs_monitor.wheel3_fault",
         "adcs_monitor.wheel_pot_fault",
+        "attitude_estimator.fault"
     ]
     for fault in faults:
         fc.write_state(fault + ".suppress", "true")

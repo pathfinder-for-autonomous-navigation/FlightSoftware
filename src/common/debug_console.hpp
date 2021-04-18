@@ -1,14 +1,12 @@
 #ifndef DEBUG_CONSOLE_HPP_
 #define DEBUG_CONSOLE_HPP_
 
-#include <map>
 #include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 
 #ifdef DESKTOP
     #include <chrono>
-    #include <memory>
     #include <thread>
     #include <concurrentqueue.h>
 #else
@@ -25,8 +23,9 @@ class debug_console {
     // Severity levels based off of
     // https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels
     // See the article for an explanation of when to use which severity level.
-    enum severity { debug, info, notice, warning, error, critical, alert, emergency };
-    static std::map<severity, const char *> severity_strs;
+    enum severity {
+        debug, info, notice, warning, error, critical, alert, emergency
+    };
 
     enum state_field_error {
         invalid_field_name,
@@ -35,11 +34,12 @@ class debug_console {
         invalid_mode_not_char,
         invalid_mode,
         missing_field_val,
-        invalid_field_val
+        invalid_field_val,
     };
-    static std::map<state_field_error, const char *> state_field_error_strs;
-    enum state_cmd_mode { unspecified_mode, read_mode, write_mode };
-    static std::map<state_cmd_mode, const char *> state_cmd_mode_strs;
+
+    enum state_cmd_mode {
+        unspecified_mode, read_mode, write_mode
+    };
 
     debug_console();
 
@@ -63,8 +63,8 @@ class debug_console {
      * newline.
      * @param str The string to be printed.
      */
-    void println(severity s, const char *str);
-    void println(const char *str);
+    static void println(severity s, const char *str);
+    static void println(const char *str);
 
     /**
      * @brief Blinks an LED at a rate of 1 Hz.
@@ -149,7 +149,7 @@ class debug_console {
      */
     void _reader();
 
-    std::shared_ptr<std::thread> reader_thd;
+    std::thread reader_thd;
 #endif
 
     /**
@@ -172,8 +172,10 @@ typedef debug_console::severity debug_severity;
  * @param ... Format parameters.
  */
 #define assert_msg(condition, format, ...) \
-    assert(condition); \
-    debug_console::printf(debug_severity::error, format, __VA_ARGS__); \
-}
+    do { \
+        assert(condition); \
+        debug_console::printf(debug_severity::error, format, __VA_ARGS__); \
+    } while (0);
+
 
 #endif
