@@ -59,7 +59,6 @@ public:
     lin::Vector3d dr_smoothed;
     lin::Vector3d dv_smoothed;
 
-
     // Orbit Controller
     gnc::OrbitControllerData data;
     gnc::OrbitControllerState state;

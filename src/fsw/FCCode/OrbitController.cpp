@@ -60,6 +60,28 @@ void OrbitController::init() {
 
 void OrbitController::execute() {
 
+    // Applies exponential smoothing if relative orbit estimate is valid
+    // Sets smoothed values to nans if relative orbit estimate is invalid
+    double alpha = alpha_f.get();
+    lin::Vector3d dr = baseline_pos_fp->get();
+    lin::Vector3d dv = baseline_vel_fp->get();
+
+    if (rel_orbit_valid_fp->get()) {
+        if (!lin::all(lin::isfinite(dr_smoothed))) {
+            dr_smoothed = dr;
+        } else {
+            dr_smoothed = alpha * dr + (1.0 - alpha) * dr_smoothed;
+        }
+        if (!lin::all(lin::isfinite(dv_smoothed))) {
+            dv_smoothed = dv;
+        } else {
+            dv_smoothed = alpha * dv + (1.0 - alpha) * dv_smoothed;
+        }
+    } else {
+        dr_smoothed = lin::nans<lin::Vector3d>();
+        dv_smoothed = lin::nans<lin::Vector3d>();
+    }
+
     // If we don't have all the information we need, don't calculate a firing
     if (!time_valid_fp->get() || !orbit_valid_fp->get() || !rel_orbit_valid_fp->get() ||
             !attitude_estimator_valid_fp->get()) {
@@ -74,8 +96,6 @@ void OrbitController::execute() {
     double t = time_fp->get();
     lin::Vector3d r = pos_fp->get();
     lin::Vector3d v = vel_fp->get();
-    lin::Vector3d dr = baseline_pos_fp->get();
-    lin::Vector3d dv = baseline_vel_fp->get();
 
     // Convert the velocity to ECEF0 coordinates
     lin::Vector3f w_earth;
@@ -119,7 +139,7 @@ void OrbitController::execute() {
     if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
 
         // Collect the output of the PD controller and get the needed impulse
-        lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
+        lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr_smoothed, dv_smoothed);
 
         // Save J_ecef to statefield
         J_ecef_f.set(J_ecef);
@@ -168,25 +188,10 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
 }
 
 lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
-    const lin::Vector3d &dr, const lin::Vector3d &dv) {
+    const lin::Vector3d &dr_smoothed, const lin::Vector3d &dv_smoothed) {
 
     // Collects Relative Orbit Estimator state
     unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
-
-    // Applies Exponential Smoothing
-    double alpha = alpha_f.get();
-
-    if (!lin::all(lin::isfinite(dr_smoothed))) {
-        dr_smoothed = dr;
-    } else {
-        dr_smoothed = alpha * dr + (1.0 - alpha) * dr_smoothed;
-    }
-
-    if (!lin::all(lin::isfinite(dv_smoothed))) {
-        dv_smoothed = dv;
-    } else {
-        dv_smoothed = alpha * dv + (1.0 - alpha) * dv_smoothed;
-    }
 
     // Assemble the input Orbit Controller data struct
     data.t = t;
