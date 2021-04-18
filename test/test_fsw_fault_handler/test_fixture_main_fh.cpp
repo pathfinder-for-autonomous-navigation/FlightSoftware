@@ -21,6 +21,7 @@ TestFixtureMainFHBase::TestFixtureMainFHBase()
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
     prop_failed_pressurize_fault_fp = registry.create_fault("prop.pressurize_fail", 1);
     prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1);
+    attitude_estimator_fault_fp = registry.create_fault("attitude_estimator.fault", 1);
 
     // Construct main fault handler and capture its outputs
     fault_handler = std::make_unique<MainFaultHandler>(registry);

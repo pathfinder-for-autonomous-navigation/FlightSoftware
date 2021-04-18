@@ -46,6 +46,7 @@ public:
   std::shared_ptr<Fault> wheel_pot_fault_fp;
   std::shared_ptr<Fault> pressurize_fail_fp;
   std::shared_ptr<Fault> overpressured_fp;
+  std::shared_ptr<Fault> attitude_estimator_fp;
 
   std::shared_ptr<WritableStateField<bool>> sph_dcdc_fp;
   std::shared_ptr<WritableStateField<bool>> adcs_dcdc_fp;

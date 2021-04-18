@@ -12,7 +12,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     batt_threshold_sr(5000,9000,10),
     batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
 
-    vboost_sr(0,8500,9), // see pg 11
+    vboost_sr(0,8500,6), // see pg 11
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
     vboost3_f("gomspace.vboost.output3", vboost_sr),
