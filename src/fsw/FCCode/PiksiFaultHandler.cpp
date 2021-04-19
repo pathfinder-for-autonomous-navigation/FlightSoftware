@@ -46,8 +46,8 @@ fault_response_t PiksiFaultHandler::execute() {
      && mission_state != mission_state_t::standby
     
     && (piksi_state == piksi_mode_t::crc_error
-    || piksi_state == piksi_mode_t::no_data_error 
-    || piksi_state == piksi_mode_t::data_error))
+     || piksi_state == piksi_mode_t::no_data_error 
+     || piksi_state == piksi_mode_t::data_error))
         piksi_dead_fault_f.signal();
     else
         piksi_dead_fault_f.unsignal();
