@@ -41,8 +41,9 @@ fault_response_t PiksiFaultHandler::execute() {
 
     // piksi_dead_fault control section
     if (mission_state != mission_state_t::startup 
-    && mission_state != mission_state_t::detumble
-    && mission_state != mission_state_t::initialization_hold
+     && mission_state != mission_state_t::detumble
+     && mission_state != mission_state_t::initialization_hold
+     && mission_state != mission_state_t::standby
     
     && (piksi_state == piksi_mode_t::crc_error
     || piksi_state == piksi_mode_t::no_data_error 
