@@ -40,17 +40,15 @@ fault_response_t PiksiFaultHandler::execute() {
     mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
 
     // piksi_dead_fault control section
-    if (mission_state != mission_state_t::startup 
+    bool should_fault = (mission_state != mission_state_t::startup 
      && mission_state != mission_state_t::detumble
      && mission_state != mission_state_t::initialization_hold
-     && mission_state != mission_state_t::standby
     
     && (piksi_state == piksi_mode_t::crc_error
      || piksi_state == piksi_mode_t::no_data_error 
-     || piksi_state == piksi_mode_t::data_error))
-        piksi_dead_fault_f.signal();
-    else
-        piksi_dead_fault_f.unsignal();
+     || piksi_state == piksi_mode_t::data_error));
+        
+    piksi_dead_fault_f.evaluate(should_fault);
 
     if(piksi_dead_fault_f.is_faulted())
         return fault_response_t::standby;
