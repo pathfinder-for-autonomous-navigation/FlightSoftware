@@ -67,14 +67,6 @@ const std::vector<std::vector<mission_state_t>> SimpleFaultHandler::active_state
         mission_state_t::leader,
         mission_state_t::follower_close_approach,
         mission_state_t::leader_close_approach,
-    },
-
-    // List 4 is used by the piksi (dead) fault
-    {
-        mission_state_t::follower,
-        mission_state_t::leader,
-        mission_state_t::follower_close_approach,
-        mission_state_t::leader_close_approach,  
     }
 };
 

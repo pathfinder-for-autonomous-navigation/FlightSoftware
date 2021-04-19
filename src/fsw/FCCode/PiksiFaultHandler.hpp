@@ -23,14 +23,6 @@ class PiksiFaultHandler : public FaultHandlerMachine {
      * that the mission manager go to standby if required.
      */
     fault_response_t execute();
-    
-    /**
-     * @brief Fault that should be triggered when the piksi has been
-     * non functional for too long, but only beyond standby
-     */
-    Fault piksi_dead_fault_f;
-
-  protected:
 
     /**
      * @brief Check if we have recently gotten any GPS readings 
@@ -61,6 +53,12 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     WritableStateField<bool> fault_handler_enabled_f;
     // Statefield for last time we got rtk readings
     InternalStateField<unsigned int> last_rtkfix_ccno_f;
+
+    /**
+     * @brief Fault that should be triggered when the piksi has been
+     * non functional for too long, but only beyond standby
+     */
+    Fault piksi_dead_fault_f;
 };
 
 #endif

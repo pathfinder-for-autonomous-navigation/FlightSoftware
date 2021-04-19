@@ -12,7 +12,7 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
     cdgps_delay_max_wait_f("piksi_fh.cdpgs_delay_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
     fault_handler_enabled_f("piksi_fh.enabled", Serializer<bool>()),
     last_rtkfix_ccno_f("piksi_fh.last_rtkfix_ccno"),
-    piksi_dead_fault_f("prop.tank1_temp_high", piksi_dead_threshold)
+    piksi_dead_fault_f("piksi_fh.dead", piksi_dead_threshold)
     {
         add_writable_field(no_cdgps_max_wait_f);
         add_writable_field(cdgps_delay_max_wait_f);
@@ -42,6 +42,7 @@ fault_response_t PiksiFaultHandler::execute() {
     // piksi_dead_fault control section
     if (mission_state != mission_state_t::startup 
     && mission_state != mission_state_t::detumble
+    && mission_state != mission_state_t::initialization_hold
     
     && (piksi_state == piksi_mode_t::crc_error
     || piksi_state == piksi_mode_t::no_data_error 
@@ -49,6 +50,9 @@ fault_response_t PiksiFaultHandler::execute() {
         piksi_dead_fault_f.signal();
     else
         piksi_dead_fault_f.unsignal();
+
+    if(piksi_dead_fault_f.is_faulted())
+        return fault_response_t::standby;
 
     // begin rtk section
 
