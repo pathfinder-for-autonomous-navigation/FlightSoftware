@@ -26,8 +26,8 @@ class DualSatFarFieldCase(DualSatStandbyCase):
         ]
         config = Configuration(configs)
 
-        def propegate(t, r, v, steps):
-            """Propegate and orbital state forward in time by the requested
+        def propagate(t, r, v, steps):
+            """Propagate and orbital state forward in time by the requested
             number of steps.
             """
             config["truth.t.ns"] = GPSTime(*t).to_pan_ns()
@@ -43,10 +43,10 @@ class DualSatFarFieldCase(DualSatStandbyCase):
                    list(sim["truth.leader.orbit.v"]),
 
         def uplink(satellite, other):
-            """Propegate this satellites orbital state forward in time and
+            """Propagate this satellites orbital state forward in time and
             uplink it to the other spacecraft.
             """
-            t, r, v = propegate(
+            t, r, v = propagate(
                 satellite.smart_read("time.gps"),
                 satellite.smart_read("orbit.pos"),
                 satellite.smart_read("orbit.vel"),
