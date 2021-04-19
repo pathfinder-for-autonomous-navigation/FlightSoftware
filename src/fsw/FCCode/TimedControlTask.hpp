@@ -134,9 +134,9 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * start time.
      * 
      * @param control_cycle_start_time System time for the start of the control task.
-     * @return T Value returned by execute().
+     * 
      */
-    T execute_on_time(unsigned int duration_us) {
+    void execute_on_time(unsigned int duration_us) {
       wait_until_time(TimedControlTaskBase::control_task_end_time);
 
       systime_duration_t duration = us_to_duration(duration_us);
