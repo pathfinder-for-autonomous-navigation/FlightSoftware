@@ -84,9 +84,13 @@ static void test_no_faults() {
  */
 void test_dead_piksi() {
     TestFixture tf;
-    tf.set_piksi_state(piksi_mode_t::dead);
-    fault_response_t response = tf.pfh->execute();
-    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+    tf.set_piksi_state(piksi_mode_t::crc_error);
+    for(int i = 0; i < PAN::one_day_ccno/6; i++){
+        tf.pfh->execute();
+    }
+    TEST_ASSERT_FALSE(tf.pfh->piksi_dead_fault_f.is_faulted());
+    tf.pfh->execute();
+    TEST_ASSERT_TRUE(tf.pfh->piksi_dead_fault_f.is_faulted());
 }
 
 /**

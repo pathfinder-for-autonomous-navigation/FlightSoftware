@@ -34,6 +34,10 @@ void MainFaultHandler::init()
         FIND_FAULT(attitude_estimator.fault.base)
     };
 
+    std::array<Fault*, 1> const active_list_4_safehold_super_simple_faults {
+        FIND_FAULT(piksi_fh.dead.base)
+    };
+
     for (auto *fault : active_list_0_safehold_super_simple_faults)
     {
         fault_handler_machines.push_back(
@@ -61,6 +65,13 @@ void MainFaultHandler::init()
         fault_handler_machines.push_back(
             std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
                 SimpleFaultHandler::active_state_lists[3], mission_state_t::safehold)
+        );
+    }
+
+    for (auto *fault : active_list_4_standby_super_simple_faults) {
+        fault_handler_machines.push_back(
+            std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
+                SimpleFaultHandler::active_state_lists[4], mission_state_t::standby)
         );
     }
 
