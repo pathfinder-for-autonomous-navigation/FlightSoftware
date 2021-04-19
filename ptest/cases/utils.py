@@ -200,6 +200,12 @@ class Enums(object):
         "no_data_error",
         "dead"
     ])
+
+    rel_orbit_state = FSWEnum([
+        "invalid",
+        "propagating",
+        "estimating"
+    ])
     
     rwa_modes = FSWEnum([
         "RWA_DISABLED",
