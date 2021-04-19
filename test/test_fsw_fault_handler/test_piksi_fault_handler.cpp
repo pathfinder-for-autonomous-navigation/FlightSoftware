@@ -84,6 +84,16 @@ static void test_no_faults() {
  */
 void test_dead_piksi() {
     TestFixture tf;
+    
+    tf.set_piksi_state(piksi_mode_t::crc_error);
+    tf.set_mission_state(mission_state_t::startup);
+    
+    // these loops should not be incrementing the fault since we're in startup
+    for(unsigned int i = 0; i < PAN::one_day_ccno/6; i++){
+        tf.pfh->execute();
+    }
+    TEST_ASSERT_FALSE(tf.pfh->piksi_dead_fault_f.is_faulted());
+
     tf.set_mission_state(mission_state_t::leader);
     tf.set_piksi_state(piksi_mode_t::crc_error);
     for(unsigned int i = 0; i < PAN::one_day_ccno/6; i++){
