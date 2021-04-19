@@ -393,16 +393,16 @@ class USBSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink"+self.radio_imei+".sbd", "uplink"+self.radio_imei+".http")
 
         # If the uplink packet exists, send it to the FlightSoftware console
-        if success and os.path.exists("uplink.sbd"):
-            success &= self.send_uplink("uplink.sbd")
-            os.remove("uplink.sbd") 
-            os.remove("uplink.http") 
+        if success and os.path.exists("uplink"+self.radio_imei+".sbd"):
+            success &= self.send_uplink("uplink"+self.radio_imei+".sbd")
+            os.remove("uplink"+self.radio_imei+".sbd") 
+            os.remove("uplink"+self.radio_imei+".http") 
             return success
         else:
-            if os.path.exists("uplink.json"): os.remove("uplink.http") 
+            if os.path.exists("uplink"+self.radio_imei+".http"): os.remove("uplink"+self.radio_imei+".http") 
             return False
 
     def parsetelem(self):
@@ -509,11 +509,11 @@ class USBSession(object):
                                 # Check if there is an email attachment
                                 if part.get_filename() is not None:
                                     # Download uplink packet from email attachment and send it to the Flight Computer
-                                    fp = open("new_uplink.sbd", 'wb')
+                                    fp = open("new_uplink"+self.radio_imei+".sbd", 'wb')
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
-                                    self.send_uplink("new_uplink.sbd")
-                                    os.remove("new_uplink.sbd")
+                                    self.send_uplink("new_uplink"+self.radio_imei+".sbd")
+                                    os.remove("new_uplink"+self.radio_imei+".sbd")
                         else:
                             # Mark message as unseen again if it wasn't addressed to this satellite
                             self.mail.store(num, '-FLAGS', '\SEEN')
