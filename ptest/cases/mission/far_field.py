@@ -30,7 +30,7 @@ class DualSatFarFieldCase(DualSatStandbyCase):
             """Propegate and orbital state forward in time by the requested
             number of steps.
             """
-            config["truth.t.ns"] = GPSTime(*t).to_ns()
+            config["truth.t.ns"] = GPSTime(*t).to_pan_ns()
             config["truth.leader.orbit.r"] = lin.Vector3(r)
             config["truth.leader.orbit.v"] = lin.Vector3(v)
 
@@ -38,9 +38,9 @@ class DualSatFarFieldCase(DualSatStandbyCase):
             for _ in range(steps):
                 sim.step()
 
-            return list(sim["truth.leader.orbit.r"]), \
-                   list(sim["truth.leader.orbit.v"]), \
-                   GPSTime(sim["truth.t.ns"]).to_list()
+            return GPSTime(sim["truth.t.ns"]).to_list(), \
+                   list(sim["truth.leader.orbit.r"]), \
+                   list(sim["truth.leader.orbit.v"]),
 
         def uplink(satellite, other):
             """Propegate this satellites orbital state forward in time and
@@ -52,6 +52,7 @@ class DualSatFarFieldCase(DualSatStandbyCase):
                 satellite.smart_read("orbit.vel"),
                 10
             )
+
             other.write_state("rel_orbit.uplink.time", t)
             other.write_state("rel_orbit.uplink.pos", r)
             other.write_state("rel_orbit.uplink.vel", v)
@@ -64,19 +65,17 @@ class DualSatFarFieldCase(DualSatStandbyCase):
         self.flight_controller_leader.write_state("pan.sat_designation", Enums.sat_designations["leader"])
         self.flight_controller_follower.write_state("pan.sat_designation", Enums.sat_designations["follower"])
 
-        for _ in range(10):
+        for _ in range(15):
             self.cycle()
 
-        if not self.flight_controller_leader.smart_read("rel_orbit.state") != Enums.rel_orbit_state["propagating"]:
+        if Enums.rel_orbit_state[self.flight_controller_leader.smart_read("rel_orbit.state")] != "propagating":
             raise TestCaseFailure("The leader's relative orbit estimator should be propagating.")
-        if not Enums.mission_states[self.flight_controller_leader.smart_read("pan.state")] != \
-                Enums.mission_states["leader"]:
+        if Enums.mission_states[self.flight_controller_leader.smart_read("pan.state")] != "leader":
             raise TestCaseFailure("The leader's mission state should be in leader.")
 
-        if not self.flight_controller_follower.smart_read("rel_orbit.state") != Enums.rel_orbit_state["propagating"]:
+        if Enums.rel_orbit_state[self.flight_controller_follower.smart_read("rel_orbit.state")] != "propagating":
             raise TestCaseFailure("The follower's relative orbit estimator should be propagating.")
-        if not Enums.mission_states[self.flight_controller_follower.smart_read("pan.state")] != \
-                Enums.mission_states["follower"]:
+        if Enums.mission_states[self.flight_controller_follower.smart_read("pan.state")] != "follower":
             raise TestCaseFailure("The follower's mission state should be in follower.")
 
     def run(self):
