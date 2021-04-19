@@ -197,8 +197,7 @@ class Enums(object):
         "crc_error",
         "time_limit_error",
         "data_error",
-        "no_data_error",
-        "dead"
+        "no_data_error"
     ])
 
     rel_orbit_state = FSWEnum([
