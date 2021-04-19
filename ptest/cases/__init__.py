@@ -12,12 +12,13 @@ from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 # Testcases intended for use with mission rehearsals and general telemetry
 # testing.
 from .mission import (
-    SingleSatStartupCase,
+    DualSatDetumbleCase,
+    DualSatFarFieldCase,
+    DualSatStandbyCase,
     DualSatStartupCase,
     SingleSatDetumbleCase,
-    DualSatDetumbleCase,
     SingleSatStandbyCase,
-    DualSatStandbyCase
+    SingleSatStartupCase
 )
 
 from .empty_case import EmptyCase, FailingEmptyCase
