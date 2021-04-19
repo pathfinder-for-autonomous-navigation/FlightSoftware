@@ -14,6 +14,7 @@ from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 from .mission import (
     DualSatDetumbleCase,
     DualSatFarFieldCase,
+    DualSatNearFieldCase,
     DualSatStandbyCase,
     DualSatStartupCase,
     SingleSatDetumbleCase,
