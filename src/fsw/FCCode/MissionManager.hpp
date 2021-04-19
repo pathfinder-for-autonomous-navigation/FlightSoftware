@@ -29,8 +29,8 @@ public:
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
     WritableStateField<double> docking_trigger_dist_f;        // Meters
     TRACKED_CONSTANT_SC(double, initial_detumble_safety_factor, 0.2);
-    TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 100); // Meters
-    TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);        // Meters
+    TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 2000); // Meters
+    TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);         // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
