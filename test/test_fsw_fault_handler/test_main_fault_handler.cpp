@@ -4,7 +4,7 @@
 #include <numeric>
 #include "cartesian_product.hpp"
 
-static constexpr unsigned int num_fault_machines = 9;
+static constexpr unsigned int num_fault_machines = 10;
 
 /**
  * @brief The main fault handler should initially be enabled and

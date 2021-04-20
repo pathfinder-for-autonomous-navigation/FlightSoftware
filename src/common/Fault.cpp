@@ -9,8 +9,8 @@ Fault::Fault(const std::string& name, const size_t _persistence) :
     suppress_f(name + ".suppress", fault_bool_sr),
     override_f(name + ".override", fault_bool_sr),
     unsignal_f(name + ".unsignal", fault_bool_sr),
-    // 65536 = 2^16 -1
-    persist_sr(65535),
+    // 1048575 = 2^20 - 1
+    persist_sr(1048575),
     persistence_f(name + ".persistence", persist_sr)
 {
   set(false);

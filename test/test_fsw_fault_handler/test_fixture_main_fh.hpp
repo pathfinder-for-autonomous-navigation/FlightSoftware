@@ -37,6 +37,7 @@ public:
     std::shared_ptr<Fault> low_batt_fault_fp;
     std::shared_ptr<Fault> prop_failed_pressurize_fault_fp;
     std::shared_ptr<Fault> prop_overpressure_fault_fp;
+    std::shared_ptr<Fault> attitude_estimator_fault_fp;
 
     WritableStateField<bool> *fault_handler_enabled_fp = nullptr;
 

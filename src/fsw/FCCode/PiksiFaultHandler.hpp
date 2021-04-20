@@ -44,7 +44,6 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     // Statefields used by the fault handler to determine response.
     ReadableStateField<unsigned char>* piksi_state_fp;
     WritableStateField<unsigned char>* mission_state_fp;
-    InternalStateField<unsigned int>* last_rtkfix_ccno_fp;
     InternalStateField<unsigned int>* enter_close_appr_time_fp;
 
     // Statefield for X time
@@ -53,6 +52,8 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     WritableStateField<unsigned int> cdgps_delay_max_wait_f;
     // Flag that can be used by HOOTL/HITL to disable/enable fault handling
     WritableStateField<bool> fault_handler_enabled_f;
+    // Statefield for last time we got rtk readings
+    InternalStateField<unsigned int> last_rtkfix_ccno_f;
 
 };
 

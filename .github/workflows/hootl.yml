@@ -60,12 +60,14 @@ jobs:
 
     - name: Mission Rehearsal Cases
       run: |
-        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatFarFieldCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatNearFieldCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStandbyCase -ni
         python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStartupCase -ni
         python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatDetumbleCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatDetumbleCase -ni
         python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStandbyCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatStandbyCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t SingleSatStartupCase -ni
 
     - name: Hardware Checkout Cases
       run: |
@@ -79,9 +81,11 @@ jobs:
     - name: Fault Handling Cases
       run: |
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSWheelFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t AttitudeFaultHandlerCase -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t LowBattFaultHandler -ni
         python -m ptest runsim -c ptest/configs/hootl.json -t PropFaultHandler -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t QuakePowerCycling -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t PiksiFaultHandler -ni
 
     # Add quake and piksi fault handler to the above once completed.
 
