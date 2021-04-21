@@ -11,7 +11,7 @@ void test_valid_initialization() {
 
     // Test initialized values
     TEST_ASSERT_EQUAL(0.2, tf.detumble_safety_factor_fp->get());
-    TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
+    TEST_ASSERT_EQUAL(2000, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
