@@ -135,30 +135,8 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         # self.cycle_tracker = 0
         # self.cycle_til_bound(self.cdpgs_delay_max_wait, mode="check_close_appr")
 
-<<<<<<< HEAD
-
-        # TODO implement testcase here.
-        
-        # piski faults handled when:
-        #     - piski is dead
-        #     - last rtk before close approach
-        #     -
-
-        if self.mission_state != "leader":
-            raise TestCaseFailure("PTest does not intialize mission state to 'leader'.")
-        self.ws("piksi.state",Enums.piksi_modes["dead"])
-        self.cycle()
-        if self.mission_state != "standby":
-            raise TestCaseFailure("Failed to set mission state to 'standby' when piksi mode was dead.")
-
-        self.ws("pan.state", Enums.mission_states["leader_close_approach"])
-        if self.mission_state != "leader_close_approach":
-            raise TestCaseFailure("Failed to set mission state to 'leader_close_approach'.")
-
-=======
         # # Mission state should be set to standby
         # self.check_is_standby()
         # self.logger.put("PiksiFaultHandler successfully changed mission state to 'standby' after waiting for 'cdpgs_delay_max_wait' cycles.'")
->>>>>>> a0078703eb03bf9aef6e5ffaf8f27ff56ec188b2
 
         self.finish()
