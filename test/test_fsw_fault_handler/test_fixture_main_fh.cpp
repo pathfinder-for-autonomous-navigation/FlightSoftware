@@ -11,7 +11,6 @@ TestFixtureMainFHBase::TestFixtureMainFHBase()
     radio_last_comms_ccno_fp = registry.create_readable_field<unsigned int>("radio.last_comms_ccno");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    piksi_lastfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
     enter_close_approach_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");
 
     quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
@@ -22,6 +21,7 @@ TestFixtureMainFHBase::TestFixtureMainFHBase()
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
     prop_failed_pressurize_fault_fp = registry.create_fault("prop.pressurize_fail", 1);
     prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1);
+    attitude_estimator_fault_fp = registry.create_fault("attitude_estimator.fault", 1);
 
     // Construct main fault handler and capture its outputs
     fault_handler = std::make_unique<MainFaultHandler>(registry);

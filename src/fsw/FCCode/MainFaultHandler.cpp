@@ -15,39 +15,52 @@ MainFaultHandler::MainFaultHandler(StateFieldRegistry &r)
 void MainFaultHandler::init()
 {
     // Populate inputs (and retrieve pointer for some outputs)
-    std::vector<Fault *> active_list_0_safehold_super_simple_faults{
-        find_fault("gomspace.low_batt.base", __FILE__, __LINE__),
+    std::array<Fault *, 1> const active_list_0_safehold_super_simple_faults{
+        FIND_FAULT(gomspace.low_batt.base)
     };
 
-    std::vector<Fault *> active_list_1_safehold_super_simple_faults{
-        find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__)
+    std::array<Fault *, 4> const active_list_1_safehold_super_simple_faults{
+        FIND_FAULT(adcs_monitor.wheel1_fault.base),
+        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel3_fault.base),
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base)
     };
 
-    std::vector<Fault*> active_list_2_standby_super_simple_faults {
-        find_fault("prop.pressurize_fail.base", __FILE__, __LINE__),
+    std::array<Fault *, 1> const active_list_2_standby_super_simple_faults {
+        FIND_FAULT(prop.pressurize_fail.base)
     };
 
-    for (Fault *fault : active_list_0_safehold_super_simple_faults)
+    std::array<Fault*, 1> const active_list_3_safehold_super_simple_faults {
+        FIND_FAULT(attitude_estimator.fault.base)
+    };
+
+    for (auto *fault : active_list_0_safehold_super_simple_faults)
     {
         fault_handler_machines.push_back(
             std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
-                                                      SimpleFaultHandler::active_state_lists[0], mission_state_t::safehold));
+                SimpleFaultHandler::active_state_lists[0], mission_state_t::safehold)
+        );
     }
 
-    for (Fault *fault : active_list_1_safehold_super_simple_faults)
+    for (auto *fault : active_list_1_safehold_super_simple_faults)
     {
         fault_handler_machines.push_back(
             std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
-                                                      SimpleFaultHandler::active_state_lists[1], mission_state_t::safehold));
+                SimpleFaultHandler::active_state_lists[1], mission_state_t::safehold)
+        );
     }
 
-    for(Fault* fault : active_list_2_standby_super_simple_faults) {
+    for(auto *fault : active_list_2_standby_super_simple_faults) {
         fault_handler_machines.push_back(
             std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
                 SimpleFaultHandler::active_state_lists[2], mission_state_t::standby)
+        );
+    }
+
+    for (auto *fault : active_list_3_safehold_super_simple_faults) {
+        fault_handler_machines.push_back(
+            std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
+                SimpleFaultHandler::active_state_lists[3], mission_state_t::safehold)
         );
     }
 
