@@ -53,10 +53,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       adcs_box_controller(registry, adcs),
       orbit_controller(registry)
 {
-    sys_time_t init_time = TimedControlTask<void>::get_system_time();
-    control_cycle_duration_f.set(0);
-    prev_sys_time = init_time;
-
     docking_controller.init();
     orbit_controller.init();
 
@@ -95,6 +91,10 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         while(!Serial) {}
     #endif
     #endif
+
+    sys_time_t init_time = TimedControlTaskBase::get_system_time();
+    control_cycle_duration_f.set(0);
+    prev_sys_time = init_time;
 }
 
 void MainControlLoop::execute() {
@@ -152,7 +152,7 @@ void MainControlLoop::execute() {
         eeprom_controller.execute_on_time(eeprom_duration);
         // Commented to save EEPROM Cycles
     #endif
-    sys_time_t later = TimedControlTask<void>::get_system_time();
+    sys_time_t later = TimedControlTaskBase::get_system_time();
     control_cycle_duration_f.set(later - prev_sys_time);
     prev_sys_time = later;
 }
