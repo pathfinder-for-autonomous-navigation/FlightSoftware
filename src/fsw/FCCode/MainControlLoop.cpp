@@ -49,9 +49,13 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       attitude_controller(registry),
       adcs_commander(registry), // needs inputs from attitude computer
       adcs_box_controller(registry, adcs),
-      orbit_controller(registry)
+      orbit_controller(registry),
+      control_cycle_duration_f("pan.cc_duration", Serializer<unsigned int>())
 {
-    
+    sys_time_t init_time = get_system_time();
+    control_cycle_duration_f.set(0);
+    prev_sys_time = init_time;
+
     docking_controller.init();
     orbit_controller.init();
 
@@ -92,6 +96,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 }
 
 void MainControlLoop::execute() {
+
     // Compute memory usage
     #ifdef DESKTOP
     memory_use_f.set(getCurrentRSS());
@@ -145,6 +150,9 @@ void MainControlLoop::execute() {
         eeprom_controller.execute_on_time(eeprom_duration);
         // Commented to save EEPROM Cycles
     #endif
+    sys_time_t later = get_system_time();
+    control_cycle_duration_f.set(later - prev_sys_time);
+    prev_sys_time = later;
 }
 
 #ifdef GSW
