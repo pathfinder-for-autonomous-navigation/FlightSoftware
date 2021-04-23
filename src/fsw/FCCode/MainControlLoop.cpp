@@ -1,5 +1,6 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
+#include "TimedControlTask.hpp"
 #include "constants.hpp"
 #include <common/constant_tracker.hpp>
 
@@ -44,15 +45,15 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       one_day_ccno_f("pan.one_day_ccno", Serializer<unsigned int>()),
       control_cycle_ms_f("pan.cc_ms", Serializer<unsigned int>()),
+      control_cycle_duration_f("pan.cc_duration", Serializer<unsigned int>()),
       prop_controller(registry),
       mission_manager(registry), // This item is initialized near-last so it has access to all state fields
       attitude_controller(registry),
       adcs_commander(registry), // needs inputs from attitude computer
       adcs_box_controller(registry, adcs),
-      orbit_controller(registry),
-      control_cycle_duration_f("pan.cc_duration", Serializer<unsigned int>())
+      orbit_controller(registry)
 {
-    sys_time_t init_time = get_system_time();
+    sys_time_t init_time = TimedControlTask<void>::get_system_time();
     control_cycle_duration_f.set(0);
     prev_sys_time = init_time;
 
@@ -77,6 +78,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     add_readable_field(memory_use_f);
     add_readable_field(one_day_ccno_f);
     add_readable_field(control_cycle_ms_f);
+    add_readable_field(control_cycle_duration_f);
     one_day_ccno_f.set(PAN::one_day_ccno);
     control_cycle_ms_f.set(PAN::control_cycle_time_ms);
 
@@ -150,7 +152,7 @@ void MainControlLoop::execute() {
         eeprom_controller.execute_on_time(eeprom_duration);
         // Commented to save EEPROM Cycles
     #endif
-    sys_time_t later = get_system_time();
+    sys_time_t later = TimedControlTask<void>::get_system_time();
     control_cycle_duration_f.set(later - prev_sys_time);
     prev_sys_time = later;
 }
