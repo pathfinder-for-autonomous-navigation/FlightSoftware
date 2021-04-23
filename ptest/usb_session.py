@@ -162,7 +162,7 @@ class USBSession(object):
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
                     telem_bytes.remove("")
-                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem{self.radio_imei}[{data['time']}].txt"), "wb")
                     for byte in telem_bytes:
                         telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
                     telem_file.close()
@@ -413,7 +413,7 @@ class USBSession(object):
         '''
 
         #get newest file
-        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, f'telem{self.radio_imei}*'))
         try:
             newest_telem_file = max(telem_files, key=os.path.basename)
         except ValueError:
@@ -447,7 +447,7 @@ class USBSession(object):
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time.downlink_recieved": str(datetime.datetime.now().isoformat())
+                "time.downlink_received": str(datetime.datetime.now().isoformat())
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
