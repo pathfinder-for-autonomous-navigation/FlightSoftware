@@ -1,6 +1,5 @@
 from .base import SingleSatCase, PSimCase
 from .utils import Enums, TestCaseFailure
-import lin
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
@@ -11,7 +10,6 @@ class PropFaultHandler(SingleSatCase, PSimCase):
         self.initial_state = "standby"
         self.skip_deployment_wait = True
         self.psim_configs += ["truth/standby"]
-        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
 
         self.tank2_pressure = 12.0
         self.tank2_temp = 25.0
