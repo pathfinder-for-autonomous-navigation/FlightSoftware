@@ -38,12 +38,12 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
     pressurize_fail_fp = registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp = registry.create_fault("prop.overpressured", 1);
+    attitude_estimator_fp = registry.create_fault("attitude_estimator.fault", 1);
 
     sph_dcdc_fp = registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
     adcs_dcdc_fp = registry.create_writable_field<bool>("dcdc.ADCSMotor_cmd");
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
-    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
     piksi_off_fp = registry.create_writable_field<bool>("gomspace.piksi_off");
     piksi_powercycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
 

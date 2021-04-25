@@ -2,8 +2,6 @@ from ..base import DualSatCase, SingleSatCase, PSimCase
 from ..utils import TestCaseFailure
 from .utils import log_fc_data, log_psim_data
 
-import lin
-
 
 class SingleSatStandbyCase(SingleSatCase, PSimCase):
 
@@ -11,7 +9,6 @@ class SingleSatStandbyCase(SingleSatCase, PSimCase):
         super(SingleSatStandbyCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/standby"]
-        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
         self.initial_state = "standby"
         self.skip_deployment_wait = True
 
@@ -35,8 +32,6 @@ class DualSatStandbyCase(DualSatCase, PSimCase):
         super(DualSatStandbyCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/standby"]
-        self.psim_config_overrides["truth.leader.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
-        self.psim_config_overrides["truth.follower.attitude.w"] = lin.Vector3([0.01,0.0711,-0.01])
         self.leader_initial_state = "standby"
         self.follower_initial_state = "standby"
         self.leader_skip_deployment_wait = True
