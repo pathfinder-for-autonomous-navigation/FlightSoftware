@@ -173,13 +173,13 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Fields used to shift flows. Moves the flow with id1 to the flow with 
      * id2's position. Default is <0,0> (No flow can have an id of 0).
      */
-     WritableStateField<unsigned char> shift_flows_id1_f;
-     WritableStateField<unsigned char> shift_flows_id2_f;
+     std::unique_ptr<WritableStateField<unsigned char>> shift_flows_id1_fp;
+     std::unique_ptr<WritableStateField<unsigned char>> shift_flows_id2_fp;
 
     /**
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
-    WritableStateField<unsigned char> toggle_flow_id_f;
+    std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
 };
 
 #endif

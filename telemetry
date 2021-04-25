@@ -1258,25 +1258,25 @@
             "writable": true
         },
         "downlink.shift_id1": {
-            "bitsize": 1,
+            "bitsize": 6,
             "flow_id": 34,
-            "max": 10,
+            "max": 43,
             "min": 0,
             "type": "unsigned char",
             "writable": true
         },
         "downlink.shift_id2": {
-            "bitsize": 1,
+            "bitsize": 6,
             "flow_id": 34,
-            "max": 10,
+            "max": 43,
             "min": 0,
             "type": "unsigned char",
             "writable": true
         },
         "downlink.toggle_id": {
-            "bitsize": 1,
+            "bitsize": 6,
             "flow_id": 34,
-            "max": 10,
+            "max": 43,
             "min": 0,
             "type": "unsigned char",
             "writable": true
