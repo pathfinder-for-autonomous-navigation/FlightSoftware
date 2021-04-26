@@ -7,14 +7,12 @@ import queue
 import os
 import pty
 import subprocess
-from multiprocessing import Process
 import glob
 from elasticsearch import Elasticsearch
 import email
 import imaplib
 
 from .data_consumers import Datastore, Logger
-from .http_cmd import create_usb_session_endpoint
 from . import get_pio_asset
 from .cases.utils import str_to_val
 import lin
@@ -30,6 +28,38 @@ class USBSession(object):
     interface (an instance of Simulation) and the user command line (an instance of StateCmdPrompt),
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
+    class Request(object):
+        """Helper object allows read-state request to USB session to be easily
+        synchronized.
+        """
+        def __init__(self, field: str):
+            super(USBSession.Request, self).__init__()
+
+            self.__field = field
+            self.__lock = threading.Lock()
+            self.__has_reply = threading.Condition(self.__lock)
+            self.__data = None
+
+        @property
+        def data(self) -> dict:
+            with self.__lock:
+                while self.__data is None:
+                    self.__has_reply.wait()
+
+                return self.__data
+
+        @data.setter
+        def data(self, data: dict):
+            with self.__lock:
+                assert self.__data is None, "Error; the request has already been filled"
+                assert data is not None, "Error; a request must be filled with a value other than None"
+
+                self.__data = data
+                self.__has_reply.notify_all()
+
+        @property
+        def field(self) -> str:
+            return self.__field
 
     def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir, tlm_config, radio_imei, scrape_uplinks, enable_auto_dbtelem):
         '''
@@ -72,7 +102,7 @@ class USBSession(object):
             self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
             self.mail.login(self.username, self.password)
             self.mail.select('"[Gmail]/Sent Mail"')
-        
+
         self.debug_to_console = None
 
     def case_interaction_setup(self, _debug_to_console):
@@ -90,11 +120,12 @@ class USBSession(object):
             self.console = serial.Serial(console_port, baud_rate)
             self.start_time = datetime.datetime.now() # This is t = 0 on the Teensy, +/- a few milliseconds.
 
-            self.device_write_lock = threading.Lock() # Lock to prevent multiple writes to device at the same time.
+            # Prevent multiple writes to the device at one time
+            self.device_lock = threading.Lock()
 
-            # Queues used to manage interface between the check_msgs_thread and calls to read_state or write_state
-            self.field_requests = queue.Queue()
-            self.field_responses = queue.Queue()
+            # Prevent multiple requests from being pushed to the queue at the same time
+            self.request_lock = threading.Lock()
+            self.requests = queue.Queue()
 
             self.datastore.start()
             self.logger.start()
@@ -115,17 +146,7 @@ class USBSession(object):
             print(f"Unable to open serial port for {self.device_name}.")
             return False
 
-        try:
-            self.flask_app = create_usb_session_endpoint(self)
-            self.flask_app.config["uplink_console"] = self.uplink_console
-            self.flask_app.config["console"] = self.console
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"host":'0.0.0.0', "port": self.port})
-            self.http_thread.start()
-            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
-            return True
-        except:
-            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
-            return False
+        return True
 
     def check_console_msgs(self):
         '''
@@ -187,7 +208,7 @@ class USBSession(object):
                         # A valid telemetry field was returned. Manage it.
                         self.datastore.put(data)
 
-                    self.field_responses.put(data)
+                    request = self.requests.get(block=False).data = data
 
             except ValueError:
                 logline = f'[RAW] {line}'
@@ -201,18 +222,6 @@ class USBSession(object):
                 print('Unspecified error. Exiting.')
                 self.disconnect()
 
-    def _wait_for_state(self, field, timeout = None):
-        """
-        Helper function used by both read_state and write_state to wait for a desired value
-        to be reported back by the connected device.
-        """
-        self.field_requests.put(field)
-        try:
-            data = self.field_responses.get(True, timeout)
-            return data['val']
-        except queue.Empty:
-            return None
-
     def read_state(self, field, timeout = None):
         '''
         Read state.
@@ -221,15 +230,21 @@ class USBSession(object):
         '''
         if not self.running_logger: return
 
-        json_cmd = {'mode': ord('r'), 'field': str(field)}
+        json_cmd = {
+            'mode': ord('r'),
+            'field': str(field)
+        }
         json_cmd = json.dumps(json_cmd) + "\n"
-        self.device_write_lock.acquire()
-        self.console.write(json_cmd.encode())
-        self.device_write_lock.release()
+
+        request = USBSession.Request(field)
+        with self.request_lock:
+            self.requests.put(request, block=False)
+            with self.device_lock:
+                self.console.write(json_cmd.encode())
+
         self.raw_logger.put("Sent:     " + json_cmd.rstrip())
 
-        return self._wait_for_state(field)
-
+        return request.data['val']
 
     def smart_read(self, field, **kwargs):
         '''
@@ -269,15 +284,16 @@ class USBSession(object):
             print("Error: Flight Software can't handle input buffers >= 512 bytes.")
             return False
 
-        self.device_write_lock.acquire()
-        self.console.write(json_cmds.encode())
-        self.device_write_lock.release()
+        requests = [USBSession.Request(field) for field in fields]
+        with self.request_lock:
+            for request in requests:
+                self.requests.put(request, block=False)
+            with self.device_lock:
+                self.console.write(json_cmds.encode())
+
         self.raw_logger.put("Sent:     " + json_cmds)
 
-        returned_vals = []
-        for field in fields:
-            returned_vals.append(self._wait_for_state(field, timeout))
-
+        returned_vals = [request.data['val'] for request in requests]
         if returned_vals[0] is None:
             return False
 
@@ -366,9 +382,9 @@ class USBSession(object):
         }
         json_cmd = json.dumps(json_cmd) + "\n"
 
-        self.device_write_lock.acquire()
-        self.console.write(json_cmd.encode())
-        self.device_write_lock.release()
+        with self.device_lock:
+            self.console.write(json_cmd.encode())
+
         self.raw_logger.put("Sent:     " + json_cmd)
 
         return True
@@ -519,7 +535,6 @@ class USBSession(object):
                             self.mail.store(num, '-FLAGS', '\SEEN')
 
         return True
-                        
 
     def disconnect(self):
         '''Quits the program and stores message log and field telemetry to file.'''
@@ -533,12 +548,6 @@ class USBSession(object):
         self.scrape_uplinks_thread.join()
         self.console.close()
         self.dp_console.close()
-
-        self.http_thread.terminate()
-        self.http_thread.join()
-
-        self.http_thread.terminate()
-        self.http_thread.join()
 
         self.datastore.stop()
         self.logger.stop()

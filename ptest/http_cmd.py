@@ -151,39 +151,3 @@ def create_radio_session_endpoint(radio_session, queue):
         return "Successfully sent telemetry to Iridium"
 
     return app
-
-def create_usb_session_endpoint(usb_session):
-    app = Flask(__name__)
-    app.logger.disabled = True
-    app.config["usb_session"] = usb_session
-
-    app.config["SWAGGER"]={"title": "PAN State Session Command Endpoint", "uiversion": 2}
-    swagger=Swagger(app, config=swagger_config)
-
-    @app.route("/send-telem", methods=["POST"])
-    @swag_from("endpoint_configs/usb_session/send-telem.yml")
-    def send_telem():
-        uplink=request.get_json()
-
-        # Create an uplink packet
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
-
-        uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "http_uplink"+radio_session.imei+".sbd", "http_uplink"+radio_session.imei+".json") and os.path.exists("http_uplink"+radio_session.imei+".sbd")
-
-        # If the uplink packet is successfully created, then send it to the Flight Computer
-        if not success: return "Unable to send telemetry"
-        success = usb_session.send_uplink("uplink"+radio_session.imei+".sbd")
-
-        # Get rid of uplink files/cleanup
-        os.remove("http_uplink"+radio_session.imei+".sbd")
-        os.remove("http_uplink"+radio_session.imei+".json")
-
-        if success:
-            return "Successfully sent telemetry to State Session"
-        return "Unable to send telemetry"
-
-    return app
