@@ -7,8 +7,6 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.initial_state = "standby"
         self.psim_configs += ["truth/standby"]
         self.debug_to_console = True
-
-        self.initial_state = "standby"
         self.skip_deployment_wait = True
 
     def post_boot(self):
@@ -16,6 +14,8 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.mock_sensor_validity = True
         self.ws("fault_handler.enabled", True)
         self.ws("piksi_fh.enabled", True)
+        ####### Had to comment out piski_fh.dead.suppress in utils.py to run #######
+        self.ws("piski_fh.dead.suppress", False)
         self.no_cdpgs_max_wait = self.rs("piksi_fh.no_cdpgs_max_wait")
         self.cdpgs_delay_max_wait = self.rs("piksi_fh.cdpgs_delay_max_wait")
         self.cycle()
@@ -37,13 +37,31 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
 
     def check_is_standby(self):
         if self.mission_state != "standby":
-            raise TestCaseFailure("Failed to set mission state to 'standby' after no rtk signal during wait period in 'leader_close_approach'.")
+            raise TestCaseFailure("Failed to set mission state to 'standby'.")
 
     def set_fixed_rtk(self):
         self.ws("piksi.state", Enums.piksi_modes["fixed_rtk"])
 
     def set_no_fix(self):
         self.ws("piksi.state", Enums.piksi_modes["no_fix"])
+
+    def check_piksi_dead_fault(self, mission_state="leader", error="crc_error", status=None):
+        self.mission_state = mission_state
+        self.cycle()
+
+        # Cycle for time until fault would be triggered
+        for _ in range(self.one_day_ccno//6 + 1):
+            print(self.mission_state)
+            if self.mission_state != mission_state:
+                raise TestCaseFailure("Failed to set mission state to " + mission_state + ". Mission state is " + self.mission_state + ".")
+            self.ws("piksi.state",Enums.piksi_modes[error])
+            self.cycle()
+
+        if status=="should_fault":
+            self.check_is_standby()
+        else:
+            if self.mission_state == "standby":
+                raise TestCaseFailure("Piksi dead fault incorrectly set mission state to 'standby'.")
 
     # def cycle_til_bound(self, n, mode=None):
     #     while self.cycle_tracker <= n:
@@ -65,14 +83,16 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
 
         # Test 1: Set piksi mode to 'dead'
         self.logger.put("Running first test: Piksi is Dead")
-        self.ws("piksi.state",Enums.piksi_modes["dead"])
 
-        self.cycle()        
+        self.check_piksi_dead_fault(error="crc_error", status="should_fault")
+        self.check_piksi_dead_fault(error="no_data_error", status="should_fault")
+        self.check_piksi_dead_fault(error="data_error", status="should_fault")
 
-        # Mission state should be set to safehold
-        if self.mission_state != "safehold":
-            raise TestCaseFailure("Failed to set mission state to 'safehold' when piksi mode was dead.")
-        
+        super(DualSatDetumbleCase, self).__init__(*args, **kwargs)
+        self.check_piksi_dead_fault(mission_state="startup", error="crc_fault")
+        # self.check_piksi_dead_fault(mission_state="detumble", error="crc_fault")
+        # self.check_piksi_dead_fault(mission_state="initialization_hold", error="crc_fault")
+
 
         # ######################## TEST 2 ########################
         # # Reset mission state to 'leader'
