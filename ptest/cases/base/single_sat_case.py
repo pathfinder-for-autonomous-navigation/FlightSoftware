@@ -1,13 +1,7 @@
 from ...data_consumers import Logger
-import time
-import math
-import threading
-import traceback
 from ..utils import Enums, TestCaseFailure, suppress_faults
-import psim # the actual python psim repo
-import lin
-import datetime
-from .ptest_case import PTestCase
+from .ptest_case import FancyFlightController, PTestCase
+
 
 class SingleSatCase(PTestCase):
     """Base class for all HOOTL and HITL testcases involving a single satellite.
@@ -39,6 +33,7 @@ class SingleSatCase(PTestCase):
 
     def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
+        self.leader = FancyFlightController(self.flight_controller, self.logger)
         self.devices = [self.flight_controller]
 
     def setup(self, devices, radios):
@@ -94,29 +89,13 @@ class SingleSatCase(PTestCase):
         """
         pass
 
-    def read_state(self, string_state):
-        """
-        Wrapper function around flight controller's read_state.
-        """
-        return self.flight_controller.read_state(string_state)
-
-    def write_state(self, string_state, state_value):
-        """
-        Wrapper function around flight controller's write_state.
-        """
-        self.flight_controller.write_state(string_state, state_value)
-        return self.read_state(string_state)
-
     @property
     def mission_state(self):
-        """
-        Returns mission state as a string: "standby", "startup", etc.
-        """
-        return Enums.mission_states[int(self.flight_controller.read_state("pan.state"))]
+        return self.leader.mission_state
 
     @mission_state.setter
     def mission_state(self, state):
-        self.flight_controller.write_state("pan.state", int(Enums.mission_states[state]))
+        self.leader.mission_state = state
 
     def cycle(self):
         """
@@ -124,7 +103,7 @@ class SingleSatCase(PTestCase):
 
         Asserts the FC did indeed step forward by one CC
         """
-        self.flight_controller.write_state('cycle.start', 'true')
+        self.ws('cycle.start', True)
 
         super(SingleSatCase, self).cycle()
 
@@ -132,34 +111,15 @@ class SingleSatCase(PTestCase):
             self.flight_controller.scrape_uplink()
         if self.flight_controller.enable_auto_dbtelem:
             self.flight_controller.dbtelem()
-        
-    def rs(self, name):
-        """
-        Reads a state field (with type inference from smart_read()).
 
-        Checks that the name is indeed a string.
-        """
-        assert(type(name) is str), "State field name was not a string."
-        ret = self.flight_controller.smart_read(name)
-        return ret
+    def rs(self, name, print=False):
+        return self.leader.rs(name, print=print)
 
     def print_rs(self, name):
-        """
-        Reads a statefield, and also prints it.
-        """
-        ret = self.rs(name)
-        self.logger.put(f"{name} is {ret}")
-        return ret
+        return self.leader.rs(self, name)
 
-    def ws(self, name, val):
-        """
-        Writes a state
-        """
-        self.flight_controller.write_state(name, val)
+    def ws(self, name, val, print=False):
+        self.leader.ws(name, val, print=print)
 
     def print_ws(self, name, val):
-        """
-        Writes the state and prints the written value.
-        """
-        self.logger.put(f"{name} set to: {val}")
-        self.ws(name, val)
+        self.leader.ws(name, val, print=True)
