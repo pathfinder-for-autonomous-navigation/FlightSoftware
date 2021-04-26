@@ -44,4 +44,5 @@ class Ditl(SingleSatStandbyCase):
     #     self.data_logs()
 
     def run(self):
+        self.cycle()
         self.data_logs()
