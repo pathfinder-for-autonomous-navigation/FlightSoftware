@@ -86,6 +86,8 @@ class USBSession(object):
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
+        self.uplink_json_name = "uplink"+self.radio_imei+".http"
+        self.uplink_sbd_name = "uplink"+self.radio_imei+".sbd"
 
         # Open a connection to elasticsearch
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
@@ -409,16 +411,16 @@ class USBSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.uplink_console.create_uplink(fields, vals, "uplink"+self.radio_imei+".sbd", "uplink"+self.radio_imei+".http")
+        success = self.uplink_console.create_uplink(fields, vals, self.uplink_sbd_name, self.uplink_json_name)
 
         # If the uplink packet exists, send it to the FlightSoftware console
-        if success and os.path.exists("uplink"+self.radio_imei+".sbd"):
-            success &= self.send_uplink("uplink"+self.radio_imei+".sbd")
-            os.remove("uplink"+self.radio_imei+".sbd") 
-            os.remove("uplink"+self.radio_imei+".http") 
+        if success and os.path.exists(self.uplink_sbd_name):
+            success &= self.send_uplink(self.uplink_sbd_name)
+            os.remove(self.uplink_sbd_name) 
+            os.remove(self.uplink_json_name) 
             return success
         else:
-            if os.path.exists("uplink"+self.radio_imei+".http"): os.remove("uplink"+self.radio_imei+".http") 
+            if os.path.exists(self.uplink_json_name): os.remove(self.uplink_json_name) 
             return False
 
     def parsetelem(self):
@@ -525,11 +527,11 @@ class USBSession(object):
                                 # Check if there is an email attachment
                                 if part.get_filename() is not None:
                                     # Download uplink packet from email attachment and send it to the Flight Computer
-                                    fp = open("new_uplink"+self.radio_imei+".sbd", 'wb')
+                                    fp = open("new_" + self.uplink_sbd_name, 'wb')
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
-                                    self.send_uplink("new_uplink"+self.radio_imei+".sbd")
-                                    os.remove("new_uplink"+self.radio_imei+".sbd")
+                                    self.send_uplink("new_"+self.uplink_sbd_name)
+                                    os.remove("new_"+self.uplink_sbd_name)
                         else:
                             # Mark message as unseen again if it wasn't addressed to this satellite
                             self.mail.store(num, '-FLAGS', '\SEEN')
