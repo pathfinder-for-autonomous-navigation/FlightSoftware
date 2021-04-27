@@ -88,7 +88,6 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.check_piksi_dead_fault(error="no_data_error", status="should_fault")
         self.check_piksi_dead_fault(error="data_error", status="should_fault")
 
-        super(DualSatDetumbleCase, self).__init__(*args, **kwargs)
         self.check_piksi_dead_fault(mission_state="startup", error="crc_fault")
         # self.check_piksi_dead_fault(mission_state="detumble", error="crc_fault")
         # self.check_piksi_dead_fault(mission_state="initialization_hold", error="crc_fault")
