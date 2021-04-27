@@ -34,7 +34,7 @@ def index_sf_report():
     imei=sf_report["imei"]
     data=json.dumps({
         sf_report["field"]: sf_report["value"],
-        "time.downlink_recieved": str(datetime.now().isoformat())
+        "time.downlink_received": str(datetime.now().isoformat())
     })
 
     #index statefield report in elasticsearch
@@ -62,7 +62,7 @@ def search_es():
         },
         "sort": [
             {
-                "time.downlink_recieved": {
+                "time.downlink_received": {
                     "order": "desc"
                 }
             }
