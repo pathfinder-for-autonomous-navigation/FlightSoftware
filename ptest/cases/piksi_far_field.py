@@ -3,6 +3,10 @@ from .utils import Enums, TestCaseFailure
 
 
 class PiksiFaultFarField(DualSatFarFieldCase):
+   def __init__(self, *args, **kwargs):
+      super(PiksiFaultFarField, self).__init__(*args, **kwargs)
+      self.debug_to_console = True
+
    def post_boot(self):
       super(PiksiFaultFarField, self).post_boot()
 
@@ -18,7 +22,6 @@ class PiksiFaultFarField(DualSatFarFieldCase):
       self.flight_controller_follower.write_state("piski_fh.dead.suppress", False)
 
       self.piksi_dead_threshold = self.leader_one_day_ccno//6 + 1
-      self.debug_to_console = True      
       self.mock_sensors = False
 
    def check_no_fix(self):
@@ -40,7 +43,7 @@ class PiksiFaultFarField(DualSatFarFieldCase):
       self.collect_diagnostic_data()
 
       # Cycle for time until fault would be triggered
-      for i in range(self.piksi_dead_threshold):
+      for i in range(20):
          print(i)       # Debugging
          if self.mission_state_leader != mission_state:
             raise TestCaseFailure("Failed to set mission state to " + mission_state + ". Mission state is " + self.mission_state_leader + ".")
