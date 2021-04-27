@@ -45,6 +45,7 @@ class PSimCase(PTestCase):
 
         self.__is_single_sat = isinstance(self, SingleSatCase)
 
+        self.mock_sensors = True
         self.mock_piksi = True
         self.mock_gyro = True
         self.mock_magnetometer = True 
@@ -97,16 +98,17 @@ class PSimCase(PTestCase):
         self.__sim.step()
 
         # Load sensor data from PSim back into the flight computer.
-        threads = list()
-        for satellite, fc in self.__fc_satellite_pairs:
-            sensors = self.__poll_sensors(satellite)
-            thread = threading.Thread(target=load_to_fc, daemon=True, args=(fc, sensors))
-            threads.append(thread)
-            thread.start()
+        if self.mock_sensors:
+            threads = list()
+            for satellite, fc in self.__fc_satellite_pairs:
+                sensors = self.__poll_sensors(satellite)
+                thread = threading.Thread(target=load_to_fc, daemon=True, args=(fc, sensors))
+                threads.append(thread)
+                thread.start()
 
-        # Wait for all state field transactions to be complete.
-        for thread in threads:
-            thread.join()
+            # Wait for all state field transactions to be complete.
+            for thread in threads:
+                thread.join()
 
     def __actuators(self, fc, satellite):
         """Reads actuator outputs from a flight computer into the simulation for

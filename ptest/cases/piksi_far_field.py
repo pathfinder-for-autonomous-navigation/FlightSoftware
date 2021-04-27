@@ -4,6 +4,8 @@ from .utils import Enums, TestCaseFailure
 
 class PiksiFaultFarField(DualSatFarFieldCase):
    def post_boot(self):
+      super(PiksiFaultFarField, self).post_boot()
+
       """We need to enable the piksi fault handler again and call far field's post_boot function.
       """
       self.flight_controller_leader.write_state("fault_handler.enabled", True)
@@ -17,9 +19,8 @@ class PiksiFaultFarField(DualSatFarFieldCase):
 
       self.piksi_dead_threshold = self.leader_one_day_ccno//6 + 1
       self.debug_to_console = True      
+      self.mock_sensors = False
 
-      super(PiksiFaultFarField, self).post_boot()
-   
    def check_no_fix(self):
       if self.flight_controller_leader.smart_read("piksi.state") == Enums.piksi_modes["fixed_rtk"]:
          raise TestCaseFailure("Leader Piksi mode is still 'fixed_rtk'")
@@ -44,6 +45,7 @@ class PiksiFaultFarField(DualSatFarFieldCase):
          if self.mission_state_leader != mission_state:
             raise TestCaseFailure("Failed to set mission state to " + mission_state + ". Mission state is " + self.mission_state_leader + ".")
          self.flight_controller_leader.write_state("piksi.state", Enums.piksi_modes[error])
+         print(self.flight_controller_leader.read_state("piksi.state"))
 
          self.cycle()
          self.collect_diagnostic_data()
