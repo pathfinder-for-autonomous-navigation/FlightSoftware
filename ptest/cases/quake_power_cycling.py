@@ -71,11 +71,11 @@ class QuakePowerCycling(SingleSatCase):
             raise TestCaseFailure("QuakeFaultHandler failed to power cycle the output channel.")
        
     def diagnostics(self):
-        self.read_state("radio.state")
-        self.read_state("qfh.state")
-        self.read_state("radio.last_comms_ccno")
-        self.read_state("gomspace.power_cycle_output3_cmd")
-        self.read_state("pan.state")
+        self.rs("radio.state")
+        self.rs("qfh.state")
+        self.rs("radio.last_comms_ccno")
+        self.rs("gomspace.power_cycle_output3_cmd")
+        self.rs("pan.state")
 
     def run(self):
         # The satellite has been in a blackout since startup. Cycle count starts at 1.
