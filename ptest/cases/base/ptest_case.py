@@ -1,12 +1,48 @@
 from ...data_consumers import Logger
-import time
-import math
-import threading
-import traceback
 from ..utils import Enums, TestCaseFailure, suppress_faults
-import psim # the actual python psim repo
-import lin
-import datetime
+
+import threading
+import time
+import traceback
+
+
+class FancyFlightController(object):
+    """Wrapper around a flight controller specific to HOOTL and HITL testcases.
+    """
+    def __init__(self, flight_controller, logger):
+        super(FancyFlightController, self).__init__()
+
+        self.__flight_controller = flight_controller
+        self.__logger = logger
+
+    def rs(self, name: str, print: bool=False):
+        """Reads a statefield and prints it to the logger if requested.
+        """
+        value = self.__flight_controller.smart_read(name)
+        if print:
+            self.__logger.put("{} is {}".format(name, value))
+
+        return value
+
+    def ws(self, name: str, value, print: bool=False):
+        """Writes a statefield and prints it to the logger if requested.
+        """
+        self.__flight_controller.write_state(name, value)
+        if print:
+            self.__logger.put("{} set to {}".format(name, value))
+
+    @property
+    def mission_state(self) -> str:
+        """Returns the current mission state as a string.
+        """
+        return Enums.mission_states[self.rs("pan.state")]
+
+    @mission_state.setter
+    def mission_state(self, state: str):
+        """Sets the mission state.
+        """
+        self.ws("pan.state", int(Enums.mission_states[state]))
+
 
 class PTestCase(object):
     """Base class for all HOOTL and HITL testcases.
