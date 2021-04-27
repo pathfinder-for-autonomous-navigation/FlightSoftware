@@ -86,27 +86,6 @@ def createFieldList(file):
     # returns fields
     return fields
 
-def getTelemValue(s):
-    typeS = getType(s)
-    print(s + " " + typeS)
-    if "vector" in typeS:
-        print("making vector")
-        returned_vec =  makeVector(s)
-        print(returned_vec)
-        return returned_vec
-    elif "quaternion" in typeS:
-        print("making quat")
-        returned_quat = makeQuaternion(s)
-        print(returned_quat)
-        return returned_quat
-    elif "bool" in typeS:
-        print("making bool")
-        returned_bool = makeBoolean(s)
-        print(returned_bool)
-        return returned_bool
-    else:
-        print("fetching initial value")
-        return initialTelemValue(s)
 
 def createDict(l):
     '''
@@ -132,9 +111,7 @@ def createDict(l):
             telemObject = telemPoint[1]
             telemState = telemPoint[2]
             # retrieve the value of the telem point from initialTelemValue()
-            telemValue = getTelemValue(telemSubsystem + '.' + telemObject + '.' + telemState)
-            print ("THREE TELEM VALUE") 
-            print(telemValue)
+            telemValue = initialTelemValue(telemSubsystem + '.' + telemObject + '.' + telemState)
             
             # checks to see if subsystem and then object are alreay in the dictionary
             if telemSubsystem in telem:
@@ -158,9 +135,7 @@ def createDict(l):
             telemSubsystem = telemPoint[0]
             telemState = telemPoint[1]
             # retrieve the value of the telem point from initialTelemValue()
-            telemValue = getTelemValue(telemSubsystem + '.' + telemState)
-            print ("TWO TELEM VALUE") 
-            print(telemValue)
+            telemValue = initialTelemValue(telemSubsystem + '.' + telemState)
             
             # checks to see if subsystem and then state are alreay in the dictoinary
             if telemSubsystem in telem:
@@ -176,7 +151,7 @@ def createDict(l):
             # initialize of the state
             telemState = telemPoint[0]
             # retrieve the value of the telem point from initialTelemValue()
-            telemValue = getTelemValue(telemState)
+            telemValue = initialTelemValue(telemState)
             
 
             if (telemState in telem) == False: # finally it adds the state to the empty dictionary using the value initialized earlier
@@ -193,7 +168,8 @@ def initialTelemValue(state):
         Returns: the initial value of that telemetry based on its type
     '''
 
-    type = getType(state)
+    # opens telemetry
+    t = open(telemetryPath, 'r')
 
     # a data structure holding all the coorisponding initial values for each type
     initialValues = {
@@ -213,25 +189,6 @@ def initialTelemValue(state):
     # if the type is not in this list return an empty string
     defaultValue = ''
 
-    for key in initialValues:
-        if type == key:
-            return initialValues[key] # if the type from telemetry matches a type in initialValues it will return that cooresponding initial value
-    
-    return defaultValue # returns the initial values for the state
-   
-
-
-def getType(state):
-    '''
-    returns the type for a specific piece of state telemetry
-
-        Parameters: 
-            state (str): the key for a telemetry state
-        Returns: the type of that telemetry
-    '''
-
-    # gets telemetry
-    t = open(telemetryPath, 'r')
     lines = t.readlines()
     t.close()
 
@@ -249,33 +206,13 @@ def getType(state):
                 type = line[:index]
                 index = type.rfind("\"")
                 type = type[index+1:]
-                return type
+                for key in initialValues:
+                    if type == key:
+                        return initialValues[key] # if the type from telemetry matches a type in initialValues it will return that cooresponding initial value
     
-    # returns not found if point not found
-    return 'not found'
+    # returns the initial values for the state
+    return defaultValue
 
-def makeBoolean(s):
-    telemValue = {}
-    telemValue["rawBool"] = 0
-    telemValue["intBool"] = 0
-    return telemValue
-
-def makeVector(s):
-    telemValue = {}
-    telemValue["rawVec"] = 0
-    telemValue["x"] = 0
-    telemValue["y"] = 0
-    telemValue["z"] = 0
-    return telemValue
-
-def makeQuaternion(s):
-    telemValue = {}
-    telemValue["rawQuat"] = 0
-    telemValue["a"] = 0
-    telemValue["b"] = 0
-    telemValue["c"] = 0
-    telemValue["d"] = 0
-    return telemValue
 
 def writeStateVariables(d):
     '''
@@ -285,8 +222,7 @@ def writeStateVariables(d):
     '''
 
     #removes the old state-variables file and creates a new one
-    if os.path.exists(stateVariablesPath):
-        os.remove(stateVariablesPath)
+    os.remove(stateVariablesPath)
     sv = open(stateVariablesPath, "x")
 
     #sets the stdout to the state-variables file, prints out the dictionary, and then makes the stdout the original again
