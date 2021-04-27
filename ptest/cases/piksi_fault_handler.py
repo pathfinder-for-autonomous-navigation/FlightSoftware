@@ -16,6 +16,7 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.ws("piksi_fh.enabled", True)
         ####### Had to comment out piski_fh.dead.suppress in utils.py to run #######
         self.ws("piski_fh.dead.suppress", False)
+        self.piksi_dead_threshold = self.one_day_ccno//6 + 1
         self.cycle()
         self.collect_diagnostic_data()
 
@@ -37,26 +38,25 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.collect_diagnostic_data()
 
         # Cycle for time until fault would be triggered
-        for _ in range(self.one_day_ccno//6 + 1):
+        for _ in range(self.piksi_dead_threshold):
             self.check_is_leader()
             self.ws("piksi.state",Enums.piksi_modes[error])
 
             self.cycle()
             self.collect_diagnostic_data()
 
-        if status=="should_fault":
-            self.check_is_standby()
-        else:
-            if self.mission_state == "standby":
-                raise TestCaseFailure("Piksi dead fault incorrectly set mission state to 'standby'.")
+        self.check_is_standby()
+        
 
     def run(self):
-        # Test 1: Set piksi mode to 'dead'
-        self.logger.put("Running first test: Piksi is Dead")
+        """After receiving consecutive piksi errors for piksi_dead_threshold
+        cycles, we transition to standby.
+        """
+        self.logger.put("Running piksi dead test")
 
-        self.check_piksi_dead_fault(error="crc_error", status="should_fault")
-        self.check_piksi_dead_fault(error="no_data_error", status="should_fault")
-        self.check_piksi_dead_fault(error="data_error", status="should_fault")
+        self.check_piksi_dead_fault(error="crc_error")
+        self.check_piksi_dead_fault(error="no_data_error")
+        self.check_piksi_dead_fault(error="data_error")
 
         self.logger.put("PiksiFaultHandler successfully changed mission state to 'standby' when piksi mode was dead.")
         self.finish()
