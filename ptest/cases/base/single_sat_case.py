@@ -116,7 +116,7 @@ class SingleSatCase(PTestCase):
         return self.leader.rs(name, print=print)
 
     def print_rs(self, name):
-        return self.leader.rs(self, name)
+        return self.leader.rs(name, print=True)
 
     def ws(self, name, val, print=False):
         self.leader.ws(name, val, print=print)
