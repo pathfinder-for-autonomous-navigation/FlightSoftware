@@ -5,6 +5,10 @@ from .utils import Enums, TestCaseFailure
 class PiksiFaultNearField(DualSatNearFieldCase):
     """Test the basic functionality of the piksi fault handler.
     """
+    def __init__(self, *args, **kwargs):
+        super(PiksiFaultNearField, self).__init__(*args, **kwargs)
+        self.debug_to_console = False
+
     def post_boot(self):
         """We need to enable the piksi fault handler again and call near field's post_boot function.
         """
@@ -13,7 +17,6 @@ class PiksiFaultNearField(DualSatNearFieldCase):
         self.flight_controller_leader.write_state("piksi_fh.enabled", True)
         self.flight_controller_follower.write_state("piksi_fh.enabled", True)
 
-        self.no_cdpgs_max_wait = self.flight_controller_leader.smart_read("piksi_fh.no_cdpgs_max_wait")
         self.cdpgs_delay_max_wait = self.flight_controller_leader.smart_read("piksi_fh.cdpgs_delay_max_wait")
 
         super(PiksiFaultNearField, self).post_boot()
@@ -44,12 +47,13 @@ class PiksiFaultNearField(DualSatNearFieldCase):
         for _ in range(10):
             self.cycle()
 
+        # Shut off cdgps readings
         self.ws_psim("sensors.leader.cdgps.disabled", True)
         self.ws_psim("sensors.follower.cdgps.disabled", True)
-        self.cycle()
+        
         self.cycle()
 
-        for _ in range(self.cdpgs_delay_max_wait):
+        for _ in range(self.cdpgs_delay_max_wait + 1):
             self.check_is_close_appr()
             self.check_no_fix()
             self.cycle()

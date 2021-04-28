@@ -18,11 +18,6 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
         self.ws("piski_fh.dead.suppress", False)
         self.piksi_dead_threshold = self.one_day_ccno//6 + 1
         self.cycle()
-        self.collect_diagnostic_data()
-
-    def collect_diagnostic_data(self):
-        self.rs("piksi.state")
-        self.rs("pan.state")
 
     def check_is_leader(self):
         if self.mission_state != "leader":
@@ -35,19 +30,14 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
     def check_piksi_dead_fault(self, error="crc_error", status=None):
         self.mission_state = "leader"
         self.cycle()
-        self.collect_diagnostic_data()
-
         # Cycle for time until fault would be triggered
         for _ in range(self.piksi_dead_threshold):
             self.check_is_leader()
             self.ws("piksi.state",Enums.piksi_modes[error])
-
             self.cycle()
-            self.collect_diagnostic_data()
 
         self.check_is_standby()
         
-
     def run(self):
         """After receiving consecutive piksi errors for piksi_dead_threshold
         cycles, we transition to standby.

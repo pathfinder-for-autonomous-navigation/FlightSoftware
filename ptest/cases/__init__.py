@@ -47,4 +47,4 @@ from .gomspacelogger import GomspaceLog
 from .reboot_utility import Reboot
 from .quake_power_cycling import QuakePowerCycling
 from .piksi_near_field import PiksiFaultNearField
-from .piksi_far_field import PiksiFaultFarField
+from .piksi_near_field_2 import PiksiFaultNearField2
