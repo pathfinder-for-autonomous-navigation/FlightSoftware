@@ -2,9 +2,22 @@ from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 import time
 
+# DO NOT USE AS A REFRENCE TO WRITE OTHER PTEST CASES
+#
+# This testcase is basically a dinosaur among the other testcases and using many
+# features that are considered "deprecated".
+
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatCase):
+
+    def read_state(self, string_state):
+        return self.flight_controller.read_state(string_state)
+
+    def write_state(self, string_state, state_value):
+        self.flight_controller.write_state(string_state, state_value)
+        return self.read_state(string_state)
+
     def post_boot(self):
         self.mission_state = 'manual'
         self.cycle()

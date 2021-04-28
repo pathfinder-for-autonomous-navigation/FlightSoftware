@@ -59,7 +59,7 @@ RelativeOrbitEstimator::RelativeOrbitEstimator(StateFieldRegistry &registry)
       orbit_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
       rel_orbit_state_f("rel_orbit.state", Serializer<unsigned char>(2)),
       rel_orbit_pos_f("rel_orbit.pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
-      rel_orbit_vel_f("rel_orbit.vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
+      rel_orbit_vel_f("rel_orbit.vel", Serializer<lin::Vector3d>(7160, 7360, 20)),
       rel_orbit_rel_pos_f("rel_orbit.rel_pos", Serializer<lin::Vector3d>(0,2000,22)),
       rel_orbit_rel_pos_sigma_f("rel_orbit.rel_pos_sigma", Serializer<lin::Vector3d>(0, 10, 12)),
       rel_orbit_rel_vel_f("rel_orbit.rel_vel", Serializer<lin::Vector3d>(0,11,14)),
@@ -67,7 +67,7 @@ RelativeOrbitEstimator::RelativeOrbitEstimator(StateFieldRegistry &registry)
       rel_orbit_reset_cmd_f("rel_orbit.reset_cmd", Serializer<bool>()),
       rel_orbit_uplink_time_f("rel_orbit.uplink.time", Serializer<gps_time_t>()),
       rel_orbit_uplink_pos_f("rel_orbit.uplink.pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
-      rel_orbit_uplink_vel_f("rel_orbit.uplink.vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
+      rel_orbit_uplink_vel_f("rel_orbit.uplink.vel", Serializer<lin::Vector3d>(7160, 7360, 20)),
       _uplink_t(get_gps_zero()),
       _have_previous_baseline(false),
       _cycles_without_rtk(0)
