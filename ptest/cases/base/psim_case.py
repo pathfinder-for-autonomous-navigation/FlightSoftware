@@ -46,10 +46,6 @@ class PSimCase(PTestCase):
         self.__is_single_sat = isinstance(self, SingleSatCase)
 
         self.mock_sensors = True
-        self.mock_piksi = True
-        self.mock_gyro = True
-        self.mock_magnetometer = True 
-        self.mock_ssa = True
 
     def setup(self, *args, **kwargs):
         super(PSimCase, self).setup(*args, **kwargs)
@@ -131,56 +127,52 @@ class PSimCase(PTestCase):
         # The Piksi can be in one of three states: we can have no GPS or CDGPS
         # data, we can have only GPS data, or we can have both CDGPS and GPS
         # data. All cases are handled here.
-        if self.mock_piksi:
-            gps_is_valid = self.__sim[f"sensors.{satellite}.gps.valid"]
+        gps_is_valid = self.__sim[f"sensors.{satellite}.gps.valid"]
 
-            if gps_is_valid:
-                if self.__sim.get(f"sensors.{satellite}.cdgps.valid"):
-                    sensors["piksi.state"] = Enums.piksi_modes["fixed_rtk"]
-                    sensors["piksi.baseline_pos"] = list(self.__sim[f"sensors.{satellite}.cdgps.dr"])
-                else:
-                    sensors["piksi.state"] = Enums.piksi_modes["spp"]
-
-                sensors["piksi.time"] = GPSTime(self.__sim['truth.t.ns']).to_list()
-                sensors["piksi.pos"] = list(self.__sim[f"sensors.{satellite}.gps.r"])
-                sensors["piksi.vel"] = list(self.__sim[f"sensors.{satellite}.gps.v"])
+        if gps_is_valid:
+            if self.__sim.get(f"sensors.{satellite}.cdgps.valid"):
+                sensors["piksi.state"] = Enums.piksi_modes["fixed_rtk"]
+                sensors["piksi.baseline_pos"] = list(self.__sim[f"sensors.{satellite}.cdgps.dr"])
             else:
-                sensors["piksi.state"] = Enums.piksi_modes["no_fix"]
+                sensors["piksi.state"] = Enums.piksi_modes["spp"]
+
+            sensors["piksi.time"] = GPSTime(self.__sim['truth.t.ns']).to_list()
+            sensors["piksi.pos"] = list(self.__sim[f"sensors.{satellite}.gps.r"])
+            sensors["piksi.vel"] = list(self.__sim[f"sensors.{satellite}.gps.v"])
+        else:
+            sensors["piksi.state"] = Enums.piksi_modes["no_fix"]
 
         # Simulate the gyroscope.
         #
         # Here, we simply see if the gyroscope data is valid, mock the ADCS
         # HAVT, and pass along the reading if applicable.
-        if self.mock_gyro:
-            gyroscope_is_valid = self.__sim[f"sensors.{satellite}.gyroscope.valid"]
+        gyroscope_is_valid = self.__sim[f"sensors.{satellite}.gyroscope.valid"]
 
-            sensors["adcs_monitor.havt_device0"] = gyroscope_is_valid
-            if gyroscope_is_valid:
-                sensors["adcs_monitor.gyr_vec"] = list(self.__sim[f"sensors.{satellite}.gyroscope.w"])
+        sensors["adcs_monitor.havt_device0"] = gyroscope_is_valid
+        if gyroscope_is_valid:
+            sensors["adcs_monitor.gyr_vec"] = list(self.__sim[f"sensors.{satellite}.gyroscope.w"])
 
         # Simulate the magnetometer
         #
         # Here, we simply see if the magnetometer data is valid, mock the ADCS
         # HAVT, and pass along the reading if applicable.
-        if self.mock_magnetometer:
-            magnetometer_is_valid = self.__sim[f"sensors.{satellite}.magnetometer.valid"]
+        magnetometer_is_valid = self.__sim[f"sensors.{satellite}.magnetometer.valid"]
 
-            sensors["adcs_monitor.havt_device1"] = magnetometer_is_valid
-            if magnetometer_is_valid:
-                sensors["adcs_monitor.mag1_vec"] = list(self.__sim[f"sensors.{satellite}.magnetometer.b"])
+        sensors["adcs_monitor.havt_device1"] = magnetometer_is_valid
+        if magnetometer_is_valid:
+            sensors["adcs_monitor.mag1_vec"] = list(self.__sim[f"sensors.{satellite}.magnetometer.b"])
 
         # Simulate the sun sensors
         #
         # Here we check if the sun vector is valid, mock the sun sensor mode,
         # and pass along the reading if applicable.
-        if self.mock_ssa:
-            sun_sensors_are_valid = self.__sim[f"sensors.{satellite}.sun_sensors.valid"]
+        sun_sensors_are_valid = self.__sim[f"sensors.{satellite}.sun_sensors.valid"]
 
-            if sun_sensors_are_valid:
-                sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_COMPLETE']
-                sensors["adcs_monitor.ssa_vec"] = list(self.__sim[f"sensors.{satellite}.sun_sensors.s"])
-            else:
-                sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_FAILURE']
+        if sun_sensors_are_valid:
+            sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_COMPLETE']
+            sensors["adcs_monitor.ssa_vec"] = list(self.__sim[f"sensors.{satellite}.sun_sensors.s"])
+        else:
+            sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_FAILURE']
 
         return sensors
 
