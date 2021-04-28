@@ -9,7 +9,6 @@
 #include <thread>
 #include <chrono>
 #include <time.h>
-#include <unistd.h>
 #else
 #include <Arduino.h>
 #endif
@@ -95,8 +94,6 @@ class TimedControlTaskBase {
       while(duration_to_us(get_system_time() - start) < delta_t) {
         #ifndef DESKTOP
           delayMicroseconds(10);
-        #else
-          usleep(10);
         #endif
       }
     }
