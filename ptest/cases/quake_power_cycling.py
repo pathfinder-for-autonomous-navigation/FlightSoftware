@@ -8,12 +8,13 @@ class QuakePowerCycling(SingleSatCase):
     def __init__(self, *args, **kwargs):
         super(QuakePowerCycling, self).__init__(*args, **kwargs)
 
-#        self.psim_configs += ["truth/standby"]
-#        self.initial_state = "standby"
+    #    self.psim_configs += ["truth/standby"]
+    #    self.initial_state = "standby"
 
     def post_boot(self):
         self.mission_state = "follower"
         self.ws("fault_handler.enabled", True)
+        self.ws("qfh.enabled", True)
 
     def check_powercycle(self):
         return self.rs("gomspace.power_cycle_output3_cmd")

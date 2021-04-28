@@ -58,6 +58,9 @@ def suppress_faults(fc, logger):
     fc.write_state("piksi_fh.enabled", "false")
     logger.put("Turning off piksi_fh")
 
+    fc.write_state("qfh.enabled", "false")
+    logger.put("Turning off qfh")
+
     faults = [
         "gomspace.low_batt",
         "gomspace.get_hk.base",
