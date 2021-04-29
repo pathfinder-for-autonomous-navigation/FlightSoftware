@@ -28,15 +28,19 @@ class PiksiFaultNearField(DualSatNearFieldCase):
             raise TestCaseFailure("Follower Piksi mode is still 'fixed_rtk'")
 
     def check_is_close_appr(self):
-        if self.mission_state_leader != "leader_close_approach":
+        self.mission_state_leader = self.flight_controller_leader.smart_read("pan.state")
+        self.mission_state_follower = self.flight_controller_follower.smart_read("pan.state")
+        if self.mission_state_leader != Enums.mission_states["leader_close_approach"]:
             raise TestCaseFailure("Failed to set mission state to 'leader_close_approach'. Mission state is: " + str(self.mission_state_leader))
-        if self.mission_state_follower != "follower_close_approach":
+        if self.mission_state_follower != Enums.mission_states["follower_close_approach"]:
             raise TestCaseFailure("Failed to set mission state to 'follower_close_approach'. Mission state is: " + str(self.mission_state_follower))
 
     def check_is_standby(self):
-        if self.mission_state_leader != "standby":
+        self.mission_state_leader = self.flight_controller_leader.smart_read("pan.state")
+        self.mission_state_follower = self.flight_controller_follower.smart_read("pan.state")
+        if self.mission_state_leader != Enums.mission_states["standby"]:
             raise TestCaseFailure("Failed to set leader mission state to 'standby'. Mission state is: " + str(self.mission_state_leader))
-        if self.mission_state_follower != "standby":
+        if self.mission_state_follower != Enums.mission_states["standby"]:
             raise TestCaseFailure("Failed to set follower mission state to 'standby'. Mission state is: " + str(self.mission_state_follower))
 
     def run(self):

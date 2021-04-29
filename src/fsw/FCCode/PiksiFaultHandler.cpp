@@ -48,21 +48,13 @@ fault_response_t PiksiFaultHandler::execute() {
      || piksi_state == piksi_mode_t::no_data_error 
      || piksi_state == piksi_mode_t::data_error));
         
-
-    printf(debug_severity::error, "Should fault: %d\n", static_cast<bool>(should_fault));
     piksi_dead_fault_f.evaluate(should_fault);
 
-    bool is_faulted = piksi_dead_fault_f.is_faulted();
-    printf(debug_severity::error, "Is faulted: %d\n", static_cast<bool>(is_faulted));
-
-
     if(piksi_dead_fault_f.is_faulted()) {
-        printf(debug_severity::error, "Piksi Dead Fault Triggered\n");
         return fault_response_t::standby;
     }
 
     // begin rtk section
-
     if (piksi_state == piksi_mode_t::fixed_rtk) {
         last_rtkfix_ccno_f.set(count_cc);
     }
@@ -83,7 +75,6 @@ fault_response_t PiksiFaultHandler::check_cdgps() {
     // Recommend moving to standby if we haven't recieved any readings in X time since 
     // moving to close approach state
     if (close_appr_time >= last_rtkfix_time && duration > no_cdgps_max_wait_f.get()) {
-        printf(debug_severity::error, "Piksi Second Fault Triggered\n");
         return fault_response_t::standby;
     }
     
@@ -91,7 +82,6 @@ fault_response_t PiksiFaultHandler::check_cdgps() {
     // then recommend moving to standby if we haven't recieved any more readings 
     // in Y time since the last reading in close approach
     if (last_rtkfix_time > close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
-        printf(debug_severity::error, "Piksi Third Fault Triggered\n");
         return fault_response_t::standby;
     }
 

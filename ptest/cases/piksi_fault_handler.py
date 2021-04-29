@@ -11,11 +11,10 @@ class PiksiFaultHandler(SingleSatCase, PSimCase):
 
     def post_boot(self):
         self.mission_state = "leader"
+        self.ws("piksi_fh.dead.suppress", False)
         self.mock_sensor_validity = True
         self.ws("fault_handler.enabled", True)
         self.ws("piksi_fh.enabled", True)
-        ####### Had to comment out piski_fh.dead.suppress in utils.py to run #######
-        self.ws("piski_fh.dead.suppress", False)
         self.piksi_dead_threshold = self.one_day_ccno//6 + 1
         self.cycle()
 
