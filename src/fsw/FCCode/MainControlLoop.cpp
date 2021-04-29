@@ -96,6 +96,19 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     control_cycle_duration_f.set(0);
     prev_sys_time = init_time;
 }
+    /**
+     * @brief Convert a duration object into microseconds.
+     * 
+     * @param delta 
+     * @return systime_duration_t 
+     */
+    static unsigned int duration_to_us(const systime_duration_t& delta) {
+      #ifdef DESKTOP
+        return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
+      #else
+        return delta;
+      #endif
+    }
 
 void MainControlLoop::execute() {
 
@@ -153,7 +166,7 @@ void MainControlLoop::execute() {
         // Commented to save EEPROM Cycles
     #endif
     sys_time_t later = TimedControlTaskBase::get_system_time();
-    control_cycle_duration_f.set(later - prev_sys_time);
+    control_cycle_duration_f.set(duration_to_us(later - prev_sys_time));
     prev_sys_time = later;
 }
 
