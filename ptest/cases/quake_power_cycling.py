@@ -8,12 +8,13 @@ class QuakePowerCycling(SingleSatCase):
     def __init__(self, *args, **kwargs):
         super(QuakePowerCycling, self).__init__(*args, **kwargs)
 
-#        self.psim_configs += ["truth/standby"]
-#        self.initial_state = "standby"
+    #    self.psim_configs += ["truth/standby"]
+    #    self.initial_state = "standby"
 
     def post_boot(self):
         self.mission_state = "follower"
         self.ws("fault_handler.enabled", True)
+        self.ws("qfh.enabled", True)
 
     def check_powercycle(self):
         return self.rs("gomspace.power_cycle_output3_cmd")
@@ -71,11 +72,11 @@ class QuakePowerCycling(SingleSatCase):
             raise TestCaseFailure("QuakeFaultHandler failed to power cycle the output channel.")
        
     def diagnostics(self):
-        self.read_state("radio.state")
-        self.read_state("qfh.state")
-        self.read_state("radio.last_comms_ccno")
-        self.read_state("gomspace.power_cycle_output3_cmd")
-        self.read_state("pan.state")
+        self.rs("radio.state")
+        self.rs("qfh.state")
+        self.rs("radio.last_comms_ccno")
+        self.rs("gomspace.power_cycle_output3_cmd")
+        self.rs("pan.state")
 
     def run(self):
         # The satellite has been in a blackout since startup. Cycle count starts at 1.

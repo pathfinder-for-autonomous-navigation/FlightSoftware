@@ -1784,10 +1784,10 @@
             "writable": false
         },
         "orbit.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": 2,
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -2241,6 +2241,12 @@
             "type": "float",
             "writable": true
         },
+        "qfh.enabled": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "qfh.state": {
             "bitsize": 3,
             "flow_id": 13,
@@ -2358,18 +2364,18 @@
             "writable": true
         },
         "rel_orbit.uplink.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": "undefined",
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": true
         },
         "rel_orbit.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": 4,
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": false
         },

@@ -3,8 +3,19 @@
 from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 
+# DO NOT USE AS A REFRENCE TO WRITE OTHER PTEST CASES
+#
+# This testcase is basically a dinosaur among the other testcases and using many
+# features that are considered "deprecated".
 
 class GomspaceCheckoutCase(SingleSatCase):
+
+    def read_state(self, string_state):
+        return self.flight_controller.read_state(string_state)
+
+    def write_state(self, string_state, state_value):
+        self.flight_controller.write_state(string_state, state_value)
+        return self.read_state(string_state)
 
     def str_to_bool(self, string):
         if string == "true":
