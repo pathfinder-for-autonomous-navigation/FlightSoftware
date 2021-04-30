@@ -1,19 +1,27 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase
 from .utils import Enums, TestCaseFailure
 import time
 
+# DO NOT USE AS A REFRENCE TO WRITE OTHER PTEST CASES
+#
+# This testcase is basically a dinosaur among the other testcases and using many
+# features that are considered "deprecated".
+
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
-class PropStateMachineCase(SingleSatOnlyCase):
-    @property
-    def initial_state(self):
-        return "manual"
+class PropStateMachineCase(SingleSatCase):
 
-    @property
-    def fast_boot(self):
-        return True
+    def read_state(self, string_state):
+        return self.flight_controller.read_state(string_state)
 
-    def setup_post_bootsetup(self):
+    def write_state(self, string_state, state_value):
+        self.flight_controller.write_state(string_state, state_value)
+        return self.read_state(string_state)
+
+    def post_boot(self):
+        self.mission_state = 'manual'
+        self.cycle()
+
         self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])
@@ -281,7 +289,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
             raise TestCaseFailure("state != idle")
         return
 
-    def run_case_singlesat(self):
+    def run(self):
         print("------------------------------------------------")
         self.test_disabled_to_idle()
         print("------------------------------------------------")

@@ -1,16 +1,18 @@
-from .base import SingleSatOnlyCase
+from .base import SingleSatCase, PSimCase
 from .utils import FSWEnum, Enums, TestCaseFailure
 
-class SafeholdReboot(SingleSatOnlyCase):
-    @property
-    def initial_state(self):
-        return "standby"
+class SafeholdReboot(SingleSatCase, PSimCase):
+    def __init__(self, *args, **kwargs):
+        super(SafeholdReboot, self).__init__(*args, **kwargs)
+        self.initial_state = "standby"
+        self.psim_configs += ['truth/standby']
 
-    @property
-    def fast_boot(self):
-        return False
+    def post_boot(self):
+        self.ws('fault_handler.enabled', True)
 
-    def run_case_singlesat(self):
+    def run(self):
+        self.cycle()
+        
         if not hasattr(self, "test_stage"):
             self.test_stage = "force_fault"
 
@@ -21,6 +23,7 @@ class SafeholdReboot(SingleSatOnlyCase):
             self.test_stage = "safehold"
 
         elif self.test_stage == "safehold":
+            print(self.mission_state)
             if self.mission_state != "safehold":
                 raise TestCaseFailure("Satellite did not go to safehold after Gomspace low-battery fault was forced.")
             else:

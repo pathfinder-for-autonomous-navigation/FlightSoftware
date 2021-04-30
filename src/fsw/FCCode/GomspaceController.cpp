@@ -12,7 +12,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     batt_threshold_sr(5000,9000,10),
     batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
 
-    vboost_sr(0,8500,9), // see pg 11
+    vboost_sr(0,8500,6), // see pg 11
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
     vboost3_f("gomspace.vboost.output3", vboost_sr),
@@ -103,8 +103,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reset_cmd_f("gomspace.gs_reset_cmd", gs_reset_cmd_sr),
 
     gs_reboot_cmd_sr(),
-    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
+    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr),
 
+    piksi_off_sr(),
+    piksi_off_f("gomspace.piksi_off", piksi_off_sr)
     {
         add_fault(get_hk_fault);
         add_fault(low_batt_fault);
@@ -188,9 +190,13 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(gs_reset_cmd_f);
 
         add_writable_field(gs_reboot_cmd_f);
+
+        add_writable_field(piksi_off_f);
+        piksi_off_f.set(true);
      }
 
 void GomspaceController::execute() {
+
 
     //Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
@@ -307,6 +313,12 @@ void GomspaceController::execute() {
     pptmode_f.set(gs.hk->pptmode);
 
     heater_f.set(gs.get_heater()==1);
+
+    // if wait < deployment_wait, turn off power to piksi
+    if(piksi_off_f.get()){
+        gs.set_single_output(0,0); // (output port = OUT-1, 0 for off)
+    }
+
 }
 
 void GomspaceController::power_cycle_outputs() {
@@ -316,6 +328,7 @@ void GomspaceController::power_cycle_outputs() {
          int idx)
     {
         if (cmd_f.get()) {
+
             // TODO add powercycling event
             if (output_f.get()) {
                 gs.set_single_output(idx,0);
@@ -328,7 +341,10 @@ void GomspaceController::power_cycle_outputs() {
     };
 
     // Power cycle output channels
-    powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+    if(!piksi_off_f.get()){
+        powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+
+    }
     powercycle_logic(power_cycle_output2_cmd_f, output2_f, 1);
     powercycle_logic(power_cycle_output3_cmd_f, output3_f, 2);
     powercycle_logic(power_cycle_output4_cmd_f, output4_f, 3);
