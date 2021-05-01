@@ -138,7 +138,10 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Unable to send telemetry"
 
          # Send the uplink immediately to Iridium
-        to = "data@sbd.iridium.com"
+        ### CHANGE BACK FOR #FLIGHT
+        # to = "data@sbd.iridium.com"
+
+        to = "pan.ssds.qlocate@gmail.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
 
