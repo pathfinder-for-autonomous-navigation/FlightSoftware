@@ -30,6 +30,14 @@ fc_fields = [
     # Attitude control commands
     "adcs_cmd.mtr_cmd",
     "adcs_cmd.rwa_torque_cmd",
+    # OrbitController
+    "prop.state",
+    "prop.sched_valve1",
+    "prop.sched_valve2",
+    "prop.sched_valve3",
+    "prop.sched_valve4",
+    "prop.sched_valve1",
+    "prop.cycles_until_firing",
     # PSim sensor debugging information
 #    "piksi.time"
 #    "adcs_monitor.ssa_vec",

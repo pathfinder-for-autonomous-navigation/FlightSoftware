@@ -3,8 +3,22 @@ from ..utils import Enums, TestCaseFailure
 from .standby import DualSatStandbyCase
 from .utils import log_fc_data, log_psim_data
 
+import lin
+
 
 class DualSatFarFieldCase(DualSatStandbyCase):
+
+    def __init__(self, *args, **kwargs):
+        super(DualSatFarFieldCase, self).__init__(*args, **kwargs)
+
+        self.psim_config_override.update({
+            "truth.t.ns": 5695000000000,
+            "truth.leader.orbit.r": lin.Vector3([6.36085e+06, -2.53567e+06, 288872]),
+            "truth.leader.orbit.v": lin.Vector3([1603.48, 4636.37, 5385.76]),
+            "truth.follower.orbit.r": lin.Vector3([6.36143e+06, -2.53408e+06, 290549]),
+            "truth.follower.orbit.v": lin.Vector3([1601.09, 4637.21, 5385.54])
+        })
+
 
     def post_boot(self):
         """To put us in fair field, we need to be able to initialize each

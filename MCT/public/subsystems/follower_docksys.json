@@ -1,0 +1,110 @@
+{
+    "name": "Docksys",
+    "key": "follower_docksys",
+    "measurements": [
+        {
+            "name": "Docked",
+            "key": "follower_docksys.docked",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 18,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Docked",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Dock_config",
+            "key": "follower_docksys.dock_config",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 18,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Dock_config",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Is_turning",
+            "key": "follower_docksys.is_turning",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 36,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Is_turning",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Config_cmd",
+            "key": "follower_docksys.config_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 36,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Config_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        }
+    ]
+}

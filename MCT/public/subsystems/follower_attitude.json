@@ -1,0 +1,122 @@
+{
+    "name": "Attitude",
+    "key": "follower_attitude",
+    "measurements": [
+        {
+            "name": "Pointer_vec1_current",
+            "key": "follower_attitude.pointer_vec1_current",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 15,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": false,
+                    "name": "Pointer_vec1_current",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pointer_vec1_desired",
+            "key": "follower_attitude.pointer_vec1_desired",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 15,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": true,
+                    "name": "Pointer_vec1_desired",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pointer_vec2_current",
+            "key": "follower_attitude.pointer_vec2_current",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 15,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": false,
+                    "name": "Pointer_vec2_current",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pointer_vec2_desired",
+            "key": "follower_attitude.pointer_vec2_desired",
+            "values": [
+                {
+                    "bitsize": 31,
+                    "flow_id": 15,
+                    "max": 1.000100016593933,
+                    "min": 0.999899983406067,
+                    "type": "lin float vector",
+                    "writable": true,
+                    "name": "Pointer_vec2_desired",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        }
+    ]
+}

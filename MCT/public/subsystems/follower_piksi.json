@@ -1,0 +1,151 @@
+{
+    "name": "Piksi",
+    "key": "follower_piksi",
+    "measurements": [
+        {
+            "name": "State",
+            "key": "follower_piksi.state",
+            "values": [
+                {
+                    "bitsize": 4,
+                    "flow_id": 20,
+                    "max": 14,
+                    "min": 0,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "State",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pos",
+            "key": "follower_piksi.pos",
+            "values": [
+                {
+                    "bitsize": 103,
+                    "flow_id": 20,
+                    "max": 6921000.0,
+                    "min": 6771000.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Pos",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Vel",
+            "key": "follower_piksi.vel",
+            "values": [
+                {
+                    "bitsize": 76,
+                    "flow_id": 20,
+                    "max": 7685.0,
+                    "min": 7570.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Vel",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Baseline_pos",
+            "key": "follower_piksi.baseline_pos",
+            "values": [
+                {
+                    "bitsize": 73,
+                    "flow_id": 20,
+                    "max": 2000.0,
+                    "min": 0.0,
+                    "type": "lin double vector",
+                    "writable": false,
+                    "name": "Baseline_pos",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Fix_error_count",
+            "key": "follower_piksi.fix_error_count",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 20,
+                    "max": 1001,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Fix_error_count",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        }
+    ]
+}

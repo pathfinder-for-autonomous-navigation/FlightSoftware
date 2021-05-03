@@ -4,7 +4,7 @@
         {
             "name": "FlightController",
             "run_mode": "teensy",
-            "port": "/dev/ttyACM0",
+            "port": "/dev/cu.usbmodem45146401",
             "baud_rate": 1152000,
             "http_port": 8000,
             "imei": "",

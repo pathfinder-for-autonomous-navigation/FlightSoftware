@@ -1,0 +1,181 @@
+{
+    "name": "Prop",
+    "key": "leader_prop",
+    "measurements": [
+        {
+            "name": "State",
+            "key": "leader_prop.state",
+            "values": [
+                {
+                    "bitsize": 4,
+                    "flow_id": 6,
+                    "max": 9,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "State",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Overpressured",
+            "key": "leader_prop.overpressured",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Base",
+                    "key": "base",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Override",
+                    "key": "override",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 16,
+                    "flow_id": 6,
+                    "max": 65535,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Persistence",
+                    "key": "persistence",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Suppress",
+                    "key": "suppress",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Unsignal",
+                    "key": "unsignal",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pressurize_fail",
+            "key": "leader_prop.pressurize_fail",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Base",
+                    "key": "base",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Override",
+                    "key": "override",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 16,
+                    "flow_id": 6,
+                    "max": 65535,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Persistence",
+                    "key": "persistence",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Suppress",
+                    "key": "suppress",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Unsignal",
+                    "key": "unsignal",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        }
+    ]
+}
