@@ -131,10 +131,9 @@ using debug_severity = typename debug_console::severity_t;
  * @param ... Format parameters.
  */
 #define assert_msg(condition, format, ...) \
-    while (!condition) \
-    { \
-        DebugConsole::printf(debug_severity::error, format, __VA_ARGS__); \
-        assert(false); \
-    };
+    do { \
+        assert(condition); \
+        debug_console::printf(debug_severity::error, format, __VA_ARGS__); \
+    } while (0);
 
 #endif
