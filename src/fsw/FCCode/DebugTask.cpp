@@ -20,12 +20,20 @@ void DebugTask::execute() {
 #ifndef FLIGHT
   start_cycle_f.set(false);
   if(auto_cycle_f.get()){
-    process_commands(_registry);
+    process_commands(_registry
+#ifdef DESKTOP
+    , false
+#endif
+    );
   }
   else{
     // !auto_cycle_f.get() is false once auto_cycle_f is true, ending the while loop
     while (!start_cycle_f.get() && !auto_cycle_f.get()) 
-      process_commands(_registry);
+      process_commands(_registry
+#ifdef DESKTOP
+    , true
+#endif
+      );
   }
 #endif
 }
