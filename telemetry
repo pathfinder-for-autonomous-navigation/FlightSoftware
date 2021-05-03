@@ -1931,6 +1931,38 @@
             "type": "unsigned int",
             "writable": true
         },
+        "piksi_fh.dead.base": {
+            "bitsize": 1,
+            "flow_id": 7,
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.override": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.persistence": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "piksi_fh.dead.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "piksi_fh.enabled": {
             "bitsize": 1,
             "flow_id": 41,
@@ -2790,6 +2822,7 @@
             "active": true,
             "fields": [
                 "adcs_monitor.functional_fault.base",
+                "piksi_fh.dead.base",
                 "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel3_fault.base",
                 "adcs_monitor.wheel_pot_fault.base",
