@@ -134,6 +134,7 @@ class PSimCase(PTestCase):
                 sensors["piksi.state"] = Enums.piksi_modes["spp"]
 
             sensors["piksi.time"] = GPSTime(self.__sim['truth.t.ns']).to_list()
+            sensors["piksi.microdelta"] = 0
             sensors["piksi.pos"] = list(self.__sim[f"sensors.{satellite}.gps.r"])
             sensors["piksi.vel"] = list(self.__sim[f"sensors.{satellite}.gps.v"])
         else:
