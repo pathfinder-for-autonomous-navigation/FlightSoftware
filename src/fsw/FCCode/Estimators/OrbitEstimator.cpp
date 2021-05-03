@@ -36,7 +36,7 @@ OrbitEstimator::OrbitEstimator(StateFieldRegistry &registry)
       orbit_valid_f("orbit.valid", Serializer<bool>()),
       orbit_pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000, 6921000, 28)),
       orbit_pos_sigma_f("orbit.pos_sigma", Serializer<lin::Vector3d>(0, 100, 12)),
-      orbit_vel_f("orbit.vel", Serializer<lin::Vector3d>(7570, 7685, 19)),
+      orbit_vel_f("orbit.vel", Serializer<lin::Vector3d>(7160, 7360, 20)),
       orbit_vel_sigma_f("orbit.vel_sigma", Serializer<lin::Vector3d>(0, 50, 12)),
       orbit_reset_cmd_f("orbit.reset_cmd", Serializer<bool>())
 {

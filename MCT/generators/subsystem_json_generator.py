@@ -3,6 +3,7 @@ import glob
 import os
 import sys
 import json
+import copy
 
 # path to the FlightSoftware folder 
 FlightSoftwareDirectory = os.path.split(os.path.split(os.path.dirname(__file__))[0])[0]
@@ -203,26 +204,13 @@ def createJSON(satellite):
 
                 # if the object is actually a dictionary
                 if isinstance(d[sub][obj], dict):
-
+                    containerObject['values'] = []
                     # iterates through each state in the object dictionary
                     for state in d[sub][obj]:
                         # get the key value to search the telemetryData json for
                         k = sub + '.' + obj + '.' + state
-
-                        #retrieve the fields from the loaded json
-                        stateObject = telemetryData['fields'][k]
-
-                        # set key, name, and hints
-                        stateObject['name'] = capFirst(state)
-                        stateObject['key'] = state
-                        stateObject['hints'] = {}
-                        stateObject['hints']['range'] = 1
-
-                        # add a units option for every type except boolean since boolean doesn't have units
-                        if stateObject['type'] != 'bool':
-                            stateObject['units'] = '_____'
                         # add this to the container satellite + '_' + object
-                        containerObject['values'].append(stateObject)
+                        containerObject['values'] = containerObject['values'] + makeValues(k)
                     # creates a timestamp object
                     timestamp = {}
                     timestamp['key'] = 'utc'
@@ -237,31 +225,16 @@ def createJSON(satellite):
                 else:
                     # get the key value to search the telemetryData json for
                     k = sub + '.' + obj
-                    #retrieve the fields from the loaded json
-                    stateObject = telemetryData['fields'][k]
-                    # set key, name, and hints
-                    stateObject['name'] = k
-                    stateObject['key'] = 'value'
-                    stateObject['hints'] = {}
-                    stateObject['hints']['range'] = 1
-
-                    # add a units option for every type except boolean since boolean doesn't have units
-                    if stateObject['type'] != 'bool':
-                        stateObject['units'] = '_____'
-
-                    # add this to the container object
-                    containerObject['values'].append(stateObject)
-
-                    # creates a timestamp object
+                    containerObject['values'] = [] + makeValues(k)
                     timestamp = {}
                     timestamp['key'] = 'utc'
                     timestamp['source'] = 'timestamp'
                     timestamp['name'] = 'Timestamp'
                     timestamp['format'] = 'utc'
                     timestamp['hints'] = {}
-                    timestamp['hints']['domain'] = 1
+                    timestamp['hints']['valuesdomain'] = 1
                     # adds the timestamp object ot the containerObject with the state Objects
-                    containerObject['values'].append(timestamp)
+                    containerObject['values'].append(timestamp)  
         # if the subsytem is actually a state variable
         else:
             # creates a container Object
@@ -304,6 +277,77 @@ def createJSON(satellite):
     json.dump(sat, satelliteJSON, indent=4)
 
                 
+def makeValues(k):
+    values = []
+    stateData = telemetryData['fields'][k]
+    type_k = stateData['type']
+    if 'vector' in type_k:
+        rawVec = copy.deepcopy(stateData)
+        rawVec['name'] = 'rawVec_' + k
+        rawVec['key'] = 'rawVec_' + k
+        rawVec['hints'] = {}
+        rawVec['hints']['range'] = 1
+        values.append(rawVec)
+        x = copy.deepcopy(stateData)
+        x['name'] = 'x_' + k
+        x['key'] = 'x_' + k
+        x['hints'] = {}
+        x['hints']['range'] = 1
+        values.append(x)
+        y = copy.deepcopy(stateData)
+        y['name'] = 'y_' + k
+        y['key'] = 'y_' + k
+        y['hints'] = {}
+        y['hints']['range'] = 1
+        values.append(y)
+        z = copy.deepcopy(stateData)
+        z['name'] = 'z_' + k
+        z['key'] = 'z_' + k
+        z['hints'] = {}
+        z['hints']['range'] = 1
+        values.append(z)
+    elif 'quaternion' in type_k:
+        rawQuat = copy.deepcopy(stateData)
+        rawQuat['name'] = 'rawQuat_' + k
+        rawQuat['key'] = 'rawQuat_' + k
+        rawQuat['hints'] = {}
+        rawQuat['hints']['range'] = 1
+        values.append(rawQuat)
+        a = copy.deepcopy(stateData)
+        a['name'] = 'a_' + k
+        a['key'] = 'a_' + k
+        a['hints'] = {}
+        a['hints']['range'] = 1
+        values.append(a)
+        b = copy.deepcopy(stateData)
+        b['name'] = 'b_' + k
+        b['key'] = 'b_' + k
+        b['hints'] = {}
+        b['hints']['range'] = 1
+        values.append(b)
+        c = copy.deepcopy(stateData)
+        c['name'] = 'c_' + k
+        c['key'] = 'c_' + k
+        c['hints'] = {}
+        c['hints']['range'] = 1
+        values.append(c)
+        d = copy.deepcopy(stateData)
+        d['name'] = 'd_' + k
+        d['key'] = 'd_' + k
+        d['hints'] = {}
+        d['hints']['range'] = 1
+        values.append(d)
+    else:
+        state = copy.deepcopy(stateData)
+        state['name'] = k
+        state['key'] = 'value'
+        state['hints'] = {}
+        state['hints']['range'] = 1
+        # add a units option for every type except boolean since boolean doesn't have units
+        if state['type'] != 'bool':
+            state['units'] = '_____'
+        values.append(state)
+    return values
 
 def capFirst(s):
     '''

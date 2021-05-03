@@ -2,6 +2,8 @@
 # - tools/alltest.sh
 # - .github/workflows/hootl.yml
 
+# Testcases that require simulation
+from .attitude_fault_handler_case import AttitudeFaultHandlerCase
 from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
 from .piksi_fault_handler import PiksiFaultHandler
@@ -10,12 +12,14 @@ from .autonomous_mission_manager_pure_radio import AutonomousMissionController
 # Testcases intended for use with mission rehearsals and general telemetry
 # testing.
 from .mission import (
-    SingleSatStartupCase,
+    DualSatDetumbleCase,
+    DualSatFarFieldCase,
+    DualSatNearFieldCase,
+    DualSatStandbyCase,
     DualSatStartupCase,
     SingleSatDetumbleCase,
-    DualSatDetumbleCase,
     SingleSatStandbyCase,
-    DualSatStandbyCase
+    SingleSatStartupCase
 )
 
 from .empty_case import EmptyCase, FailingEmptyCase

@@ -43,7 +43,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
 
             # Test that field information (for one field) is correct
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["type"], "unsigned int")
-            self.assertEqual(telem_info["fields"]["pan.cycle_no"]["flow_id"], "undefined")
+            self.assertEqual(telem_info["fields"]["pan.cycle_no"]["flow_id"], 1) # update to "undefined" if remove from flow
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["min"], 0)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["max"], 4294967295)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["bitsize"], 32)

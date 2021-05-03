@@ -58,6 +58,9 @@ def suppress_faults(fc, logger):
     fc.write_state("piksi_fh.enabled", "false")
     logger.put("Turning off piksi_fh")
 
+    fc.write_state("qfh.enabled", "false")
+    logger.put("Turning off qfh")
+
     faults = [
         "gomspace.low_batt",
         "gomspace.get_hk.base",
@@ -69,6 +72,7 @@ def suppress_faults(fc, logger):
         "adcs_monitor.wheel2_fault",
         "adcs_monitor.wheel3_fault",
         "adcs_monitor.wheel_pot_fault",
+        "attitude_estimator.fault"
     ]
     for fault in faults:
         fc.write_state(fault + ".suppress", "true")
@@ -198,6 +202,12 @@ class Enums(object):
         "data_error",
         "no_data_error",
         "dead"
+    ])
+
+    rel_orbit_state = FSWEnum([
+        "invalid",
+        "propagating",
+        "estimating"
     ])
     
     rwa_modes = FSWEnum([

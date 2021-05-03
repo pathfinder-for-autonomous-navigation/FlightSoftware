@@ -43,9 +43,6 @@ public:
     Serializer<unsigned int> microdelta_sr;
     ReadableStateField<unsigned int> microdelta_f;
 
-    // Control cycle of last good Piksi reading
-    InternalStateField<unsigned int> last_rtkfix_ccno_f;
-
 protected:
     //Internal Data Containers
     std::array<double, 3> pos;
