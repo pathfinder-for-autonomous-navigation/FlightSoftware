@@ -178,6 +178,8 @@ class PTest(object):
         stop_str = ("Error: " if is_error else "") + reason_for_stop
         print(stop_str)
 
+        self.testcase.finish(block=True)
+
         print("Stopping binary monitor thread...")
         if hasattr(self, "binary_monitor_thread"):
             self.binary_monitor_thread.join()

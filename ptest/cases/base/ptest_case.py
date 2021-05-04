@@ -65,6 +65,10 @@ class PTestCase(object):
 
         self.debug_to_console = False
 
+        self.__lock = threading.Lock()
+        self.__is_running = False
+        self.__has_finished = threading.Condition(self.__lock)
+
     def setup(self, devices, radios):
         """Initial entrypoint for running a testcase.
 
@@ -99,6 +103,11 @@ class PTestCase(object):
                     self.finish(True)
                     return
 
+            with self.__lock:
+                self.__is_running = False
+                self.__has_finished.notify_all()
+
+        self.__is_running = True
         if self.is_interactive:
             self.testcase_thread = threading.Thread(name="Testcase execution", target=_run, daemon=True)
             self.testcase_thread.start()
@@ -115,7 +124,7 @@ class PTestCase(object):
         """
         raise NotImplementedError
 
-    def finish(self, error=False):
+    def finish(self, error=False, block=True):
         """
         When called, this function indicates to PTest that
         the testcase has finished its execution.
@@ -123,8 +132,15 @@ class PTestCase(object):
         self.errored = error
 
         if not self.finished:
-            self.logger.put("[TESTCASE] Finished testcase.")
+            self.logger.put("[TESTCASE] Finishing testcase")
             self.finished = True
+
+            if block:
+                self.logger.put("Blocking until the testcase thread exits")
+                with self.__lock:
+                    while self.__is_running:
+                        self.__has_finished.wait()
+
             self.logger.stop()
             time.sleep(1) # Allow time for logger to stop
 
