@@ -68,7 +68,6 @@ void test_update()
     assert_no_update_for(piksi_mode_t::time_limit_error);
     assert_no_update_for(piksi_mode_t::data_error);
     assert_no_update_for(piksi_mode_t::no_data_error);
-    assert_no_update_for(piksi_mode_t::dead);
 
     // Provide an initial time estimate
     tf.piksi_mode_fp->set(static_cast<unsigned char>(piksi_mode_t::spp));
