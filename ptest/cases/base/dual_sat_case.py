@@ -1,13 +1,7 @@
 from ...data_consumers import Logger
-import time
-import math
-import threading
-import traceback
 from ..utils import Enums, TestCaseFailure, suppress_faults
-import psim # the actual python psim repo
-import lin
-import datetime
-from .ptest_case import PTestCase
+from .ptest_case import FancyFlightController, PTestCase
+
 
 class DualSatCase(PTestCase):
     """Base class for all HOOTL and HITL testcases involving two satellites.
@@ -29,7 +23,9 @@ class DualSatCase(PTestCase):
     def populate_devices(self, devices, radios):
         if devices:
             self.flight_controller_leader = devices["FlightControllerLeader"]
+            self.leader = FancyFlightController(self.flight_controller_leader, self.logger)
             self.flight_controller_follower = devices["FlightControllerFollower"]
+            self.follower = FancyFlightController(self.flight_controller_follower, self.logger)
             self.devices = [self.flight_controller_leader, self.flight_controller_follower]
         if "FlightControllerLeaderRadio" in radios:
             self.radio_leader = radios["FlightControllerLeaderRadio"]
@@ -125,33 +121,3 @@ class DualSatCase(PTestCase):
             #    device.scrape_uplink()
             if device.enable_auto_dbtelem:
                 device.dbtelem()
-
-    @property
-    def mission_state_leader(self):
-        return Enums.mission_states[int(self.flight_controller_leader.read_state("pan.state"))]
-
-    @property
-    def mission_state_follower(self):
-        return Enums.mission_states[int(self.flight_controller_follower.read_state("pan.state"))]
-
-    @mission_state_leader.setter
-    def mission_state_leader(self, state):
-        self.flight_controller_leader.write_state("pan.state", int(Enums.mission_states[state]))
-
-    @mission_state_follower.setter
-    def mission_state_follower(self, state):
-        self.flight_controller_follower.write_state("pan.state", int(Enums.mission_states[state]))
-
-    def read_state_leader(self, string_state):
-        return self.flight_controller_leader.read_state(string_state)
-
-    def write_state_leader(self, string_state, state_value):
-        self.flight_controller_leader.write_state(string_state, state_value)
-        return self.flight_controller_leader.read_state(string_state)
-
-    def read_state_follower(self, string_state):
-        return self.flight_controller_follower.read_state(string_state)
-
-    def write_state_follower(self, string_state, state_value):
-        self.flight_controller_follower.write_state(string_state, state_value)
-        return self.flight_controller_follower.read_state(string_state)

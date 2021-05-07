@@ -1784,10 +1784,10 @@
             "writable": false
         },
         "orbit.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": 2,
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -1929,6 +1929,38 @@
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
+            "writable": true
+        },
+        "piksi_fh.dead.base": {
+            "bitsize": 1,
+            "flow_id": 7,
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.override": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.persistence": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1048575,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "piksi_fh.dead.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.dead.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
             "writable": true
         },
         "piksi_fh.enabled": {
@@ -2241,6 +2273,12 @@
             "type": "float",
             "writable": true
         },
+        "qfh.enabled": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "qfh.state": {
             "bitsize": 3,
             "flow_id": 13,
@@ -2358,18 +2396,18 @@
             "writable": true
         },
         "rel_orbit.uplink.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": "undefined",
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": true
         },
         "rel_orbit.vel": {
-            "bitsize": 76,
+            "bitsize": 77,
             "flow_id": 4,
-            "max": 7685.0,
-            "min": 7570.0,
+            "max": 7360.0,
+            "min": 7160.0,
             "type": "lin double vector",
             "writable": false
         },
@@ -2784,6 +2822,7 @@
             "active": true,
             "fields": [
                 "adcs_monitor.functional_fault.base",
+                "piksi_fh.dead.base",
                 "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel3_fault.base",
                 "adcs_monitor.wheel_pot_fault.base",
