@@ -37,12 +37,13 @@ fc_fields = [
 #    "adcs_monitor.mag1_vec",
 #    "adcs_monitor.gyr_vec",
 #    "adcs_monitor.ssa_mode",
+    
 
     #prop errors
-    # "prop.pressurize_fail",
-    # "prop.overpressured",
-    # "prop.tank2_temp_high",
-    # "prop.tank1_temp_high"
+    "prop.pressurize_fail.base",
+    "prop.overpressured.base",
+    "prop.tank2_temp_high.base",
+    "prop.tank1_temp_high.base"
 ]
 
 psim_fields_per_satellite = [
