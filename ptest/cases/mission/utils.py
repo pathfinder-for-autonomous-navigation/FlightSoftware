@@ -37,6 +37,13 @@ fc_fields = [
     #    "adcs_monitor.mag1_vec",
     #    "adcs_monitor.gyr_vec",
     #    "adcs_monitor.ssa_mode",
+    "dcdc.SpikeDock",
+
+    "prop.cycles_until_firing",
+    "prop.sched_valve1",
+    "prop.sched_valve2",
+    "prop.sched_valve3",
+    "prop.sched_valve4",
 
     #prop errors
     "prop.pressurize_fail.base",

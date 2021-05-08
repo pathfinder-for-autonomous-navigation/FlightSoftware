@@ -27,7 +27,8 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
 
         self.flight_controller_leader.write_state("pan.sat_designation", Enums.sat_designations["leader"])
         self.flight_controller_follower.write_state("pan.sat_designation", Enums.sat_designations["follower"])
-
+        # self.flight_controller_follower.ws("prop.threshold_firing")
+        # self.flight_controller_leader.write_state("dcdc.SpikeDock_cmd
         self.cycle()
 
         if not self.rs_psim("sensors.leader.cdgps.valid"):
