@@ -191,162 +191,140 @@ def createJSON(satellite):
         
             # iterates through each object in the subsystem dictionary
             for obj in d[sub]:
-                #creates container object
-                containerObject = {}
-
-                # set key, name, and values;
-                containerObject['name'] = satellite + '_' + sub + '.' + obj
-                containerObject['key'] = satellite + '_' + sub + '.' + obj
-                containerObject['values'] = []
-
-                #add the object to the subsytem
-                sat['measurements'].append(containerObject)
-
+                
                 # if the object is actually a dictionary
                 if isinstance(d[sub][obj], dict):
-                    containerObject['values'] = []
+                    
                     # iterates through each state in the object dictionary
                     for state in d[sub][obj]:
                         # get the key value to search the telemetryData json for
                         k = sub + '.' + obj + '.' + state
+                        #creates container object
+                        containerObject = {}
+                        # set key, name, and values;
+                        containerObject['name'] = satellite + '_' + sub + '.' + obj + '.' + state
+                        containerObject['key'] = satellite + '_' + sub + '.' + obj + '.' + state
+                        containerObject['values'] = makeValue('', k)
+                        containerObject['values'] = containerObject['values'] + makeTimestamp()
+
+                        #add the object to the subsytem
+                        sat['measurements'].append(containerObject)
+
                         # add this to the container satellite + '_' + object
-                        containerObject['values'] = containerObject['values'] + makeValues(k)
-                    # creates a timestamp object
-                    timestamp = {}
-                    timestamp['key'] = 'utc'
-                    timestamp['source'] = 'timestamp'
-                    timestamp['name'] = 'Timestamp'
-                    timestamp['format'] = 'utc'
-                    timestamp['hints'] = {}
-                    timestamp['hints']['domain'] = 1
+                        sat['measurements'] = sat['measurements'] + makeValues(satellite, k)
                     # adds the timestamp object ot the containerObject with the state Objects
-                    containerObject['values'].append(timestamp)
                 # if the object is actually a state variable  
                 else:
                     # get the key value to search the telemetryData json for
                     k = sub + '.' + obj
-                    containerObject['values'] = [] + makeValues(k)
-                    timestamp = {}
-                    timestamp['key'] = 'utc'
-                    timestamp['source'] = 'timestamp'
-                    timestamp['name'] = 'Timestamp'
-                    timestamp['format'] = 'utc'
-                    timestamp['hints'] = {}
-                    timestamp['hints']['valuesdomain'] = 1
-                    # adds the timestamp object ot the containerObject with the state Objects
-                    containerObject['values'].append(timestamp)  
+
+                    #creates container object
+                    containerObject = {}
+                    # set key, name, and values;
+                    containerObject['name'] = satellite + '_' + k
+                    containerObject['key'] = satellite + '_' + k
+                    containerObject['values'] = makeValue('', k)
+                    containerObject['values'] = containerObject['values'] + makeTimestamp()
+
+                    #add the object to the subsytem
+                    sat['measurements'].append(containerObject)
+                    # add this to the container satellite + '_' + object
+                    sat['measurements'] = sat['measurements'] + makeValues(satellite, k)
+
         # if the subsytem is actually a state variable
         else:
-            # creates a container Object
-            containerObject = {}
-            #sets its key, name, and values
-            containerObject['name'] = satellite + '_' + sub
-            containerObject['key'] = satellite + '_' + sub
-            containerObject['values'] = []
-            #adds the contianer object to the subsystem object
-            
-            # get the key value to search the telemetryData json for
             k = sub
-            #retrieve the fields from the loaded json
-            stateObject = telemetryData['fields'][k]
-            # set the key, name, and hints
-            stateObject['name'] = capFirst(sub)
-            stateObject['key'] = 'value'
-            stateObject['hints'] = {}
-            stateObject['hints']['range'] = 1
-            # add a units option for every type except boolean since boolean doesn't have units
-            if stateObject['type'] != 'bool':
-                stateObject['units'] = '_____'
-            #add the state object to the container object
-            containerObject['values'].append(stateObject)
-            #creates a timestamp 
-            timestamp = {}
-            timestamp['key'] = 'utc'
-            timestamp['source'] = 'timestamp'
-            timestamp['name'] = 'Timestamp'
-            timestamp['format'] = 'utc'
-            timestamp['hints'] = {}
-            timestamp['hints']['domain'] = 1
-            #adds the timestamp to the container object
-            containerObject['values'].append(timestamp)
+            #creates container object
+            containerObject = {}
+            # set key, name, and values;
+            containerObject['name'] = satellite + '_' + k
+            containerObject['key'] = satellite + '_' + k
+            containerObject['values'] = makeValue('', k)
+            containerObject['values'] = containerObject['values'] + makeTimestamp()
 
+            #add the object to the subsytem
             sat['measurements'].append(containerObject)
+            # add this to the container satellite + '_' + object
+            sat['measurements'] = sat['measurements'] + makeValues(satellite, k)
 
     # creates a json file called miscellaneous,json in .\MCT\public\subsystems folder and dumps json for subsystem object into it.
     satelliteJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'satellites', satellite + '.json'), 'w')
     json.dump(sat, satelliteJSON, indent=4)
 
+def makeTimestamp():
+    values = []
+    timestamp = {}
+    timestamp['key'] = 'utc'
+    timestamp['source'] = 'timestamp'
+    timestamp['name'] = 'Timestamp'
+    timestamp['format'] = 'utc'
+    timestamp['hints'] = {}
+    timestamp['hints']['domain'] = 1
+
+    values.append(timestamp)
+    return values
+
+
+def makeValue(prefix, k):
+    values = []
+    stateData = telemetryData['fields'][k]
+    val = copy.deepcopy(stateData)
+    val['name'] = prefix + k
+    val['key'] = 'value'
+    val['hints'] = {}
+    val['hints']['range'] = 1
+    values.append(val)
+    return values
                 
-def makeValues(k):
+def makeValues(satellite, k):
     values = []
     stateData = telemetryData['fields'][k]
     type_k = stateData['type']
     if 'vector' in type_k:
-        rawVec = copy.deepcopy(stateData)
-        rawVec['name'] = 'rawVec_' + k
-        rawVec['key'] = 'rawVec_' + k
-        rawVec['hints'] = {}
-        rawVec['hints']['range'] = 1
-        values.append(rawVec)
-        x = copy.deepcopy(stateData)
-        x['name'] = 'x_' + k
-        x['key'] = 'x_' + k
-        x['hints'] = {}
-        x['hints']['range'] = 1
+        x = {}
+        x['name'] = satellite + '_x_' + k
+        x['key'] = satellite + '_x_' + k
+        x['values'] = makeValue('x_',k)
+        x['values'] = x['values'] + makeTimestamp()
         values.append(x)
-        y = copy.deepcopy(stateData)
-        y['name'] = 'y_' + k
-        y['key'] = 'y_' + k
-        y['hints'] = {}
-        y['hints']['range'] = 1
+        y = {}
+        y['name'] = satellite + '_y_' + k
+        y['key'] = satellite + '_y_' + k
+        y['values'] = makeValue('y_',k)
+        y['values'] = y['values'] + makeTimestamp()
         values.append(y)
-        z = copy.deepcopy(stateData)
-        z['name'] = 'z_' + k
-        z['key'] = 'z_' + k
-        z['hints'] = {}
-        z['hints']['range'] = 1
+        z = {}
+        z['name'] = satellite + '_z_' + k
+        z['key'] = satellite + '_z_' + k
+        z['values'] = makeValue('z_',k) 
+        z['values'] = z['values'] + makeTimestamp()
         values.append(z)
+
     elif 'quaternion' in type_k:
-        rawQuat = copy.deepcopy(stateData)
-        rawQuat['name'] = 'rawQuat_' + k
-        rawQuat['key'] = 'rawQuat_' + k
-        rawQuat['hints'] = {}
-        rawQuat['hints']['range'] = 1
-        values.append(rawQuat)
-        a = copy.deepcopy(stateData)
-        a['name'] = 'a_' + k
-        a['key'] = 'a_' + k
-        a['hints'] = {}
-        a['hints']['range'] = 1
+        a = {}
+        a['name'] = satellite + '_a_' + k
+        a['key'] = satellite + '_a_' + k
+        a['values'] = makeValue('a_',k)
+        a['values'] = a['values'] + makeTimestamp()
         values.append(a)
-        b = copy.deepcopy(stateData)
-        b['name'] = 'b_' + k
-        b['key'] = 'b_' + k
-        b['hints'] = {}
-        b['hints']['range'] = 1
+        b = {}
+        b['name'] = satellite + '_b_' + k
+        b['key'] = satellite + '_b_' + k
+        b['values'] = makeValue('b_',k)
+        b['values'] = b['values'] + makeTimestamp()
         values.append(b)
-        c = copy.deepcopy(stateData)
-        c['name'] = 'c_' + k
-        c['key'] = 'c_' + k
-        c['hints'] = {}
-        c['hints']['range'] = 1
+        c = {}
+        c['name'] = satellite + '_c_' + k
+        c['key'] = satellite + '_c_' + k
+        c['values'] = makeValue('c_',k)
+        c['values'] = c['values'] + makeTimestamp()
         values.append(c)
-        d = copy.deepcopy(stateData)
-        d['name'] = 'd_' + k
-        d['key'] = 'd_' + k
-        d['hints'] = {}
-        d['hints']['range'] = 1
+        d = {}
+        d['name'] = satellite + '_d_' + k
+        d['key'] = satellite + '_d_' + k
+        d['values'] = makeValue('d_',k) 
+        d['values'] = d['values'] + makeTimestamp()
         values.append(d)
-    else:
-        state = copy.deepcopy(stateData)
-        state['name'] = k
-        state['key'] = 'value'
-        state['hints'] = {}
-        state['hints']['range'] = 1
-        # add a units option for every type except boolean since boolean doesn't have units
-        if state['type'] != 'bool':
-            state['units'] = '_____'
-        values.append(state)
     return values
 
 def capFirst(s):

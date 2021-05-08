@@ -11,6 +11,7 @@ const variables = require('./state-variables.js')
 const request = require('request');
 var path = require('path');
 const { config } = require('process');
+const { stat } = require('fs');
 
 /**
  * The URL of the Elastic Search database
@@ -36,19 +37,19 @@ function Telemetry(configuration) {
     this.singleSat = false
     let deviceOneFilled = false
     let deviceTwoFilled = false
-    if(config_json.devices[0].name.indexOf("Leader") != -1){
+    if (config_json.devices[0].name.indexOf("Leader") != -1) {
       this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
     }
-    else if(config_json.devices[0].name.indexOf("Follower") != -1){
+    else if (config_json.devices[0].name.indexOf("Follower") != -1) {
       this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
     }
-    if(config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined){
+    if (config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined) {
       this.leaderIndex = 'statefield_report_' + config_json.devices[1].imei
     }
-    else if(config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined){
+    else if (config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined) {
       this.followerIndex = 'statefield_report_' + config_json.devices[1].imei
     }
-    
+
   }
   else {
     throw "Malformed: There are no devices or radios in this config file"
@@ -61,12 +62,28 @@ function Telemetry(configuration) {
   this.leader_state = {};
 
   //creates an entry in state for every variable in './state-variables'
-  Object.entries(this.initialState).forEach(function ([statesSubsystem,v]) {
-    Object.entries(v).forEach(function ([k,v]) {
-      let key = statesSubsystem + '.' + k;
+  Object.entries(this.initialState).forEach(function ([statesSubsystem, v]) {
+    if (typeof v === 'object' && v !== null) {
+      Object.entries(v).forEach(function ([k, v]) {
+        if (typeof v === 'object' && v !== null) {
+          Object.entries(v).forEach(function ([field, v]) {
+            let key = statesSubsystem + '.' + k + '.' + field;
+            this.follower_state[('follower_' + key)] = v;
+            this.leader_state[('leader_' + key)] = v;
+          }, this);
+        }
+        else {
+          let key = statesSubsystem + '.' + k;
+          this.follower_state[('follower_' + key)] = v;
+          this.leader_state[('leader_' + key)] = v;
+        }
+      }, this);
+    }
+    else {
+      let key = statesSubsystem;
       this.follower_state[('follower_' + key)] = v;
       this.leader_state[('leader_' + key)] = v;
-    }, this);
+    }
   }, this);
 
   //all of the historical telemetry data
@@ -75,50 +92,51 @@ function Telemetry(configuration) {
   //the listeners for the real time telemetry
   this.listeners = [];
 
-    //adds all the initial follower values to history
-    Object.entries(this.follower_state).forEach(function ([k,v]) {
-      this.history[k] = [];
-    }, this);
+  //adds all the initial follower values to history
+  Object.entries(this.follower_state).forEach(function ([k, v]) {
+    this.history[k] = [];
+  }, this);
 
-    //adds all the initial leader values to history
-    Object.entries(this.leader_state).forEach(function ([k,v]) {
-      this.history[k] = [];
-    }, this);
+  //adds all the initial leader values to history
+  Object.entries(this.leader_state).forEach(function ([k, v]) {
+    this.history[k] = [];
+  }, this);
 
 
-    //updates the states, generates the realtime listers/notifications and historical telemetry ever 1 second.
-    setInterval(function () {
-        this.updateState();
-        this.generateTelemetry();
-    }.bind(this), 5000);
+  //updates the states, generates the realtime listers/notifications and historical telemetry ever 1 second.
+  setInterval(function () {
+    this.updateState();
+    this.generateTelemetry();
+  }.bind(this), 5000);
 
-    console.log("Now reading spacecraft telemetry from leader and follower")
+  console.log("Now reading spacecraft telemetry from leader and follower")
 
 };
 
-function numberCommas(s){
-  if (typeof s == "string"){
-  return s.split(",").length-1}
-  else{
+function numberCommas(s) {
+  if (typeof s == "string") {
+    return s.split(",").length - 1
+  }
+  else {
     return 0
   }
 }
 
-function getCoord(s, num){
-  if (num == 1){
+function getCoord(s, num) {
+  if (num == 1) {
     let i = s.indexOf(',')
-    if(i== -1){
+    if (i == -1) {
       return s
-    }else{
+    } else {
       return s.substring(0, i)
     }
   }
-  else{
+  else {
     let i = s.indexOf(',')
-    if(i== -1){
+    if (i == -1) {
       return s
-    }else{
-      return getCoord(s.substring(i+1), num - 1)
+    } else {
+      return getCoord(s.substring(i + 1), num - 1)
     }
   }
 }
@@ -136,18 +154,18 @@ Telemetry.prototype.updateState = async function () {
   Object.keys(this.follower_state).forEach(async function (id) {
 
     //if the value for the key of the state entry is an object
-    if(typeof(this.follower_state[id]) == 'object'){
+    if (typeof (this.follower_state[id]) == 'object') {
 
-      Object.keys(this.follower_state[id]).forEach(async function (subId){
+      Object.keys(this.follower_state[id]).forEach(async function (subId) {
         new_id = id.substr(id.indexOf('_') + 1);
         //send a request to Elastic Search for the field
         let res = await this.getValue(searchURl, this.followerIndex, new_id + '.' + subId);
         (this.follower_state[id])[subId] = res;//update state
-      },this)
+      }, this)
 
     }
     //if the value for the key of the state entry is a primitive
-    else{
+    else {
       new_id = id.substr(id.indexOf('_') + 1);
       //send a request to Elastic Search for the field
       let res = await this.getValue(searchURl, this.followerIndex, new_id);
@@ -155,29 +173,29 @@ Telemetry.prototype.updateState = async function () {
     }
 
   }, this);
-  if (this.singleSat == false){
-  Object.keys(this.leader_state).forEach(async function (id) {
+  if (this.singleSat == false) {
+    Object.keys(this.leader_state).forEach(async function (id) {
 
-    //if the value for the key of the state entry is an object
-    if(typeof(this.leader_state[id]) == 'object'){
-      
-      Object.keys(this.leader_state[id]).forEach(async function (subId){
+      //if the value for the key of the state entry is an object
+      if (typeof (this.leader_state[id]) == 'object') {
+
+        Object.keys(this.leader_state[id]).forEach(async function (subId) {
+          new_id = id.substr(id.indexOf('_') + 1);
+          //send a request to Elastic Search for the field
+          let res = await this.getValue(searchURl, this.leaderIndex, new_id + '.' + subId);
+          (this.leader_state[id])[subId] = res;//update state
+        }, this)
+
+      }
+      //if the value for the key of the state entry is a primitive
+      else {
         new_id = id.substr(id.indexOf('_') + 1);
-        //send a request to Elastic Search for the field
-        let res = await this.getValue(searchURl, this.leaderIndex, new_id + '.' + subId);
-        (this.leader_state[id])[subId] = res;//update state
-      },this)
+        //send a request to Elastic Search for the field 
+        let res = await this.getValue(searchURl, this.leaderIndex, new_id);
+        this.leader_state[id] = res;//update state
+      }
 
-    }
-    //if the value for the key of the state entry is a primitive
-    else{
-      new_id = id.substr(id.indexOf('_') + 1);
-      //send a request to Elastic Search for the field 
-      let res = await this.getValue(searchURl, this.leaderIndex, new_id);
-      this.leader_state[id] = res;//update state
-    }
-
-  }, this);
+    }, this);
   }
 
 };
@@ -220,141 +238,221 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
  *   for the state value directly
  */
 Telemetry.prototype.generateTelemetry = function () {
-    var timestamp = Date.now(), sent = 0;
-    //make two cases one that updates objects and one that directly updates field
-    
-    Object.keys(this.follower_state).forEach(function (id) {
+  var timestamp = Date.now(), sent = 0;
+  //make two cases one that updates objects and one that directly updates field
 
-      //if the value for the key of the state entry is an object
-      if(typeof(this.follower_state[id]) == 'object'){
+  Object.keys(this.follower_state).forEach(function (id) {
 
-        //generate telemetry point oject
-        var telempoint = { timestamp: timestamp, id: id};
-        for (const output in this.follower_state[id]){
-          let answer = this.follower_state[id][output];
-          if (answer == 'false'){
-            telempoint[output] = 0
-          }else if (answer == 'true'){
-            telempoint[output] = 1
-          }else if (numberCommas(answer) == 3){
-            telempoint['rawVec_' + output] = answer
-            telempoint['x_' + output] = getCoord(answer, 1)
-            telempoint['y_' + output] = getCoord(answer, 2)
-            telempoint['z_' + output] = getCoord(answer, 3)
-          }else if (numberCommas(answer) == 4){
-            telempoint['rawQuat_' + output] = answer
-            telempoint['a_' + output] = getCoord(answer, 1)
-            telempoint['b_' + output] = getCoord(answer, 2)
-            telempoint['c_' + output] = getCoord(answer, 3)
-            telempoint['d_' + output] = getCoord(answer, 4)
-          }else{
-            telempoint[output] = answer
-          }
-        }
-
+      
+      //generate telemetry point primitve state
+      let answer = this.follower_state[id]
+      if (answer == 'false') {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = 0
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+      } else if (answer == 'true') {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = 1
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);id
+      } else if (numberCommas(answer) == 3) {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-      }
-      //if the value for the key of the state entry is a primitive
-      else{
+        var telempointx = { timestamp: timestamp, id: 'follower_x_' + id.substring(9) };
+        telempointx['value'] = getCoord(answer, 1)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointx);
+        if(this.history['follower_x_' + id.substring(9)] == undefined){
+        this.history['follower_x_' + id.substring(9)] = []
+        }
+        this.history['follower_x_' + id.substring(9)].push(telempointx);
 
-        var telempoint = { timestamp: timestamp, id: id};
-        //generate telemetry point primitve state
-        let answer = this.follower_state[id]
-          if (answer == 'false'){
-            telempoint['value'] = 0
-          }else if (answer == 'true'){
-            telempoint['value'] = 1
-          }else if (numberCommas(answer) == 3){
-            telempoint['rawVec_' + id.substring(9)] = answer
-            telempoint['x_' + id.substring(9)] = getCoord(answer, 1)
-            telempoint['y_' + id.substring(9)] = getCoord(answer, 2)
-            telempoint['z_' + id.substring(9)] = getCoord(answer, 3)
-          }else if (numberCommas(answer) == 4){
-            telempoint['rawQuat_' + id.substring(9)] = answer
-            telempoint['a_' + id.substring(9)] = getCoord(answer, 1)
-            telempoint['b_' + id.substring(9)] = getCoord(answer, 2)
-            telempoint['c_' + id.substring(9)] = getCoord(answer, 3)
-            telempoint['d_' + id.substring(9)] = getCoord(answer, 4)
-          }else{
-            telempoint['value'] = answer
-          }
+        var telempointy = { timestamp: timestamp, id: 'follower_y_' + id.substring(9) };
+        telempointy['value'] = getCoord(answer, 2)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointy);
+        if(this.history['follower_y_' + id.substring(9)] == undefined){
+        this.history['follower_y_' + id.substring(9)] = []
+        }
+        this.history['follower_y_' + id.substring(9)].push(telempointy);
+
+        var telempointz = { timestamp: timestamp, id: 'follower_z_' + id.substring(9) };
+        telempointz['value'] = getCoord(answer, 3)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointz);
+        if(this.history['follower_z_' + id.substring(9)] == undefined){
+        this.history['follower_z_' + id.substring(9)] = []
+        }
+        this.history['follower_z_' + id.substring(9)].push(telempointz);
+
+      } else if (numberCommas(answer) == 4) {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+
+        var telempointa = { timestamp: timestamp, id: 'follower_a_' + id.substring(9) };
+        telempointa['value'] = getCoord(answer, 1)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointa);
+        if(this.history['follower_a_' + id.substring(9)] == undefined){
+        this.history['follower_a_' + id.substring(9)] = []
+        }
+        this.history['follower_a_' + id.substring(9)].push(telempointa);
+
+        var telempointb = { timestamp: timestamp, id: 'follower_b_' + id.substring(9) };
+        telempointb['value'] = getCoord(answer, 2)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointb);
+        if(this.history['follower_b_' + id.substring(9)] == undefined){
+        this.history['follower_b_' + id.substring(9)] = []
+        }
+        this.history['follower_b_' + id.substring(9)].push(telempointb);
+
+        var telempointc = { timestamp: timestamp, id: 'follower_c_' + id.substring(9) };
+        telempointc['value'] = getCoord(answer, 3)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointc);
+        if(this.history['follower_c_' + id.substring(9)] == undefined){
+        this.history['follower_c_' + id.substring(9)] = []
+        }
+        this.history['follower_c_' + id.substring(9)].push(telempointc);
         
+        var telempointd = { timestamp: timestamp, id: 'follower_d_' + id.substring(9) };
+        telempointd['value'] = getCoord(answer, 4)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointd);
+        if(this.history['follower_d_' + id.substring(9)] == undefined){
+        this.history['follower_d_' + id.substring(9)] = []
+        }
+        this.history['follower_d_' + id.substring(9)].push(telempointd);
 
+      } else {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+      }
+
+
+      
+
+  }, this);
+
+  if (this.singleSat == false) {
+    Object.keys(this.leader_state).forEach(function (id) {
+
+      //generate telemetry point primitve state
+      let answer = this.leader_state[id]
+      if (answer == 'false') {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = 0
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+      } else if (answer == 'true') {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = 1
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);id
+      } else if (numberCommas(answer) == 3) {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+
+        var telempointx = { timestamp: timestamp, id: 'leader_x_' + id.substring(7) };
+        telempointx['value'] = getCoord(answer, 1)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointx);
+        if(this.history['leader_x_' + id.substring(7)] == undefined){
+          
+        this.history['leader_x_' + id.substring(7)] = []
+        }
+        this.history['leader_x_' + id.substring(7)].push(telempointx);
+
+        var telempointy = { timestamp: timestamp, id: 'leader_y_' + id.substring(7) };
+        telempointy['value'] = getCoord(answer, 2)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointy);
+        if(this.history['leader_y_' + id.substring(7)] == undefined){
+        this.history['leader_y_' + id.substring(7)] = []
+        }
+        this.history['leader_y_' + id.substring(7)].push(telempointy);
+
+        var telempointz = { timestamp: timestamp, id: 'leader_z_' + id.substring(7) };
+        telempointz['value'] = getCoord(answer, 3)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointz);
+        if(this.history['leader_z_' + id.substring(7)] == undefined){
+        this.history['leader_z_' + id.substring(7)] = []
+        }
+        this.history['leader_z_' + id.substring(7)].push(telempointz);
+
+      } else if (numberCommas(answer) == 4) {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
+
+        var telempointa = { timestamp: timestamp, id: 'leader_a_' + id.substring(7) };
+        telempointa['value'] = getCoord(answer, 1)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointa);
+        if(this.history['leader_a_' + id.substring(7)] == undefined){
+        this.history['leader_a_' + id.substring(7)] = []
+        }
+        this.history['leader_a_' + id.substring(7)].push(telempointa);
+
+        var telempointb = { timestamp: timestamp, id: 'leader_b_' + id.substring(7) };
+        telempointb['value'] = getCoord(answer, 2)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointb);
+        if(this.history['leader_b_' + id.substring(7)] == undefined){
+        this.history['leader_b_' + id.substring(7)] = []
+        }
+        this.history['leader_b_' + id.substring(7)].push(telempointb);
+
+        var telempointc = { timestamp: timestamp, id: 'leader_c_' + id.substring(7) };
+        telempointc['value'] = getCoord(answer, 3)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointc);
+        if(this.history['leader_c_' + id.substring(7)] == undefined){
+        this.history['leader_c_' + id.substring(7)] = []
+        }
+        this.history['leader_c_' + id.substring(7)].push(telempointc);
+        
+        var telempointd = { timestamp: timestamp, id: 'leader_d_' + id.substring(7) };
+        telempointd['value'] = getCoord(answer, 4)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempointd);
+        if(this.history['leader_d_' + id.substring(7)] == undefined){
+        this.history['leader_d_' + id.substring(7)] = []
+        }
+        this.history['leader_d_' + id.substring(7)].push(telempointd);
+
+      } else {
+        var telempoint = { timestamp: timestamp, id: id };
+        telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
       }
 
     }, this);
-
-    if (this.singleSat == false){
-    Object.keys(this.leader_state).forEach(function (id) {
-
-      //if the value for the key of the state entry is an object
-      if(typeof(this.leader_state[id]) == 'object'){
-
-        //generate telemetry point oject
-        var telempoint = { timestamp: timestamp, id: id};
-        for (const output in this.leader_state[id]){
-          let answer = this.leader_state[id][output];
-          if (answer == 'false'){
-            telempoint[output] = 0
-          }else if (answer == 'true'){
-            telempoint[output] = 1
-          }else if (numberCommas(answer) == 3){
-            telempoint['rawVec_' + output] = answer
-            telempoint['x_' + output] = getCoord(answer, 1)
-            telempoint['y_' + output] = getCoord(answer, 2)
-            telempoint['z_' + output] = getCoord(answer, 3)
-          }else if (numberCommas(answer) == 4){
-            telempoint['rawQuat_' + output] = answer
-            telempoint['a_' + output] = getCoord(answer, 1)
-            telempoint['b_' + output] = getCoord(answer, 2)
-            telempoint['c_' + output] = getCoord(answer, 3)
-            telempoint['d_' + output] = getCoord(answer, 4)
-          }else{
-            telempoint[output] = answer
-          }
-        }
-
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempoint);
-        this.history[id].push(telempoint);
-      }
-    //if the value for the key of the state entry is a primitive
-    else {
-
-      //generate telemetry point primitve state
-      var telempoint = { timestamp: timestamp, id: id };
-      let answer = this.leader_state[id]
-          if (answer == 'false'){
-            telempoint['value'] = 0
-          }else if (answer == 'true'){
-            telempoint['value'] = 1
-          }else if (numberCommas(answer) == 3){
-            telempoint['rawVec_' + id.substring(7)] = answer
-            telempoint['x_' + id.substring(7)] = getCoord(answer, 1)
-            telempoint['y_' + id.substring(7)] = getCoord(answer, 2)
-            telempoint['z_' + id.substring(7)] = getCoord(answer, 3)
-          }else if (numberCommas(answer) == 4){
-            telempoint['rawQuat_' + id.substring(7)] = answer
-            telempoint['a_' + id.substring(7)] = getCoord(answer, 1)
-            telempoint['b_' + id.substring(7)] = getCoord(answer, 2)
-            telempoint['c_' + id.substring(7)] = getCoord(answer, 3)
-            telempoint['d_' + id.substring(7)] = getCoord(answer, 4)
-          }else{
-            telempoint['value'] = answer
-          }
-      //notify the realtime server and push the datapoint to the history server
-      this.notify(telempoint);
-      this.history[id].push(telempoint);
-    }
-
-  }, this);
-}
+  }
 };
 
 /**
