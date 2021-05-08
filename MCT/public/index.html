@@ -2,43 +2,15 @@
 <html>
 
 <head>
-    <title>PAN Mission Control - OpenMCT</title>
-    <script src="/openmct/openmct.js"></script>
-    <script src="http.js"></script>
-    <script src="generic-plugin.js"></script>
+
 
 
 </head>
 
 <body>
-    <script>
-        //indicates the location of the openmct libraries and assets
-        openmct.setAssetPath('openmct');
-        //installs plugins for creation and storage of user objects like layouts (currenlty needs to have CORS enabled - Run MCT/generators/mct_es_config.sh)
-        openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
-        openmct.install(openmct.plugins.MyItems());
-        //installs new plugins for viewing telemetry and analyzing telemetry
-        openmct.install(openmct.plugins.AutoflowView({
-            type: "telemetry.fixed"
-        }));
-        openmct.install(openmct.plugins.SummaryWidget());
-        //installs timezone plugins
-        openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.time.clock('local', { start: -15 * 60 * 1000, end: 0 });
-        openmct.time.timeSystem('utc');
-        //installs dark theme
-        openmct.install(openmct.plugins.Espresso());
-        //installs server plugins using generic-plugin.js
-        openmct.install(GenericPlugin("historical"));
-        openmct.install(GenericPlugin("realtime"));
-        //installs subsystem/domain object plugins using generic-plugin.js
-        openmct.install(GenericPlugin("follower"));
-        openmct.install(GenericPlugin("leader"));
-
-
-        //starts OpenMCT once all installs are completed
-        openmct.start();
-    </script>
+    <a href="https://localhost:8080/dual">Dual MCT</a>
+    <a href="https://localhost:8080/follower">Follower Only</a>
+    <a href="https://localhost:8080/leader">Leader Only</a>
 </body>
 
 </html>
