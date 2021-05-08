@@ -96,6 +96,33 @@ function Telemetry(configuration) {
 
 };
 
+function numberCommas(s){
+  if (typeof s == "string"){
+  return s.split(",").length-1}
+  else{
+    return 0
+  }
+}
+
+function getCoord(s, num){
+  if (num == 1){
+    let i = s.indexOf(',')
+    if(i== -1){
+      return s
+    }else{
+      return s.substring(0, i)
+    }
+  }
+  else{
+    let i = s.indexOf(',')
+    if(i== -1){
+      return s
+    }else{
+      return getCoord(s.substring(i+1), num - 1)
+    }
+  }
+}
+
 /**
 *   Updates the state fields with the new values in the Elastic Search database.<br>
 *
@@ -204,7 +231,25 @@ Telemetry.prototype.generateTelemetry = function () {
         //generate telemetry point oject
         var telempoint = { timestamp: timestamp, id: id};
         for (const output in this.follower_state[id]){
-          telempoint[output] = this.follower_state[id][output];
+          let answer = this.follower_state[id][output];
+          if (answer == 'false'){
+            telempoint[output] = 0
+          }else if (answer == 'true'){
+            telempoint[output] = 1
+          }else if (numberCommas(answer) == 3){
+            telempoint['rawVec_' + output] = answer
+            telempoint['x_' + output] = getCoord(answer, 1)
+            telempoint['y_' + output] = getCoord(answer, 2)
+            telempoint['z_' + output] = getCoord(answer, 3)
+          }else if (numberCommas(answer) == 4){
+            telempoint['rawQuat_' + output] = answer
+            telempoint['a_' + output] = getCoord(answer, 1)
+            telempoint['b_' + output] = getCoord(answer, 2)
+            telempoint['c_' + output] = getCoord(answer, 3)
+            telempoint['d_' + output] = getCoord(answer, 4)
+          }else{
+            telempoint[output] = answer
+          }
         }
 
         //notify the realtime server and push the datapoint to the history server
@@ -215,8 +260,28 @@ Telemetry.prototype.generateTelemetry = function () {
       //if the value for the key of the state entry is a primitive
       else{
 
+        var telempoint = { timestamp: timestamp, id: id};
         //generate telemetry point primitve state
-        var telempoint = { timestamp: timestamp, value: this.follower_state[id], id: id};
+        let answer = this.follower_state[id]
+          if (answer == 'false'){
+            telempoint['value'] = 0
+          }else if (answer == 'true'){
+            telempoint['value'] = 1
+          }else if (numberCommas(answer) == 3){
+            telempoint['rawVec_' + id.substring(9)] = answer
+            telempoint['x_' + id.substring(9)] = getCoord(answer, 1)
+            telempoint['y_' + id.substring(9)] = getCoord(answer, 2)
+            telempoint['z_' + id.substring(9)] = getCoord(answer, 3)
+          }else if (numberCommas(answer) == 4){
+            telempoint['rawQuat_' + id.substring(9)] = answer
+            telempoint['a_' + id.substring(9)] = getCoord(answer, 1)
+            telempoint['b_' + id.substring(9)] = getCoord(answer, 2)
+            telempoint['c_' + id.substring(9)] = getCoord(answer, 3)
+            telempoint['d_' + id.substring(9)] = getCoord(answer, 4)
+          }else{
+            telempoint['value'] = answer
+          }
+        
 
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
@@ -234,7 +299,25 @@ Telemetry.prototype.generateTelemetry = function () {
         //generate telemetry point oject
         var telempoint = { timestamp: timestamp, id: id};
         for (const output in this.leader_state[id]){
-          telempoint[output] = this.leader_state[id][output];
+          let answer = this.leader_state[id][output];
+          if (answer == 'false'){
+            telempoint[output] = 0
+          }else if (answer == 'true'){
+            telempoint[output] = 1
+          }else if (numberCommas(answer) == 3){
+            telempoint['rawVec_' + output] = answer
+            telempoint['x_' + output] = getCoord(answer, 1)
+            telempoint['y_' + output] = getCoord(answer, 2)
+            telempoint['z_' + output] = getCoord(answer, 3)
+          }else if (numberCommas(answer) == 4){
+            telempoint['rawQuat_' + output] = answer
+            telempoint['a_' + output] = getCoord(answer, 1)
+            telempoint['b_' + output] = getCoord(answer, 2)
+            telempoint['c_' + output] = getCoord(answer, 3)
+            telempoint['d_' + output] = getCoord(answer, 4)
+          }else{
+            telempoint[output] = answer
+          }
         }
 
         //notify the realtime server and push the datapoint to the history server
@@ -245,7 +328,26 @@ Telemetry.prototype.generateTelemetry = function () {
     else {
 
       //generate telemetry point primitve state
-      var telempoint = { timestamp: timestamp, value: this.leader_state[id], id: id };
+      var telempoint = { timestamp: timestamp, id: id };
+      let answer = this.leader_state[id]
+          if (answer == 'false'){
+            telempoint['value'] = 0
+          }else if (answer == 'true'){
+            telempoint['value'] = 1
+          }else if (numberCommas(answer) == 3){
+            telempoint['rawVec_' + id.substring(7)] = answer
+            telempoint['x_' + id.substring(7)] = getCoord(answer, 1)
+            telempoint['y_' + id.substring(7)] = getCoord(answer, 2)
+            telempoint['z_' + id.substring(7)] = getCoord(answer, 3)
+          }else if (numberCommas(answer) == 4){
+            telempoint['rawQuat_' + id.substring(7)] = answer
+            telempoint['a_' + id.substring(7)] = getCoord(answer, 1)
+            telempoint['b_' + id.substring(7)] = getCoord(answer, 2)
+            telempoint['c_' + id.substring(7)] = getCoord(answer, 3)
+            telempoint['d_' + id.substring(7)] = getCoord(answer, 4)
+          }else{
+            telempoint['value'] = answer
+          }
       //notify the realtime server and push the datapoint to the history server
       this.notify(telempoint);
       this.history[id].push(telempoint);
