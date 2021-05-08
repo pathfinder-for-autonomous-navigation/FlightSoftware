@@ -14,6 +14,7 @@ fc_fields = [
     "adcs.state",
     "piksi.state",
     "radio.state",
+    "prop.state",
     # Estimator information
     "time.valid",
     "time.gps",
@@ -36,6 +37,12 @@ fc_fields = [
 #    "adcs_monitor.mag1_vec",
 #    "adcs_monitor.gyr_vec",
 #    "adcs_monitor.ssa_mode",
+
+    #prop errors
+    "prop.pressurize_fail",
+    "prop.overpressured",
+    "prop.tank2_temp_high",
+    "prop.tank1_temp_high"
 ]
 
 psim_fields_per_satellite = [

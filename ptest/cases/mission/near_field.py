@@ -9,6 +9,7 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
         super(DualSatNearFieldCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/near_field"]
+        # self.psim_config_overrides = {"truth.leader.pos": lin.Vector3[0,0,0,0], "truth.leader.vel"}
         self.leader_initial_state = "standby"
         self.follower_initial_state = "standby"
         self.leader_skip_deployment_wait = True
