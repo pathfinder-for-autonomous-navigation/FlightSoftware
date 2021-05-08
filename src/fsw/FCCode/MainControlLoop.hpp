@@ -83,13 +83,14 @@ class MainControlLoop : public ControlTask<void> {
      */
     ReadableStateField<unsigned int> control_cycle_ms_f;
 
+    OrbitController orbit_controller;
+
     PropController prop_controller;
     MissionManager mission_manager;
     AttitudeController attitude_controller; // needs adcs.state from MissionManager
     ADCSCommander adcs_commander; // will need inputs from computer
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
-    OrbitController orbit_controller;
 
     // Control cycle time offsets, in microseconds
     #ifdef FLIGHT

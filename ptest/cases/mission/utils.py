@@ -44,8 +44,8 @@ fc_fields = [
     "prop.sched_valve2",
     "prop.sched_valve3",
     "prop.sched_valve4",
-
-    #prop errors
+    "orbit.control.J_ecef",
+    
     "prop.pressurize_fail.base",
     "prop.overpressured.base",
     "prop.tank2_temp_high.base",

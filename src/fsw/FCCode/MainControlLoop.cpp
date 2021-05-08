@@ -44,12 +44,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       one_day_ccno_f("pan.one_day_ccno", Serializer<unsigned int>()),
       control_cycle_ms_f("pan.cc_ms", Serializer<unsigned int>()),
+      orbit_controller(registry, orbit_controller_offset),
       prop_controller(registry, prop_controller_offset),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_controller(registry, attitude_controller_offset),
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
-      orbit_controller(registry, orbit_controller_offset)
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
 {
     
     docking_controller.init();
