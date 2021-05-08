@@ -52,10 +52,6 @@ class PiksiCheckoutCase(SingleSatCase):
     def nominal_checkout(self):
         self.print_header("ENTERING NOMINAL CHECKOUT")
 
-        deads = self.modes_dict["dead"]
-        self.logger.put(f"Deads reported: {deads}")
-        self.soft_assert(deads == 0, f"Deads reported: {deads}")
-
         sync_errors = self.modes_dict["sync_error"]
         self.logger.put(f"Sync errors: {sync_errors}")
         self.soft_assert(sync_errors < self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
@@ -132,7 +128,7 @@ class PiksiCheckoutCase(SingleSatCase):
         self.logger.put(str(self.modes_dict))
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
-        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
+        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error"]
 
         # When in no fix, no_data_error is actually the most common mode
         if self.most_common_mode == 'no_data_error' and self.second_most_common_mode == 'no_fix':

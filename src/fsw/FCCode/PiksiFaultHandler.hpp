@@ -3,12 +3,13 @@
 
 #include "FaultHandlerMachine.hpp"
 #include "piksi_mode_t.enum"
-
+#include <common/Fault.hpp>
 class PiksiFaultHandler : public FaultHandlerMachine {
   public:
     //! Default maximum wait times
     TRACKED_CONSTANT_SC(unsigned int, default_no_cdgps_max_wait, PAN::one_day_ccno);
     TRACKED_CONSTANT_SC(unsigned int, default_cdgps_delay_max_wait, PAN::one_day_ccno/8);
+    TRACKED_CONSTANT_SC(unsigned int, piksi_dead_threshold, PAN::one_day_ccno/6);
 
     /**
      * @brief Construct a new Piksi Fault Handler.
@@ -22,8 +23,6 @@ class PiksiFaultHandler : public FaultHandlerMachine {
      * that the mission manager go to standby if required.
      */
     fault_response_t execute();
-
-  protected:
 
     /**
      * @brief Check if we have recently gotten any GPS readings 
@@ -55,6 +54,11 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     // Statefield for last time we got rtk readings
     InternalStateField<unsigned int> last_rtkfix_ccno_f;
 
+    /**
+     * @brief Fault that should be triggered when the piksi has been
+     * non functional for too long, but only beyond standby
+     */
+    Fault piksi_dead_fault_f;
 };
 
 #endif

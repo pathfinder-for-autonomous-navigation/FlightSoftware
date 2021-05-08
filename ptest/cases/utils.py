@@ -72,7 +72,8 @@ def suppress_faults(fc, logger):
         "adcs_monitor.wheel2_fault",
         "adcs_monitor.wheel3_fault",
         "adcs_monitor.wheel_pot_fault",
-        "attitude_estimator.fault"
+        "attitude_estimator.fault",
+        "piksi_fh.dead"
     ]
     for fault in faults:
         fc.write_state(fault + ".suppress", "true")
@@ -200,8 +201,7 @@ class Enums(object):
         "crc_error",
         "time_limit_error",
         "data_error",
-        "no_data_error",
-        "dead"
+        "no_data_error"
     ])
 
     rel_orbit_state = FSWEnum([
