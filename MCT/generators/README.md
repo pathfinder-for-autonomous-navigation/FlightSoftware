@@ -9,7 +9,7 @@ This file generates every subsystem/domain object's json file for MCT. Run this 
 
 ### 3. [mct_setup.sh]
 
-This file runs but `state_variables_generator.py` and `subsystem_json_generator.py`. You must run this from the root FlightSoftware directory
+This file runs both `state_variables_generator.py` and `subsystem_json_generator.py`. You must run this from the root FlightSoftware directory
 
 
 [state_variables_generator.py]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/generators/state_variables_generator.py
