@@ -1,7 +1,7 @@
 from ..base import DualSatCase, PSimCase
 from ..utils import Enums, TestCaseFailure
 from .utils import log_fc_data, log_psim_data
-
+import lin
 
 class DualSatNearFieldCase(DualSatCase, PSimCase):
 
@@ -9,6 +9,8 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
         super(DualSatNearFieldCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/near_field"]
+        # self.psim_config_overrides = {"truth.leader.attitude.w": lin.Vector3([0,0,0]), "truth.follower.attitude.w": lin.Vector3([0,0,0])}
+
         # self.psim_config_overrides = {"truth.leader.pos": lin.Vector3[0,0,0,0], "truth.leader.vel"}
         self.leader_initial_state = "standby"
         self.follower_initial_state = "standby"
