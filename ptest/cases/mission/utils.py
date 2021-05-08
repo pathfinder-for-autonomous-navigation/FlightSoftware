@@ -40,10 +40,10 @@ fc_fields = [
     "dcdc.SpikeDock",
 
     "prop.cycles_until_firing",
-    "prop.sched_valve1",
-    "prop.sched_valve2",
-    "prop.sched_valve3",
-    "prop.sched_valve4",
+    "orbit.control.valve1",
+    "orbit.control.valve2",
+    "orbit.control.valve3",
+    "orbit.control.valve4",
     "orbit.control.J_ecef",
     
     "prop.pressurize_fail.base",
