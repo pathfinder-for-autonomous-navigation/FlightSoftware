@@ -12,5 +12,15 @@
             "enable_auto_dbtelem": false
         }
     ],
-    "radios": []
+    "radios": [
+        {
+            "connected_device": "FlightController",
+            "imei": "",
+            "connect": false,
+            "send_queue_duration": 0,
+            "send_lockout_duration": 0,
+            "check_uplink_queue_enable": false,
+            "http_port": 8001
+        }
+    ]
 }
