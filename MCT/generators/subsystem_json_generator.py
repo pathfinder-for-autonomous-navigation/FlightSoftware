@@ -252,6 +252,9 @@ def createJSON(satellite):
     json.dump(sat, satelliteJSON, indent=4)
 
 def makeTimestamp():
+    '''
+        Creates the timestamp field for the telempoint
+    '''
     values = []
     timestamp = {}
     timestamp['key'] = 'utc'
@@ -266,6 +269,9 @@ def makeTimestamp():
 
 
 def makeValue(prefix, k):
+    '''
+        Creates the telem field for the telempoint
+    '''
     values = []
     stateData = telemetryData['fields'][k]
     val = copy.deepcopy(stateData)
@@ -277,6 +283,10 @@ def makeValue(prefix, k):
     return values
                 
 def makeValues(satellite, k):
+    '''
+        Evaluates and returns the list of all additional domain objects needed for a key based on its type
+        Ex.: vector x,y,x or quaternion a,b,c,d
+    '''
     values = []
     stateData = telemetryData['fields'][k]
     type_k = stateData['type']
