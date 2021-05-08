@@ -1,9 +1,9 @@
 # Runs mission from startup state to standby state.
 from psim.sims import SingleAttitudeOrbitGnc
 from .utils import Enums, mag_of, sum_of_differentials
-from .mission.standby import SingleSatStandbyCase
+from .mission import SingleSatDetumbleCase
 
-class Ditl(SingleSatStandbyCase):
+class Ditl(SingleSatDetumbleCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -43,6 +43,11 @@ class Ditl(SingleSatStandbyCase):
 
     #     self.data_logs()
 
+    def post_boot(self):
+        self.ws("fault_handler.enabled", True)
+        
+
     def run(self):
         self.cycle()
         self.data_logs()
+        # self.ws("adcs.state", Enums.adcs_states["startup"])
