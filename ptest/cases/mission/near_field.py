@@ -16,6 +16,7 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
         self.follower_initial_state = "standby"
         self.leader_skip_deployment_wait = True
         self.follower_skip_deployment_wait = True
+        self.debug_to_console = True
 
     def post_boot(self):
         """To put us in fair field, we need to be able to initialize each
