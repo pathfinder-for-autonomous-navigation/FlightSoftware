@@ -152,7 +152,7 @@ void loop() {
     }
      Serial.printf("finished filling cycle %d of 10 \n ", numCycle+1);
   }
-
+/*
  ////////////////Critical venting to remove excess compressed air in tank 1
   Serial.println("Phase 2: started critical venting to remove excess compressed air in tank 1 \n ");
   for(int i= 0; i < 2; i++){
@@ -270,7 +270,7 @@ void loop() {
       Serial.printf("finished top-up filling cycle %d  of 3 \n", numCycle+1);
     }
 
-   Serial.println("al fin \n");
+   Serial.println("al fin \n"); */
 
-   exit(0);
+   // exit(0);
 }
