@@ -131,7 +131,7 @@ void OrbitController::execute() {
 
     // Get the time until the satellite reaches the next firing node in control cycles
     double time_till_firing = time_till_node(theta, r, v);
-    double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time;
+    double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time_ms;
 
     // Schedule the valves for firing soon if the prop system is idle
     if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::idle) {

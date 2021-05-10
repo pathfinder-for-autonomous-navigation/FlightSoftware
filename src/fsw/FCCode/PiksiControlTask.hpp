@@ -12,7 +12,6 @@
 class PiksiControlTask : public TimedControlTask<void>
 {
 public:
-    TRACKED_CONSTANT_SC(unsigned int, DEAD_CYCLE_COUNT, 1000);
     TRACKED_CONSTANT_SC(unsigned int, PIKSI_MD_THRESHOLD, 100000);
 
     PiksiControlTask(StateFieldRegistry &registry, Devices::Piksi &_piksi);

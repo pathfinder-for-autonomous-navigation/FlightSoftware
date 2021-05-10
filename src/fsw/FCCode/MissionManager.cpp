@@ -16,9 +16,10 @@ const constexpr unsigned char MissionManager::kill_switch_value;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
+
 MissionManager::MissionManager(StateFieldRegistry &registry) 
     : TimedControlTask<void>(registry, "mission_ct"),
-        detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
+        detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 0.05, 7)),
         close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
         docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
         docking_timeout_limit_f("docking_timeout_limit",
@@ -40,6 +41,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
         sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
         enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
         kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
+
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);

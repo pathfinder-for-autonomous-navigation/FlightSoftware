@@ -86,6 +86,8 @@ class USBSession(object):
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
+        self.uplink_json_name = "uplink"+self.radio_imei+".http"
+        self.uplink_sbd_name = "uplink"+self.radio_imei+".sbd"
 
         # Open a connection to elasticsearch
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
@@ -183,7 +185,7 @@ class USBSession(object):
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
                     telem_bytes.remove("")
-                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem{self.radio_imei}[{data['time']}].txt"), "wb")
                     for byte in telem_bytes:
                         telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
                     telem_file.close()
@@ -409,16 +411,16 @@ class USBSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd", "uplink.http")
+        success = self.uplink_console.create_uplink(fields, vals, self.uplink_sbd_name, self.uplink_json_name)
 
         # If the uplink packet exists, send it to the FlightSoftware console
-        if success and os.path.exists("uplink.sbd"):
-            success &= self.send_uplink("uplink.sbd")
-            os.remove("uplink.sbd") 
-            os.remove("uplink.http") 
+        if success and os.path.exists(self.uplink_sbd_name):
+            success &= self.send_uplink(self.uplink_sbd_name)
+            os.remove(self.uplink_sbd_name) 
+            os.remove(self.uplink_json_name) 
             return success
         else:
-            if os.path.exists("uplink.json"): os.remove("uplink.http") 
+            if os.path.exists(self.uplink_json_name): os.remove(self.uplink_json_name) 
             return False
 
     def parsetelem(self):
@@ -429,7 +431,7 @@ class USBSession(object):
         '''
 
         #get newest file
-        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, f'telem{self.radio_imei}*'))
         try:
             newest_telem_file = max(telem_files, key=os.path.basename)
         except ValueError:
@@ -463,7 +465,7 @@ class USBSession(object):
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time.downlink_recieved": str(datetime.datetime.now().isoformat())
+                "time.downlink_received": str(datetime.datetime.now().isoformat())
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':
@@ -525,11 +527,11 @@ class USBSession(object):
                                 # Check if there is an email attachment
                                 if part.get_filename() is not None:
                                     # Download uplink packet from email attachment and send it to the Flight Computer
-                                    fp = open("new_uplink.sbd", 'wb')
+                                    fp = open("new_" + self.uplink_sbd_name, 'wb')
                                     fp.write(part.get_payload(decode=True))
                                     fp.close()
-                                    self.send_uplink("new_uplink.sbd")
-                                    os.remove("new_uplink.sbd")
+                                    self.send_uplink("new_"+self.uplink_sbd_name)
+                                    os.remove("new_"+self.uplink_sbd_name)
                         else:
                             # Mark message as unseen again if it wasn't addressed to this satellite
                             self.mail.store(num, '-FLAGS', '\SEEN')
