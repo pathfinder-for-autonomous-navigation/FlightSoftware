@@ -5,79 +5,121 @@
 
 #include <array>
 #include <cstdarg>
+#include <cstdint>
 
 #ifdef DESKTOP
+    #include <concurrentqueue.h>
+
+    #include <chrono>
     #include <iostream>
+    #include <thread>
 #else
     #include <Arduino.h>
 #endif
 
-static constexpr ConstexprMap<debug_console::severity, char const *, 8> severity_strs {{{
-    {debug_console::severity::debug, "DEBUG"},
-    {debug_console::severity::info, "INFO"},
-    {debug_console::severity::notice, "NOTICE"},
-    {debug_console::severity::warning, "WARNING"},
-    {debug_console::severity::error, "ERROR"},
-    {debug_console::severity::critical, "CRITICAL"},
-    {debug_console::severity::alert, "ALERT"},
-    {debug_console::severity::emergency, "EMERGENCY"},
+static constexpr std::uint8_t LED = 13;
+
+static constexpr ConstexprMap<debug_console::severity_t, char const *, 8> severity_strs {{{
+    {debug_console::severity_t::debug, "DEBUG"},
+    {debug_console::severity_t::info, "INFO"},
+    {debug_console::severity_t::notice, "NOTICE"},
+    {debug_console::severity_t::warning, "WARNING"},
+    {debug_console::severity_t::error, "ERROR"},
+    {debug_console::severity_t::critical, "CRITICAL"},
+    {debug_console::severity_t::alert, "ALERT"},
+    {debug_console::severity_t::emergency, "EMERGENCY"},
 }}};
 
-static constexpr ConstexprMap<debug_console::state_field_error, char const *, 7> state_field_error_strs {{{
-    {debug_console::state_field_error::invalid_field_name, "invalid field name"},
-    {debug_console::state_field_error::missing_mode, "missing mode specification"},
-    {debug_console::state_field_error::invalid_mode_not_char, "mode value is not a character"},
-    {debug_console::state_field_error::invalid_mode, "mode value is not 'r' or 'w'"},
-    {debug_console::state_field_error::missing_field_val, "missing value of field to be written"},
-    {debug_console::state_field_error::invalid_field_val, "field value was invalid"}
+static constexpr ConstexprMap<debug_console::state_field_error_t, char const *, 7> state_field_error_strs {{{
+    {debug_console::state_field_error_t::invalid_field_name, "invalid field name"},
+    {debug_console::state_field_error_t::missing_mode, "missing mode specification"},
+    {debug_console::state_field_error_t::invalid_mode_not_char, "mode value is not a character"},
+    {debug_console::state_field_error_t::invalid_mode, "mode value is not 'r' or 'w'"},
+    {debug_console::state_field_error_t::missing_field_val, "missing value of field to be written"},
+    {debug_console::state_field_error_t::invalid_field_val, "field value was invalid"}
 }}};
 
-static constexpr ConstexprMap<debug_console::state_cmd_mode, char const *, 3> state_cmd_mode_strs {{{
-    {debug_console::state_cmd_mode::unspecified_mode, "perform unspecified operation with"},
-    {debug_console::state_cmd_mode::read_mode, "read"},
-    {debug_console::state_cmd_mode::write_mode, "write"}
+static constexpr ConstexprMap<debug_console::state_cmd_mode_t, char const *, 3> state_cmd_mode_strs {{{
+    {debug_console::state_cmd_mode_t::unspecified_mode, "perform unspecified operation with"},
+    {debug_console::state_cmd_mode_t::read_mode, "read"},
+    {debug_console::state_cmd_mode_t::write_mode, "write"}
 }}};
 
-bool debug_console::is_initialized = false;
+/** @brief True if the debug console has been opened and false otherwise.
+ */
+static bool is_open = false;
+
+/** @brief Start time of process overall.
+ *
+ *  In Arduino this is relative to the millis timer and on desktop the system
+ *  time.
+ */
 #ifndef DESKTOP
-unsigned int debug_console::_start_time = 0;
+static unsigned int start_time = 0;
 #else
-std::chrono::steady_clock::time_point debug_console::_start_time =
-    std::chrono::steady_clock::now();
-#endif
+static std::chrono::steady_clock::time_point const start_time =
+        std::chrono::steady_clock::now();
 
-debug_console::debug_console() {}
+/** @brief Thread responsible for reading data from the input stream in HOOTL.
+ */
+static std::thread reader_thread;
+
+/** @brief Used to signal the reader thread to halt.
+ */
+static volatile bool reader_thread_is_running = false;
+
+/** @brief Consumer producer queue facilitating communication between the main
+ *         thread and reader thread.
+ */
+static moodycamel::ConcurrentQueue<std::string> unprocessed_inputs;
+#endif
 
 unsigned int debug_console::_get_elapsed_time() {
 #ifdef DESKTOP
-    std::chrono::milliseconds ms_since_start =
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - _start_time);
-    return ms_since_start.count();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - start_time).count();
 #else
-    unsigned int current_time = millis();
-    if (!Serial) {
-        /** Reset the start time if Serial is unconnected. We
-         * do this so that the logging utility on the computer
-         * can always produce a correct timestamp.
-         */
-        _start_time = current_time;
-    }
-    unsigned int elapsed_time = current_time - _start_time;
-    return elapsed_time;
+    unsigned int const current_time = millis();
+
+    /* Reset the start time if Serial is unconnected. We do this so that the
+     * logging utility on the computer can always produce a correct timestamp.
+     */
+    if (!Serial) start_time = current_time;
+
+    return current_time - start_time;
 #endif
 }
 
-void debug_console::_print_json_msg(severity s, const char* msg) {
+void debug_console::_print_json_msg(severity_t severity, const char* msg) {
 #ifdef DESKTOP
     DynamicJsonDocument doc(2000);
 #else
     StaticJsonDocument<500> doc;
 #endif
     doc["t"] = _get_elapsed_time();
-    doc["svrty"] = severity_strs[s];
+    doc["svrty"] = severity_strs[severity];
     doc["msg"] = msg;
 
+#ifdef DESKTOP
+    serializeJson(doc, std::cout);
+    std::cout << std::endl;
+#else
+    serializeJson(doc, Serial);
+    Serial.println();
+#endif
+}
+
+void debug_console::_print_error_state_field(char const *field_name,
+        state_cmd_mode_t mode, state_field_error_t error_code) {
+#ifdef DESKTOP
+    DynamicJsonDocument doc(500);
+#else
+    StaticJsonDocument<200> doc;
+#endif
+    doc["t"] = _get_elapsed_time();
+    doc["field"] = field_name;
+    doc["mode"] = state_cmd_mode_strs[mode];
+    doc["err"] = state_field_error_strs[error_code];
 #ifdef DESKTOP
     serializeJson(doc, std::cout);
     std::cout << std::endl << std::flush;
@@ -87,55 +129,68 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
 #endif
 }
 
-void debug_console::init() {
-    if (!is_initialized) {
+void debug_console::open() {
+    if (is_open) return;
+
 #ifdef DESKTOP
-        std::cin.tie(nullptr);
-        running = true;
-        reader_thd = std::thread([&](){ this->_reader(); });
+    std::cin.tie(nullptr);
+    reader_thread_is_running = true;
+    reader_thread = std::thread([&]() -> void {
+        std::string input;
+        while (reader_thread_is_running) {
+            std::getline(std::cin, input);
+            unprocessed_inputs.enqueue(input);
+        }
+    });
 #else
-        Serial.begin(115200);
-        pinMode(13, OUTPUT);
-
-        _start_time = millis();
+    Serial.begin(115200);
+    pinMode(LED, OUTPUT);
 #endif
-        is_initialized = true;
-    }
+    is_open = true;
 }
 
-void debug_console::printf(const char* format, ...) {
-    if (!is_initialized) return;
-    char buf[100];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(buf, sizeof(buf), format, args);
-    _print_json_msg(debug_severity::info, buf);
-    va_end(args);
+void debug_console::close() {
+#ifdef DESKTOP
+    if (!is_open) return;
+
+    reader_thread_is_running = false;
+    if (reader_thread.joinable()) reader_thread.join();
+#endif
 }
-void debug_console::printf(severity s, const char* format, ...) {
-    if (!is_initialized) return;
+
+void debug_console::printf(severity_t severity, const char* fmt, ...) {
+    if (!is_open) return;
+
     char buf[100];
     va_list args;
-    va_start(args, format);
-    vsnprintf(buf, sizeof(buf), format, args);
-    _print_json_msg(s, buf);
+    va_start(args, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    _print_json_msg(severity, buf);
     va_end(args);
 }
 
-void debug_console::println(severity s, const char* str) {
-    if (!is_initialized) return;
-    _print_json_msg(s, str);
+void debug_console::printf(const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    printf(severity_t::info, fmt, args);
+    va_end(args);
 }
-void debug_console::println(const char* str) {
-    println(debug_severity::info, str);
+
+void debug_console::println(severity_t severity, char const *msg) {
+    if (!is_open) return;
+    _print_json_msg(severity, msg);
+}
+
+void debug_console::println(char const *msg) {
+    println(severity_t::info, msg);
 }
 
 void debug_console::blink_led() {
-    if (!is_initialized) return;
+    if (!is_open) return;
 #ifndef DESKTOP
-    digitalWrite(13, HIGH);
+    digitalWrite(LED, HIGH);
     delay(500);
-    digitalWrite(13, LOW);
+    digitalWrite(LED, LOW);
     delay(500);
 #endif
 }
@@ -149,27 +204,6 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
     doc["t"] = _get_elapsed_time();
     doc["field"] = field.name().c_str();
     doc["val"] = field.print();
-#ifdef DESKTOP
-    serializeJson(doc, std::cout);
-    std::cout << std::endl << std::flush;
-#else
-    serializeJson(doc, Serial);
-    Serial.println();
-#endif
-}
-
-void debug_console::_print_error_state_field(const char* field_name,
-                                             const debug_console::state_cmd_mode mode,
-                                             const debug_console::state_field_error error_code) {
-#ifdef DESKTOP
-    DynamicJsonDocument doc(500);
-#else
-    StaticJsonDocument<200> doc;
-#endif
-    doc["t"] = _get_elapsed_time();
-    doc["field"] = field_name;
-    doc["mode"] = state_cmd_mode_strs[mode];
-    doc["err"] = state_field_error_strs[error_code];
 #ifdef DESKTOP
     serializeJson(doc, std::cout);
     std::cout << std::endl << std::flush;
@@ -238,12 +272,12 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
         const char* field_name = field.as<const char*>();
         if (msg_mode.isNull()) {
-            _print_error_state_field(field_name, unspecified_mode, missing_mode);
+            _print_error_state_field(field_name, state_cmd_mode_t::unspecified_mode, state_field_error_t::missing_mode);
             continue;
         }
 
         if (!msg_mode.is<unsigned char>()) {
-            _print_error_state_field(field_name, unspecified_mode, invalid_mode_not_char);
+            _print_error_state_field(field_name, state_cmd_mode_t::unspecified_mode, state_field_error_t::invalid_mode_not_char);
             continue;
         }
         const unsigned char mode = msg_mode.as<unsigned char>();
@@ -254,7 +288,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 ReadableStateFieldBase* field_ptr = 
                     registry.find_readable_field(field_name);
                 if (!field_ptr) {
-                    _print_error_state_field(field_name, read_mode, invalid_field_name);
+                    _print_error_state_field(field_name, state_cmd_mode_t::read_mode, state_field_error_t::invalid_field_name);
                     break;
                 } else {
                     print_state_field(*field_ptr);
@@ -263,7 +297,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             case 'w': {
                 JsonVariant field_val = msgs[i]["val"];
                 if (field_val.isNull()) {
-                    _print_error_state_field(field_name, write_mode, missing_field_val);
+                    _print_error_state_field(field_name, state_cmd_mode_t::write_mode, state_field_error_t::missing_field_val);
                     break;
                 }
 
@@ -271,14 +305,14 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 // that input values can be simmed.
                 ReadableStateFieldBase* field_ptr = registry.find_readable_field(field_name);
                 if (!field_ptr) {
-                    _print_error_state_field(field_name, write_mode, invalid_field_name);
+                    _print_error_state_field(field_name, state_cmd_mode_t::write_mode, state_field_error_t::invalid_field_name);
                     break;
                 }
 
                 const char* field_val_serialized = field_val.as<const char*>();
                 const bool processed_val = field_ptr->deserialize(field_val_serialized);
                 if (!processed_val) {
-                    _print_error_state_field(field_name, write_mode, invalid_field_val);
+                    _print_error_state_field(field_name, state_cmd_mode_t::write_mode, state_field_error_t::invalid_field_val);
                     break;
                 }
 
@@ -348,28 +382,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
             } break;
             default: {
-                _print_error_state_field(field_name, read_mode, invalid_mode);
+                _print_error_state_field(field_name, state_cmd_mode_t::read_mode, state_field_error_t::invalid_mode);
             }
         }
     }
-}
-
-#ifdef DESKTOP
-void debug_console::_reader() {
-    while(running) {
-        std::string input;
-        std::getline(std::cin, input);
-        unprocessed_inputs.enqueue(input);
-    }
-}
-#endif
-
-debug_console::~debug_console() {
-#ifdef DESKTOP
-    if(running) {
-        running = false;
-        if (reader_thd.joinable())
-            reader_thd.join();
-    }
-#endif
 }

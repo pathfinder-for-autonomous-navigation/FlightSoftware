@@ -5,77 +5,82 @@
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 
-#ifdef DESKTOP
-    #include <chrono>
-    #include <thread>
-    #include <concurrentqueue.h>
-#else
-    #include <Arduino.h>
-#endif
-
-/**
- * @brief Provides access to Serial via a convenient wrapper that plays
- * well with ChibiOS.
- *
- */
 class debug_console {
-   public:
+  public:
     // Severity levels based off of
     // https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels
     // See the article for an explanation of when to use which severity level.
-    enum severity {
+    enum class severity_t : unsigned char {
         debug, info, notice, warning, error, critical, alert, emergency
     };
 
-    enum state_field_error {
-        invalid_field_name,
-        field_is_only_readable,
-        missing_mode,
-        invalid_mode_not_char,
-        invalid_mode,
-        missing_field_val,
-        invalid_field_val,
+    enum class state_field_error_t : unsigned char {
+        invalid_field_name, field_is_only_readable, missing_mode,
+        invalid_mode_not_char, invalid_mode, missing_field_val,
+        invalid_field_val
     };
 
-    enum state_cmd_mode {
+    enum class state_cmd_mode_t : unsigned char {
         unspecified_mode, read_mode, write_mode
     };
 
-    debug_console();
-
-    /**
-     * @brief Starts the debug console.
+    /** @brief Initializes the debug console.
+     *
+     *  This function must be called before any other method provided will
+     *  function properly.
      */
-    void init();
+    static void open();
 
-    /**
-     * @brief Prints a formatted string and prepends the process name at the
-     * beginning of the string. The use of a formatted string allows for the easy
-     * printing of arbitrary data.
-     * @param format The format string specifying how data should be represented.
-     * @param ... One or more arguments containing the data to be printed.
+    /** @brief Closes the debug console.
+     *
+     *  This function should be called on program termination. This doesn't
+     *  matter for HITL but is responsible for cleanly closing a thread in
+     *  HOOTL.
      */
-    static void printf(const char *format, ...);
-    static void printf(severity s, const char *format, ...);
+    static void close();
 
-    /**
-     * @brief Prints a string to console. Computer console automatically appends
-     * newline.
-     * @param str The string to be printed.
+    /** @brief Prints a formatted message over the debug console.
+     *
+     *  @param severity Message severity.
+     *  @param fmt      Message format.
+     *  @param ...      Formatting arguments.
      */
-    static void println(severity s, const char *str);
-    static void println(const char *str);
+    static void printf(severity_t severity, char const *fmt, ...);
+
+    /** @brief Prints a formatted message over the debug console.
+     *
+     *  @param fmt      Message format.
+     *  @param ...      Formatting arguments.
+     *
+     *  The message severity defaults to `info`.
+     */
+    static void printf(char const *fmt, ...);
+
+    /** @brief Prints a message over the debug console followed by a newline.
+     *
+     *  @param severity Message severity.
+     *  @param msg      Message.
+     */
+    static void println(severity_t severity, char const *msg);
+
+    /** @brief Prints a message over the debug console followed by a newline.
+     *
+     *  @param msg Message.
+     *
+     *  The message severity defaults to `info`.
+     */
+    static void println(char const *msg);
 
     /**
      * @brief Blinks an LED at a rate of 1 Hz.
      */
-    void blink_led();
+    static void blink_led();
 
     /**
      * @brief Reads in from the serial buffer to process incoming commands from a
      * computer to read/write to state fields.
      */
-    void process_commands(const StateFieldRegistry &registry);
+    static void process_commands(const StateFieldRegistry &registry);
 
     /**
      * @brief Helper method to write state fields to the console. State fields might
@@ -84,40 +89,19 @@ class debug_console {
      *
      * @param field
      */
-    void print_state_field(const SerializableStateFieldBase &field);
+    static void print_state_field(const SerializableStateFieldBase &field);
 
-   protected:
-/**
- * @brief The system time at which the debug connection with the computer was initiated,
- * relative to ChibiOS's initialization time.
- */
-#ifndef DESKTOP
-    static unsigned int _start_time;
-#else
-    static std::chrono::steady_clock::time_point _start_time;
-#endif
-
-    /**
-     * @brief Checks whether or not the debug console has been initialized. This is a static
-     * variable so that the debug console is not forcibly initialized several times (which can
-     * happen if multiple ControlTasks initialize the console.)
-     */
-    static bool is_initialized;
-
-    /**
-     * @brief Returns the elapsed time relative to system time.
-     *
-     * @return unsigned _get_elapsed_time
+  protected:
+    /** @return Returns the elapsed time relative to system time in milliseconds.
      */
     static unsigned int _get_elapsed_time();
 
-    /**
-     * @brief Prints a message in JSON format to the debug console.
+    /** @brief Prints a message in JSON format to the debug console.
      *
-     * @param s
-     * @param msg
+     *  @param severity Message severity.
+     *  @param msg      Message string.
      */
-    static void _print_json_msg(severity s, const char *msg);
+    static void _print_json_msg(severity_t severity, const char* msg);
 
     /**
      * @brief If a read or write command was issued by a simulation computer to this Flight
@@ -129,39 +113,14 @@ class debug_console {
      * "write", or "unspecified"). This field is used by the console as part of its error message.
      * @param error The error associated with the computer's request.
      */
-    void _print_error_state_field(const char *field_name, const state_cmd_mode mode,
-                                  const state_field_error error);
-
-#ifdef DESKTOP
-    /**
-     * @brief Thread-safe queue for inputs found by reader thread.
-     */
-    moodycamel::ConcurrentQueue<std::string> unprocessed_inputs;
-
-    /**
-     * @brief True if debug console is currently running.
-     */
-    bool running = false;
-
-    /**
-     * @brief Collects input from stdin and passes it to process_commands via
-     * a thread-safe queue.
-     */
-    void _reader();
-
-    std::thread reader_thd;
-#endif
-
-    /**
-     * @brief Destroy the debug console object
-     */
-    ~debug_console();
+    static void _print_error_state_field(char const *field_name,
+            state_cmd_mode_t mode, state_field_error_t error_code);
 };
 
 /**
  * @brief Useful type definition to reduce the length of debugging print statements.
  */
-typedef debug_console::severity debug_severity;
+using debug_severity = typename debug_console::severity_t;
 
 /**
  * @brief Asserts an error. This aborts the program if running on a computer and
@@ -176,6 +135,5 @@ typedef debug_console::severity debug_severity;
         assert(condition); \
         debug_console::printf(debug_severity::error, format, __VA_ARGS__); \
     } while (0);
-
 
 #endif
