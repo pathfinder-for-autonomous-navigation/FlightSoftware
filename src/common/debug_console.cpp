@@ -240,9 +240,9 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
         // If requested, block until a new packet has arrived
         if (blocking)
-            input_queue_is_not_empty.wait(lock, [&]() -> bool {
-                return input_queue.size();
-            });
+            while (!input_queue.size())
+                input_queue_is_not_empty.wait(lock);
+
         // Only check if a packet is there otherwise return
         else if (input_queue.size() == 0)
             return;
