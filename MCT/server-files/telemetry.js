@@ -236,6 +236,31 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
   return await p;
 };
 
+/**
+ * Adds the resultant coordinate to history and realtime 
+ * 
+ * @param {*} id the id of the telempoint
+ * @param {*} answer the resultant value recieved from elasticsearch
+ * @param {*} satellite the satellite name in a string form 
+ * @param {*} coord_name the name of the coordinate point
+ * @param {*} coord the coordinate location that we want to get from the elasticsearch value
+ */
+Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite, coord_name, coord){
+        var timestamp = Date.now(), sent = 0;
+        
+        substringid = id.substring(satellite.length + 1)
+        new_id = satellite + '_' + coord_name + '_' + substringid
+        var telempoint = { timestamp: timestamp, id: new_id };
+        //set value follower_
+        telempoint['value'] = getCoord(answer, coord)
+        //notify the realtime server and push the datapoint to the history server
+        this.notify(telempoint);
+        if(this.history[new_id] == undefined){ //makes sure it is not undefined
+        this.history[new_id] = []
+        }
+        this.history[new_id].push(telempoint);
+
+};
 
 
 /**
@@ -292,38 +317,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        //create x telempoint
-        var telempointx = { timestamp: timestamp, id: 'follower_x_' + id.substring(9) };
-        //set value
-        telempointx['value'] = getCoord(answer, 1)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointx);
-        if(this.history['follower_x_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_x_' + id.substring(9)] = []
-        }
-        this.history['follower_x_' + id.substring(9)].push(telempointx);
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1)
 
-        //create y telempoint
-        var telempointy = { timestamp: timestamp, id: 'follower_y_' + id.substring(9) };
-        //set value
-        telempointy['value'] = getCoord(answer, 2)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointy);
-        if(this.history['follower_y_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_y_' + id.substring(9)] = []
-        }
-        this.history['follower_y_' + id.substring(9)].push(telempointy);
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2)
 
-        //create z telempoint
-        var telempointz = { timestamp: timestamp, id: 'follower_z_' + id.substring(9) };
-        //set value
-        telempointz['value'] = getCoord(answer, 3)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointz);
-        if(this.history['follower_z_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_z_' + id.substring(9)] = []
-        }
-        this.history['follower_z_' + id.substring(9)].push(telempointz);
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3)
 
       } 
       //check if quaternion
@@ -336,49 +334,14 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        //create a telempoint
-        var telempointa = { timestamp: timestamp, id: 'follower_a_' + id.substring(9) };
-        //set value
-        telempointa['value'] = getCoord(answer, 1)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointa);
-        if(this.history['follower_a_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_a_' + id.substring(9)] = []
-        }
-        this.history['follower_a_' + id.substring(9)].push(telempointa);
 
-        //create b telempoint
-        var telempointb = { timestamp: timestamp, id: 'follower_b_' + id.substring(9) };
-        //set value
-        telempointb['value'] = getCoord(answer, 2)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointb);
-        if(this.history['follower_b_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_b_' + id.substring(9)] = []
-        }
-        this.history['follower_b_' + id.substring(9)].push(telempointb);
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1)
 
-        //create c telempoint
-        var telempointc = { timestamp: timestamp, id: 'follower_c_' + id.substring(9) };
-        //set value
-        telempointc['value'] = getCoord(answer, 3)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointc);
-        if(this.history['follower_c_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_c_' + id.substring(9)] = []
-        }
-        this.history['follower_c_' + id.substring(9)].push(telempointc);
-        
-        //create d telempoint
-        var telempointd = { timestamp: timestamp, id: 'follower_d_' + id.substring(9) };
-        //set value
-        telempointd['value'] = getCoord(answer, 4)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointd);
-        if(this.history['follower_d_' + id.substring(9)] == undefined){ //makes sure it is not undefined
-        this.history['follower_d_' + id.substring(9)] = []
-        }
-        this.history['follower_d_' + id.substring(9)].push(telempointd);
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4)
 
       } 
       //regular numerical data
@@ -435,38 +398,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        //create x telempoint
-        var telempointx = { timestamp: timestamp, id: 'leader_x_' + id.substring(7) };
-        //set value
-        telempointx['value'] = getCoord(answer, 1)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointx);
-        if(this.history['leader_x_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_x_' + id.substring(7)] = []
-        }
-        this.history['leader_x_' + id.substring(7)].push(telempointx);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1)
 
-        //create y telempoint
-        var telempointy = { timestamp: timestamp, id: 'leader_y_' + id.substring(7) };
-        //set value
-        telempointy['value'] = getCoord(answer, 2)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointy);
-        if(this.history['leader_y_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_y_' + id.substring(7)] = []
-        }
-        this.history['leader_y_' + id.substring(7)].push(telempointy);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2)
 
-        //create z telempoint
-        var telempointz = { timestamp: timestamp, id: 'leader_z_' + id.substring(7) };
-        //set value
-        telempointz['value'] = getCoord(answer, 3)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointz);
-        if(this.history['leader_z_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_z_' + id.substring(7)] = []
-        }
-        this.history['leader_z_' + id.substring(7)].push(telempointz);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3)
 
       } 
       //check if quaternion
@@ -480,49 +416,13 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        //create a telempoint
-        var telempointa = { timestamp: timestamp, id: 'leader_a_' + id.substring(7) };
-        //set value
-        telempointa['value'] = getCoord(answer, 1)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointa);
-        if(this.history['leader_a_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_a_' + id.substring(7)] = []
-        }
-        this.history['leader_a_' + id.substring(7)].push(telempointa);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1)
 
-        //create b telempoint
-        var telempointb = { timestamp: timestamp, id: 'leader_b_' + id.substring(7) };
-        //set value
-        telempointb['value'] = getCoord(answer, 2)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointb);
-        if(this.history['leader_b_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_b_' + id.substring(7)] = []
-        }
-        this.history['leader_b_' + id.substring(7)].push(telempointb);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2)
 
-        //create c telempoint
-        var telempointc = { timestamp: timestamp, id: 'leader_c_' + id.substring(7) };
-        //set value
-        telempointc['value'] = getCoord(answer, 3)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointc);
-        if(this.history['leader_c_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_c_' + id.substring(7)] = []
-        }
-        this.history['leader_c_' + id.substring(7)].push(telempointc);
-        
-        //create d telempoint
-        var telempointd = { timestamp: timestamp, id: 'leader_d_' + id.substring(7) };
-        //set value
-        telempointd['value'] = getCoord(answer, 4)
-        //notify the realtime server and push the datapoint to the history server
-        this.notify(telempointd);
-        if(this.history['leader_d_' + id.substring(7)] == undefined){ //makes sure it is not undefined
-        this.history['leader_d_' + id.substring(7)] = []
-        }
-        this.history['leader_d_' + id.substring(7)].push(telempointd);
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4)
 
       } 
       //regular numerical data
