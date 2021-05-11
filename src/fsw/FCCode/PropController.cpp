@@ -1,4 +1,6 @@
 #include <fsw/FCCode/PropController.hpp>
+#include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
+#include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
@@ -19,6 +21,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
       sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
       sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
+
+      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),
@@ -74,7 +78,13 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
 
-    threshold_firing_pressure.set(threshold_firing_pressure_ic);
+    // If in nearfield Tank 2 pressure should be lower than in far-field
+    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
+    threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
+    if (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
+        threshold_firing_pressure.set(threshold_firing_pressure_near_ic);
+    }
+
     ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
