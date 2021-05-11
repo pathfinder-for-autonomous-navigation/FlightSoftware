@@ -111,6 +111,9 @@ void ADCSCommander::execute() {
         When MissionManager is in safehold, adcs_state = startup (here)
         */
         case adcs_state_t::startup:
+            //zeroing out these commands are critical for ptesting
+            rwa_torque_cmd_f.set({0,0,0});
+            mtr_cmd_f.set({0,0,0});
             break;
 
         /** We do nothing here since ptest/ground will write into the adcs_cmd fields
