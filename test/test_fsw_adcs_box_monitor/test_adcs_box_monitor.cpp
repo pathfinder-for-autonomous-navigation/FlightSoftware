@@ -55,7 +55,7 @@ class TestFixture {
         {
         #endif
             Fault::cc = &TimedControlTaskBase::control_cycle_count;
-            adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0);  
+            adcs_box = std::make_unique<ADCSBoxMonitor>(registry);  
 
             // initialize pointers to statefields
             rwa_speed_rd_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.rwa_speed_rd");
