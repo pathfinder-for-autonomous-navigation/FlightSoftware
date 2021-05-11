@@ -27,12 +27,6 @@ class TestFixture {
         std::vector<ReadableStateField<bool>*> havt_read_vector_fp;
 
         // pointers to error flags
-        ReadableStateField<bool>* rwa_speed_rd_flag_p;
-        ReadableStateField<bool>* rwa_torque_rd_flag_p;
-        ReadableStateField<bool>* mag1_vec_flag_p;
-        ReadableStateField<bool>* mag2_vec_flag_p;
-        ReadableStateField<bool>* gyr_vec_flag_p;
-        ReadableStateField<bool>* gyr_temp_flag_p;
         ReadableStateField<bool>* adcs_functional_p;
 
         // fault pointers
@@ -87,12 +81,6 @@ class TestFixture {
             gyr_temp_fp = registry.find_readable_field_t<float>("adcs_monitor.gyr_temp");
 
             //find flag state fields
-            rwa_speed_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.speed_rd_flag");
-            rwa_torque_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.torque_rd_flag");
-            mag1_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag1_vec_flag");
-            mag2_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag2_vec_flag");
-            gyr_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_vec_flag");
-            gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
             adcs_functional_p = registry.find_readable_field_t<bool>("adcs_monitor.functional");
 
             // find the faults fields
@@ -174,16 +162,6 @@ void test_execute_ssa(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
-    //verify that all flags are set to true
-    //since temp bounds are all max - 1
-    //mocking using max output sets all flags to true
-    TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
-
     //TEST IN_PROGRESS
     //set mock return to IN_PROGRESS
     tf.set_mock_ssa_mode(adcs::SSAMode::SSA_IN_PROGRESS);
@@ -210,17 +188,6 @@ void test_execute_ssa(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
-    //verify that all flags are set to true
-    //since temp bounds are all max - 1
-    //mocking using max output sets all flags to true
-    TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
-
-
     //TEST FAILURE
     //set mock return to FAILURE
     tf.set_mock_ssa_mode(adcs::SSAMode::SSA_FAILURE);
@@ -246,16 +213,6 @@ void test_execute_ssa(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
-
-    //verify that all flags are set to true
-    //since temp bounds are all max - 1
-    //mocking using max output sets all flags to true
-    TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
-    TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 }
 
 /**

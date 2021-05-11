@@ -25,7 +25,6 @@ Prop Sensors,FALSE,prop.tank1.valve_choice,prop.tank2.pressure,prop.tank2.temp,p
 ADCS Computation,TRUE,attitude.pointer_vec1_current,attitude.pointer_vec1_desired,attitude.pointer_vec2_current,attitude.pointer_vec2_desired,,,,,,,,,,,,,,,,,,,,,,
 Radio Data,TRUE,radio.err,radio.last_comms_ccno,,,,,,,,,,,,,,,,,,,,,,,,
 ADCS Sensor Data,TRUE,adcs_monitor.mag1_vec.x,adcs_monitor.mag1_vec.y,adcs_monitor.mag1_vec.z,adcs_monitor.mag2_vec.x,adcs_monitor.mag2_vec.y,adcs_monitor.mag2_vec.z,adcs_monitor.gyr_vec.x,adcs_monitor.gyr_vec.y,adcs_monitor.gyr_vec.z,adcs_monitor.ssa_vec,,,,,,,,,,,,,,,,
-ADCS Sensor Bound Flags,FALSE,adcs_monitor.speed_rd_flag,adcs_monitor.torque_rd_flag,adcs_monitor.mag1_vec_flag,adcs_monitor.mag2_vec_flag,adcs_monitor.gyr_vec_flag,adcs_monitor.gyr_temp_flag,,,,,,,,,,,,,,,,,,,,
 Raw Piksi Data,FALSE,piksi.pos,piksi.vel,piksi.baseline_pos,piksi.fix_error_count,piksi.time,piksi.microdelta,,,,,,,,,,,,,,,,,,,,
 DCDC Information,FALSE,dcdc.SpikeDock,dcdc.ADCSMotor,,,,,,,,,,,,,,,,,,,,,,,,
 ADCS Sun Sensor Voltages 1,FALSE,adcs_monitor.ssa_voltage0,adcs_monitor.ssa_voltage1,adcs_monitor.ssa_voltage2,adcs_monitor.ssa_voltage3,adcs_monitor.ssa_voltage4,adcs_monitor.ssa_voltage5,adcs_monitor.ssa_voltage6,adcs_monitor.ssa_voltage7,adcs_monitor.ssa_voltage8,adcs_monitor.ssa_voltage9,,,,,,,,,,,,,,,,

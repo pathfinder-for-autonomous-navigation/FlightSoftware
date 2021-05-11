@@ -50,12 +50,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr),
 
     flag_sr(),
-    rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
-    rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
-    mag1_vec_flag("adcs_monitor.mag1_vec_flag", flag_sr),
-    mag2_vec_flag("adcs_monitor.mag2_vec_flag", flag_sr),
-    gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
-    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
     adcs_is_functional("adcs_monitor.functional", flag_sr),
     adcs_functional_fault("adcs_monitor.functional_fault", 1),
@@ -122,13 +116,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(gyr_vec_z_f);
         add_readable_field(gyr_temp_f);
 
-        //add flag state fields
-        add_readable_field(rwa_speed_rd_flag);
-        add_readable_field(rwa_torque_rd_flag);
-        add_readable_field(mag1_vec_flag);
-        add_readable_field(mag2_vec_flag);
-        add_readable_field(gyr_vec_flag);
-        add_readable_field(gyr_temp_flag);
 
         add_readable_field(adcs_is_functional);
         // add faults to registry
@@ -244,32 +231,4 @@ void ADCSBoxMonitor::execute(){
         havt_read_vector[idx].set(havt_read.test(idx));
     }
 
-    mag1_vec_f.set(to_linvector(mag1_vec));
-    mag2_vec_f.set(to_linvector(mag2_vec));
-    gyr_vec_f.set(to_linvector(gyr_vec));
-    gyr_temp_f.set(gyr_temp);
-
-    //flags default to false, meaning there are no issues
-    rwa_speed_rd_flag.set(false);
-    rwa_torque_rd_flag.set(false);
-    mag1_vec_flag.set(false);
-    mag2_vec_flag.set(false);
-    gyr_vec_flag.set(false);
-    gyr_temp_flag.set(false);
-
-    //TODO: UPDATE; THESE ARE PLACE HOLDER FLAG BOUNDS
-    //They all have bounds of min to max -1 to force a flag for testing purposes
-    //Eventually change to proper bounds
-    if(exceed_bounds(rwa_speed_rd, adcs::rwa::min_speed_read, adcs::rwa::max_speed_read - 1))
-        rwa_speed_rd_flag.set(true);
-    if(exceed_bounds(rwa_torque_rd, adcs::rwa::min_torque, adcs::rwa::max_torque - 1))
-        rwa_torque_rd_flag.set(true);
-    if(exceed_bounds(mag1_vec, adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag - 1))
-        mag1_vec_flag.set(true);
-    if(exceed_bounds(mag2_vec, adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag - 1))
-        mag2_vec_flag.set(true);
-    if(exceed_bounds(gyr_vec, adcs::imu::min_rd_omega, adcs::imu::max_rd_omega - 1))
-        gyr_vec_flag.set(true);
-    if(exceed_bounds(gyr_temp, adcs::imu::min_rd_temp, adcs::imu::max_rd_temp - 1))
-        gyr_temp_flag.set(true);
 }
