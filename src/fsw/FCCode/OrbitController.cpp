@@ -61,7 +61,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 /**
- * @brief initializes the orbit controller by finding required writable fields
+ * @brief Collect prop planner state's state field.
  * 
  */
 void OrbitController::init() {
@@ -73,12 +73,7 @@ void OrbitController::init() {
 }
 
 /**
- * @brief Controls the orbit by calculating necessary prop firings.
- * 
- * Will return with no firings if it does not have all the information.
- * 
- * Will set the firingings at the right time depending on the amount of cycles 
- * left until it reaches the needed amount.
+ * @brief Compute firing and set prop planner's desired state.
  * 
  */
 void OrbitController::execute() {
@@ -186,7 +181,10 @@ void OrbitController::execute() {
 }
 
 /**
- * @brief the amount of time left until the next firing node
+ * @brief Returns the time in seconds when the satellite reaches its next firing point
+ * This is just an estimation for the sake of prop planning. It's not a very accurate
+ * number. It calculates the angular velocity w and uses the eqn firing_node = wt+theta
+ * to find the time until each firing node. It then returns the smallest positive time.
  * 
  * @param theta The angle between the satellite's position and the projected sun vector
  * @param pos The orbit position
@@ -219,7 +217,8 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
 }
 
 /**
- * @brief the impulse of the satellite
+ * @brief Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
+ * impulse in ECEF reference frame.
  * 
  * @param t the time
  * @param r the orbit position
@@ -262,7 +261,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 }
 
 /**
- * @brief time of impulse
+ * @brief Convert the impulse of a thruster to the time the valve should be open in ms
  * 
  * @param impulse the impulse
  * @return unsigned int 
@@ -274,7 +273,8 @@ unsigned int OrbitController::impulse_to_time(double impulse) {
 }
 
 /**
- * @brief schedules the valves based on the J_body
+ * @brief Calculates the time each valve should open to deliver a given impulse. 
+ * The impulse must be in the body frame of the satellite
  * 
  * @param J_body 
  */
