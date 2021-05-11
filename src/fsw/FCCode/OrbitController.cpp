@@ -16,6 +16,14 @@ static constexpr std::array<double, 18> firing_nodes_near = {pi/18, pi/6, pi*(5/
 
 static constexpr auto gain_factor = static_cast<double>(firing_nodes_near.size()) / firing_nodes_far.size();
 
+/**
+ * @brief Construct a new Orbit Controller:: Orbit Controller object
+ * 
+ * creates or finds all of the required fields and adds them
+ * 
+ * @param r 
+ * @param offset 
+ */
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
     time_fp(FIND_INTERNAL_FIELD(double, time.s)),
@@ -52,6 +60,10 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     dv_smoothed = lin::nans<lin::Vector3d>();
 }
 
+/**
+ * @brief initializes the orbit controller by finding required writable fields
+ * 
+ */
 void OrbitController::init() {
     prop_state_fp = FIND_WRITABLE_FIELD(unsigned int, prop.state);
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
@@ -60,6 +72,15 @@ void OrbitController::init() {
     ctrl_cycles_per_cooling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_cooling);
 }
 
+/**
+ * @brief Controls the orbit by calculating necessary prop firings.
+ * 
+ * Will return with no firings if it does not have all the information.
+ * 
+ * Will set the firingings at the right time depending on the amount of cycles 
+ * left until it reaches the needed amount.
+ * 
+ */
 void OrbitController::execute() {
 
     // Applies exponential smoothing if relative orbit estimate is valid
@@ -164,6 +185,14 @@ void OrbitController::execute() {
 
 }
 
+/**
+ * @brief the amount of time left until the next firing node
+ * 
+ * @param theta The angle between the satellite's position and the projected sun vector
+ * @param pos The orbit position
+ * @param vel The orbit velocity
+ * @return double 
+ */
 double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel) {
 
 
@@ -189,6 +218,16 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
             next_node(firing_nodes_near) : next_node(firing_nodes_far);
 }
 
+/**
+ * @brief the impulse of the satellite
+ * 
+ * @param t the time
+ * @param r the orbit position
+ * @param v the orbit velocity
+ * @param dr the smoothened position
+ * @param dv the smoothened veloicty
+ * @return lin::Vector3d 
+ */
 lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
     const lin::Vector3d &dr, const lin::Vector3d &dv) {
 
@@ -222,12 +261,23 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 
 }
 
+/**
+ * @brief time of impulse
+ * 
+ * @param impulse the impulse
+ * @return unsigned int 
+ */
 unsigned int OrbitController::impulse_to_time(double impulse) {
     double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
     int time_ms = time * 1000;
     return time_ms;
 }
 
+/**
+ * @brief schedules the valves based on the J_body
+ * 
+ * @param J_body 
+ */
 void OrbitController::schedule_valves(lin::Vector3d J_body) {
 
     double a = J_body(0);
@@ -268,7 +318,11 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
     sched_valve4_f.set(impulse_to_time(x4));
 
 }
-
+/**
+ * @brief is the minimum amount of cycles required for prop system
+ * 
+ * @return unsigned int 
+ */
 unsigned int OrbitController::prop_min_cycles_needed() {
     return max_pressurizing_cycles_fp->get() *
                (ctrl_cycles_per_filling_period_fp->get() +
