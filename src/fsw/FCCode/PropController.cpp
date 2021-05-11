@@ -9,6 +9,14 @@
     } while (0)
 #endif
 
+/**
+ * @brief Constructor for Prop Controller to initialize the state fields with unsigned int values
+ * 
+ * The number of bits for the serializer is assigned to each statefield. 
+ * 
+ * @param registry The registry that holds all the statefields
+ * @param offset The bit values that the serializer will contain
+ */
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "prop", offset),
       prop_state_f("prop.state", Serializer<unsigned int>(9)),
@@ -97,6 +105,16 @@ PropState_Venting PropController::state_venting;
 PropState_HandlingFault PropController::state_handling_fault;
 PropState_Manual PropController::state_manual;
 
+/**
+ * Utilizes helper function written later to check for faults.
+ * 
+ * Amount of cycles gets decremented to 0 and when 0, prop system stops firing.
+ * 
+ * Change in state is verified and if not done yet, is forced by conditional statement. If still not working, a reboot is attempted to powercycle the satellite.
+ * 
+ * Sensors are read immediately in order to spoof data for HITL tests.
+ * 
+ */
 void PropController::execute()
 {
     check_faults();
@@ -133,7 +151,12 @@ void PropController::execute()
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
 }
-
+/**
+ * Calls on helper functions written that check if the parameterized values for the tanks are too high or overpressured by evaluating
+ * their return statement calls signal if the flag is true and unsignal if the flag is false.
+ * 
+ * Flags are in PropController.hpp.
+ */
 void PropController::check_faults()
 {
     overpressure_fault_f.evaluate(is_tank2_overpressured());
@@ -141,11 +164,25 @@ void PropController::check_faults()
     tank1_temp_high_fault_f.evaluate(is_tank1_temp_high());
 }
 
+/**
+ * Checks whether a particular state can be entered by checking whther the propstate is disabled. 
+ * Checked with a helper function in PropController.cpp
+ * 
+ * @param desired_state Used with argument "next_state" in execute() 
+ * @return Type: Boolean. For whether the state can be entered.
+ */
 bool PropController::can_enter_state(prop_state_t desired_state) const
 {
     return get_state(desired_state).can_enter();
 }
 
+/**
+ * Function that contains a switch conditional and determines the state based off the prop.state value,
+ * determined off an enum selection in prop_state_t.enum
+ * 
+ * @param state input state for which prop.state's value is determined off of
+ * @return PropState& Gives the memory address of the state
+ */
 PropState &PropController::get_state(prop_state_t state) const
 {
     switch (state)
@@ -173,6 +210,13 @@ PropState &PropController::get_state(prop_state_t state) const
     }
 }
 
+/**
+ * Function that uses helper function is_valid_schedule to check the schedules of each valve and to
+ * make sure that the cycles until firing is above 1.
+ * 
+ * @return true if a valid schedule
+ * @return false if not a valid schedule
+ */
 bool PropController::validate_schedule()
 {
     return is_valid_schedule(sched_valve1_f.get(),
@@ -182,6 +226,18 @@ bool PropController::validate_schedule()
                              cycles_until_firing.get());
 }
 
+/**
+ * Helper function for valid_schedule that checks if each schedule value is valid itself using a boolean 
+ * statement.
+ * 
+ * @param v1 Schedule for the first valve
+ * @param v2 Schedule for the second valve
+ * @param v3 Schedule for the third valve
+ * @param v4 Schedule for the fourth valve
+ * @param ctrl_cycles_from_now The number of cycles from now
+ * @return true if is a valid schedule
+ * @return false if is not a valid schedule
+ */
 bool PropController::is_valid_schedule(unsigned int v1,
                                        unsigned int v2,
                                        unsigned int v3,
@@ -191,6 +247,13 @@ bool PropController::is_valid_schedule(unsigned int v1,
     return (v1 <= 1000 && v2 <= 1000 && v3 <= 1000 && v4 <= 1000 && ctrl_cycles_from_now > 1);
 }
 
+/**
+ * Helper function that is used in pressurization functions to calculate the minimum number of cycles that are needed.
+ * This is done by adding the maximum number of pressuring cycles + the control cycles per filling period + 
+ * control cycles per cooling period.
+ * 
+ * @return unsigned int: The minimum number of cycles that are needed
+ */
 unsigned int PropController::min_cycles_needed() const
 {
     return max_pressurizing_cycles.get() *
