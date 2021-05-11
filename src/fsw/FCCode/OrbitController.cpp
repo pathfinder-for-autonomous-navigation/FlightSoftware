@@ -52,6 +52,10 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     dv_smoothed = lin::nans<lin::Vector3d>();
 }
 
+/**
+ * @brief Collect prop planner state's state field.
+ * 
+ */
 void OrbitController::init() {
     prop_state_fp = FIND_WRITABLE_FIELD(unsigned int, prop.state);
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
@@ -268,7 +272,6 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
     sched_valve4_f.set(impulse_to_time(x4));
 
 }
-
 unsigned int OrbitController::prop_min_cycles_needed() {
     return max_pressurizing_cycles_fp->get() *
                (ctrl_cycles_per_filling_period_fp->get() +

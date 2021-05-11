@@ -24,7 +24,9 @@ class GomspaceController : public TimedControlTask<void> {
         Devices::Gomspace &gs);
 
     /**
-     * @brief Passes data from gomspace into statefields
+     * @brief Passes data from gomspace into statefields. Executes 
+     * command statfields that have been set by other control tasks 
+     * or the ground.
      */
     void execute() override;
 

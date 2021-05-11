@@ -329,7 +329,6 @@ void GomspaceController::power_cycle_outputs() {
     {
         if (cmd_f.get()) {
 
-            // TODO add powercycling event
             if (output_f.get()) {
                 gs.set_single_output(idx,0);
             }
