@@ -17,41 +17,68 @@ public:
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
 
+    /**
+     * @brief Construct a new Orbit Controller:: Orbit Controller object
+     * 
+     * creates or finds all of the required fields and adds them
+     * 
+     * @param r the registry
+     * @param offset 
+     */
     OrbitController(StateFieldRegistry &registry, unsigned int offset);
 
     /**
      * @brief Collect prop planner state's state field.
+     * 
      */
     void init();
 
-    /** 
-    * Compute firing and set prop planner's desired state. 
-    */
+    /**
+     * @brief Compute firing and set prop planner's desired state.
+     * 
+     */
     void execute() override;
 
     /**
-     * Returns the time in seconds when the satellite reaches its next firing point
+     * @brief Returns the time in seconds when the satellite reaches its next firing point
      * This is just an estimation for the sake of prop planning. It's not a very accurate
      * number. It calculates the angular velocity w and uses the eqn firing_node = wt+theta
      * to find the time until each firing node. It then returns the smallest positive time.
+     * 
+     * @param theta The angle between the satellite's position and the projected sun vector
+     * @param pos The orbit position
+     * @param vel The orbit velocity
+     * @return double 
      */
     double time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel);
 
     /**
-     * Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
+     * @brief Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
      * impulse in ECEF reference frame.
+     * 
+     * @param t the time
+     * @param r the orbit position
+     * @param v the orbit velocity
+     * @param dr the smoothened position
+     * @param dv the smoothened veloicty
+     * @return lin::Vector3d 
      */
     lin::Vector3d calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
         const lin::Vector3d &dr, const lin::Vector3d &dv);
 
-    /*
-     * Convert the impulse of a thruster to the time the valve should be open in ms
+    /**
+     * @brief Convert the impulse of a thruster to the time the valve should be open in ms
+     * 
+     * @param impulse the impulse
+     * @return unsigned int 
      */
     unsigned int impulse_to_time(double impulse);
 
     /**
-     * Calculates the time each valve should open to deliver a given impulse. 
+     * @brief Calculates the time each valve should open to deliver a given impulse. 
      * The impulse must be in the body frame of the satellite
+     * 
+     * @param J_body 
      */
     void schedule_valves(lin::Vector3d J_body);
 
@@ -64,7 +91,11 @@ public:
     gnc::OrbitControllerState state;
     gnc::OrbitActuation actuation;
 
-    // Prop system 
+    /**
+     * @brief is the minimum amount of cycles required for prop system
+     * 
+     * @return unsigned int 
+     */
     unsigned int prop_min_cycles_needed();
     WritableStateField<unsigned int>* prop_state_fp;
     WritableStateField<unsigned int>* max_pressurizing_cycles_fp;

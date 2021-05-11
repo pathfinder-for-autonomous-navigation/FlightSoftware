@@ -17,8 +17,9 @@ public:
     PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
     
     Devices::Piksi& piksi;
+
     /** 
-    * execute is overriden from TimedControlTask 
+    * Reads Piksi data from serial buffer and updates state fields with new data
     */
     void execute() override;
 
