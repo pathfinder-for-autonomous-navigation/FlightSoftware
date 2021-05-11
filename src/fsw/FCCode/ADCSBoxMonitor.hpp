@@ -90,10 +90,7 @@ protected:
     Serializer<float> gyr_temp_sr;
     ReadableStateField<float> gyr_temp_f;
 
-    /**
-    * @brief Bound flags.
-    * If the flag is true, that means it is outside the validity bounds.
-    */
+    //! serializer for adcs_monitor.functional
     Serializer<bool> flag_sr;
 
     //! vector for HAVT table, a 0/false means device disabled; 1/true is functional
