@@ -90,25 +90,10 @@ protected:
     Serializer<float> gyr_temp_sr;
     ReadableStateField<float> gyr_temp_f;
 
-    /**
-    * @brief Bound flags.
-    * If the flag is true, that means it is outside the validity bounds.
-    */
+    //! serializer for adcs_monitor.functional
     Serializer<bool> flag_sr;
-    //! Is the reaction wheel speed read outside the validity bounds?
-    ReadableStateField<bool> rwa_speed_rd_flag;
-    //! Is the reaction wheel torque read outside the validity bounds?
-    ReadableStateField<bool> rwa_torque_rd_flag;
-    //! Is the magnetic field vector reading within the validity bounds?
-    ReadableStateField<bool> mag1_vec_flag;
-    //! Is the magnetic field vector reading within the validity bounds?
-    ReadableStateField<bool> mag2_vec_flag;
-    //! Is the gyroscope rate reading within the validity bounds?
-    ReadableStateField<bool> gyr_vec_flag;
-    //! Is the gyroscope temperature reading within the validity bounds?W
-    ReadableStateField<bool> gyr_temp_flag;
 
-    //! vector for havt table, a 0/false means device disabled; 1/true is functional
+    //! vector for HAVT table, a 0/false means device disabled; 1/true is functional
     std::vector<ReadableStateField<bool>> havt_read_vector;
     Serializer<bool> havt_bool_sr;
 
