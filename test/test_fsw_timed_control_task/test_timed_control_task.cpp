@@ -75,9 +75,9 @@ class TestFixture {
      */
     sys_time_t execute() {
         clock_manager->execute();
-        dummy_task_1->execute_on_time();
+        dummy_task_1->execute_on_time(4000);
         sys_time_t ret_time = get_system_time();
-        dummy_task_2->execute_on_time();
+        dummy_task_2->execute_on_time(4000);
         return ret_time;
     }
 
