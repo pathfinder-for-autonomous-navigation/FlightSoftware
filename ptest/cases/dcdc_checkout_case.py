@@ -92,7 +92,6 @@ class DCDCCheckoutCase(SingleSatCase):
         self.__prop = self.rs("dcdc.SpikeDock")
         self.__disable_command = self.rs("dcdc.disable_cmd")
         self.__reset_command = self.rs("dcdc.reset_cmd")
-        self.rs("pan.cc_duration")
 
     def reset(self, has_enabled = True):
         """Runs and verifies the DCDC reset command executes as expected.
