@@ -268,7 +268,6 @@ void OrbitController::schedule_valves(lin::Vector3d J_body, unsigned char state)
         x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
         x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
     }
-    printf(debug_severity::error, "x1, x2 is: %f, %f\n", x1, x2);
 
     // Translate the impulse values into the times the valves must stay open and set valves
     sched_valve1_f.set(impulse_to_time(x1, state));
