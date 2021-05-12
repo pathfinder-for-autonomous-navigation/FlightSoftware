@@ -1,0 +1,25 @@
+{
+    "seed" : 0,
+    "devices" : [
+        {
+            "name": "FlightControllerLeader",
+            "run_mode": "teensy",
+            "port": "/dev/ttyACM0",
+            "baud_rate": 1152000,
+            "http_port": 8088,
+            "imei": "",
+            "scrape_uplinks": false,
+            "enable_auto_dbtelem": false
+        },
+        {
+            "name": "FlightControllerFollower",
+            "run_mode": "native",
+            "pio_target": "fsw_native_follower_autotelem",
+            "http_port" : 8089,
+            "imei": "412222222",
+            "scrape_uplinks": true,
+            "enable_auto_dbtelem": true
+        }
+    ],
+    "radios" : [ ]
+}
