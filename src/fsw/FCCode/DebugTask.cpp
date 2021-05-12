@@ -10,6 +10,12 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
   init();
 }
 
+DebugTask::~DebugTask() {
+#ifndef GSW
+    debug_console::close();
+#endif
+}
+
 void DebugTask::execute() {
 #ifndef FLIGHT
   start_cycle_f.set(false);
@@ -25,7 +31,7 @@ void DebugTask::execute() {
 }
 
 void DebugTask::init() {
- #ifndef GSW
-    debug_console::init();
- #endif
+#ifndef GSW
+    debug_console::open();
+#endif
 }
