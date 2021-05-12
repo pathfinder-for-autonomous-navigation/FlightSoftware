@@ -14,8 +14,12 @@ class OrbitController : public TimedControlTask<void>
 {
 public:
     // Linear regression on dataset from empirical test: ThrustVectorTest_2018_Nov_11_15h37m36s_300Firings_293K_refVac
-    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
-    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_far, 0.024119);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_far, 7.0092e-05);
+
+    // Linear regression
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_near, 0.024119);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_near, 7.0092e-05);
 
     OrbitController(StateFieldRegistry &registry, unsigned int offset);
 
@@ -47,7 +51,7 @@ public:
     /*
      * Convert the impulse of a thruster to the time the valve should be open in ms
      */
-    unsigned int impulse_to_time(double impulse);
+    unsigned int impulse_to_time(double impulse, unsigned char state);
 
     /**
      * Calculates the time each valve should open to deliver a given impulse. 

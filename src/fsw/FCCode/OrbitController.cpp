@@ -222,7 +222,13 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 
 }
 
-unsigned int OrbitController::impulse_to_time(double impulse) {
+unsigned int OrbitController::impulse_to_time(double impulse, unsigned char state) {
+    auto valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
+    auto valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
+    if (state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
+        valve_time_lin_reg_slope = valve_time_lin_reg_slope_near;
+        valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_near;
+    }
     double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
     int time_ms = time * 1000;
     return time_ms;
