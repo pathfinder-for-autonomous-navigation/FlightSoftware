@@ -18,7 +18,7 @@ const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsi
 
 MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "mission_ct", offset),
-      detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
+      detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 0.05, 7)),
       close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
       docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
       docking_timeout_limit_f("docking_timeout_limit",
@@ -280,9 +280,7 @@ void MissionManager::dispatch_leader()
 
 void MissionManager::dispatch_follower_close_approach()
 {
-    docking_config_cmd_f.set(true);
-
-    if (distance_to_other_sat() < docking_trigger_dist_f.get())
+    if (distance_to_other_sat() < docking_trigger_dist_f.get() && docking_config_cmd_f.get())
     {
         transition_to(mission_state_t::docking,
                       adcs_state_t::zero_torque);
@@ -291,9 +289,7 @@ void MissionManager::dispatch_follower_close_approach()
 
 void MissionManager::dispatch_leader_close_approach()
 {
-    docking_config_cmd_f.set(true);
-
-    if (distance_to_other_sat() < docking_trigger_dist_f.get())
+    if (distance_to_other_sat() < docking_trigger_dist_f.get() && docking_config_cmd_f.get())
     {
         transition_to(mission_state_t::docking,
                       adcs_state_t::zero_torque);
@@ -310,7 +306,6 @@ static bool have_set_docking_entry_ccno = false;
 
 void MissionManager::dispatch_docking()
 {
-    docking_config_cmd_f.set(true);
     if (!have_set_docking_entry_ccno)
     {
         enter_docking_cycle_f.set(control_cycle_count);
