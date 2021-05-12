@@ -3,8 +3,10 @@
 #include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
 #include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
-const constexpr double OrbitController::valve_time_lin_reg_slope;
-const constexpr double OrbitController::valve_time_lin_reg_intercept;
+const constexpr double OrbitController::valve_time_lin_reg_slope_near;
+const constexpr double OrbitController::valve_time_lin_reg_intercept_near;
+const constexpr double OrbitController::valve_time_lin_reg_slope_far;
+const constexpr double OrbitController::valve_time_lin_reg_intercept_far;
 
 // Firing nodes
 constexpr double pi = gnc::constant::pi;
@@ -223,8 +225,8 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 }
 
 unsigned int OrbitController::impulse_to_time(double impulse, unsigned char state) {
-    auto valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
-    auto valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
+    double valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
+    double valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
     if (state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
         valve_time_lin_reg_slope = valve_time_lin_reg_slope_near;
         valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_near;
@@ -234,7 +236,7 @@ unsigned int OrbitController::impulse_to_time(double impulse, unsigned char stat
     return time_ms;
 }
 
-void OrbitController::schedule_valves(lin::Vector3d J_body) {
+void OrbitController::schedule_valves(lin::Vector3d J_body, unsigned char state) {
 
     double a = J_body(0);
     double b = J_body(1);
@@ -269,10 +271,10 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
     printf(debug_severity::error, "x1, x2 is: %f, %f\n", x1, x2);
 
     // Translate the impulse values into the times the valves must stay open and set valves
-    sched_valve1_f.set(impulse_to_time(x1));
-    sched_valve2_f.set(impulse_to_time(x2));
-    sched_valve3_f.set(impulse_to_time(x3));
-    sched_valve4_f.set(impulse_to_time(x4));
+    sched_valve1_f.set(impulse_to_time(x1, state));
+    sched_valve2_f.set(impulse_to_time(x2, state));
+    sched_valve3_f.set(impulse_to_time(x3, state));
+    sched_valve4_f.set(impulse_to_time(x4, state));
 
 }
 

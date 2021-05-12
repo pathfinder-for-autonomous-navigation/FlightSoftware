@@ -57,7 +57,7 @@ public:
      * Calculates the time each valve should open to deliver a given impulse. 
      * The impulse must be in the body frame of the satellite
      */
-    void schedule_valves(lin::Vector3d J_body);
+    void schedule_valves(lin::Vector3d J_body, unsigned char state);
 
     // Initializing Smoothed Relative Orbital States
     lin::Vector3d dr_smoothed;
