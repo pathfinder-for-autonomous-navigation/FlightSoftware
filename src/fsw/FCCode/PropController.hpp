@@ -43,10 +43,9 @@ public:
     // ------------------------------------------------------------------------
     // Input Fields
     // ------------------------------------------------------------------------
+    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
 
     WritableStateField<unsigned int> prop_state_f;
-
-    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
 
     WritableStateField<unsigned int> cycles_until_firing;
     WritableStateField<unsigned int>* sched_valve1_fp;

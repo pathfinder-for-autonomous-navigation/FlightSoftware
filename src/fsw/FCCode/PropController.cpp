@@ -13,6 +13,8 @@
 
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "prop", offset),
+      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
+
       prop_state_f("prop.state", Serializer<unsigned int>(9)),
       cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(orbit_ccno)),
       sched_valve1_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve1)),
@@ -21,8 +23,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       sched_valve4_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve4)),
       sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
       sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
-
-      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),

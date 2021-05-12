@@ -160,7 +160,7 @@ void OrbitController::execute() {
         gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
         // Communicate desired impulse to the prop controller.
-        schedule_valves(J_body);
+        schedule_valves(J_body, rel_orbit_valid_fp->get());
 
     }
 
