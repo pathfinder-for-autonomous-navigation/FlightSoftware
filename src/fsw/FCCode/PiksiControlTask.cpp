@@ -45,24 +45,6 @@ void PiksiControlTask::execute()
     //Throw CRC error if microdelta is not in expected range and no other error is thrown
     if (microdelta > PIKSI_MD_THRESHOLD && read_out < 2) read_out = 3; 
 
-    //4 means no bytes
-    //3 means CRC error on serial
-    //5 means timing error exceed
-    if(read_out == 3|| read_out == 4|| read_out == 5)
-        fix_error_count_f.set(fix_error_count_f.get() + 1);
-    else {
-        fix_error_count_f.set(0);
-    }
-        
-    //if we haven't had a good reading in ~120 seconds the piksi is probably dead
-    //eventually replace with HAVT logic
-    if(fix_error_count_f.get() > DEAD_CYCLE_COUNT){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::dead));
-        //prevent roll over
-        fix_error_count_f.set(1001);
-        return;
-    }
-
     if(read_out == 5){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::time_limit_error));
         return;
