@@ -272,5 +272,5 @@ void loop() {
 
    Serial.println("al fin \n");
 
-   exit(0);
+   while (1) delay(100);
 }
