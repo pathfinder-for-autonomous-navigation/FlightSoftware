@@ -16,9 +16,9 @@
     #include <thread>
 #else
     #include <Arduino.h>
-#endif
 
-static constexpr std::uint8_t LED = 13;
+    static constexpr std::uint8_t LED = 13;
+#endif
 
 static constexpr ConstexprMap<debug_console::severity_t, char const *, 8> severity_strs {{{
     {debug_console::severity_t::debug, "DEBUG"},
