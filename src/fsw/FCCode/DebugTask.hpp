@@ -11,6 +11,10 @@ public:
    * @param registry   */
   DebugTask(StateFieldRegistry &registry);
 
+  /** @brief Closes the debug console.
+   */
+  virtual ~DebugTask();
+
   /**
    * @brief Runs the debug task (processes state field commands present in the
    * serial buffer.)
@@ -18,7 +22,7 @@ public:
   void execute() override;
 
   /**
-   * @brief Initializes the debug console.
+   * @brief Closes the debug console.
    */
   void init();
 
