@@ -4,8 +4,8 @@
 <head>
     <title>PAN Mission Control - OpenMCT</title>
     <script src="/openmct/openmct.js"></script>
-    <script src="../http.js"></script>
-    <script src="../generic-plugin.js"></script>
+    <script src="http.js"></script>
+    <script src="generic-plugin.js"></script>
 
 
 </head>
@@ -33,6 +33,7 @@
         openmct.install(GenericPlugin("realtime"));
         //installs subsystem/domain object plugins using generic-plugin.js
         openmct.install(GenericPlugin("follower"));
+        openmct.install(GenericPlugin("leader"));
 
 
         //starts OpenMCT once all installs are completed

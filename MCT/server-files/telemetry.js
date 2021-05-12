@@ -22,37 +22,25 @@ var searchURl = 'http://localhost:5000/search-es';
  */
 function Telemetry(configuration) {
 
+  /**
+   * The config file (defaults to mct_secret.json)
+   */
   var FlightSoftware = path.resolve(__dirname, '../..')
   var config_file = FlightSoftware + "/" + configuration
   var config_json = require(config_file);
+
   /**
-  * The index of the Elastic Search database
+  * The indexes of the Elastic Search database
   */
-  if (config_json.devices.length == 1) {
-    this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    this.singleSat = true
+  try{
+  this.leaderIndex = 'statefield_report_' + config_json.devices.leader.imei
+  this.followerIndex = 'statefield_report_' + config_json.devices.follower.imei
+  this.leader_enabled = config_json.devices.leader.enabled
+  this.follower_enabled = config_json.devices.follower.enabled
+  } catch {
+    console.log("Invalid MCT Configuration File")
   }
-  else if (config_json.devices.length > 1) {
-    this.singleSat = false
-    let deviceOneFilled = false
-    let deviceTwoFilled = false
-    if(config_json.devices[0].name.indexOf("Leader") != -1){
-      this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    else if(config_json.devices[0].name.indexOf("Follower") != -1){
-      this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    if(config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined){
-      this.leaderIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
-    else if(config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined){
-      this.followerIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
-    
-  }
-  else {
-    throw "Malformed: There are no devices or radios in this config file"
-  }
+
   //This state function takes in initial values from the state-variables.js file
   this.initialState = variables;
 
@@ -133,6 +121,7 @@ function getCoord(s, num){
 *   for the state value directly
 **/
 Telemetry.prototype.updateState = async function () {
+  if (this.follower_enabled){
   Object.keys(this.follower_state).forEach(async function (id) {
 
     //if the value for the key of the state entry is an object
@@ -155,7 +144,8 @@ Telemetry.prototype.updateState = async function () {
     }
 
   }, this);
-  if (this.singleSat == false){
+  }
+  if (this.leader_enabled){
   Object.keys(this.leader_state).forEach(async function (id) {
 
     //if the value for the key of the state entry is an object
@@ -222,7 +212,7 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
 Telemetry.prototype.generateTelemetry = function () {
     var timestamp = Date.now(), sent = 0;
     //make two cases one that updates objects and one that directly updates field
-    
+    if(this.follower_enabled){
     Object.keys(this.follower_state).forEach(function (id) {
 
       //if the value for the key of the state entry is an object
@@ -289,8 +279,8 @@ Telemetry.prototype.generateTelemetry = function () {
       }
 
     }, this);
-
-    if (this.singleSat == false){
+    }
+    if (this.leader_enabled){
     Object.keys(this.leader_state).forEach(function (id) {
 
       //if the value for the key of the state entry is an object

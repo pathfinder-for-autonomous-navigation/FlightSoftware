@@ -22,9 +22,9 @@ var credentials = {key: privateKey, cert: certificate};
 var app = express()
 expressWs(app);
 
-//sets default config file to ci.json
+//sets default config file to mct_secret.json
 if(myArgs[0] == undefined){
-  myArgs[0] = "ptest/configs/hootl.json"
+  myArgs[0] = "MCT/server-files/mct_secret.json"
 }
 
 var spacecraft = new Telemetry(myArgs[0]);
@@ -50,20 +50,16 @@ app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);
 app.use('/openmct', express.static('node_modules/openmct/dist/'));
 app.use('/', express.static("public"));
+
+
 if (mct.devices.follower.enabled == true && mct.devices.leader.enabled == true){
-  app.get('/',function(req,res) {
-    res.sendFile(path.join(__dirname, '../public/views/dual.html'));
-  });
+  app.use(express.static('public/', {index: 'dual.html'}))
 }else if (mct.devices.follower.enabled == false && mct.devices.leader.enabled == true){
-  app.get('/',function(req,res) {
-    res.sendFile(path.join(__dirname, '../public/views/leader.html'));
-  });
+  app.use(express.static('public/', {index: 'leader.html'}))
 }else if (mct.devices.follower.enabled == true && mct.devices.leader.enabled == false){
-  app.get('/',function(req,res) {
-    res.sendFile(path.join(__dirname, '../public/views/follower.html'));
-  });
-}else {
-  app.use('/', express.static("public"));
+  app.use(express.static('public/', {index: 'follower.html'}))
+}else{
+  app.use(express.static('public/', {index: 'empty.html'}))
 }
 
 
