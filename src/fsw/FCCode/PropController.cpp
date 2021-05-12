@@ -19,6 +19,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
       sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
       sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
+      mission_state_fp(FIND_WRITABLE_FIELD(unsigned char, pan.state)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),
@@ -175,11 +176,13 @@ PropState &PropController::get_state(prop_state_t state) const
 
 bool PropController::validate_schedule()
 {
+    mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
     return is_valid_schedule(sched_valve1_f.get(),
                              sched_valve2_f.get(),
                              sched_valve3_f.get(),
                              sched_valve4_f.get(),
-                             cycles_until_firing.get());
+                             cycles_until_firing.get()) && 
+                             (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach);
 }
 
 bool PropController::is_valid_schedule(unsigned int v1,
