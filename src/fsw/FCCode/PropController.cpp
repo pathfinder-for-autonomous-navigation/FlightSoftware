@@ -74,13 +74,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
-
-    // If in nearfield Tank 2 pressure should be lower than in far-field
-    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
     threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
-    if (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-        threshold_firing_pressure.set(threshold_firing_pressure_near_ic);
-    }
     ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
@@ -116,6 +110,13 @@ void PropController::execute()
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
+
+    // If in nearfield Tank 2 pressure should be lower than in far-field
+    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
+    threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
+    if (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
+        threshold_firing_pressure.set(threshold_firing_pressure_near_ic);
+    }
 
     auto current_state = static_cast<prop_state_t>(prop_state_f.get());
 
