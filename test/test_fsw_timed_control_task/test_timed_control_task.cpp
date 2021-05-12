@@ -17,8 +17,8 @@
 class DummyTimedControlTask : public TimedControlTask<void> {
   public:
     DummyTimedControlTask(StateFieldRegistry &registry,
-        const std::string& name, const unsigned int offset) :
-      TimedControlTask<void>(registry, name, offset) {}
+        const std::string& name) :
+      TimedControlTask<void>(registry, name) {}
 
     int i = 0;
     void execute() {
@@ -52,7 +52,6 @@ class TestFixture {
     TestFixture() : registry() {
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
-        constexpr unsigned int allocated_starts[2] = {2001, 6001};
         dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1");
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2");
 

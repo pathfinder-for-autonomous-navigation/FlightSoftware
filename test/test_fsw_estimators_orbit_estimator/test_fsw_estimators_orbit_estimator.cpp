@@ -104,7 +104,6 @@ void test_update()
     assert_no_update_for(piksi_mode_t::time_limit_error);
     assert_no_update_for(piksi_mode_t::data_error);
     assert_no_update_for(piksi_mode_t::no_data_error);
-    assert_no_update_for(piksi_mode_t::dead);
 
     // Ensure the estimate does update for valid Piksi states
     auto assert_update_for = [](piksi_mode_t mode) {
