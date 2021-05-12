@@ -2129,38 +2129,6 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.sched_valve1": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve2": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve3": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve4": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "prop.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -3102,10 +3070,6 @@
             "active": false,
             "fields": [
                 "prop.cycles_until_firing",
-                "prop.sched_valve1",
-                "prop.sched_valve2",
-                "prop.sched_valve3",
-                "prop.sched_valve4",
                 "prop.sched_intertank1",
                 "prop.sched_intertank2"
             ],
