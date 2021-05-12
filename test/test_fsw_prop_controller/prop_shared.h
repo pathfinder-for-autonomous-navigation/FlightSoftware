@@ -107,10 +107,10 @@ public:
     inline void check_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
                                unsigned int ctrl_cycles_from_now)
     {
-        TEST_ASSERT_EQUAL(v1, pc->sched_valve1_f.get());
-        TEST_ASSERT_EQUAL(v2, pc->sched_valve2_f.get());
-        TEST_ASSERT_EQUAL(v3, pc->sched_valve3_f.get());
-        TEST_ASSERT_EQUAL(v4, pc->sched_valve4_f.get());
+        TEST_ASSERT_EQUAL(v1, pc->sched_valve1_fp->get());
+        TEST_ASSERT_EQUAL(v2, pc->sched_valve2_fp->get());
+        TEST_ASSERT_EQUAL(v3, pc->sched_valve3_fp->get());
+        TEST_ASSERT_EQUAL(v4, pc->sched_valve4_fp->get());
         TEST_ASSERT_EQUAL(pc->cycles_until_firing.get(), ctrl_cycles_from_now);
     }
 
