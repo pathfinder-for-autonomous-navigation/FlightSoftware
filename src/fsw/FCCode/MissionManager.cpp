@@ -18,7 +18,7 @@ const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsi
 
 MissionManager::MissionManager(StateFieldRegistry &registry) 
     : TimedControlTask<void>(registry, "mission_ct"),
-    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 0.5, 7)),
+    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 0.05, 7)),
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
     docking_timeout_limit_f("docking_timeout_limit",
