@@ -32,3 +32,4 @@ class TaskTime(SingleSatStandbyCase):
     def run(self):
         self.cycle()
         self.data_logs()
+        self.finish()
