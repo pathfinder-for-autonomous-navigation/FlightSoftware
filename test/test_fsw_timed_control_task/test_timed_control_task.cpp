@@ -53,8 +53,8 @@ class TestFixture {
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
         constexpr unsigned int allocated_starts[2] = {2001, 6001};
-        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1", allocated_starts[0]);
-        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
+        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1");
+        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2");
 
         // Check that the statistics parameters are available.
         auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
