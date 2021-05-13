@@ -19,7 +19,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
       sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
       sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
-      mission_state_fp(FIND_WRITABLE_FIELD(unsigned char, pan.state)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),
@@ -51,6 +50,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_writable_field(sched_valve4_f);
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
+    mission_state_fp = FIND_WRITABLE_FIELD(unsigned char, pan.state);
 
     add_writable_field(max_venting_cycles);
     add_writable_field(ctrl_cycles_per_close_period);
