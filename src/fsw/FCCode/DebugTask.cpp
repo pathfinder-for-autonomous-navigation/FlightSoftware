@@ -20,12 +20,11 @@ void DebugTask::execute() {
 #ifndef FLIGHT
   start_cycle_f.set(false);
   if(auto_cycle_f.get()){
-    #ifdef DESKTOP
-       constexpr bool blocking = true;
-    #else
-       constexpr bool blocking = false;
-    #endif
-    process_commands(_registry, blocking);
+    process_commands(_registery
+#ifdef DESKTOP
+      , false
+#endif
+    );
   }
   else{
     // !auto_cycle_f.get() is false once auto_cycle_f is true, ending the while loop
