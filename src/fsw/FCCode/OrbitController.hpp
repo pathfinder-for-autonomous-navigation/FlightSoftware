@@ -51,13 +51,13 @@ public:
     /*
      * Convert the impulse of a thruster to the time the valve should be open in ms
      */
-    unsigned int impulse_to_time(double impulse, unsigned char state);
+    unsigned int impulse_to_time(double impulse);
 
     /**
      * Calculates the time each valve should open to deliver a given impulse. 
      * The impulse must be in the body frame of the satellite
      */
-    void schedule_valves(lin::Vector3d J_body, unsigned char state);
+    void schedule_valves(lin::Vector3d J_body);
 
     // Initializing Smoothed Relative Orbital States
     lin::Vector3d dr_smoothed;

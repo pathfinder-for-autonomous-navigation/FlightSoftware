@@ -3,6 +3,10 @@
 #include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
 #include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
+// Variables which are set to either near or far-field values depending on mission state
+double valve_time_lin_reg_slope;
+double valve_time_lin_reg_intercept;
+
 const constexpr double OrbitController::valve_time_lin_reg_slope_near;
 const constexpr double OrbitController::valve_time_lin_reg_intercept_near;
 const constexpr double OrbitController::valve_time_lin_reg_slope_far;
@@ -159,8 +163,16 @@ void OrbitController::execute() {
         lin::Vector3d J_body;
         gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
+        // Setting linear regression parameters depending on farfield or nearfield
+        valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
+        valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
+        if (rel_orbit_valid_fp->get()==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
+         valve_time_lin_reg_slope = valve_time_lin_reg_slope_near;
+         valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_near;
+        }
+
         // Communicate desired impulse to the prop controller.
-        schedule_valves(J_body, rel_orbit_valid_fp->get());
+        schedule_valves(J_body);
 
     }
 
@@ -224,19 +236,13 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 
 }
 
-unsigned int OrbitController::impulse_to_time(double impulse, unsigned char state) {
-    double valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
-    double valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
-    if (state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-        valve_time_lin_reg_slope = valve_time_lin_reg_slope_near;
-        valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_near;
-    }
+unsigned int OrbitController::impulse_to_time(double impulse) {
     double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
     int time_ms = time * 1000;
     return time_ms;
 }
 
-void OrbitController::schedule_valves(lin::Vector3d J_body, unsigned char state) {
+void OrbitController::schedule_valves(lin::Vector3d J_body) {
 
     double a = J_body(0);
     double b = J_body(1);
@@ -270,10 +276,10 @@ void OrbitController::schedule_valves(lin::Vector3d J_body, unsigned char state)
     }
 
     // Translate the impulse values into the times the valves must stay open and set valves
-    sched_valve1_f.set(impulse_to_time(x1, state));
-    sched_valve2_f.set(impulse_to_time(x2, state));
-    sched_valve3_f.set(impulse_to_time(x3, state));
-    sched_valve4_f.set(impulse_to_time(x4, state));
+    sched_valve1_f.set(impulse_to_time(x1));
+    sched_valve2_f.set(impulse_to_time(x2));
+    sched_valve3_f.set(impulse_to_time(x3));
+    sched_valve4_f.set(impulse_to_time(x4));
 
 }
 
