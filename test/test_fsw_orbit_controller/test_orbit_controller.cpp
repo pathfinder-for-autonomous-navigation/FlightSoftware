@@ -33,6 +33,9 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
+                // for prop_controller
+                registry.create_writable_field<unsigned char>("pan.state");
+
                 time_valid_fp = registry.create_readable_field<bool>("time.valid");
                 time_s_fp = registry.create_internal_field<double>("time.s");
                 orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
