@@ -182,7 +182,9 @@ bool PropController::validate_schedule()
                              sched_valve3_f.get(),
                              sched_valve4_f.get(),
                              cycles_until_firing.get()) && 
-                             (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach);
+                             (mission_state == mission_state_t::follower 
+                             || mission_state == mission_state_t::manual
+                             || mission_state == mission_state_t::follower_close_approach);
 }
 
 bool PropController::is_valid_schedule(unsigned int v1,
