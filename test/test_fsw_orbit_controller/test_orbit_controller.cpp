@@ -118,7 +118,7 @@ void test_task_calculate_impulse(){
 void test_task_schedule_valves_helper(lin::Vector3d J_body){
         TestFixture tf;
 
-        tf.orbit_controller->schedule_valves(J_body, 0);
+        tf.orbit_controller->schedule_valves(J_body);
 
         // Unit vectors giving the directions of the thrusters in the satellite's body frame
         lin::Vector3d thruster1 = { 0.6534, -0.3822, -0.6534};
