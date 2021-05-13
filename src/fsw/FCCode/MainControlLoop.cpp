@@ -122,7 +122,7 @@ void MainControlLoop::execute() {
 
     TRACKED_CONSTANT_SC(unsigned int, piksi_duration, 6400);
     TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_duration, 28000);
-    TRACKED_CONSTANT_SC(unsigned int, debug_duration, 43400);
+    TRACKED_CONSTANT_SC(unsigned int, debug_duration, 16400);
     TRACKED_CONSTANT_SC(unsigned int, gomspace_duration, 15000);
     TRACKED_CONSTANT_SC(unsigned int, uplink_duration, 10000);
     TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_duration, 5000);
@@ -132,7 +132,7 @@ void MainControlLoop::execute() {
     TRACKED_CONSTANT_SC(unsigned int, adcs_commander_duration, 1000);
     TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_duration, 10000);
     TRACKED_CONSTANT_SC(unsigned int, orbit_duration, 5000);
-    TRACKED_CONSTANT_SC(unsigned int, prop_duration, 1000);
+    TRACKED_CONSTANT_SC(unsigned int, prop_duration, 28000);
     TRACKED_CONSTANT_SC(unsigned int, downlink_duration, 1000);
     TRACKED_CONSTANT_SC(unsigned int, quake_duration, 30000);
     TRACKED_CONSTANT_SC(unsigned int, docking_duration, 10000);
