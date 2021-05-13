@@ -97,13 +97,6 @@ PropState_Venting PropController::state_venting;
 PropState_HandlingFault PropController::state_handling_fault;
 PropState_Manual PropController::state_manual;
 
-void init(){
-    //sched_valve1_fp = FIND_WRITABLE_FIELD(unsigned int, "orbit.control.valve1");
-    //sched_valve2_fp = FIND_WRITABLE_FIELD(unsigned int, "orbit.control.valve2");
-    //sched_valve3_fp = FIND_WRITABLE_FIELD(unsigned int, "orbit.control.valve3");
-    //sched_valve4_fp = FIND_WRITABLE_FIELD(unsigned int, "orbit.control.valve4");
-}
-
 void PropController::execute()
 {
     check_faults();

@@ -225,8 +225,6 @@ public:
     //      that means we are not changing states this cycle.
     virtual prop_state_t evaluate() = 0;
 
-    void init();
-
 protected:
     const prop_state_t this_state;
 
