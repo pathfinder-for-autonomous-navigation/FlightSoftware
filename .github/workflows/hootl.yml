@@ -59,6 +59,7 @@ jobs:
     - name: Mission Rehearsal Cases
       run: |
         python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatDetumbleCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_hootl.json -t DualSatFarFieldCase -ni
 
     - name: Hardware Checkout Cases
       run: |
