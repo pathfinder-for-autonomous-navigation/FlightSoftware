@@ -71,18 +71,21 @@ public:
     unsigned int &cc = TimedControlTaskBase::control_cycle_count;
     using FnVoid_t = void (*)(); // pointer to a void function
 
+    std::shared_ptr<ReadableStateField<unsigned int>> rel_orbit_state_fp;
+
     StateFieldRegistryMock registry;
 
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
 
-    TestFixture()
-    {
+    TestFixture() : registry() {
+        rel_orbit_state_fp = registry.create_readable_field<unsigned int>("rel_orbit.rel_pos", 0, 1, 100);
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry, 0);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
+        rel_orbit_state_fp->set(2); // set to estimating... should unit test fully
     }
 
     inline int ctrl_cycles_per_pressurizing_cycle()
