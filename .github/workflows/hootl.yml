@@ -71,14 +71,7 @@ jobs:
 
     - name: Fault Handling Cases
       run: |
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSWheelFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t AttitudeFaultHandlerCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t LowBattFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/hootl.json -t PropFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t QuakePowerCycling -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t PiksiFaultHandler -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl_speedup.json -t PiksiFaultNearField -ni
-        python -m ptest runsim -c ptest/configs/hootl_hootl_speedup.json -t PiksiFaultNearField2 -ni
+
 
     # Add quake and piksi fault handler to the above once completed.
 
