@@ -50,11 +50,7 @@ jobs:
 
     - name: CI Checkout Case and Empty case
       run: |
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t CICase -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t EmptyCase -ni
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t EmptySimCase -ni
-        !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptyCase -ni)
-        !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptySimCase -ni)
+
 
     - name: Mission Rehearsal Cases
       run: |
