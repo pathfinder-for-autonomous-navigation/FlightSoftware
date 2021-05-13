@@ -32,11 +32,6 @@ fc_fields = [
     "adcs_cmd.mtr_cmd",
     "adcs_cmd.rwa_torque_cmd",
     # PSim sensor debugging information
-    #    "piksi.time"
-    #    "adcs_monitor.ssa_vec",
-    #    "adcs_monitor.mag1_vec",
-    #    "adcs_monitor.gyr_vec",
-    #    "adcs_monitor.ssa_mode",
     "dcdc.SpikeDock",
 
     "prop.cycles_until_firing",

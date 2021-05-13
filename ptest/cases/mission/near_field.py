@@ -9,9 +9,6 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
         super(DualSatNearFieldCase, self).__init__(*args, **kwargs)
 
         self.psim_configs += ["truth/near_field"]
-        # self.psim_config_overrides = {"truth.leader.attitude.w": lin.Vector3([0,0,0]), "truth.follower.attitude.w": lin.Vector3([0,0,0])}
-
-        # self.psim_config_overrides = {"truth.leader.pos": lin.Vector3[0,0,0,0], "truth.leader.vel"}
         self.leader_initial_state = "standby"
         self.follower_initial_state = "standby"
         self.leader_skip_deployment_wait = True
@@ -28,8 +25,6 @@ class DualSatNearFieldCase(DualSatCase, PSimCase):
 
         self.flight_controller_leader.write_state("pan.sat_designation", Enums.sat_designations["leader"])
         self.flight_controller_follower.write_state("pan.sat_designation", Enums.sat_designations["follower"])
-        # self.flight_controller_follower.ws("prop.threshold_firing")
-        # self.flight_controller_leader.write_state("dcdc.SpikeDock_cmd
         self.cycle()
 
         if not self.rs_psim("sensors.leader.cdgps.valid"):
