@@ -73,14 +73,14 @@ public:
 
     StateFieldRegistryMock registry;
 
-    std::shared_ptr<ReadableStateField<unsigned char>> pan_state_fp;
+    std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
 
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
 
     TestFixture() : registry() 
     {
-        pan_state_fp = registry.create_readable_field<unsigned char>("pan.state", 0, 1, 100);
+        pan_state_fp = registry.create_writable_field<unsigned char>("pan.state", 0, 1, 100);
 
         cc = 0;
         Fault::cc = &cc;
