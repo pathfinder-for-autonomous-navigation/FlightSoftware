@@ -79,7 +79,7 @@ public:
     std::unique_ptr<PropFaultHandler> pfh;
 
     TestFixture() : registry() {
-        rel_orbit_state_fp = registry.create_readable_field<unsigned int>("rel_orbit.rel_pos", 0, 1, 100);
+        rel_orbit_state_fp = registry.create_readable_field<unsigned int>("rel_orbit.state", 0, 1, 100);
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry, 0);
