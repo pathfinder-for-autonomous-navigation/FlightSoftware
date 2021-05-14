@@ -70,7 +70,7 @@ public:
         radio_power_cycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
 
         // Create Quake Manager instance
-        quake_manager = std::make_unique<QuakeManager>(registry, 0);
+        quake_manager = std::make_unique<QuakeManager>(registry);
         quake_manager->init();
 
         max_wait_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_wait");

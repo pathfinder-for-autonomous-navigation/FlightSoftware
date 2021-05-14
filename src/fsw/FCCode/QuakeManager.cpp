@@ -27,8 +27,8 @@
  */
 
 // Quake driver setup is initialized when QuakeController constructor is called
-QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "quake", offset),
+QuakeManager::QuakeManager(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "quake"),
       max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
       max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(PAN::one_day_ccno)),
       radio_err_f("radio.err", Serializer<int>(-90, 10)),

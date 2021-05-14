@@ -1,7 +1,7 @@
 #include "Estimators.hpp"
 
-Estimators::Estimators(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "estimators", offset),
+Estimators::Estimators(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "estimators"),
       time_estimator(registry),
       orbit_estimator(registry),
       relative_orbit_estimator(registry),

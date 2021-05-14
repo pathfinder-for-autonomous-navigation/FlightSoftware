@@ -8,9 +8,8 @@ public:
   /**
    * @brief Construct a new Debug Task object
    *
-   * @param registry
-   */
-  DebugTask(StateFieldRegistry &registry, unsigned int offset);
+   * @param registry   */
+  DebugTask(StateFieldRegistry &registry);
 
   /** @brief Closes the debug console.
    */

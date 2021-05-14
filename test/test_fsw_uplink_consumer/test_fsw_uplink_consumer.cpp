@@ -60,7 +60,7 @@ class TestFixture {
         radio_mt_packet_fp = registry.create_internal_field<char*>("uplink.ptr");
 
         // Initialize internal fields
-        uplink_consumer = std::make_unique<UplinkConsumer>(registry, 0);
+        uplink_consumer = std::make_unique<UplinkConsumer>(registry);
 
         radio_mt_packet_fp->set(mt_buffer);
         field_map = std::map<std::string, size_t>();
