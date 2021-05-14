@@ -272,5 +272,5 @@ void loop() {
 
    Serial.println("al fin \n");
 
-   while (1) delay(100);
+   while (1) ping_gomspace();
 }
