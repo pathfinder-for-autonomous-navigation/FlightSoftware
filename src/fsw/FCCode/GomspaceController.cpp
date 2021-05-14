@@ -1,8 +1,8 @@
 #include "GomspaceController.hpp"
 
-GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
+GomspaceController::GomspaceController(StateFieldRegistry &registry,
     Devices::Gomspace &_gs)
-    : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
+    : TimedControlTask<void>(registry, "gomspace_rd"), gs(_gs), 
 
     // Serializer values taken from datasheet: https://drive.google.com/drive/u/0/folders/1IKB0q4r82Rd-L4oDUTEDPsAWOrWoveDo
 

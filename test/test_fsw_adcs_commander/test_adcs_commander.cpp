@@ -51,7 +51,7 @@ class TestFixture {
             pointer_mtr_cmd_fp        = registry.create_writable_lin_vector_field<float>(
                 "pointer.mtr_cmd", adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3);
 
-            adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
+            adcs_cmder = std::make_unique<ADCSCommander>(registry);  
 
             // initialize pointers to output statefields
             rwa_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.rwa_mode");

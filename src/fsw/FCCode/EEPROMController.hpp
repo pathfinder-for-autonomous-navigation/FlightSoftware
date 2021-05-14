@@ -19,11 +19,10 @@ public:
     /**
      * @brief Construct a new EEPROM Controller object
      * 
-     * @param registry 
-     * @param offset
+     * @param registry
      * @param statefields
      */
-    EEPROMController(StateFieldRegistry &registry, unsigned int offset);
+    EEPROMController(StateFieldRegistry &registry);
 
     /**
      * @brief Sets up addresses for the set of EEPROM-saved fields.

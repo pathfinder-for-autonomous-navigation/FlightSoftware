@@ -9,8 +9,8 @@
     } while (0)
 #endif
 
-PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "prop", offset),
+PropController::PropController(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "prop"),
       prop_state_f("prop.state", Serializer<unsigned int>(9)),
       cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(orbit_ccno)),
       sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
