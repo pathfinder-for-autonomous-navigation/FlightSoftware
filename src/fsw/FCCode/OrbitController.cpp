@@ -13,6 +13,7 @@ const constexpr double OrbitController::valve_time_lin_reg_slope_far;
 const constexpr double OrbitController::valve_time_lin_reg_intercept_far;
 
 
+
 // Firing nodes
 constexpr double pi = gnc::constant::pi;
 static constexpr std::array<double, 3> firing_nodes_far = {pi/3, pi, -pi/3};
