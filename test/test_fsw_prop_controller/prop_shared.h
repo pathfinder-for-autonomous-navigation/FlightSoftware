@@ -71,7 +71,7 @@ public:
     unsigned int &cc = TimedControlTaskBase::control_cycle_count;
     using FnVoid_t = void (*)(); // pointer to a void function
 
-    std::shared_ptr<ReadableStateField<unsigned int>> rel_orbit_state_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
 
     StateFieldRegistryMock registry;
 
@@ -79,7 +79,7 @@ public:
     std::unique_ptr<PropFaultHandler> pfh;
 
     TestFixture() : registry() {
-        rel_orbit_state_fp = registry.create_readable_field<unsigned int>("rel_orbit.state", 0, 1, 100);
+        rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 3);
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry);
