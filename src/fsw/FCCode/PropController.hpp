@@ -25,7 +25,7 @@ class PropState_Manual;
 class PropController : public TimedControlTask<void>
 {
 public:
-    PropController(StateFieldRegistry &registry, unsigned int offset);
+    PropController(StateFieldRegistry &registry);
 
     TRACKED_CONSTANT(unsigned int, orbit_ccno, PAN::one_day_ccno*(96)/(24*60));
 
@@ -43,11 +43,13 @@ public:
     // ------------------------------------------------------------------------
     // Input Fields
     // ------------------------------------------------------------------------
-    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
 
     WritableStateField<unsigned int> prop_state_f;
 
     WritableStateField<unsigned int> cycles_until_firing;
+
+    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
+
     WritableStateField<unsigned int>* sched_valve1_fp;
     WritableStateField<unsigned int>* sched_valve2_fp;
     WritableStateField<unsigned int>* sched_valve3_fp;

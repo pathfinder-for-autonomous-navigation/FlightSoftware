@@ -11,12 +11,12 @@
     } while (0)
 #endif
 
-PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "prop", offset),
-      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
-
+PropController::PropController(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "prop"),
       prop_state_f("prop.state", Serializer<unsigned int>(9)),
       cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(orbit_ccno)),
+      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
+
       sched_valve1_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve1)),
       sched_valve2_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve2)),
       sched_valve3_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve3)),

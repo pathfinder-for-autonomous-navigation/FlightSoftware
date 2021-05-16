@@ -82,7 +82,7 @@ public:
         rel_orbit_state_fp = registry.create_readable_field<unsigned int>("rel_orbit.state", 0, 1, 100);
         cc = 0;
         Fault::cc = &cc;
-        pc = std::make_unique<PropController>(registry, 0);
+        pc = std::make_unique<PropController>(registry);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
         rel_orbit_state_fp->set(2); // set to estimating... should unit test fully

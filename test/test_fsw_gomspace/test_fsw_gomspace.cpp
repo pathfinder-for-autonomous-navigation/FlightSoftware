@@ -112,7 +112,7 @@ class TestFixture {
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         Fault::cc = &TimedControlTaskBase::control_cycle_count;
 
-        gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
+        gs_controller = std::make_unique<GomspaceController>(registry, gs);
 
         batt_threshold_fp = registry.find_writable_field_t<unsigned int>("gomspace.batt_threshold");
 
