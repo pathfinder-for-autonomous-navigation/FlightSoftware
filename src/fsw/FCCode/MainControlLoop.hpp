@@ -82,10 +82,10 @@ class MainControlLoop : public ControlTask<void> {
      * spacecraft.
      */
     ReadableStateField<unsigned int> control_cycle_ms_f;
-
-    OrbitController orbit_controller;
     ReadableStateField<unsigned int> control_cycle_duration_f;
     sys_time_t prev_sys_time;
+
+    OrbitController orbit_controller;
 
     PropController prop_controller;
     MissionManager mission_manager;
