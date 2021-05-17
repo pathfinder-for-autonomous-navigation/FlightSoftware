@@ -84,7 +84,7 @@ public:
 
         cc = 0;
         Fault::cc = &cc;
-        pc = std::make_unique<PropController>(registry, 0);
+        pc = std::make_unique<PropController>(registry);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
 

@@ -26,7 +26,7 @@ class PropState_Manual;
 class PropController : public TimedControlTask<void>
 {
 public:
-    PropController(StateFieldRegistry &registry, unsigned int offset);
+    PropController(StateFieldRegistry &registry);
 
     TRACKED_CONSTANT(unsigned int, orbit_ccno, PAN::one_day_ccno*(96)/(24*60));
 

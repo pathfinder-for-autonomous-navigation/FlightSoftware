@@ -24,7 +24,7 @@ class Estimators : public TimedControlTask<void>
 
     ~Estimators() = default;
 
-    Estimators(StateFieldRegistry &registry, unsigned int offset);
+    Estimators(StateFieldRegistry &registry);
 
     void execute() override;
 

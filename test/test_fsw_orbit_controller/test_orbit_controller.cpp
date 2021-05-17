@@ -47,8 +47,8 @@ class TestFixture {
                 attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
-                orbit_controller = std::make_unique<OrbitController>(registry, 0);
-                prop_controller = std::make_unique<PropController>(registry, 0);
+                orbit_controller = std::make_unique<OrbitController>(registry);
+                prop_controller = std::make_unique<PropController>(registry);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
                 sched_valve2_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve2");

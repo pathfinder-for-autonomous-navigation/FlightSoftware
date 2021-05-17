@@ -14,10 +14,9 @@ class DockingController : public TimedControlTask<void> {
      * @brief Construct a new Docking Controller object
      * 
      * @param registry 
-     * @param offset
      * @param docksys 
      */
-    DockingController(StateFieldRegistry& registry, unsigned int offset,
+    DockingController(StateFieldRegistry& registry,
         Devices::DockingSystem &docksys);
 
     /**
@@ -40,9 +39,12 @@ class DockingController : public TimedControlTask<void> {
     //shared pointer set by mission manager - tells control task to dock or undock motor
     const WritableStateField<bool>* docking_config_cmd_fp;
 
-    //fields for step angle and step delay to change the speed/torque of the motor and how long it will turn
+    //field for step angle which should be constant based on its setup
     //values written to be taken from testing data
     WritableStateField<float> docking_step_angle_f;
+
+    //field for step delay to change the speed/torque of the motor and how long it will turn
+    //values written to be taken from testing data
     WritableStateField<unsigned int> docking_step_delay_f;
 
     //state field returns whether or not the spacecraft are docked with one another
