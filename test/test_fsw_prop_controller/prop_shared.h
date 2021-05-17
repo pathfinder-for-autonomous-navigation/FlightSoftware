@@ -73,22 +73,16 @@ public:
 
     StateFieldRegistryMock registry;
 
-    std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
-
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
 
-    TestFixture() : registry() 
+    TestFixture()
     {
-        pan_state_fp = registry.create_writable_field<unsigned char>("pan.state", 0, 1, 100);
-
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
-
-        pan_state_fp->set(4); // force set to something that allows firings
     }
 
     inline int ctrl_cycles_per_pressurizing_cycle()

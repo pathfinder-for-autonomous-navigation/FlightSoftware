@@ -24,6 +24,7 @@ class TestFixture {
 
         std::unique_ptr<OrbitController> orbit_controller;
         std::unique_ptr<PropController> prop_controller;
+        std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
 
         // Outputs of orbit controller
         WritableStateField<unsigned int>* sched_valve1_fp;
@@ -33,8 +34,9 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
-                // for prop_controller
-                registry.create_writable_field<unsigned char>("pan.state");
+                // for scheduling valves
+                pan_state_fp = registry.create_writable_field<unsigned char>("pan.state", 0, 12, 4);
+                pan_state_fp->set(4); // force set to something that allows firings
 
                 time_valid_fp = registry.create_readable_field<bool>("time.valid");
                 time_s_fp = registry.create_internal_field<double>("time.s");
