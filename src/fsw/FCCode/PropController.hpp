@@ -4,7 +4,6 @@
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/prop_state_t.enum>
 #include <common/Fault.hpp>
-#include "mission_state_t.enum"
 /**
  * Implementation Info:
  * - millisecond to control cycle count conversions take the floor operator - 
@@ -54,8 +53,6 @@ public:
 
     WritableStateField<unsigned int> sched_intertank1_f;
     WritableStateField<unsigned int> sched_intertank2_f;
-
-    WritableStateField<unsigned char>* mission_state_fp;
 
     // ------------------------------------------------------------------------
     // Ground-Modifiable Parameters

@@ -44,6 +44,7 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     add_writable_field(sched_valve4_f);
     add_writable_field(J_ecef_f);
     add_writable_field(alpha_f);
+    mission_state_fp = FIND_WRITABLE_FIELD(unsigned char, pan.state);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
@@ -160,7 +161,10 @@ void OrbitController::execute() {
         gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
         // Communicate desired impulse to the prop controller.
-        schedule_valves(J_body);
+        mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
+        if (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach) {
+            schedule_valves(J_body);
+        }
 
     }
 

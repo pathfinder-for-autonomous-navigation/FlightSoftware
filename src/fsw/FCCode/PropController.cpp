@@ -50,7 +50,6 @@ PropController::PropController(StateFieldRegistry &registry)
     add_writable_field(sched_valve4_f);
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
-    mission_state_fp = FIND_WRITABLE_FIELD(unsigned char, pan.state);
 
     add_writable_field(max_venting_cycles);
     add_writable_field(ctrl_cycles_per_close_period);
@@ -176,15 +175,11 @@ PropState &PropController::get_state(prop_state_t state) const
 
 bool PropController::validate_schedule()
 {
-    mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
     return is_valid_schedule(sched_valve1_f.get(),
                              sched_valve2_f.get(),
                              sched_valve3_f.get(),
                              sched_valve4_f.get(),
-                             cycles_until_firing.get()) && 
-                             (mission_state == mission_state_t::follower 
-                             || mission_state == mission_state_t::manual
-                             || mission_state == mission_state_t::follower_close_approach);
+                             cycles_until_firing.get());
 }
 
 bool PropController::is_valid_schedule(unsigned int v1,
