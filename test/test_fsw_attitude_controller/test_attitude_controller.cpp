@@ -61,7 +61,7 @@ class TestFixture {
         rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state");
         pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 100);
 
-        attitude_controller = std::make_unique<AttitudeController>(registry, 0);
+        attitude_controller = std::make_unique<AttitudeController>(registry);
 
         // Check that attitude controller creates its expected fields
         pointer_vec1_current_fp = registry.find_readable_field_t<lin::Vector3f>("attitude.pointer_vec1_current");
