@@ -5,6 +5,7 @@
 
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/PropController.hpp>
+#include <iostream>
 
 class TestFixture {
     public:
@@ -23,8 +24,13 @@ class TestFixture {
         std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
 
         std::unique_ptr<OrbitController> orbit_controller;
-        std::unique_ptr<PropController> prop_controller;
+
         std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> prop_cycles_until_firing_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> max_pressurizing_cycles_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> ctrl_cycles_per_filling_period_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> ctrl_cycles_per_cooling_period_fp;
 
         // Outputs of orbit controller
         WritableStateField<unsigned int>* sched_valve1_fp;
@@ -38,6 +44,13 @@ class TestFixture {
                 pan_state_fp = registry.create_writable_field<unsigned char>("pan.state", 0, 12, 4);
                 pan_state_fp->set(4); // force set to something that allows firings
 
+                // Prop Controller
+                prop_state_fp = registry.create_writable_field<unsigned int>("prop.state", 0, 9, 4);
+                prop_cycles_until_firing_fp = registry.create_writable_field<unsigned int>("prop.cycles_until_firing", 0, 48000, 16);
+                max_pressurizing_cycles_fp = registry.create_writable_field<unsigned int>("prop.max_pressurizing_cycles", 0, 50, 6);
+                ctrl_cycles_per_filling_period_fp = registry.create_writable_field<unsigned int>("prop.ctrl_cycles_per_filling", 0, 25, 5);
+                ctrl_cycles_per_cooling_period_fp = registry.create_writable_field<unsigned int>("prop.ctrl_cycles_per_cooling", 0, 100, 7);
+
                 time_valid_fp = registry.create_readable_field<bool>("time.valid");
                 time_s_fp = registry.create_internal_field<double>("time.s");
                 orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
@@ -50,7 +63,6 @@ class TestFixture {
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
                 orbit_controller = std::make_unique<OrbitController>(registry);
-                prop_controller = std::make_unique<PropController>(registry);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
                 sched_valve2_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve2");
@@ -167,13 +179,78 @@ void test_task_schedule_valves(){
 
 }
 
+// Test that the firings are scheduled only in follower/follower close approach
+void test_task_execute_firings(){
+        TestFixture tf;
+        tf.orbit_controller->init();
+
+        // Orbit Controller inputs
+        tf.time_valid_fp->set(true);
+        tf.orbit_valid_fp->set(true);
+        tf.rel_orbit_state_fp->set(true);
+        tf.attitude_estimator_valid_fp->set(true);
+
+        tf.time_s_fp->set(10);
+        tf.pos_fp->set({1349,0,0});
+        tf.vel_fp->set({0,100,0});
+        tf.baseline_pos_fp->set({67678960,10879000,879778900});
+        tf.baseline_vel_fp->set({0,0,0});
+        tf.q_body_eci_fp->set({0,0,0,1});
+
+        tf.prop_state_fp->set(6); 
+
+        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
+
+        tf.orbit_controller->execute();
+
+        TEST_ASSERT_NOT_EQUAL(tf.sched_valve1_fp->get() + tf.sched_valve2_fp->get() + tf.sched_valve3_fp->get() + tf.sched_valve4_fp->get(), 0);
+
+}
+
+void test_task_dont_execute_firings(){
+        TestFixture tf;
+        tf.orbit_controller->init();
+
+        // Orbit Controller inputs
+        tf.time_valid_fp->set(true);
+        tf.orbit_valid_fp->set(true);
+        tf.rel_orbit_state_fp->set(true);
+        tf.attitude_estimator_valid_fp->set(true);
+
+        tf.time_s_fp->set(10);
+        tf.pos_fp->set({1,0,0});
+        tf.vel_fp->set({0,1,0});
+        tf.baseline_pos_fp->set({0,1,0});
+        tf.baseline_vel_fp->set({-1,0,0});
+        tf.q_body_eci_fp->set({1,0,0,0});
+
+        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
+
+        tf.pan_state_fp->set(1);
+
+        tf.orbit_controller->execute();
+
+        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
+        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
+}
+
 int test_control_task()
 {
         UNITY_BEGIN();
-        RUN_TEST(test_task_initialization);
-        RUN_TEST(test_task_time_till_node);
-        RUN_TEST(test_task_calculate_impulse);
-        RUN_TEST(test_task_schedule_valves);
+        // RUN_TEST(test_task_initialization);
+        // RUN_TEST(test_task_time_till_node);
+        // RUN_TEST(test_task_calculate_impulse);
+        // RUN_TEST(test_task_schedule_valves);
+        RUN_TEST(test_task_execute_firings);
+        RUN_TEST(test_task_dont_execute_firings);
         return UNITY_END();
 }
 
