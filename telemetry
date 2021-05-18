@@ -2249,6 +2249,22 @@
             "type": "float",
             "writable": true
         },
+        "prop.threshold_firing_pressure_far": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
+        },
+        "prop.threshold_firing_pressure_near": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
+        },
         "qfh.enabled": {
             "bitsize": 1,
             "flow_id": "undefined",

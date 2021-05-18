@@ -68,6 +68,8 @@ public:
 
     WritableStateField<unsigned int> max_pressurizing_cycles;
     WritableStateField<float> threshold_firing_pressure;
+    WritableStateField<float> threshold_firing_pressure_far;
+    WritableStateField<float> threshold_firing_pressure_near;
     WritableStateField<unsigned int> ctrl_cycles_per_filling_period;
     WritableStateField<unsigned int> ctrl_cycles_per_cooling_period;
     WritableStateField<unsigned int> tank1_valve;

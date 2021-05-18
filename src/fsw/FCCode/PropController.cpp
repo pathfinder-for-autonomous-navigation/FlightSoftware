@@ -29,6 +29,8 @@ PropController::PropController(StateFieldRegistry &registry)
 
       max_pressurizing_cycles("prop.max_pressurizing_cycles", Serializer<unsigned int>(50)),
       threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 6)),
+      threshold_firing_pressure_far("prop.threshold_firing_pressure_far", Serializer<float>(10, 50, 6)),
+      threshold_firing_pressure_near("prop.threshold_firing_pressure_near", Serializer<float>(10, 50, 6)),
       ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(25)),
       ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(100)),
       tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
@@ -57,6 +59,9 @@ PropController::PropController(StateFieldRegistry &registry)
 
     add_writable_field(max_pressurizing_cycles);
     add_writable_field(threshold_firing_pressure);
+    add_writable_field(threshold_firing_pressure_far);
+    add_writable_field(threshold_firing_pressure_near);
+
     add_writable_field(ctrl_cycles_per_filling_period);
     add_writable_field(ctrl_cycles_per_cooling_period);
     add_writable_field(tank1_valve);
@@ -75,6 +80,8 @@ PropController::PropController(StateFieldRegistry &registry)
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
     threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
+    threshold_firing_pressure_far.set(threshold_firing_pressure_far_ic);
+    threshold_firing_pressure_near.set(threshold_firing_pressure_near_ic);
     ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
@@ -106,9 +113,9 @@ void PropController::execute()
 
     // If in nearfield Tank 2 pressure should be lower than in far-field
     unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
-    threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
+    threshold_firing_pressure.set(threshold_firing_pressure_far.get());
     if (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-        threshold_firing_pressure.set(threshold_firing_pressure_near_ic);
+        threshold_firing_pressure.set(threshold_firing_pressure_near.get());
     }
 
     auto current_state = static_cast<prop_state_t>(prop_state_f.get());
