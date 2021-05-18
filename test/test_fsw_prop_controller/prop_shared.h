@@ -3,6 +3,7 @@
 #include <fsw/FCCode/PropFaultHandler.h>
 #include <fsw/FCCode/prop_state_t.enum>
 #include "../StateFieldRegistryMock.hpp"
+#include "fsw/FCCode/OrbitController.hpp"
 
 #define assert_fault_state(state, x) TEST_ASSERT_EQUAL(state, tf.pc->x.is_faulted())
 
@@ -71,17 +72,38 @@ public:
     unsigned int &cc = TimedControlTaskBase::control_cycle_count;
     using FnVoid_t = void (*)(); // pointer to a void function
 
+    std::shared_ptr<InternalStateField<double>> time_s_fp;
+    std::shared_ptr<ReadableStateField<bool>> time_valid_fp;
+    std::shared_ptr<ReadableStateField<bool>> orbit_valid_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_fp;
     std::shared_ptr<ReadableStateField<unsigned char>> rel_orbit_state_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_pos_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_vel_fp;
+    std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
 
     StateFieldRegistryMock registry;
 
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
+    std::unique_ptr<OrbitController> orbit_controller;
 
     TestFixture() : registry() {
-        rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 3);
+        time_s_fp = registry.create_internal_field<double>("time.s");
+        time_valid_fp = registry.create_readable_field<bool>("time.valid");
+        orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
+        pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 1);
+        vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 1);
+        rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 2);
+        baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 1);
+        baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_vel", 0, 1, 1);
+        attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
+        q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
+
         cc = 0;
         Fault::cc = &cc;
+        orbit_controller = std::make_unique<OrbitController>(registry);
         pc = std::make_unique<PropController>(registry);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
