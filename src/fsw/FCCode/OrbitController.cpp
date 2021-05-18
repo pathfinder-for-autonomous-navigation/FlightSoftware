@@ -59,6 +59,8 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     alpha_f.set(0.4);
     dr_smoothed = lin::nans<lin::Vector3d>();
     dv_smoothed = lin::nans<lin::Vector3d>();
+    valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
+    valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
 }
 
 void OrbitController::init() {
