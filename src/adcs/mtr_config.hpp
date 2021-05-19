@@ -35,35 +35,38 @@ static unsigned int const mtr2_r_pin = 14;
 
 /** Transforms a vector from the body frame into the commanding frame for the
  *  magnetic torque rods. */
-static lin::Matrix3x3f const body_to_mtr({
+static constexpr lin::Matrix3x3f body_to_mtr = {
 #ifdef PAN_LEADER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
+   0.0f,  0.0f, -1.0f,
+  -1.0f,  0.0f,  0.0f,
+   0.0f, -1.0f,  0.0f
 #elif PAN_FOLLOWER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
+   0.0f, 0.0f, 1.0f,
+  -1.0f, 0.0f, 0.0f,
+   0.0f, 1.0f, 0.0f
 #else
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
-});
+};
 
 /** Transforms a vector from the magnetic torque rod frame to the body frame of
  *  the spacecraft. */
-static lin::Matrix3x3f const mtr_to_body({
+static constexpr lin::Matrix3x3f mtr_to_body = {
 #ifdef PAN_LEADER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
+   0.0f, -1.0f,  0.0f,
+   0.0f,  0.0f, -1.0f,
+  -1.0f,  0.0f,  0.0f
 #elif PAN_FOLLOWER
-  1.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 1.0f
+  0.0f, -1.0f, 0.0f,
+  0.0f,  0.0f, 1.0f,
+  1.0f,  0.0f, 0.0f
 #else
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
-});
+};
+
+static_assert(lin::fro(body_to_mtr * mtr_to_body - lin::identity<lin::Matrix3x3f>()) < 1.0e-5f, "");
+
 }  // namespace mtr
 }  // namespace adcs
 
