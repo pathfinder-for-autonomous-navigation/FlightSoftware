@@ -588,24 +588,24 @@
         "adcs_monitor.mag1_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
@@ -626,24 +626,24 @@
         "adcs_monitor.mag2_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
