@@ -24,6 +24,7 @@ from .mission import (
 
 from .empty_case import EmptyCase, FailingEmptyCase
 from .dual_empty_case import DualEmptyCase
+from .ditl import Ditl
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
@@ -46,3 +47,5 @@ from .safehold_standby_transition_case import SafeholdStandbyTransitionCase
 from .gomspacelogger import GomspaceLog
 from .reboot_utility import Reboot
 from .quake_power_cycling import QuakePowerCycling
+from .piksi_near_field import PiksiFaultNearField
+from .piksi_near_field_2 import PiksiFaultNearField2

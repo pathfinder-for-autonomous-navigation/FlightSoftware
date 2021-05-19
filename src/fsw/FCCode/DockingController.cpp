@@ -1,8 +1,8 @@
 #include "DockingController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
+DockingController::DockingController(StateFieldRegistry &registry,
     Devices::DockingSystem &_docksys)
-    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
+    : TimedControlTask<void>(registry, "docking_ct"), docksys(_docksys),
       docking_step_angle_f("docksys.step_angle", Serializer<float>(0, 180, 16)),
       docking_step_delay_f("docksys.step_delay", Serializer<unsigned int>()),
       docked_f("docksys.docked", Serializer<bool>()),
@@ -26,11 +26,30 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
 
   docksys.setup();
 }
-
+  /**
+   * @brief Sets the docking_config_cmd_fp pointer to point to the 
+   * "docksys.config_cmd" writeable field allowing us to set the motor that
+   * affects the magnet configuration (true for docked, false for undocked)
+   *  
+   * @return void
+   */
 void DockingController::init() {
   docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
 }
 
+  /**
+   * @brief Main control task function: 
+   * updates state fields, 
+   * initializes step angle and step delay,
+   * starts docking process if the docking_cmd field is true and we arent 
+   * already in the docking configuration
+   * 
+   * If we have reached the last step (get_steps() == 0) then we flip the value
+   * of dock_config and stop the motor stepping timer, 
+   * we also set is_turning to false
+   *  
+   * @return void
+   */
 void DockingController::execute() {
   //update writable fields
   docksys.set_step_angle(docking_step_angle_f.get());

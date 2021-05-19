@@ -35,7 +35,7 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry(), PIKSI_INITIALIZATION {
-                piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
+                piksi_task = std::make_unique<PiksiControlTask>(registry, piksi);  
 
                 // initialize pointers to statefields      
                 currentState_fp = registry.find_readable_field_t<unsigned char>("piksi.state");
@@ -228,48 +228,6 @@ void test_task_execute()
         TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
 }
 
-//test to make sure the control task goes into dead mode if it happens
-void test_dead(){
-        TestFixture tf;
-
-        lin::Vector3d pos = {1000.0, 2000.0, 3000.0};
-        lin::Vector3d vel = {4000.0, 5000.0, 6000.0};
-        lin::Vector3d baseline = {7000.0, 8000.0, 9000.0};
-
-        //get a good reading from driver
-        unsigned int tow = 200;
-        tf.set_read_return(1);
-        tf.set_gps_time(tow);
-        tf.set_pos_ecef(tow, pos, 4);
-        tf.set_vel_ecef(tow, vel);
-        tf.set_baseline_ecef(tow, baseline);
-        tf.set_baseline_flag(1);
-        tf.set_microdelta(0);
-        tf.execute();
-        //times should now agree, and be in baseline
-        assert_piksi_mode(piksi_mode_t::fixed_rtk);
-        TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(pos),lin::fro(tf.pos_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(vel),lin::fro(tf.vel_fp->get()));
-        TEST_ASSERT_FLOAT_WITHIN(0.1,lin::fro(baseline),lin::fro(tf.baseline_fp->get()));
-
-        //simulate that the piksi is not sending any data for 1000 control cycles.
-        //Make sure that the counter state fields are set correctl.
-        tf.set_read_return(4);
-        for(int i = 0;i<1000;i++) {
-                if (i % 100 == 0) {
-                        TEST_ASSERT_EQUAL(i, tf.fix_error_count_fp->get());
-                }
-                tf.execute();
-                TimedControlTaskBase::wait_duration(1);
-        }
-        assert_piksi_mode(piksi_mode_t::no_data_error);
-
-        //one more execution to throw into DEAD mode
-        tf.execute();
-        assert_piksi_mode(piksi_mode_t::dead);
-}
-
 int test_control_task()
 {
         UNITY_BEGIN();
@@ -277,7 +235,6 @@ int test_control_task()
         RUN_TEST(test_read_errors);
         RUN_TEST(test_normal_errors);
         RUN_TEST(test_task_execute);
-        RUN_TEST(test_dead);
         return UNITY_END();
 }
 

@@ -4,9 +4,8 @@
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>
 
-ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
-    unsigned int offset, Devices::ADCS &_adcs)
-    : TimedControlTask<void>(registry, "adcs_controller", offset),
+ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, Devices::ADCS &_adcs)
+    : TimedControlTask<void>(registry, "adcs_controller"),
     adcs_system(_adcs)
     {
         //find command statefields

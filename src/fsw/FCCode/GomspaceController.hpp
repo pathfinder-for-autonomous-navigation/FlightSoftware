@@ -17,10 +17,9 @@ class GomspaceController : public TimedControlTask<void> {
      * @brief Construct a new Gomspace Controller object
      * 
      * @param registry 
-     * @param offset
      * @param gs 
      */
-    GomspaceController(StateFieldRegistry& registry, unsigned int offset,
+    GomspaceController(StateFieldRegistry& registry,
         Devices::Gomspace &gs);
 
     /**
