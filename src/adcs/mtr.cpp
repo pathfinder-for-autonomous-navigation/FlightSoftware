@@ -64,7 +64,7 @@ void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
   LOG_TRACE_println("Actuating MTRs")
 
   // Account for calibration
-  mtr_cmd = body_to_mtr * mtr_cmd;
+  mtr_cmd = (body_to_mtr * mtr_cmd).eval();
 
   LOG_TRACE_header
   LOG_TRACE_println("Commanding MTRs to " + String(mtr_cmd(0)) + " "
