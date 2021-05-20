@@ -689,11 +689,11 @@ void manual_eval(WritableStateField<unsigned int> &sched,
 
 prop_state_t PropState_Manual::evaluate()
 {
-    manual_eval(*(controller->sched_valve1_fp), Tank1, 0);
-    manual_eval(*(controller->sched_valve2_fp), Tank1, 1);
-    manual_eval(*(controller->sched_valve3_fp), Tank1, 2);
-    manual_eval(*(controller->sched_valve4_fp), Tank1, 3);
-    manual_eval(controller->sched_intertank1_f, Tank2, 0);
-    manual_eval(controller->sched_intertank2_f, Tank2, 1);
+    manual_eval(*(controller->sched_valve1_fp), Tank2, 0);
+    manual_eval(*(controller->sched_valve2_fp), Tank2, 1);
+    manual_eval(*(controller->sched_valve3_fp), Tank2, 2);
+    manual_eval(*(controller->sched_valve4_fp), Tank2, 3);
+    manual_eval(controller->sched_intertank1_f, Tank1, 0);
+    manual_eval(controller->sched_intertank2_f, Tank1, 1);
     return this_state;
 }
