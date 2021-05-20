@@ -48,14 +48,19 @@ public:
     lin::Vector3d calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
         const lin::Vector3d &dr, const lin::Vector3d &dv);
 
-    /*
-     * Convert the impulse of a thruster to the time the valve should be open in ms
+    /**
+     * @brief Converts the impulse of a thruster to the time the valve should be open in ms
+     * 
+     * @param impulse Desired impulse
+     * @return Time in ms the valve should be open for
      */
     unsigned int impulse_to_time(double impulse);
 
     /**
-     * Calculates the time each valve should open to deliver a given impulse. 
+     * @brief Calculates the time each valve should open to deliver a given impulse. 
      * The impulse must be in the body frame of the satellite
+     * 
+     * @param J_body Impulse in body frame coordinates
      */
     void schedule_valves(lin::Vector3d J_body);
 
