@@ -115,6 +115,9 @@ class PSimCase(PTestCase):
         self.__sim[f"truth.{satellite}.wheels.t"] = lin.Vector3(fc.smart_read("adcs_cmd.rwa_torque_cmd"))
         self.__sim[f"truth.{satellite}.magnetorquers.m"] = lin.Vector3(fc.smart_read("adcs_cmd.mtr_cmd"))
 
+        ### psim value = prop.state
+        self.__sim[f"truth.{satellite}.orbit.J.ecef"] = lin.Vector3(fc.smart_read("orbit.control.J_ecef"))
+
     def __poll_sensors(self, satellite):
         """Polls sensor data from the simulation for the specified satellite and
         returns a key value mapping of flight computer state field to sensor

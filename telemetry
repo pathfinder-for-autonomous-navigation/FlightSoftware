@@ -2137,38 +2137,6 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.sched_valve1": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve2": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve3": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve4": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "prop.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -2276,6 +2244,22 @@
         "prop.threshold_firing_pressure": {
             "bitsize": 6,
             "flow_id": 42,
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
+        },
+        "prop.threshold_firing_pressure_far": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
+        },
+        "prop.threshold_firing_pressure_near": {
+            "bitsize": 6,
+            "flow_id": "undefined",
             "max": 50.0,
             "min": 10.0,
             "type": "float",
@@ -3254,10 +3238,6 @@
             "active": false,
             "fields": [
                 "prop.cycles_until_firing",
-                "prop.sched_valve1",
-                "prop.sched_valve2",
-                "prop.sched_valve3",
-                "prop.sched_valve4",
                 "prop.sched_intertank1",
                 "prop.sched_intertank2"
             ],
