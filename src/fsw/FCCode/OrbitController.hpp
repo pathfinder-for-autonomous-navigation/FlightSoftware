@@ -17,8 +17,8 @@ public:
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_far, 0.024119);
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_far, 7.0092e-05);
 
-    // Linear regression
-    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_near, 0.024119);
+    // Linear regression for 15psi tank pressure. Slope is (15/25) * slope @ 25 psi.
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_near, 0.0144714);
     TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_near, 7.0092e-05);
 
     OrbitController(StateFieldRegistry &registry);
