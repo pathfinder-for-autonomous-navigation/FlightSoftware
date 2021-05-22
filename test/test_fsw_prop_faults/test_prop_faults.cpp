@@ -153,7 +153,7 @@ void test_underpressured_unsignal_response()
     }
     // If the ground decides to unsignal and lower the pressure threshold
     unsignal_fault(pressurize_fail_fault_f);
-    tf.pc->threshold_firing_pressure.set(14.0); // default fake pressure is 14.6 psi
+    tf.pc->threshold_firing_pressure_near.set(14.0); // default fake pressure is 14.6 psi
     tf.step();
     // Check that the fault is no longer faulted
     assert_fault_state(false, pressurize_fail_fault_f);

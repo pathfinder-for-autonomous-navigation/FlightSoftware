@@ -14,8 +14,12 @@ class OrbitController : public TimedControlTask<void>
 {
 public:
     // Linear regression on dataset from empirical test: ThrustVectorTest_2018_Nov_11_15h37m36s_300Firings_293K_refVac
-    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
-    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_far, 0.024119);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_far, 7.0092e-05);
+
+    // Linear regression
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope_near, 0.024119);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept_near, 7.0092e-05);
 
     OrbitController(StateFieldRegistry &registry);
 
@@ -44,14 +48,19 @@ public:
     lin::Vector3d calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
         const lin::Vector3d &dr, const lin::Vector3d &dv);
 
-    /*
-     * Convert the impulse of a thruster to the time the valve should be open in ms
+    /**
+     * @brief Converts the impulse of a thruster to the time the valve should be open in ms
+     * 
+     * @param impulse Desired impulse
+     * @return Time in ms the valve should be open for
      */
     unsigned int impulse_to_time(double impulse);
 
     /**
-     * Calculates the time each valve should open to deliver a given impulse. 
+     * @brief Calculates the time each valve should open to deliver a given impulse. 
      * The impulse must be in the body frame of the satellite
+     * 
+     * @param J_body Impulse in body frame coordinates
      */
     void schedule_valves(lin::Vector3d J_body);
 
