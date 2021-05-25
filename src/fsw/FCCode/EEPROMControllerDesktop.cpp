@@ -9,8 +9,8 @@
 
 nlohmann::json EEPROMController::data;
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "eeprom_ct", offset)
+EEPROMController::EEPROMController(StateFieldRegistry &registry)
+    : TimedControlTask<void>(registry, "eeprom_ct")
 {
     std::ifstream in("eeprom.json");
     if (!in.fail()) in >> data;

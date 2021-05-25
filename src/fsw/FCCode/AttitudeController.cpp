@@ -16,8 +16,8 @@
 
 #include <iostream>
 
-AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
-    TimedControlTask<void>(registry, "attitude_controller", offset),
+AttitudeController::AttitudeController(StateFieldRegistry &registry) :
+    TimedControlTask<void>(registry, "attitude_controller"),
     w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
     attitude_estimator_b_valid_fp(FIND_INTERNAL_FIELD(bool, attitude_estimator.b_valid)),
     b_body_rd_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.b_body)),
@@ -194,7 +194,7 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec1_current_f.set({0.0f, 0.0f, -1.0f});                        // Docking face
             pointer_vec2_current_f.set({1.0f, 0.0f,  0.0f});                        // Antenna face
             pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));               // dr_hat
-            pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 2))); // n_hat_body
+            pointer_vec2_desired_f.set(lin::transpose(lin::row(DCM_hill_body, 0))); // r_hat_body
             break;
         }
         /* In other adcs states, we won't specify a pointing strategy.

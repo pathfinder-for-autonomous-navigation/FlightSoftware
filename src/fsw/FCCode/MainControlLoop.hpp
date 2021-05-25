@@ -82,39 +82,19 @@ class MainControlLoop : public ControlTask<void> {
      * spacecraft.
      */
     ReadableStateField<unsigned int> control_cycle_ms_f;
+    ReadableStateField<unsigned int> control_cycle_duration_f;
+    sys_time_t prev_sys_time;
+
+    OrbitController orbit_controller;
 
     PropController prop_controller;
     MissionManager mission_manager;
     AttitudeController attitude_controller; // needs adcs.state from MissionManager
-    ADCSCommander adcs_commander; // will need inputs from computer
+    ADCSCommander adcs_commander; // will need inputs from computer++
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
-    OrbitController orbit_controller;
 
-    // Control cycle time offsets, in microseconds
-    #ifdef FLIGHT
-        TRACKED_CONSTANT_SC(unsigned int, test_offset, 0);
-    #else
-        TRACKED_CONSTANT_SC(unsigned int, test_offset, 50000);
-    #endif
 
-    TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   ,   1000);
-    TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
-    TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
-    TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
-    TRACKED_CONSTANT_SC(unsigned int, estimators_offset          ,  35500 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  71600 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     ,  71700 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, attitude_controller_offset ,  71800 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  71900 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  72000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, orbit_controller_offset    ,  73000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, prop_controller_offset     , 102000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 107000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 109400 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 109500 + test_offset);
 
    public:
     /*

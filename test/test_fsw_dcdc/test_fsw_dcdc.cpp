@@ -19,7 +19,7 @@ class TestFixture {
     ReadableStateField<bool>* SpikeDockDCDC_fp;
 
     TestFixture() : registry(), dcdc("dcdc") {
-        dcdc_controller = std::make_unique<DCDCController>(registry, 0, dcdc);
+        dcdc_controller = std::make_unique<DCDCController>(registry, dcdc);
 
         ADCSMotorDCDC_cmd_fp = registry.find_writable_field_t<bool>("dcdc.ADCSMotor_cmd");
         SpikeDockDCDC_cmd_fp = registry.find_writable_field_t<bool>("dcdc.SpikeDock_cmd");

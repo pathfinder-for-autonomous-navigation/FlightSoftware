@@ -8,8 +8,8 @@
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>
 
-ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
-    TimedControlTask<void>(registry, "adcs_commander", offset),
+ADCSCommander::ADCSCommander(StateFieldRegistry& registry) :
+    TimedControlTask<void>(registry, "adcs_commander"),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
@@ -111,6 +111,9 @@ void ADCSCommander::execute() {
         When MissionManager is in safehold, adcs_state = startup (here)
         */
         case adcs_state_t::startup:
+            //zeroing out these commands are critical for ptesting
+            rwa_torque_cmd_f.set({0,0,0});
+            mtr_cmd_f.set({0,0,0});
             break;
 
         /** We do nothing here since ptest/ground will write into the adcs_cmd fields

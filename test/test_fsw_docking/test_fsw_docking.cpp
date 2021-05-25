@@ -22,7 +22,7 @@ class TestFixture {
     TestFixture() : registry() {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
 
-        docking_controller = std::make_unique<DockingController>(registry, 0, docksys);
+        docking_controller = std::make_unique<DockingController>(registry, docksys);
         docking_controller->init();
 
         docked_fp = registry.find_readable_field_t<bool>("docksys.docked");

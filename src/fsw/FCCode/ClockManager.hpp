@@ -29,12 +29,6 @@ class ClockManager : public TimedControlTask<void> {
 
    private:
     /**
-     * @brief If no control cycle has ended yet, this is set to false.
-     * Otherwise true.
-     */
-    bool has_executed = false;
-
-    /**
      * @brief Duration of a control cycle.
      */
     systime_duration_t control_cycle_size;

@@ -17,8 +17,8 @@
 class DummyTimedControlTask : public TimedControlTask<void> {
   public:
     DummyTimedControlTask(StateFieldRegistry &registry,
-        const std::string& name, const unsigned int offset) :
-      TimedControlTask<void>(registry, name, offset) {}
+        const std::string& name) :
+      TimedControlTask<void>(registry, name) {}
 
     int i = 0;
     void execute() {
@@ -52,9 +52,8 @@ class TestFixture {
     TestFixture() : registry() {
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
-        constexpr unsigned int allocated_starts[2] = {2001, 6001};
-        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1", allocated_starts[0]);
-        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
+        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1");
+        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2");
 
         // Check that the statistics parameters are available.
         auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
@@ -76,9 +75,9 @@ class TestFixture {
      */
     sys_time_t execute() {
         clock_manager->execute();
-        dummy_task_1->execute_on_time();
+        dummy_task_1->execute_on_time(4000);
         sys_time_t ret_time = get_system_time();
-        dummy_task_2->execute_on_time();
+        dummy_task_2->execute_on_time(4000);
         return ret_time;
     }
 
