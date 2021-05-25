@@ -34,10 +34,7 @@ class QuakePowerCycling(SingleSatCase):
             raise TestCaseFailure("Radio should be in config after QuakeFaultHandler power cycled.")
 
     def is_powercycle_state(self):
-        return self.qfh_state() in [
-            Enums.qfh_states["powercycle_1"], Enums.qfh_states["powercycle_2"],
-            Enums.qfh_states["powercycle_3"]
-        ]
+        return self.qfh_state() in [Enums.qfh_states["powercycle_1"], Enums.qfh_states["powercycle_2"], Enums.qfh_states["powercycle_3"]]
 
     # Cycle until the QFH transitions to the next state
     def advance_to_next_qfh_state(self, time):
