@@ -30,7 +30,6 @@ namespace PAN
 
 #ifdef SPEEDUP
     TRACKED_CONSTANT_SC(unsigned int, one_day_ccno, 10 * 1000 / control_cycle_time_ms);
-    TRACKED_CONSTANT_SC(unsigned int, one_day_ccno, 1400);
 #else
     TRACKED_CONSTANT_SC(unsigned int, one_day_ccno, 24 * 60 * 60 * 1000 / control_cycle_time_ms);
 #endif
