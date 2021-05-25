@@ -3,36 +3,48 @@ from .utils import Enums, TestCaseFailure
 import math
 
 class ResetforFlight(SingleSatCase):
-    #takes in field name and value to set, then confirms the value was correctly
-    #set 
-    # @param field: state field to update
-    # @param value: value to update field with
-    def set_confirm(self, field, value):
-        initialstate = self.rs( field )
-        self.ws( field, value )
-        self.cycle()
-        updatestate = self.rs( field )
-        if ( updatestate == initialstate ):
-          self.logger.put("Could not update" + str(field))
-          self.failed = True
-        self.logger.put("Reset " + str(field) + " to " + str(value))
-
     def run(self):
         self.mission_state = "manual"
+        self.ws( "cycle.auto", False )
         self.cycle()
 
         self.print_header("Starting Reset")
-        self.ws( "cycle.auto", False )
-        self.set_confirm("gomspace.pptmode_cmd", 1)
-        self.set_confirm("pan.bootcount", 0)
-        self.set_confirm("pan.deployment.elapsed", 0)
-        self.set_confirm("pan.deployed", False)
 
-        #ensure autocycling is happening 
-        #make sure spacecraft is shut down right after this test case so mission doesnt start executing
-        self.ws( "cycle.auto", True )
-        self.cycle()
-        self.print_rs("cycle.auto")
+        #printing original states
+        self.print_header("initial gomspace.pptmode_cmd: \n" 
+                        + str(self.rs("gomspace.pptmode_cmd")))
+        self.print_header("initial pan.bootcount: \n" 
+                        + str(self.rs("pan.bootcount")))
+        self.print_header("initial pan.deployment.elapsed: \n" 
+                        + str(self.rs("pan.deployment.elapsed")))
+        self.print_header("initial pan.deployed: \n" 
+                        + str(self.rs("pan.deployed")))
+
+        cycle_no = self.rs("pan.cycle_no")
+        #pan.bootcount & pan.deployed have longest save duration of 1000 cycles 
+        #additional 10 cycles to make sure fields are saved to EEPROM
+        cycle_duration = cycle_no + 1000 + 10 
+
+        while (cycle_no < cycle_duration):
+            self.print_header("cycle_no: " + str(self.rs("pan.cycle_no")))
+            
+            self.ws("gomspace.pptmode_cmd", 1)
+            self.ws("pan.bootcount", 0)
+            self.ws("pan.deployment.elapsed", 0)
+            self.ws("pan.deployed", False)
+            self.cycle()
+
+            cycle_no = self.rs("pan.cycle_no")
+
+        #printing updated states after cycling
+        self.print_header("final gomspace.pptmode_cmd: \n" 
+                            + str(self.rs("gomspace.pptmode_cmd")))
+        self.print_header("final pan.bootcount: \n" 
+                            + str(self.rs("pan.bootcount")))
+        self.print_header("final pan.deployment.elapsed: \n" 
+                            + str(self.rs("pan.deployment.elapsed")))
+        self.print_header("final pan.deployed: \n" 
+                            + str(self.rs("pan.deployed")))
 
         self.print_header("Flight Reset Complete")
         self.finish()
