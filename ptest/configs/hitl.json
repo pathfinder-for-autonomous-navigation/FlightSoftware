@@ -4,7 +4,7 @@
         {
             "name": "FlightController",
             "run_mode": "teensy",
-            "port": "/dev/cu.usbmodem73392101",
+            "port": "/dev/ttyACM0",
             "baud_rate": 1152000,
             "http_port": 8000,
             "imei": "",
@@ -19,26 +19,8 @@
             "connect": false,
             "send_queue_duration": 0,
             "send_lockout_duration": 0,
-<<<<<<< Updated upstream
             "check_uplink_queue_enable": false,
             "http_port": 8001
-=======
-            "http_port": 8001,
-            "check_uplink_queue_enable": false
->>>>>>> Stashed changes
         }
-<<<<<<< HEAD
-    ],
-    "tlm": {
-        "email_username": "",
-        "email_password": "",
-        "webservice": {
-            "server": "",
-            "port": 0
-        }
-    }
-}
-=======
     ]
 }
->>>>>>> ef1f50f72497bc2dad68d1b85512ef4452368bcc
