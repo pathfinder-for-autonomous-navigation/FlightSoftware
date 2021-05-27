@@ -33,7 +33,7 @@ ADCS Sun Sensor Voltages 2,FALSE,adcs_monitor.ssa_voltage10,adcs_monitor.ssa_vol
 Docking core information,TRUE,docksys.docked,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,
 OrbitController,TRUE,orbit.control.valve1,orbit.control.valve2,orbit.control.valve3,orbit.control.valve4,orbit.control.J_ecef,orbit.control.alpha,,,,,,,,,,,,,,,,,,,,
-Prop Controls,FALSE,prop.cycles_until_firing,prop.sched_intertank1,prop.sched_intertank2,,,,,,,,,,,,,,,,,,,,,,,
+Prop Controls,FALSE,prop.cycles_until_firing,prop.sched_valve1,prop.sched_valve2,prop.sched_valve3,prop.sched_valve4,prop.sched_intertank1,prop.sched_intertank2,,,,,,,,,,,,,,,,,,,
 ADCS Control Vectors,FALSE,adcs_cmd.rwa_speed_cmd,adcs_cmd.rwa_torque_cmd,adcs_cmd.mtr_cmd,,,,,,,,,,,,,,,,,,,,,,,
 Timing Data 1,FALSE,timing.adcs_commander.avg_wait,timing.adcs_commander.num_lates,timing.adcs_controller.avg_wait,timing.adcs_controller.num_lates,timing.estimators.avg_wait,timing.estimators.num_lates,timing.adcs_monitor.avg_wait,timing.adcs_monitor.num_lates,timing.attitude_controller.avg_wait,timing.attitude_controller.num_lates,timing.clock_ct.avg_wait,timing.clock_ct.num_lates,timing.dcdc_ct.avg_wait,timing.dcdc_ct.num_lates,timing.debug.avg_wait,timing.debug.num_lates,,,,,,,,,,
 Timing Data 2,FALSE,timing.docking_ct.avg_wait,timing.docking_ct.num_lates,timing.downlink_ct.avg_wait,timing.downlink_ct.num_lates,timing.eeprom_ct.avg_wait,timing.eeprom_ct.num_lates,timing.gomspace_rd.avg_wait,timing.gomspace_rd.num_lates,timing.mission_ct.avg_wait,timing.mission_ct.num_lates,timing.piksi.avg_wait,timing.piksi.num_lates,timing.quake.avg_wait,timing.quake.num_lates,timing.uplink_ct.avg_wait,timing.uplink_ct.num_lates,,,,,,,,,,

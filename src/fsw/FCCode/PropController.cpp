@@ -1,6 +1,4 @@
 #include <fsw/FCCode/PropController.hpp>
-#include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
-#include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
@@ -15,12 +13,10 @@ PropController::PropController(StateFieldRegistry &registry)
     : TimedControlTask<void>(registry, "prop"),
       prop_state_f("prop.state", Serializer<unsigned int>(9)),
       cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(orbit_ccno)),
-      rel_orbit_valid_fp(FIND_READABLE_FIELD(unsigned char, rel_orbit.state)),
-
-      sched_valve1_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve1)),
-      sched_valve2_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve2)),
-      sched_valve3_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve3)),
-      sched_valve4_fp(FIND_WRITABLE_FIELD(unsigned int, orbit.control.valve4)),
+      sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
+      sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
+      sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
+      sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
       sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
       sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
 
@@ -29,8 +25,6 @@ PropController::PropController(StateFieldRegistry &registry)
 
       max_pressurizing_cycles("prop.max_pressurizing_cycles", Serializer<unsigned int>(50)),
       threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 6)),
-      threshold_firing_pressure_far("prop.threshold_firing_pressure_far", Serializer<float>(10, 50, 6)),
-      threshold_firing_pressure_near("prop.threshold_firing_pressure_near", Serializer<float>(10, 50, 6)),
       ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(25)),
       ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(100)),
       tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
@@ -50,7 +44,10 @@ PropController::PropController(StateFieldRegistry &registry)
     PropulsionSystem.setup();
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
-
+    add_writable_field(sched_valve1_f);
+    add_writable_field(sched_valve2_f);
+    add_writable_field(sched_valve3_f);
+    add_writable_field(sched_valve4_f);
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
 
@@ -59,9 +56,6 @@ PropController::PropController(StateFieldRegistry &registry)
 
     add_writable_field(max_pressurizing_cycles);
     add_writable_field(threshold_firing_pressure);
-    add_writable_field(threshold_firing_pressure_far);
-    add_writable_field(threshold_firing_pressure_near);
-
     add_writable_field(ctrl_cycles_per_filling_period);
     add_writable_field(ctrl_cycles_per_cooling_period);
     add_writable_field(tank1_valve);
@@ -79,9 +73,8 @@ PropController::PropController(StateFieldRegistry &registry)
     max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
-    threshold_firing_pressure.set(threshold_firing_pressure_far_ic);
-    threshold_firing_pressure_far.set(threshold_firing_pressure_far_ic);
-    threshold_firing_pressure_near.set(threshold_firing_pressure_near_ic);
+
+    threshold_firing_pressure.set(threshold_firing_pressure_ic);
     ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
@@ -110,13 +103,6 @@ void PropController::execute()
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
-
-    // If in nearfield Tank 2 pressure should be lower than in far-field
-    unsigned char rel_orbit_state=rel_orbit_valid_fp->get();
-    threshold_firing_pressure.set(threshold_firing_pressure_far.get());
-    if (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-        threshold_firing_pressure.set(threshold_firing_pressure_near.get());
-    }
 
     auto current_state = static_cast<prop_state_t>(prop_state_f.get());
 
@@ -189,10 +175,10 @@ PropState &PropController::get_state(prop_state_t state) const
 
 bool PropController::validate_schedule()
 {
-    return is_valid_schedule(sched_valve1_fp->get(),
-                             sched_valve2_fp->get(),
-                             sched_valve3_fp->get(),
-                             sched_valve4_fp->get(),
+    return is_valid_schedule(sched_valve1_f.get(),
+                             sched_valve2_f.get(),
+                             sched_valve3_f.get(),
+                             sched_valve4_f.get(),
                              cycles_until_firing.get());
 }
 
@@ -689,11 +675,11 @@ void manual_eval(WritableStateField<unsigned int> &sched,
 
 prop_state_t PropState_Manual::evaluate()
 {
-    manual_eval(*(controller->sched_valve1_fp), Tank2, 0);
-    manual_eval(*(controller->sched_valve2_fp), Tank2, 1);
-    manual_eval(*(controller->sched_valve3_fp), Tank2, 2);
-    manual_eval(*(controller->sched_valve4_fp), Tank2, 3);
-    manual_eval(controller->sched_intertank1_f, Tank1, 0);
-    manual_eval(controller->sched_intertank2_f, Tank1, 1);
+    manual_eval(controller->sched_valve1_f, Tank1, 0);
+    manual_eval(controller->sched_valve2_f, Tank1, 1);
+    manual_eval(controller->sched_valve3_f, Tank1, 2);
+    manual_eval(controller->sched_valve4_f, Tank1, 3);
+    manual_eval(controller->sched_intertank1_f, Tank2, 0);
+    manual_eval(controller->sched_intertank2_f, Tank2, 1);
     return this_state;
 }
