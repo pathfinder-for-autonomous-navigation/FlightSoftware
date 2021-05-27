@@ -44,8 +44,7 @@ class QuakePowerCycling(SingleSatCase):
             self.cycles_since_blackout_start += 1
 
             # Check mission state when in QFH forced standby
-            if self.qfh_state() == Enums.qfh_states[
-                    'forced_standby'] and not self.mission_state == "standby":
+            if self.qfh_state() == Enums.qfh_states['forced_standby'] and not self.mission_state == "standby":
                 raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby during during QuakeFaultHandler's `forced standby` state. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
 
             # Check that radio is in config after power cycling
