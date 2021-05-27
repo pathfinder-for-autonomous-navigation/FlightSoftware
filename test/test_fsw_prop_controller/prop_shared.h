@@ -121,20 +121,20 @@ public:
 
     inline void set_schedule(size_t v1, size_t v2, size_t v3, size_t v4, size_t cycles_until_firing)
     {
-        pc->sched_valve1_f->set(v1);
-        pc->sched_valve2_f->set(v2);
-        pc->sched_valve3_f->set(v3);
-        pc->sched_valve4_f->set(v4);
+        pc->sched_valve1_fp->set(v1);
+        pc->sched_valve2_fp->set(v2);
+        pc->sched_valve3_fp->set(v3);
+        pc->sched_valve4_fp->set(v4);
         pc->cycles_until_firing.set(cycles_until_firing);
     }
 
     inline void check_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
                                unsigned int ctrl_cycles_from_now)
     {
-        TEST_ASSERT_EQUAL(v1, pc->sched_valve1_f->get());
-        TEST_ASSERT_EQUAL(v2, pc->sched_valve2_f->get());
-        TEST_ASSERT_EQUAL(v3, pc->sched_valve3_f->get());
-        TEST_ASSERT_EQUAL(v4, pc->sched_valve4_f->get());
+        TEST_ASSERT_EQUAL(v1, pc->sched_valve1_fp->get());
+        TEST_ASSERT_EQUAL(v2, pc->sched_valve2_fp->get());
+        TEST_ASSERT_EQUAL(v3, pc->sched_valve3_fp->get());
+        TEST_ASSERT_EQUAL(v4, pc->sched_valve4_fp->get());
         TEST_ASSERT_EQUAL(pc->cycles_until_firing.get(), ctrl_cycles_from_now);
     }
 
