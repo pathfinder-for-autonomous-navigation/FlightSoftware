@@ -44,13 +44,10 @@ PropController::PropController(StateFieldRegistry &registry)
     PropulsionSystem.setup();
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
-<<<<<<< HEAD
-=======
     add_writable_field(sched_valve1_f);
     add_writable_field(sched_valve2_f);
     add_writable_field(sched_valve3_f);
     add_writable_field(sched_valve4_f);
->>>>>>> origin/master
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
 
