@@ -225,7 +225,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 }
 
 unsigned int OrbitController::impulse_to_time(double impulse) {
-    double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
+    double time = (impulse - valve_time_lin_reg_intercept) / valve_time_lin_reg_slope;
     int time_ms = time * 1000;
     return time_ms;
 }
