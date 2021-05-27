@@ -88,7 +88,7 @@ public:
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
     std::unique_ptr<OrbitController> orbit_controller;
-
+    
     TestFixture() : registry() {
         time_s_fp = registry.create_internal_field<double>("time.s");
         time_valid_fp = registry.create_readable_field<bool>("time.valid");
@@ -107,7 +107,6 @@ public:
         pc = std::make_unique<PropController>(registry);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
-        rel_orbit_state_fp->set(2); // set to estimating... should unit test fully
     }
 
     inline int ctrl_cycles_per_pressurizing_cycle()
