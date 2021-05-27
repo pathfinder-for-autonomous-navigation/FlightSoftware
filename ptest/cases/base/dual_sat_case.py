@@ -55,12 +55,12 @@ class DualSatCase(PTestCase):
         else:
             self.logger.put("[TESTCASE] Follower: Auto-dbtelem INACTIVE")
 
-        if self.flight_controller_leader.scrape_uplink:
+        if self.flight_controller_leader.scrape:
             self.logger.put("[TESTCASE] Leader: Scrape-uplink ACTIVE")
         else:
             self.logger.put("[TESTCASE] Leader: Scrape-uplink INACTIVE")
 
-        if self.flight_controller_follower.scrape_uplink:
+        if self.flight_controller_follower.scrape:
             self.logger.put("[TESTCASE] Follower: Scrape-uplink ACTIVE")
         else:
             self.logger.put("[TESTCASE] Follower: Scrape-uplink INACTIVE")
