@@ -146,10 +146,10 @@ public:
     // Precond: schedule should be valid before calling this
     inline void write_tank2_schedule()
     {
-        PropulsionSystem.set_schedule(sched_valve1_fp->get(),
-                                      sched_valve2_fp->get(),
-                                      sched_valve3_fp->get(),
-                                      sched_valve4_fp->get());
+        PropulsionSystem.set_schedule(sched_valve1_f.get(),
+                                      sched_valve2_f.get(),
+                                      sched_valve3_f.get(),
+                                      sched_valve4_f.get());
     }
 
     // Return True if we are allowed to enter the desired_state

@@ -44,6 +44,13 @@ PropController::PropController(StateFieldRegistry &registry)
     PropulsionSystem.setup();
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
+<<<<<<< HEAD
+=======
+    add_writable_field(sched_valve1_f);
+    add_writable_field(sched_valve2_f);
+    add_writable_field(sched_valve3_f);
+    add_writable_field(sched_valve4_f);
+>>>>>>> origin/master
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
 
@@ -171,10 +178,10 @@ PropState &PropController::get_state(prop_state_t state) const
 
 bool PropController::validate_schedule()
 {
-    return is_valid_schedule(sched_valve1_fp->get(),
-                             sched_valve2_fp->get(),
-                             sched_valve3_fp->get(),
-                             sched_valve4_fp->get(),
+    return is_valid_schedule(sched_valve1_f.get(),
+                             sched_valve2_f.get(),
+                             sched_valve3_f.get(),
+                             sched_valve4_f.get(),
                              cycles_until_firing.get());
 }
 
@@ -671,11 +678,11 @@ void manual_eval(WritableStateField<unsigned int> &sched,
 
 prop_state_t PropState_Manual::evaluate()
 {
-    manual_eval(*(controller->sched_valve1_fp), Tank2, 0);
-    manual_eval(*(controller->sched_valve2_fp), Tank2, 1);
-    manual_eval(*(controller->sched_valve3_fp), Tank2, 2);
-    manual_eval(*(controller->sched_valve4_fp), Tank2, 3);
-    manual_eval(controller->sched_intertank1_f, Tank1, 0);
-    manual_eval(controller->sched_intertank2_f, Tank1, 1);
+    manual_eval(controller->sched_valve1_f, Tank1, 0);
+    manual_eval(controller->sched_valve2_f, Tank1, 1);
+    manual_eval(controller->sched_valve3_f, Tank1, 2);
+    manual_eval(controller->sched_valve4_f, Tank1, 3);
+    manual_eval(controller->sched_intertank1_f, Tank2, 0);
+    manual_eval(controller->sched_intertank2_f, Tank2, 1);
     return this_state;
 }
