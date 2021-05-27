@@ -44,10 +44,6 @@ PropController::PropController(StateFieldRegistry &registry)
     PropulsionSystem.setup();
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
-    add_writable_field(sched_valve1_f);
-    add_writable_field(sched_valve2_f);
-    add_writable_field(sched_valve3_f);
-    add_writable_field(sched_valve4_f);
     add_writable_field(sched_intertank1_f);
     add_writable_field(sched_intertank2_f);
 
@@ -175,10 +171,10 @@ PropState &PropController::get_state(prop_state_t state) const
 
 bool PropController::validate_schedule()
 {
-    return is_valid_schedule(sched_valve1_f.get(),
-                             sched_valve2_f.get(),
-                             sched_valve3_f.get(),
-                             sched_valve4_f.get(),
+    return is_valid_schedule(sched_valve1_fp->get(),
+                             sched_valve2_fp->get(),
+                             sched_valve3_fp->get(),
+                             sched_valve4_fp->get(),
                              cycles_until_firing.get());
 }
 
