@@ -227,6 +227,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 unsigned int OrbitController::impulse_to_time(double impulse) {
     double time = (impulse - valve_time_lin_reg_intercept) / valve_time_lin_reg_slope;
     int time_ms = time * 1000;
+    if (time_ms < 0) { time_ms = 0; }; // if the desired impulse is 0, the lin-regression intercept will cause the time of firing to be <0
     return time_ms;
 }
 

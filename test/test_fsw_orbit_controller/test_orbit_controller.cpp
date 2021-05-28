@@ -133,13 +133,13 @@ void test_task_schedule_valves_helper(lin::Vector3d J_body){
 
         // Find the calculated impulse for each thruster
         unsigned int t1 = tf.sched_valve1_fp->get();   
-        double j1 = (t1) * (0.024119 / 1000) + 7.0092e-05;
+        double j1 = t1 * (0.024119 / 1000) + 7.0092e-05;
         unsigned int t2 = tf.sched_valve2_fp->get();   
-        double j2 = (t2) * (0.024119 / 1000) + 7.0092e-05;
+        double j2 = t2 * (0.024119 / 1000) + 7.0092e-05;
         unsigned int t3 = tf.sched_valve3_fp->get();   
-        double j3 = (t3) * (0.024119 / 1000) + 7.0092e-05;
+        double j3 = t3 * (0.024119 / 1000) + 7.0092e-05;
         unsigned int t4 = tf.sched_valve4_fp->get();   
-        double j4 = (t4) * (0.024119 / 1000) + 7.0092e-05;
+        double j4 = t4 * (0.024119 / 1000) + 7.0092e-05;
         lin::Vector4d impulses = {j1, j2, j3, j4};
 
         // Check that they add up to the desired impulse vector J_ecef
