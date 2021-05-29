@@ -8,9 +8,12 @@ public:
   /**
    * @brief Construct a new Debug Task object
    *
-   * @param registry
+   * @param registry   */
+  DebugTask(StateFieldRegistry &registry);
+
+  /** @brief Closes the debug console.
    */
-  DebugTask(StateFieldRegistry &registry, unsigned int offset);
+  virtual ~DebugTask();
 
   /**
    * @brief Runs the debug task (processes state field commands present in the
@@ -19,7 +22,7 @@ public:
   void execute() override;
 
   /**
-   * @brief Initializes the debug console.
+   * @brief Closes the debug console.
    */
   void init();
 

@@ -44,8 +44,8 @@ class TestFixture {
                 attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
-                orbit_controller = std::make_unique<OrbitController>(registry, 0);
-                prop_controller = std::make_unique<PropController>(registry, 0);
+                orbit_controller = std::make_unique<OrbitController>(registry);
+                prop_controller = std::make_unique<PropController>(registry);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
                 sched_valve2_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve2");
@@ -133,13 +133,13 @@ void test_task_schedule_valves_helper(lin::Vector3d J_body){
 
         // Find the calculated impulse for each thruster
         unsigned int t1 = tf.sched_valve1_fp->get();   
-        double j1 = (t1-7.0092e-05) / (0.024119*1000);
-        unsigned int t2 = tf.orbit_controller->sched_valve2_f.get();
-        double j2 = (t2-7.0092e-05) / (0.024119*1000);
-        unsigned int t3 = tf.orbit_controller->sched_valve3_f.get();
-        double j3 = (t3-7.0092e-05) / (0.024119*1000);
-        unsigned int t4 = tf.orbit_controller->sched_valve4_f.get();
-        double j4 = (t4-7.0092e-05) / (0.024119*1000);
+        double j1 = t1 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t2 = tf.sched_valve2_fp->get();   
+        double j2 = t2 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t3 = tf.sched_valve3_fp->get();   
+        double j3 = t3 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t4 = tf.sched_valve4_fp->get();   
+        double j4 = t4 * (0.024119 / 1000) + 7.0092e-05;
         lin::Vector4d impulses = {j1, j2, j3, j4};
 
         // Check that they add up to the desired impulse vector J_ecef

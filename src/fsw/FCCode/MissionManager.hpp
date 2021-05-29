@@ -1,3 +1,4 @@
+
 #ifndef MISSION_MANAGER_HPP_
 #define MISSION_MANAGER_HPP_
 
@@ -21,7 +22,7 @@ class MissionManager : public TimedControlTask<void>
 #endif
 
 public:
-    MissionManager(StateFieldRegistry &registry, unsigned int offset);
+    MissionManager(StateFieldRegistry &registry);
     void execute() override;
 
     // Constants that drive state transitions.

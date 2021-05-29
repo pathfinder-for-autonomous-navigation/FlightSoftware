@@ -588,24 +588,24 @@
         "adcs_monitor.mag1_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
@@ -626,24 +626,24 @@
         "adcs_monitor.mag2_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
@@ -1807,6 +1807,14 @@
             "type": "unsigned int",
             "writable": false
         },
+        "pan.cc_duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "pan.cc_ms": {
             "bitsize": 32,
             "flow_id": "undefined",
@@ -2129,38 +2137,6 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.sched_valve1": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve2": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve3": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve4": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "prop.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -2451,6 +2427,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.adcs_commander.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.adcs_commander.num_lates": {
             "bitsize": 32,
             "flow_id": 29,
@@ -2465,6 +2449,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.adcs_controller.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.adcs_controller.num_lates": {
@@ -2483,6 +2475,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.adcs_monitor.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.adcs_monitor.num_lates": {
             "bitsize": 32,
             "flow_id": 29,
@@ -2497,6 +2497,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.attitude_controller.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.attitude_controller.num_lates": {
@@ -2515,6 +2523,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.clock_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.clock_ct.num_lates": {
             "bitsize": 32,
             "flow_id": 29,
@@ -2529,6 +2545,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.dcdc_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.dcdc_ct.num_lates": {
@@ -2547,6 +2571,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.debug.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.debug.num_lates": {
             "bitsize": 32,
             "flow_id": 29,
@@ -2561,6 +2593,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.docking_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.docking_ct.num_lates": {
@@ -2579,6 +2619,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.downlink_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.downlink_ct.num_lates": {
             "bitsize": 32,
             "flow_id": 30,
@@ -2593,6 +2641,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.eeprom_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.eeprom_ct.num_lates": {
@@ -2611,6 +2667,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.estimators.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.estimators.num_lates": {
             "bitsize": 32,
             "flow_id": 29,
@@ -2625,6 +2689,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.gomspace_rd.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.gomspace_rd.num_lates": {
@@ -2643,6 +2715,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.mission_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.mission_ct.num_lates": {
             "bitsize": 32,
             "flow_id": 30,
@@ -2657,6 +2737,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.orbit_control_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.orbit_control_ct.num_lates": {
@@ -2675,6 +2763,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.piksi.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.piksi.num_lates": {
             "bitsize": 32,
             "flow_id": 30,
@@ -2689,6 +2785,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.prop.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.prop.num_lates": {
@@ -2707,6 +2811,14 @@
             "type": "float",
             "writable": false
         },
+        "timing.quake.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.quake.num_lates": {
             "bitsize": 32,
             "flow_id": 30,
@@ -2721,6 +2833,14 @@
             "max": 120000.0,
             "min": 0.0,
             "type": "float",
+            "writable": false
+        },
+        "timing.uplink_ct.duration": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "timing.uplink_ct.num_lates": {
@@ -3102,10 +3222,6 @@
             "active": false,
             "fields": [
                 "prop.cycles_until_firing",
-                "prop.sched_valve1",
-                "prop.sched_valve2",
-                "prop.sched_valve3",
-                "prop.sched_valve4",
                 "prop.sched_intertank1",
                 "prop.sched_intertank2"
             ],
