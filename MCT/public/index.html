@@ -14,8 +14,8 @@
     <script>
         //indicates the location of the openmct libraries and assets
         openmct.setAssetPath('openmct');
-        //installs plugins for creation and storage of user objects like layouts (currenlty needs to have CORS enabled - Run MCT/generators/mct_es_config.sh)
-        openmct.install(openmct.plugins.Elasticsearch('http://localhost:9200'))
+        //installs plugins for creation and storage of user objects like layouts in your Local Browser Storage
+        openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         //installs new plugins for viewing telemetry and analyzing telemetry
         openmct.install(openmct.plugins.AutoflowView({
