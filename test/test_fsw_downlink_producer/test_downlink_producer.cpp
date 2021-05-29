@@ -30,7 +30,7 @@ struct TestFixture {
         cycle_count_fp->set(20);
         foo1_fp->set(400);
 
-        downlink_producer = std::make_unique<DownlinkProducer>(registry, 0);
+        downlink_producer = std::make_unique<DownlinkProducer>(registry);
         downlink_producer->init_flows(flow_data);
         snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(

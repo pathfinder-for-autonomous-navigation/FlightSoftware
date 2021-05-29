@@ -1,8 +1,8 @@
 #include "UplinkConsumer.h"
 #include <common/bitstream.h>
 
-UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry, unsigned int offset) :
-    TimedControlTask<void>(_registry, "uplink_ct", offset), Uplink(_registry)
+UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry) :
+    TimedControlTask<void>(_registry, "uplink_ct"), Uplink(_registry)
 {
     radio_mt_packet_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
     radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);

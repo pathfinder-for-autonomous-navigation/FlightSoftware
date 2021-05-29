@@ -14,10 +14,9 @@ class DCDCController : public TimedControlTask<void> {
      * @brief Construct a new DCDC Controller object
      * 
      * @param registry 
-     * @param offset
      * @param dcdc converter 
      */
-    DCDCController(StateFieldRegistry& registry, unsigned int offset,
+    DCDCController(StateFieldRegistry& registry,
         Devices::DCDC &dcdc);
 
     /**

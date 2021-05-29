@@ -2,8 +2,7 @@
 #include <algorithm>
 #include <set>
 
-DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
-    const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
+DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
                                  snapshot_ptr_f("downlink.ptr"),
                                  snapshot_size_bytes_f("downlink.snap_size")
 {

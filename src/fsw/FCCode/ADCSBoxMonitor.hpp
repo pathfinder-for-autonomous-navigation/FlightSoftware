@@ -16,10 +16,9 @@ public:
      * @brief Construct a new ADCSBoxMonitor control task
      * 
      * @param registry input StateField registry
-     * @param offset control task offset
      * @param _adcs the input adcs system
      */
-    ADCSBoxMonitor(StateFieldRegistry &registry, unsigned int offset, Devices::ADCS &_adcs);
+    ADCSBoxMonitor(StateFieldRegistry &registry, Devices::ADCS &_adcs);
 
     /** ADCS Driver. **/
     Devices::ADCS& adcs_system;
