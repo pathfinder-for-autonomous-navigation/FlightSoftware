@@ -14,6 +14,7 @@ fc_fields = [
     "adcs.state",
     "piksi.state",
     "radio.state",
+    "prop.state",
     # Estimator information
     "time.valid",
     "time.gps",
@@ -31,11 +32,19 @@ fc_fields = [
     "adcs_cmd.mtr_cmd",
     "adcs_cmd.rwa_torque_cmd",
     # PSim sensor debugging information
-#    "piksi.time"
-#    "adcs_monitor.ssa_vec",
-#    "adcs_monitor.mag1_vec",
-#    "adcs_monitor.gyr_vec",
-#    "adcs_monitor.ssa_mode",
+    "dcdc.SpikeDock",
+
+    "prop.cycles_until_firing",
+    "orbit.control.valve1",
+    "orbit.control.valve2",
+    "orbit.control.valve3",
+    "orbit.control.valve4",
+    "orbit.control.J_ecef",
+
+    "prop.pressurize_fail.base",
+    "prop.overpressured.base",
+    "prop.tank2_temp_high.base",
+    "prop.tank1_temp_high.base"
 ]
 
 psim_fields_per_satellite = [

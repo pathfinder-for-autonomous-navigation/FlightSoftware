@@ -25,7 +25,7 @@ class PropState_Manual;
 class PropController : public TimedControlTask<void>
 {
 public:
-    PropController(StateFieldRegistry &registry, unsigned int offset);
+    PropController(StateFieldRegistry &registry);
 
     TRACKED_CONSTANT(unsigned int, orbit_ccno, PAN::one_day_ccno*(96)/(24*60));
 
@@ -46,10 +46,10 @@ public:
     WritableStateField<unsigned int> prop_state_f;
 
     WritableStateField<unsigned int> cycles_until_firing;
-    WritableStateField<unsigned int> sched_valve1_f;
-    WritableStateField<unsigned int> sched_valve2_f;
-    WritableStateField<unsigned int> sched_valve3_f;
-    WritableStateField<unsigned int> sched_valve4_f;
+    WritableStateField<unsigned int>* sched_valve1_fp;
+    WritableStateField<unsigned int>* sched_valve2_fp;
+    WritableStateField<unsigned int>* sched_valve3_fp;
+    WritableStateField<unsigned int>* sched_valve4_fp;
 
     WritableStateField<unsigned int> sched_intertank1_f;
     WritableStateField<unsigned int> sched_intertank2_f;
@@ -146,10 +146,10 @@ public:
     // Precond: schedule should be valid before calling this
     inline void write_tank2_schedule()
     {
-        PropulsionSystem.set_schedule(sched_valve1_f.get(),
-                                      sched_valve2_f.get(),
-                                      sched_valve3_f.get(),
-                                      sched_valve4_f.get());
+        PropulsionSystem.set_schedule(sched_valve1_fp->get(),
+                                      sched_valve2_fp->get(),
+                                      sched_valve3_fp->get(),
+                                      sched_valve4_fp->get());
     }
 
     // Return True if we are allowed to enter the desired_state

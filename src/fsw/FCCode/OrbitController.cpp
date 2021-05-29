@@ -6,6 +6,7 @@
 const constexpr double OrbitController::valve_time_lin_reg_slope;
 const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
+
 // Firing nodes
 constexpr double pi = gnc::constant::pi;
 static constexpr std::array<double, 3> firing_nodes_far = {pi/3, pi, -pi/3};
@@ -16,8 +17,9 @@ static constexpr std::array<double, 18> firing_nodes_near = {pi/18, pi/6, pi*(5/
 
 static constexpr auto gain_factor = static_cast<double>(firing_nodes_near.size()) / firing_nodes_far.size();
 
-OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
-    TimedControlTask<void>(r, "orbit_control_ct", offset),
+OrbitController::OrbitController(StateFieldRegistry &r) : 
+    TimedControlTask<void>(r, "orbit_control_ct"),
+
     time_fp(FIND_INTERNAL_FIELD(double, time.s)),
     time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),  
     orbit_valid_fp(FIND_READABLE_FIELD(bool, orbit.valid)),
@@ -223,8 +225,9 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 }
 
 unsigned int OrbitController::impulse_to_time(double impulse) {
-    double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
+    double time = (impulse - valve_time_lin_reg_intercept) / valve_time_lin_reg_slope;
     int time_ms = time * 1000;
+    if (time_ms < 0) { time_ms = 0; }; // if the desired impulse is 0, the lin-regression intercept will cause the time of firing to be <0
     return time_ms;
 }
 

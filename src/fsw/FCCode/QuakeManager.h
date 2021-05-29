@@ -34,7 +34,7 @@
 class QuakeManager : public TimedControlTask<void>
 {
 public:
-   QuakeManager(StateFieldRegistry &registry, unsigned int offset);
+   QuakeManager(StateFieldRegistry &registry);
    
    /**
     * @brief Initializes the MO buffers

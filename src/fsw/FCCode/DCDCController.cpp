@@ -1,8 +1,8 @@
 #include "DCDCController.hpp"
 
-DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset,
+DCDCController::DCDCController(StateFieldRegistry &registry,
     Devices::DCDC &_dcdc)
-    : TimedControlTask<void>(registry, "dcdc_ct", offset), dcdc(_dcdc),
+    : TimedControlTask<void>(registry, "dcdc_ct"), dcdc(_dcdc),
       ADCSMotorDCDC_cmd_f("dcdc.ADCSMotor_cmd", Serializer<bool>()),
       SpikeDockDCDC_cmd_f("dcdc.SpikeDock_cmd", Serializer<bool>()),
       disable_cmd_f("dcdc.disable_cmd", Serializer<bool>()),

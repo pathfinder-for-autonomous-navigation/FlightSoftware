@@ -15,7 +15,7 @@ class ADCSCommander : public TimedControlTask<void> {
      * 
      * @param registry 
      */
-    ADCSCommander(StateFieldRegistry& registry, unsigned int offset);
+    ADCSCommander(StateFieldRegistry& registry);
 
     /**
      * @brief Determine control outputs for the ADCSBoxController
