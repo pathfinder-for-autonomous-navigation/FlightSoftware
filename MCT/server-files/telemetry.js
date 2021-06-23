@@ -21,38 +21,25 @@ var searchURl = 'http://localhost:5000/search-es';
  */
 function Telemetry(configuration) {
 
+  /**
+   * The config file (defaults to mct_secret.json)
+   */
   var FlightSoftware = path.resolve(__dirname, '../..')
   var config_file = FlightSoftware + "/" + configuration
   var config_json = require(config_file);
-  /**
-  * The index of the Elastic Search database
-  * It uses ptest configs currently to get the data necessary to know the imei number
-  */
-  if (config_json.devices.length == 1) {
-    this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    this.singleSat = true
-  }
-  else if (config_json.devices.length > 1) {
-    this.singleSat = false
-    let deviceOneFilled = false
-    let deviceTwoFilled = false
-    if (config_json.devices[0].name.indexOf("Leader") != -1) {
-      this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    else if (config_json.devices[0].name.indexOf("Follower") != -1) {
-      this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    if (config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined) {
-      this.leaderIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
-    else if (config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined) {
-      this.followerIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
 
+  /**
+  * The indexes of the Elastic Search database
+  */
+  try{
+  this.leaderIndex = 'statefield_report_' + config_json.devices.leader.imei
+  this.followerIndex = 'statefield_report_' + config_json.devices.follower.imei
+  this.leader_enabled = config_json.devices.leader.enabled
+  this.follower_enabled = config_json.devices.follower.enabled
+  } catch {
+    console.log("Invalid MCT Configuration File")
   }
-  else {
-    throw "Malformed: There are no devices or radios in this config file"
-  }
+
   //This state function takes in initial values from the state-variables.js file
   this.initialState = variables;
 
@@ -161,6 +148,7 @@ function getCoord(s, num) {
 *   for the state value directly
 **/
 Telemetry.prototype.updateState = async function () {
+  if (this.follower_enabled){
   //follower value updater
   Object.keys(this.follower_state).forEach(async function (id) {
 
@@ -184,9 +172,9 @@ Telemetry.prototype.updateState = async function () {
     }
 
   }, this);
-  //leader value updater
-  if (this.singleSat == false) {
-    Object.keys(this.leader_state).forEach(async function (id) {
+  }
+  if (this.leader_enabled){
+  Object.keys(this.leader_state).forEach(async function (id) {
 
       //if the value for the key of the state entry is an object
       if (typeof (this.leader_state[id]) == 'object') {
@@ -275,9 +263,9 @@ Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite
  *   for the state value directly
  */
 Telemetry.prototype.generateTelemetry = function () {
-  var timestamp = Date.now(), sent = 0;
-  //make two cases one that updates objects and one that directly updates field
-
+    var timestamp = Date.now(), sent = 0;
+    //make two cases one that updates objects and one that directly updates field
+    if(this.follower_enabled){
   //follower telemetry generation
   Object.keys(this.follower_state).forEach(function (id) {
 
@@ -334,7 +322,6 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-
         this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1)
 
         this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2)
@@ -342,8 +329,7 @@ Telemetry.prototype.generateTelemetry = function () {
         this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3)
 
         this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4)
-
-      } 
+      }
       //regular numerical data
       else {
         //create telempoint
@@ -354,14 +340,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
       }
-
-
-      
-
-  }, this);
+    }, this);
+  }
 
   //leader telemetry generation
-  if (this.singleSat == false) {
+  if (this.leader_enabled) {
     Object.keys(this.leader_state).forEach(function (id) {
 
       //recieve current raw data value
