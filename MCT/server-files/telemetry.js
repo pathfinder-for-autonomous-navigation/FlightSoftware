@@ -233,18 +233,25 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
  * @param {*} coord_name the name of the coordinate point
  * @param {*} coord the coordinate location that we want to get from the elasticsearch value
  */
-Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite, coord_name, coord){
+Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite, coord_name, coord, exists){
+
         var timestamp = Date.now(), sent = 0;
         
         substringid = id.substring(satellite.length + 1)
         new_id = satellite + '_' + coord_name + '_' + substringid
         var telempoint = { timestamp: timestamp, id: new_id };
-        //set value follower_
-        telempoint['value'] = getCoord(answer, coord)
+        if (exists){
+          //set value if parent exists in elasticsearch
+          telempoint['value'] = getCoord(answer, coord)
+
+        }else{
+          //set value if parent doesn't exist in elasticsearch
+          telempoint['value'] = "Data not found"
+        }
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         if(this.history[new_id] == undefined){ //makes sure it is not undefined
-        this.history[new_id] = []
+          this.history[new_id] = []
         }
         this.history[new_id].push(telempoint);
 
@@ -305,11 +312,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3, true)
 
       } 
       //check if quaternion
@@ -322,13 +329,13 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4, true)
       }
       //regular numerical data
       else {
@@ -339,6 +346,21 @@ Telemetry.prototype.generateTelemetry = function () {
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
+
+        //handle data missing from elasticsearch
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3, false)
       }
     }, this);
   }
@@ -381,11 +403,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3, true)
 
       } 
       //check if quaternion
@@ -399,13 +421,13 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4, true)
 
       } 
       //regular numerical data
@@ -417,6 +439,22 @@ Telemetry.prototype.generateTelemetry = function () {
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
+
+
+        //handle data missing from elasticsearch
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4, false)
       }
 
     }, this);
