@@ -347,6 +347,7 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
+        //handle data missing from elasticsearch
         this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, false)
 
         this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2, false)
@@ -439,11 +440,13 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, false)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2, false)
+        //handle data missing from elasticsearch
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, false)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3, false)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3, false)
 
         this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, false)
 
