@@ -26,15 +26,24 @@
 
 This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates.
 
-To configure the code base to run MCT, run **```./MCT/generators/mct_setup.sh```** from the FlightSoftware directory
+The following steps guide you through starting up PAN Mission Control.
 
-The openMCT web server is run using the **```npm start```** command in terminal after navigating to the /MCT directory and installing the node.js modules with **```npm install```**.
+Step 2 needs to be completed any time the package files are updated. 
+Step 3 needs to be completed any time the mct code-base has been updated.
 
-Running **```npm start```** default to using the ci.json configuration file. you can specify the configuration file that you want MCT to use by appending an argument containing the path relative to FlightSoftware root directory.
+1. navigate to the /MCT directory
+
+2. install the node.js modules with **```npm install```**
+
+3. configure the MCT code-base using **```npm run setup```**
+
+4. start the PAN Mission Control server using **```npm start```**
+
+Running **```npm start```** defaults to using server-files/mct_secret.json configuration file. you can specify the configuration file that you want MCT to use by appending an argument containing the path relative to FlightSoftware root directory.
 
 For example:
 
-**```npm start ptest/configs/dual_usb.json```** would start MCT using the configuration file dual_usb.json. Make sure the config file has at least 1 device or 1 radio and that it is a valid ptest config file.
+**```npm start MCT/server-files/mct_single.json```** would start MCT using the configuration file mct_single.json. Make sure the config file is a valid mct config file as defined in ```/MCT/server-files/mct_config_schema.json``` .
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
 

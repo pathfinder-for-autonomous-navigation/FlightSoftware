@@ -21,38 +21,25 @@ var searchURl = 'http://localhost:5000/search-es';
  */
 function Telemetry(configuration) {
 
+  /**
+   * The config file (defaults to mct_secret.json)
+   */
   var FlightSoftware = path.resolve(__dirname, '../..')
   var config_file = FlightSoftware + "/" + configuration
   var config_json = require(config_file);
-  /**
-  * The index of the Elastic Search database
-  * It uses ptest configs currently to get the data necessary to know the imei number
-  */
-  if (config_json.devices.length == 1) {
-    this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    this.singleSat = true
-  }
-  else if (config_json.devices.length > 1) {
-    this.singleSat = false
-    let deviceOneFilled = false
-    let deviceTwoFilled = false
-    if (config_json.devices[0].name.indexOf("Leader") != -1) {
-      this.leaderIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    else if (config_json.devices[0].name.indexOf("Follower") != -1) {
-      this.followerIndex = 'statefield_report_' + config_json.devices[0].imei
-    }
-    if (config_json.devices[1].name.indexOf("Leader") != -1 && this.leaderIndex == undefined) {
-      this.leaderIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
-    else if (config_json.devices[1].name.indexOf("Follower") != -1 && this.followerIndex == undefined) {
-      this.followerIndex = 'statefield_report_' + config_json.devices[1].imei
-    }
 
+  /**
+  * The indexes of the Elastic Search database
+  */
+  try{
+  this.leaderIndex = 'statefield_report_' + config_json.devices.leader.imei
+  this.followerIndex = 'statefield_report_' + config_json.devices.follower.imei
+  this.leader_enabled = config_json.devices.leader.enabled
+  this.follower_enabled = config_json.devices.follower.enabled
+  } catch {
+    console.log("Invalid MCT Configuration File")
   }
-  else {
-    throw "Malformed: There are no devices or radios in this config file"
-  }
+
   //This state function takes in initial values from the state-variables.js file
   this.initialState = variables;
 
@@ -161,6 +148,7 @@ function getCoord(s, num) {
 *   for the state value directly
 **/
 Telemetry.prototype.updateState = async function () {
+  if (this.follower_enabled){
   //follower value updater
   Object.keys(this.follower_state).forEach(async function (id) {
 
@@ -184,9 +172,9 @@ Telemetry.prototype.updateState = async function () {
     }
 
   }, this);
-  //leader value updater
-  if (this.singleSat == false) {
-    Object.keys(this.leader_state).forEach(async function (id) {
+  }
+  if (this.leader_enabled){
+  Object.keys(this.leader_state).forEach(async function (id) {
 
       //if the value for the key of the state entry is an object
       if (typeof (this.leader_state[id]) == 'object') {
@@ -245,18 +233,25 @@ Telemetry.prototype.getValue = async function (myUrl, i, f) {
  * @param {*} coord_name the name of the coordinate point
  * @param {*} coord the coordinate location that we want to get from the elasticsearch value
  */
-Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite, coord_name, coord){
+Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite, coord_name, coord, exists){
+
         var timestamp = Date.now(), sent = 0;
         
         substringid = id.substring(satellite.length + 1)
         new_id = satellite + '_' + coord_name + '_' + substringid
         var telempoint = { timestamp: timestamp, id: new_id };
-        //set value follower_
-        telempoint['value'] = getCoord(answer, coord)
+        if (exists){
+          //set value if parent exists in elasticsearch
+          telempoint['value'] = getCoord(answer, coord)
+
+        }else{
+          //set value if parent doesn't exist in elasticsearch
+          telempoint['value'] = "Data not found"
+        }
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         if(this.history[new_id] == undefined){ //makes sure it is not undefined
-        this.history[new_id] = []
+          this.history[new_id] = []
         }
         this.history[new_id].push(telempoint);
 
@@ -275,9 +270,9 @@ Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite
  *   for the state value directly
  */
 Telemetry.prototype.generateTelemetry = function () {
-  var timestamp = Date.now(), sent = 0;
-  //make two cases one that updates objects and one that directly updates field
-
+    var timestamp = Date.now(), sent = 0;
+    //make two cases one that updates objects and one that directly updates field
+    if(this.follower_enabled){
   //follower telemetry generation
   Object.keys(this.follower_state).forEach(function (id) {
 
@@ -317,11 +312,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3, true)
 
       } 
       //check if quaternion
@@ -334,16 +329,14 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2)
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3)
-
-        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4)
-
-      } 
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4, true)
+      }
       //regular numerical data
       else {
         //create telempoint
@@ -353,15 +346,27 @@ Telemetry.prototype.generateTelemetry = function () {
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
+
+        //handle data missing from elasticsearch
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'b', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'c', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'd', 4, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'y', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'follower', 'z', 3, false)
       }
-
-
-      
-
-  }, this);
+    }, this);
+  }
 
   //leader telemetry generation
-  if (this.singleSat == false) {
+  if (this.leader_enabled) {
     Object.keys(this.leader_state).forEach(function (id) {
 
       //recieve current raw data value
@@ -398,11 +403,11 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3, true)
 
       } 
       //check if quaternion
@@ -416,13 +421,13 @@ Telemetry.prototype.generateTelemetry = function () {
         this.notify(telempoint);
         this.history[id].push(telempoint);
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3, true)
 
-        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4)
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4, true)
 
       } 
       //regular numerical data
@@ -434,6 +439,22 @@ Telemetry.prototype.generateTelemetry = function () {
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
         this.history[id].push(telempoint);
+
+
+        //handle data missing from elasticsearch
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'y', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'z', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'b', 2, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'c', 3, false)
+
+        this.generateTelemetryCoordinate(id, answer, 'leader', 'd', 4, false)
       }
 
     }, this);
