@@ -1,0 +1,3 @@
+*.json
+mct_secret.json
+!mct_config_schema.json

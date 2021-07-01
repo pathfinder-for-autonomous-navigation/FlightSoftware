@@ -588,24 +588,24 @@
         "adcs_monitor.mag1_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag1_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.004999999888241,
-            "min": -0.004999999888241,
+            "max": 0.004915200173855,
+            "min": -0.004915200173855,
             "type": "float",
             "writable": false
         },
@@ -626,24 +626,24 @@
         "adcs_monitor.mag2_vec.x": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.y": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
         "adcs_monitor.mag2_vec.z": {
             "bitsize": 16,
             "flow_id": 19,
-            "max": 0.003199999919161,
-            "min": -0.003199999919161,
+            "max": 0.001599999959581,
+            "min": -0.001599999959581,
             "type": "float",
             "writable": false
         },
@@ -2137,38 +2137,6 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.sched_valve1": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve2": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve3": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
-        "prop.sched_valve4": {
-            "bitsize": 10,
-            "flow_id": 27,
-            "max": 999,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "prop.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -3254,10 +3222,6 @@
             "active": false,
             "fields": [
                 "prop.cycles_until_firing",
-                "prop.sched_valve1",
-                "prop.sched_valve2",
-                "prop.sched_valve3",
-                "prop.sched_valve4",
                 "prop.sched_intertank1",
                 "prop.sched_intertank2"
             ],

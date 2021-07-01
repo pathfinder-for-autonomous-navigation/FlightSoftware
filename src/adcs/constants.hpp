@@ -122,14 +122,14 @@ TRACKED_CONSTANT_SC(float, min_rd_omega, -max_rd_omega);
 
 /** Maximum magnetic field reading in Tesla that can be read from the first
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, max_mag1_rd_mag, 0.0050f); // TODO : Check this
+TRACKED_CONSTANT_SC(float, max_mag1_rd_mag, 0.0049152f);
 /** Minimum magnetic field reading in Tesla that can be read from the first
  *  magnetometer. */
 TRACKED_CONSTANT_SC(float, min_mag1_rd_mag, -max_mag1_rd_mag);
 
 /** Maximum magnetic field reading in Tesla that can be read from the second
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0032f); // TODO : Check this
+TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0016f);
 /** Minimum magnetic field reading in Tesla that can be read from the second
  *  magnetometer. */
 TRACKED_CONSTANT_SC(float, min_mag2_rd_mag, -max_mag2_rd_mag);
