@@ -179,78 +179,14 @@ void test_task_schedule_valves(){
 
 }
 
-// Test that the firings are scheduled only in follower/follower close approach
-void test_task_execute_firings(){
-        TestFixture tf;
-        tf.orbit_controller->init();
-
-        // Orbit Controller inputs
-        tf.time_valid_fp->set(true);
-        tf.orbit_valid_fp->set(true);
-        tf.rel_orbit_state_fp->set(true);
-        tf.attitude_estimator_valid_fp->set(true);
-
-        tf.time_s_fp->set(10);
-        tf.pos_fp->set({1349,0,0});
-        tf.vel_fp->set({0,100,0});
-        tf.baseline_pos_fp->set({67678960,10879000,879778900});
-        tf.baseline_vel_fp->set({0,0,0});
-        tf.q_body_eci_fp->set({0,0,0,1});
-
-        tf.prop_state_fp->set(6); 
-
-        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
-
-        tf.orbit_controller->execute();
-
-        TEST_ASSERT_NOT_EQUAL(tf.sched_valve1_fp->get() + tf.sched_valve2_fp->get() + tf.sched_valve3_fp->get() + tf.sched_valve4_fp->get(), 0);
-
-}
-
-void test_task_dont_execute_firings(){
-        TestFixture tf;
-        tf.orbit_controller->init();
-
-        // Orbit Controller inputs
-        tf.time_valid_fp->set(true);
-        tf.orbit_valid_fp->set(true);
-        tf.rel_orbit_state_fp->set(true);
-        tf.attitude_estimator_valid_fp->set(true);
-
-        tf.time_s_fp->set(10);
-        tf.pos_fp->set({1,0,0});
-        tf.vel_fp->set({0,1,0});
-        tf.baseline_pos_fp->set({0,1,0});
-        tf.baseline_vel_fp->set({-1,0,0});
-        tf.q_body_eci_fp->set({1,0,0,0});
-
-        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
-
-        tf.pan_state_fp->set(1);
-
-        tf.orbit_controller->execute();
-
-        TEST_ASSERT_EQUAL(tf.sched_valve1_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve2_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve3_fp->get(), 0);
-        TEST_ASSERT_EQUAL(tf.sched_valve4_fp->get(), 0);
-}
 
 int test_control_task()
 {
         UNITY_BEGIN();
-        // RUN_TEST(test_task_initialization);
-        // RUN_TEST(test_task_time_till_node);
-        // RUN_TEST(test_task_calculate_impulse);
-        // RUN_TEST(test_task_schedule_valves);
-        RUN_TEST(test_task_execute_firings);
-        RUN_TEST(test_task_dont_execute_firings);
+        RUN_TEST(test_task_initialization);
+        RUN_TEST(test_task_time_till_node);
+        RUN_TEST(test_task_calculate_impulse);
+        RUN_TEST(test_task_schedule_valves);
         return UNITY_END();
 }
 

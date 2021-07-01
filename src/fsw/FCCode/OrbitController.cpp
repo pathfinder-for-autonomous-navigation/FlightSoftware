@@ -44,7 +44,6 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     add_writable_field(sched_valve4_f);
     add_writable_field(J_ecef_f);
     add_writable_field(alpha_f);
-    mission_state_fp = FIND_WRITABLE_FIELD(unsigned char, pan.state);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
@@ -61,6 +60,7 @@ void OrbitController::init() {
     max_pressurizing_cycles_fp = FIND_WRITABLE_FIELD(unsigned int, prop.max_pressurizing_cycles);
     ctrl_cycles_per_filling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_filling);
     ctrl_cycles_per_cooling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_cooling);
+    mission_state_fp = FIND_WRITABLE_FIELD(unsigned char, pan.state);
 }
 
 void OrbitController::execute() {
