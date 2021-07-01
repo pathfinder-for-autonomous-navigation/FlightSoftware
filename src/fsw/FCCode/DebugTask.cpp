@@ -20,7 +20,7 @@ void DebugTask::execute() {
 #ifndef FLIGHT
   start_cycle_f.set(false);
   if(auto_cycle_f.get()){
-    process_commands(_registery
+    process_commands(_registry
 #ifdef DESKTOP
       , false
 #endif
