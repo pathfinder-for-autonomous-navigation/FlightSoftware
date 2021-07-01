@@ -82,6 +82,7 @@ public:
     std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_vel_fp;
     std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
+    std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
 
     StateFieldRegistryMock registry;
 
@@ -100,6 +101,7 @@ public:
         baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_vel", 0, 1, 1);
         attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
         q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
+        pan_state_fp = registry.create_writable_field<unsigned char>("pan.state");
 
         cc = 0;
         Fault::cc = &cc;

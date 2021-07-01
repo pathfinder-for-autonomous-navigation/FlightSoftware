@@ -9,6 +9,7 @@
 #include "TimedControlTask.hpp"
 #include <fsw/FCCode/prop_state_t.enum>
 #include <common/constant_tracker.hpp>
+#include "mission_state_t.enum"
 
 class OrbitController : public TimedControlTask<void>
 {
@@ -81,6 +82,8 @@ public:
     const ReadableStateField<lin::Vector3d>* const vel_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_pos_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_vel_fp;
+
+    WritableStateField<unsigned char>* mission_state_fp;
 
     // Converts from ECI to body frame
     ReadableStateField<bool> const *const attitude_estimator_valid_fp;
