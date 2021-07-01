@@ -5,7 +5,6 @@
 
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/PropController.hpp>
-#include <iostream>
 
 class TestFixture {
     public:
@@ -178,7 +177,6 @@ void test_task_schedule_valves(){
         test_task_schedule_valves_helper({-27,-8,-50});
 
 }
-
 
 int test_control_task()
 {
