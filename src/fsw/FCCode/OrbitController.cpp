@@ -3,15 +3,8 @@
 #include <fsw/FCCode/Estimators/rel_orbit_state_t.enum>
 #include <fsw/FCCode/Estimators/RelativeOrbitEstimator.hpp>
 
-// Variables which are set to either near or far-field values depending on mission state
-double valve_time_lin_reg_slope;
-double valve_time_lin_reg_intercept;
-
-const constexpr double OrbitController::valve_time_lin_reg_slope_near;
-const constexpr double OrbitController::valve_time_lin_reg_intercept_near;
-const constexpr double OrbitController::valve_time_lin_reg_slope_far;
-const constexpr double OrbitController::valve_time_lin_reg_intercept_far;
-
+const constexpr double OrbitController::valve_time_lin_reg_slope;
+const constexpr double OrbitController::valve_time_lin_reg_intercept;
 
 
 // Firing nodes
@@ -59,8 +52,6 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     alpha_f.set(0.4);
     dr_smoothed = lin::nans<lin::Vector3d>();
     dv_smoothed = lin::nans<lin::Vector3d>();
-    valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
-    valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
 }
 
 void OrbitController::init() {
@@ -168,14 +159,6 @@ void OrbitController::execute() {
         lin::Vector3d J_body;
         gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
-        // Setting linear regression parameters depending on farfield or nearfield
-        valve_time_lin_reg_slope = valve_time_lin_reg_slope_far;
-        valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_far;
-        if (rel_orbit_valid_fp->get()==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
-         valve_time_lin_reg_slope = valve_time_lin_reg_slope_near;
-         valve_time_lin_reg_intercept = valve_time_lin_reg_intercept_near;
-        }
-
         // Communicate desired impulse to the prop controller.
         schedule_valves(J_body);
 
@@ -242,8 +225,9 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
 }
 
 unsigned int OrbitController::impulse_to_time(double impulse) {
-    double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
+    double time = (impulse - valve_time_lin_reg_intercept) / valve_time_lin_reg_slope;
     int time_ms = time * 1000;
+    if (time_ms < 0) { time_ms = 0; }; // if the desired impulse is 0, the lin-regression intercept will cause the time of firing to be <0
     return time_ms;
 }
 

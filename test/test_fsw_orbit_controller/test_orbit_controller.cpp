@@ -38,7 +38,7 @@ class TestFixture {
                 orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
                 pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 1, 1);
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 1, 1);
-                rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 2);
+                rel_orbit_state_fp = registry.create_readable_field<unsigned char>("rel_orbit.state", 3);
                 baseline_pos_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_pos", 0, 1, 1);
                 baseline_vel_fp = registry.create_readable_lin_vector_field<double>("rel_orbit.rel_vel", 0, 1, 1);
                 attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
@@ -117,7 +117,6 @@ void test_task_calculate_impulse(){
 
 void test_task_schedule_valves_helper(lin::Vector3d J_body){
         TestFixture tf;
-        tf.rel_orbit_state_fp->set(1);
 
         tf.orbit_controller->schedule_valves(J_body);
 
@@ -134,13 +133,13 @@ void test_task_schedule_valves_helper(lin::Vector3d J_body){
 
         // Find the calculated impulse for each thruster
         unsigned int t1 = tf.sched_valve1_fp->get();   
-        double j1 = (t1-7.0092e-05) / (0.024119*1000);
-        unsigned int t2 = tf.sched_valve2_fp->get();
-        double j2 = (t2-7.0092e-05) / (0.024119*1000);
-        unsigned int t3 = tf.sched_valve3_fp->get();
-        double j3 = (t3-7.0092e-05) / (0.024119*1000);
-        unsigned int t4 = tf.sched_valve4_fp->get();
-        double j4 = (t4-7.0092e-05) / (0.024119*1000);
+        double j1 = t1 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t2 = tf.sched_valve2_fp->get();   
+        double j2 = t2 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t3 = tf.sched_valve3_fp->get();   
+        double j3 = t3 * (0.024119 / 1000) + 7.0092e-05;
+        unsigned int t4 = tf.sched_valve4_fp->get();   
+        double j4 = t4 * (0.024119 / 1000) + 7.0092e-05;
         lin::Vector4d impulses = {j1, j2, j3, j4};
 
         // Check that they add up to the desired impulse vector J_ecef

@@ -31,8 +31,7 @@ public:
 
     TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
-    TRACKED_CONSTANT(float, threshold_firing_pressure_far_ic, 25.0f);
-    TRACKED_CONSTANT(float, threshold_firing_pressure_near_ic, 15.0f);
+    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
     TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
     TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
 
@@ -47,9 +46,6 @@ public:
     WritableStateField<unsigned int> prop_state_f;
 
     WritableStateField<unsigned int> cycles_until_firing;
-
-    const ReadableStateField<unsigned char> *const rel_orbit_valid_fp;
-
     WritableStateField<unsigned int>* sched_valve1_fp;
     WritableStateField<unsigned int>* sched_valve2_fp;
     WritableStateField<unsigned int>* sched_valve3_fp;
@@ -68,8 +64,6 @@ public:
 
     WritableStateField<unsigned int> max_pressurizing_cycles;
     WritableStateField<float> threshold_firing_pressure;
-    WritableStateField<float> threshold_firing_pressure_far;
-    WritableStateField<float> threshold_firing_pressure_near;
     WritableStateField<unsigned int> ctrl_cycles_per_filling_period;
     WritableStateField<unsigned int> ctrl_cycles_per_cooling_period;
     WritableStateField<unsigned int> tank1_valve;
