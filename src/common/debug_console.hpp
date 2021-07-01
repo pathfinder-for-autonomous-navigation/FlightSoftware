@@ -80,7 +80,11 @@ class debug_console {
      * @brief Reads in from the serial buffer to process incoming commands from a
      * computer to read/write to state fields.
      */
+#ifdef DESKTOP
+    static void process_commands(const StateFieldRegistry &registry, bool blocking);
+#else
     static void process_commands(const StateFieldRegistry &registry);
+#endif
 
     /**
      * @brief Helper method to write state fields to the console. State fields might
