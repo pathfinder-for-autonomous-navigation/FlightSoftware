@@ -8,10 +8,11 @@
 #include <cstdint>
 
 #ifdef DESKTOP
-    #include <concurrentqueue.h>
-
     #include <chrono>
+    #include <condition_variable>
+    #include <deque>
     #include <iostream>
+    #include <mutex>
     #include <thread>
 #else
     #include <Arduino.h>
@@ -68,10 +69,18 @@ static std::thread reader_thread;
  */
 static volatile bool reader_thread_is_running = false;
 
-/** @brief Consumer producer queue facilitating communication between the main
+/** @brief Producer consumer queue facilitating communication between the main
  *         thread and reader thread.
  */
-static moodycamel::ConcurrentQueue<std::string> unprocessed_inputs;
+static std::deque<std::string> input_queue;
+
+/** @brief Mutex for the producer consumer queue.
+ */
+static std::mutex input_queue_mutex;
+
+/** @brief Condition variable for waiting until the queue isn't empty.
+ */
+static std::condition_variable input_queue_is_not_empty;
 #endif
 
 unsigned int debug_console::_get_elapsed_time() {
@@ -139,7 +148,10 @@ void debug_console::open() {
         std::string input;
         while (reader_thread_is_running) {
             std::getline(std::cin, input);
-            unprocessed_inputs.enqueue(input);
+
+            std::unique_lock<std::mutex> lock{input_queue_mutex};
+            input_queue.push_back(input);
+            input_queue_is_not_empty.notify_all();
         }
     });
 #else
@@ -213,14 +225,31 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
 #endif
 }
 
+#ifdef DESKTOP
+void debug_console::process_commands(const StateFieldRegistry& registry, bool blocking) {
+#else
 void debug_console::process_commands(const StateFieldRegistry& registry) {
+#endif
     TRACKED_CONSTANT_C(size_t, SERIAL_BUF_SIZE, 512);
     char buf[SERIAL_BUF_SIZE] = {0};
 
 #ifdef DESKTOP
     std::string input;
-    bool found_input = unprocessed_inputs.try_dequeue(input);
-    if (!found_input) return;
+    {
+        std::unique_lock<std::mutex> lock{input_queue_mutex};
+
+        // If requested, block until a new packet has arrived
+        if (blocking)
+            while (!input_queue.size())
+                input_queue_is_not_empty.wait(lock);
+
+        // Only check if a packet is there otherwise return
+        else if (input_queue.size() == 0)
+            return;
+
+        input = input_queue[0];
+        input_queue.pop_front();
+    }
     input.copy(buf, sizeof(buf));
 #else
     char lastchar = '?';
