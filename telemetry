@@ -1212,7 +1212,7 @@
         "docking_timeout_limit": {
             "bitsize": 6,
             "flow_id": 33,
-            "max": 1440000,
+            "max": 1016470,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1932,9 +1932,9 @@
             "writable": false
         },
         "piksi_fh.cdpgs_delay_max_wait": {
-            "bitsize": 20,
+            "bitsize": 19,
             "flow_id": 41,
-            "max": 720000,
+            "max": 508235,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -1978,9 +1978,9 @@
             "writable": true
         },
         "piksi_fh.no_cdpgs_max_wait": {
-            "bitsize": 20,
+            "bitsize": 19,
             "flow_id": 41,
-            "max": 720000,
+            "max": 508235,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2028,7 +2028,7 @@
         "prop.cycles_until_firing": {
             "bitsize": 16,
             "flow_id": 27,
-            "max": 48000,
+            "max": 33882,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2280,17 +2280,17 @@
             "writable": false
         },
         "radio.max_transceive": {
-            "bitsize": 20,
+            "bitsize": 19,
             "flow_id": 40,
-            "max": 720000,
+            "max": 508235,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
         "radio.max_wait": {
-            "bitsize": 20,
+            "bitsize": 19,
             "flow_id": 40,
-            "max": 720000,
+            "max": 508235,
             "min": 0,
             "type": "unsigned int",
             "writable": true
@@ -2422,7 +2422,7 @@
         "timing.adcs_commander.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2446,7 +2446,7 @@
         "timing.adcs_controller.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2470,7 +2470,7 @@
         "timing.adcs_monitor.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2494,7 +2494,7 @@
         "timing.attitude_controller.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2518,7 +2518,7 @@
         "timing.clock_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2542,7 +2542,7 @@
         "timing.dcdc_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2566,7 +2566,7 @@
         "timing.debug.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2590,7 +2590,7 @@
         "timing.docking_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2614,7 +2614,7 @@
         "timing.downlink_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2638,7 +2638,7 @@
         "timing.eeprom_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2662,7 +2662,7 @@
         "timing.estimators.avg_wait": {
             "bitsize": 18,
             "flow_id": 29,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2686,7 +2686,7 @@
         "timing.gomspace_rd.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2710,7 +2710,7 @@
         "timing.mission_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2734,7 +2734,7 @@
         "timing.orbit_control_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": "undefined",
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2758,7 +2758,7 @@
         "timing.piksi.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2782,7 +2782,7 @@
         "timing.prop.avg_wait": {
             "bitsize": 18,
             "flow_id": "undefined",
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2806,7 +2806,7 @@
         "timing.quake.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
@@ -2830,7 +2830,7 @@
         "timing.uplink_ct.avg_wait": {
             "bitsize": 18,
             "flow_id": 30,
-            "max": 120000.0,
+            "max": 170000.0,
             "min": 0.0,
             "type": "float",
             "writable": false
