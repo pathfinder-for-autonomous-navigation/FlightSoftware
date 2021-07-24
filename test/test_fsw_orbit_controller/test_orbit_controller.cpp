@@ -23,7 +23,13 @@ class TestFixture {
         std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
 
         std::unique_ptr<OrbitController> orbit_controller;
-        std::unique_ptr<PropController> prop_controller;
+
+        std::shared_ptr<WritableStateField<unsigned char>> pan_state_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> prop_cycles_until_firing_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> max_pressurizing_cycles_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> ctrl_cycles_per_filling_period_fp;
+        std::shared_ptr<WritableStateField<unsigned int>> ctrl_cycles_per_cooling_period_fp;
 
         // Outputs of orbit controller
         WritableStateField<unsigned int>* sched_valve1_fp;
@@ -33,6 +39,17 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
+                // for scheduling valves
+                pan_state_fp = registry.create_writable_field<unsigned char>("pan.state", 0, 12, 4);
+                pan_state_fp->set(4); // force set to something that allows firings
+
+                // Prop Controller
+                prop_state_fp = registry.create_writable_field<unsigned int>("prop.state", 0, 9, 4);
+                prop_cycles_until_firing_fp = registry.create_writable_field<unsigned int>("prop.cycles_until_firing", 0, 48000, 16);
+                max_pressurizing_cycles_fp = registry.create_writable_field<unsigned int>("prop.max_pressurizing_cycles", 0, 50, 6);
+                ctrl_cycles_per_filling_period_fp = registry.create_writable_field<unsigned int>("prop.ctrl_cycles_per_filling", 0, 25, 5);
+                ctrl_cycles_per_cooling_period_fp = registry.create_writable_field<unsigned int>("prop.ctrl_cycles_per_cooling", 0, 100, 7);
+
                 time_valid_fp = registry.create_readable_field<bool>("time.valid");
                 time_s_fp = registry.create_internal_field<double>("time.s");
                 orbit_valid_fp = registry.create_readable_field<bool>("orbit.valid");
@@ -45,7 +62,6 @@ class TestFixture {
                 q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
                 orbit_controller = std::make_unique<OrbitController>(registry);
-                prop_controller = std::make_unique<PropController>(registry);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
                 sched_valve2_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve2");
