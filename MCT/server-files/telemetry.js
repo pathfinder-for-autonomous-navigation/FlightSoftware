@@ -16,6 +16,8 @@ var path = require('path');
  */
 var searchURl = 'http://localhost:5000/search-es';
 
+var timeSearchURL = 'http://localhost:5000/time-search-es'
+
 /**
  *  constructor initializing and then calling for the generation and updating of all telemetry points from all subsytems and domains
  */
@@ -72,21 +74,8 @@ function Telemetry(configuration) {
     }
   }, this);
 
-  //all of the historical telemetry data
-  this.history = {};
-
   //the listeners for the real time telemetry
   this.listeners = [];
-
-  //adds all the initial follower values to history
-  Object.entries(this.follower_state).forEach(function ([k, v]) {
-    this.history[k] = [];
-  }, this);
-
-  //adds all the initial leader values to history
-  Object.entries(this.leader_state).forEach(function ([k, v]) {
-    this.history[k] = [];
-  }, this);
 
 
   //updates the states, generates the realtime listers/notifications and historical telemetry ever 1 second.
@@ -99,12 +88,13 @@ function Telemetry(configuration) {
 
 };
 
+
 /**
  * 
  * @param {*} s a string
  * @returns the number of commas in string [s]
  */
-function numberCommas(s) {
+ function numberCommas(s) {
   if (typeof s == "string") {
     return s.split(",").length - 1
   }
@@ -138,6 +128,88 @@ function getCoord(s, num) {
   }
 }
 
+Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
+  let new_id = ''
+  let receiverIndex = ''
+  if(id.startsWith("follower_")){
+    new_id = id.substring(9, id.length)
+    receiverIndex = this.followerIndex
+
+  }
+  else if(id.includes("leader_")){
+    new_id = id.substring(7, id.length)
+    receiverIndex = this.leaderIndex
+  }
+
+  let commas = -1
+  let position = -1
+
+  if(new_id.startsWith("a_")){
+    commas = 4
+    position = 1
+    new_id = new_id.substring(2, new_id.length)
+  } 
+  else if(new_id.startsWith("b_")){
+    commas = 4
+    position = 2
+    new_id = new_id.substring(2, new_id.length)
+  }
+  else if(new_id.startsWith("c_")){
+    commas = 4
+    position = 3
+    new_id = new_id.substring(2, new_id.length)
+  }
+  else if(new_id.startsWith("d_")){
+    commas = 4
+    position = 4
+    new_id = new_id.substring(2, new_id.length)
+  }
+  else if(new_id.startsWith("x_")){
+    commas = 3
+    position = 1
+    new_id = new_id.substring(2, new_id.length)
+  }
+  else if(new_id.startsWith("y_")){
+    commas = 3
+    position = 2
+    new_id = new_id.substring(2, new_id.length)
+  }
+  else if(new_id.startsWith("z_")){
+    commas = 3
+    position = 3
+    new_id = new_id.substring(2, new_id.length)
+  }
+  let valueArray = await this.getValue(timeSearchURL, {
+    index: receiverIndex, 
+    field: new_id, 
+    start: (new Date(start)).toISOString().split(':').join('%3A'), 
+    end: (new Date(end)).toISOString().split(':').join('%3A')
+  })
+  valueArray = JSON.parse(valueArray)
+  let processedArray = valueArray.map( point =>{
+    let id_val = point['value']
+    if (id_val == 'true') {
+      id_val = 1
+    }
+    else if (id_val == 'false'){
+      id_val = 0
+    }
+    if (numberCommas(id_val) == commas){
+      id_val = getCoord(id_val, position);
+    }
+
+    let new_timestamp = Date.parse(point['timestamp'])
+
+    return {timestamp: new_timestamp, id: id, value: id_val}
+  });
+  return processedArray
+
+
+};
+
+
+
+
 /**
 *   Updates the state fields with the new values in the Elastic Search database.<br>
 *
@@ -158,7 +230,7 @@ Telemetry.prototype.updateState = async function () {
       Object.keys(this.follower_state[id]).forEach(async function (subId) {
         new_id = id.substr(id.indexOf('_') + 1);
         //send a request to Elastic Search for the field
-        let res = await this.getValue(searchURl, this.followerIndex, new_id + '.' + subId);
+        let res = await this.getValue(searchURl, {index: this.followerIndex, field: new_id + '.' + subId});
         (this.follower_state[id])[subId] = res;//update state
       }, this)
 
@@ -167,7 +239,7 @@ Telemetry.prototype.updateState = async function () {
     else {
       new_id = id.substr(id.indexOf('_') + 1);
       //send a request to Elastic Search for the field
-      let res = await this.getValue(searchURl, this.followerIndex, new_id);
+      let res = await this.getValue(searchURl, {index: this.followerIndex, field: new_id});
       this.follower_state[id] = res;//update state
     }
 
@@ -182,7 +254,7 @@ Telemetry.prototype.updateState = async function () {
         Object.keys(this.leader_state[id]).forEach(async function (subId) {
           new_id = id.substr(id.indexOf('_') + 1);
           //send a request to Elastic Search for the field
-          let res = await this.getValue(searchURl, this.leaderIndex, new_id + '.' + subId);
+          let res = await this.getValue(searchURl, {index: this.leaderIndex, field: new_id + '.' + subId});
           (this.leader_state[id])[subId] = res;//update state
         }, this)
 
@@ -191,7 +263,7 @@ Telemetry.prototype.updateState = async function () {
       else {
         new_id = id.substr(id.indexOf('_') + 1);
         //send a request to Elastic Search for the field 
-        let res = await this.getValue(searchURl, this.leaderIndex, new_id);
+        let res = await this.getValue(searchURl, {index: this.leaderIndex, field: new_id});
         this.leader_state[id] = res;//update state
       }
 
@@ -208,21 +280,20 @@ Telemetry.prototype.updateState = async function () {
  * @param {*} i  the index of the Elastic Search database
  * @param {*} f the field that's value is being requested
  */
-Telemetry.prototype.getValue = async function (myUrl, i, f) {
-
-  //properties of the search
-  var propertiesObject = { index: i, field: f };
-
+Telemetry.prototype.getValue = async function (myUrl, props) {
+  
   let p = new Promise(function (resolve, reject) {
 
     //requests URL based on properties
-    request({ url: myUrl, qs: propertiesObject }, function (err, response, body) {
+    request({ url: myUrl, qs: props }, function (err, response, body) {
       if (!err && response.statusCode == 200) { resolve(body); }
       else { reject(err); }
     });
   });
   return await p;
 };
+
+
 
 /**
  * Adds the resultant coordinate to history and realtime 
@@ -250,10 +321,7 @@ Telemetry.prototype.generateTelemetryCoordinate = function(id, answer, satellite
         }
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        if(this.history[new_id] == undefined){ //makes sure it is not undefined
-          this.history[new_id] = []
-        }
-        this.history[new_id].push(telempoint);
+        
 
 };
 
@@ -288,7 +356,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = 0
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         
       } 
@@ -300,7 +367,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = 1
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);id
       } 
       //test if vector
       else if (numberCommas(answer) == 3) {
@@ -310,7 +376,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         this.generateTelemetryCoordinate(id, answer, 'follower', 'x', 1, true)
 
@@ -327,7 +392,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, true)
 
@@ -345,7 +409,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         //handle data missing from elasticsearch
         this.generateTelemetryCoordinate(id, answer, 'follower', 'a', 1, false)
@@ -381,7 +444,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = 0
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
       } 
       //check if bool true
       else if (answer == 'true') {
@@ -391,7 +453,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = 1
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);id
       } 
       //check if vector
       else if (numberCommas(answer) == 3) {
@@ -401,7 +462,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         this.generateTelemetryCoordinate(id, answer, 'leader', 'x', 1, true)
 
@@ -419,7 +479,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
         this.generateTelemetryCoordinate(id, answer, 'leader', 'a', 1, true)
 
@@ -438,7 +497,6 @@ Telemetry.prototype.generateTelemetry = function () {
         telempoint['value'] = answer
         //notify the realtime server and push the datapoint to the history server
         this.notify(telempoint);
-        this.history[id].push(telempoint);
 
 
         //handle data missing from elasticsearch

@@ -34,7 +34,7 @@ def index_sf_report():
     imei=sf_report["imei"]
     data=json.dumps({
         sf_report["field"]: sf_report["value"],
-        "time.downlink_received": str(datetime.now().isoformat())
+        "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
     })
 
     #index statefield report in elasticsearch
@@ -76,6 +76,53 @@ def search_es():
         if len(res["hits"]["hits"])!=0:
             most_recent_field=res["hits"]["hits"][0]["_source"][field]
             return str(most_recent_field)
+        else:
+            return f"Unable to find field: {field} in index: {index}"
+    else:
+        return f"Unable to find index: {index}"
+
+
+@app.route("/time-search-es", methods=["GET"])
+@swag_from("endpoint_configs/time_search_es_config.yml")
+def time_search_es():
+    index = request.args.get('index')
+    field = str(request.args.get('field'))
+    start = request.args.get('start')
+    end = request.args.get('end')
+    start = start.replace('%3A', ':')
+    end = end.replace('%3A', ':')
+
+    # get the array of time values of the field between start time and end time
+    search_object={
+        'query': {
+            'exists': {
+                'field': field
+            }
+        },
+        "sort": [
+            {
+                "time.downlink_received": {
+                    "order": "desc"
+                }
+            }
+        ],
+        "size": 10000
+    }
+    
+    values = []
+    minFound = False
+    maxFound = False
+    # Get the value of that field from the document
+    if app.config["es"].indices.exists(index=index):
+        res = app.config["es"].search(index=index, body=json.dumps(search_object))
+        if len(res["hits"]["hits"])!=0:
+            for f in res["hits"]["hits"]:
+                telempoint = {'timestamp': f["_source"]['time.downlink_received'], 'id': field, 'value': f["_source"][field]}
+                if telempoint['timestamp']>= start and telempoint['timestamp']<= end:
+                    values = values + [telempoint]
+                elif telempoint['timestamp'] < start:
+                    return json.dumps(values[::-1])
+            return json.dumps(values)
         else:
             return f"Unable to find field: {field} in index: {index}"
     else:

@@ -465,7 +465,7 @@ class USBSession(object):
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time.downlink_received": str(datetime.datetime.now().isoformat())
+                "time.downlink_received": str(datetime.datetime.utcnow().isoformat())[:-3]+'Z'
             })
             res = self.es.index(index='statefield_report_'+str(self.radio_imei), doc_type='report', body=data)
             if not res['result'] == 'created':

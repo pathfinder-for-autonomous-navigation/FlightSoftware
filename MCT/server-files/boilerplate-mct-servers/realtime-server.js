@@ -4,9 +4,15 @@ function RealtimeServer(spacecraft) {
 
     var router = express.Router();
 
-    router.ws('/', function (ws) {
-        var unlisten = spacecraft.listen(notifySubscribers);
+    router.ws('/realtime/', function (ws) {
         var subscribed = {}; // Active subscriptions for this connection
+        function notifySubscribers(point) {
+            if (subscribed[point.id]) {
+                ws.send(JSON.stringify(point));
+            }
+        }
+        var unlisten = spacecraft.listen(notifySubscribers);
+        
         var handlers = { // Handlers for specific requests
                 subscribe: function (id) {
                     subscribed[id] = true;
@@ -16,11 +22,7 @@ function RealtimeServer(spacecraft) {
                 }
             };
 
-        function notifySubscribers(point) {
-            if (subscribed[point.id]) {
-                ws.send(JSON.stringify(point));
-            }
-        }
+        
 
         // Listen for requests
         ws.on('message', function (message) {
