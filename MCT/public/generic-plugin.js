@@ -44,17 +44,19 @@ function requestJSON(j) {
 function GenericPlugin(config) {
     return function install(openmct) {
 
-        console.log(configs);
+        
 
         //if the parameter config is "realtime", it will install the realtime server
         if (config === "realtime") {
 
             //creates the websocket - wss (since the location of the origin is running on https)
-            var socket = new WebSocket(location.origin.replace(/^http/, 'ws') + '/realtime/');
+            var socket = new WebSocket('wss://localhost:8080/'/*location.origin.replace(/^http/, 'ws') + '/realtime/'*/);
+            
             var listener = {};
 
             //adds the event data to the listener
             socket.onmessage = function (event) {
+                
                 point = JSON.parse(event.data);
                 if (listener[point.id]) {
                     listener[point.id](point);
@@ -73,11 +75,13 @@ function GenericPlugin(config) {
                             allowed = true;
                         }
                     }
-
+                    
                     return allowed;
+
                 },
                 //subscribes to the domain object adding it to listener and setting up the websocket subscription
                 subscribe: function (domainObject, callback) {
+                    
                     listener[domainObject.identifier.key] = callback;
                     socket.send('subscribe ' + domainObject.identifier.key);
                     //option to unsubscribe

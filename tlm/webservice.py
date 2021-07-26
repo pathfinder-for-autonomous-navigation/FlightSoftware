@@ -82,6 +82,60 @@ def search_es():
         return f"Unable to find index: {index}"
 
 
+
+def pit_search(pit_id, index, start, end, field, values = [], last_search_location = None):
+    search_object = {
+        "size": 10000,
+        'query': {
+            'exists': {
+                'field': field
+            }
+        },
+        "pit": {
+            'id': pit_id,
+            'keep_alive': '1m'
+        },
+        "sort": [
+            {
+                "time.downlink_received": {
+                    "order": "desc"
+                }
+            }
+        ]
+        
+    }
+    if last_search_location is not None:
+        search_object['search_after'] = last_search_location
+        search_object['track_total_hits'] = False
+
+
+    res = app.config["es"].search(body=json.dumps(search_object))
+
+    hit_num = len(res["hits"]["hits"])
+    if hit_num == 0:
+        if last_search_location is not None:
+            return json.dumps(values)
+        else:
+            telempoint = {'timestamp': end, 'id': field, 'value': f"Unable to find field: {field} in index: {index}"}
+            values = values + [telempoint]
+            return json.dumps(values)
+    
+    for r in res["hits"]["hits"]:
+        time = r["_source"]["time.downlink_received"]
+        value = r["_source"][field]
+        if time <= end and time >= start:
+            telempoint = {'timestamp': time, 'id': field, 'value': value}
+            values = values + [telempoint]
+        elif time < start:
+            return json.dumps(values)
+    last_loc = res["hits"]["hits"][hit_num - 1]["sort"]
+
+    return pit_search(pit_id,index,start,end,field,values, last_loc)
+        
+
+    
+
+    
 @app.route("/time-search-es", methods=["GET"])
 @swag_from("endpoint_configs/time_search_es_config.yml")
 def time_search_es():
@@ -91,39 +145,16 @@ def time_search_es():
     end = request.args.get('end')
     start = start.replace('%3A', ':')
     end = end.replace('%3A', ':')
-
-    # get the array of time values of the field between start time and end time
-    search_object={
-        'query': {
-            'exists': {
-                'field': field
-            }
-        },
-        "sort": [
-            {
-                "time.downlink_received": {
-                    "order": "desc"
-                }
-            }
-        ],
-        "size": 10000
-    }
-    
-    values = []
-    minFound = False
-    maxFound = False
-    # Get the value of that field from the document
     if app.config["es"].indices.exists(index=index):
-        res = app.config["es"].search(index=index, body=json.dumps(search_object))
-        if len(res["hits"]["hits"])!=0:
-            for f in res["hits"]["hits"]:
-                telempoint = {'timestamp': f["_source"]['time.downlink_received'], 'id': field, 'value': f["_source"][field]}
-                if telempoint['timestamp']>= start and telempoint['timestamp']<= end:
-                    values = values + [telempoint]
-                elif telempoint['timestamp'] < start:
-                    return json.dumps(values[::-1])
-            return json.dumps(values)
-        else:
-            return f"Unable to find field: {field} in index: {index}"
+        pit_id = (app.config["es"].open_point_in_time(index=index,keep_alive='3m'))['id']
+        completed_search = pit_search(pit_id, index, start, end, field)
+        del_pit = {
+            "id" : pit_id
+        }
+        app.config["es"].close_point_in_time(body=json.dumps(del_pit))
+        return completed_search
     else:
-        return f"Unable to find index: {index}"
+        telempoint = {'timestamp': end, 'id': field, 'value': f"Unable to find index: {index}"}
+        values = [telempoint]
+        return json.dumps(values)
+    

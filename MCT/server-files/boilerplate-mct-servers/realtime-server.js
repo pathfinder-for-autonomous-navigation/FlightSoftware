@@ -1,10 +1,12 @@
 var express = require('express');
 
 function RealtimeServer(spacecraft) {
-
+    console.log("REALTIME")
     var router = express.Router();
 
-    router.ws('/realtime/', function (ws) {
+    router.ws('/', function (ws) {
+        console.log("hi")
+        console.log(ws)
         var subscribed = {}; // Active subscriptions for this connection
         function notifySubscribers(point) {
             if (subscribed[point.id]) {
