@@ -1,5 +1,4 @@
 
-const e = require('express');
 var express = require('express');
 
 function HistoryServer(spacecraft) {
