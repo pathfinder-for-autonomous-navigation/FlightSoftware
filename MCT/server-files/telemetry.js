@@ -128,14 +128,25 @@ function getCoord(s, num) {
   }
 }
 
+/**
+ * This Function recieves an array of MCT ready data processed to be directly inputted into the webclient. 
+ * This data comes from between the starting and ending points and is the id parameter
+ * @param {*} start starting point of the time range
+ * @param {*} end ending point of the time range
+ * @param {*} id the field being searched for
+ * @returns 
+ */
 Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
   let new_id = ''
   let receiverIndex = ''
+
+  //checks if the object is part of the follower and sets the corrisponding index
   if(id.startsWith("follower_")){
     new_id = id.substring(9, id.length)
     receiverIndex = this.followerIndex
 
   }
+  //checks if the object is part of the leader and sets the corrisponding index
   else if(id.includes("leader_")){
     new_id = id.substring(7, id.length)
     receiverIndex = this.leaderIndex
@@ -144,6 +155,7 @@ Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
   let commas = -1
   let position = -1
 
+  //checks if the object is a quaternion and if so sets the specific number of commas and position of element for later parsing
   if(new_id.startsWith("a_")){
     commas = 4
     position = 1
@@ -164,6 +176,8 @@ Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
     position = 4
     new_id = new_id.substring(2, new_id.length)
   }
+
+  //checks if the object is a vector and if so sets the specific number of commas and position of element for later parsing
   else if(new_id.startsWith("x_")){
     commas = 3
     position = 1
@@ -179,6 +193,8 @@ Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
     position = 3
     new_id = new_id.substring(2, new_id.length)
   }
+
+  //Request the data with the specified starting and ending time from the time-search endpoint on the webservice
   let valueArray = await this.getValue(timeSearchURL, {
     index: receiverIndex, 
     field: new_id, 
@@ -186,22 +202,32 @@ Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
     end: (new Date(end)).toISOString().split(':').join('%3A')
   })
   valueArray = JSON.parse(valueArray)
+
+  //process the raw data to convert it into the correct coordinate or MCT interpreted value
   let processedArray = valueArray.map( point =>{
+    
     let id_val = point['value']
+
+    //converts booleans to 1 or 0 for graphing ability
     if (id_val == 'true') {
       id_val = 1
     }
     else if (id_val == 'false'){
       id_val = 0
     }
+
+    //converts vectors and quaternians from raw data to the coorisponding coordinate requested
     if (numberCommas(id_val) == commas){
       id_val = getCoord(id_val, position);
     }
 
+    //convert time to correct format
     let new_timestamp = Date.parse(point['timestamp'])
-
+    
     return {timestamp: new_timestamp, id: id, value: id_val}
   });
+
+  //returns the processed array
   return processedArray
 
 
