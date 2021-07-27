@@ -50,7 +50,7 @@ function GenericPlugin(config) {
         if (config === "realtime") {
 
             //creates the websocket - wss (since the location of the origin is running on https)
-            var socket = new WebSocket('wss://localhost:8080/'/*location.origin.replace(/^http/, 'ws') + '/realtime/'*/);
+            var socket = new WebSocket(location.origin.replace(/^http/, 'ws'));
             
             var listener = {};
 
