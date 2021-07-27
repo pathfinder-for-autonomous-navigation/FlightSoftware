@@ -12,15 +12,22 @@
 
 <body>
     <script>
+
+        const THIRTY_SECONDS = 30 * 1000;
+        const ONE_MINUTE = THIRTY_SECONDS * 2;
+        const FIVE_MINUTES = ONE_MINUTE * 5;
+        const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
+        const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
+        const ONE_HOUR = THIRTY_MINUTES * 2;
+        const TWO_HOURS = ONE_HOUR * 2;
+        const ONE_DAY = ONE_HOUR * 24;
+
         //indicates the location of the openmct libraries and assets
         openmct.setAssetPath('openmct');
         //installs plugins for creation and storage of user objects like layouts in your Local Browser Storage
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         //installs new plugins for viewing telemetry and analyzing telemetry
-        openmct.install(openmct.plugins.AutoflowView({
-            type: "telemetry.fixed"
-        }));
         openmct.install(openmct.plugins.SummaryWidget());
         //installs timezone plugins
         openmct.install(openmct.plugins.UTCTimeSystem());
@@ -34,6 +41,118 @@
         //installs subsystem/domain object plugins using generic-plugin.js
         openmct.install(GenericPlugin("follower"));
         openmct.install(GenericPlugin("leader"));
+
+
+        openmct.install(openmct.plugins.PlanLayout());
+        openmct.install(openmct.plugins.Timeline());
+        openmct.install(openmct.plugins.AutoflowView({
+            type: "telemetry.panel"
+        }));
+        openmct.install(openmct.plugins.Conductor({
+            menuOptions: [
+                {
+                    //Fixed Views
+                    name: "Fixed",
+                    timeSystem: 'utc',
+                    bounds: {
+                        start: Date.now() - THIRTY_MINUTES,
+                        end: Date.now()
+                    },
+                    //Preset Fixed Views
+                    presets: [
+                        {
+                            label: 'Last 30 Days',
+                            bounds: {
+                                start: () => Date.now() - (30 * ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last Week',
+                            bounds: {
+                                start: () => Date.now() - (7 * ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last Day',
+                            bounds: {
+                                start: () => Date.now() - ONE_DAY,
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 2 hours',
+                            bounds: {
+                                start: () => Date.now() - TWO_HOURS,
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last hour',
+                            bounds: {
+                                start: () => Date.now() - ONE_HOUR,
+                                end: () => Date.now()
+                            }
+                        }
+                    ],
+                    // number of past view positions stored
+                    records: 10
+                },
+                //Realtime Clock Views
+                {
+                    name: "Realtime",
+                    timeSystem: 'utc',
+                    clock: 'local',
+                    clockOffsets: {
+                        start: - THIRTY_MINUTES,
+                        end: 0
+                    },
+                    //Preset Clock Views
+                    presets: [
+                        {
+                            label: '1 Hour',
+                            bounds: {
+                                start: - ONE_HOUR,
+                                end: 0
+                            }
+                        },
+                        {
+                            label: '30 Minutes',
+                            bounds: {
+                                start: - THIRTY_MINUTES,
+                                end: 0
+                            }
+                        },
+                        {
+                            label: '15 Minutes',
+                            bounds: {
+                                start: - FIFTEEN_MINUTES,
+                                end: 0
+                            }
+                        },
+                        {
+                            label: '5 Minutes',
+                            bounds: {
+                                start: - FIVE_MINUTES,
+                                end: 0
+                            }
+                        },
+                        {
+                            label: '1 Minute',
+                            bounds: {
+                                start: - ONE_MINUTE,
+                                end: 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        }));
+        openmct.install(openmct.plugins.Notebook());
+        openmct.install(openmct.plugins.LADTable());
+        openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
+        openmct.install(openmct.plugins.ObjectMigration());
 
 
         //starts OpenMCT once all installs are completed
