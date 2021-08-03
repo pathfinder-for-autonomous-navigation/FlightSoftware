@@ -8,7 +8,6 @@ const mct = require(path.join( __dirname, 'mct_secret.json'))
 var myArgs = process.argv.slice(2);
 
 var Telemetry= require('./telemetry');
-var RealtimeServer = require('./boilerplate-mct-servers/realtime-server');
 var HistoryServer = require('./boilerplate-mct-servers/history-server');
 var expressWs = require('express-ws'); 
 var express = require('express');
