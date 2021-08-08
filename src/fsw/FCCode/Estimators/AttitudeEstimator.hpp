@@ -81,8 +81,8 @@ class AttitudeEstimator : public ControlTask<void>
 
     /*
      */
-    InternalStateField<bool> attitude_estimator_b_valid_f;
-    InternalStateField<lin::Vector3f> attitude_estimator_b_body_f;
+    ReadableStateField<bool> attitude_estimator_b_valid_f;
+    ReadableStateField<lin::Vector3f> attitude_estimator_b_body_f;
 
     /*
      */

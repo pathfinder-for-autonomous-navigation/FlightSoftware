@@ -31,8 +31,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       adcs_mag2_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag2_vec)),
       adcs_ssa_mode_fp(FIND_READABLE_FIELD(unsigned char, adcs_monitor.ssa_mode)),
       adcs_ssa_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.ssa_vec)),
-      attitude_estimator_b_valid_f("attitude_estimator.b_valid"),
-      attitude_estimator_b_body_f("attitude_estimator.b_body"),
+      attitude_estimator_b_valid_f("attitude_estimator.b_valid", Serializer<bool>()),
+      attitude_estimator_b_body_f("attitude_estimator.b_body", Serializer<lin::Vector3f>(0.0, 1.0e-3, 12)),
       attitude_estimator_valid_f("attitude_estimator.valid", Serializer<bool>()),
       attitude_estimator_q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
       attitude_estimator_p_body_eci_sigma_f("attitude_estimator.p_body_eci_sigma_f", Serializer<lin::Vector3f>(0.0, 0.5, 14)),
@@ -44,8 +44,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
-    add_internal_field(attitude_estimator_b_valid_f);
-    add_internal_field(attitude_estimator_b_body_f);
+    add_readable_field(attitude_estimator_b_valid_f);
+    add_readable_field(attitude_estimator_b_body_f);
     add_readable_field(attitude_estimator_valid_f);
     add_readable_field(attitude_estimator_q_body_eci_f);
     add_readable_field(attitude_estimator_p_body_eci_sigma_f);
