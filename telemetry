@@ -1076,7 +1076,7 @@
         "attitude_estimator.b_body": {
             "bitsize": 43,
             "flow_id": 6,
-            "max": 0.001000000047497,
+            "max": 9.9999997474e-05,
             "min": 0.0,
             "type": "lin float vector",
             "writable": false
