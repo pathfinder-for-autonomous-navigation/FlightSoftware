@@ -48,9 +48,16 @@ class AttitudeEstimator : public ControlTask<void>
 
     AttitudeEstimator(StateFieldRegistry &registry);
 
+    /**
+     * @brief Collect ADCS commander state field.
+     */
+    void init();
+
     void execute() override;
 
   protected:
+    void _execute();
+
     /*
      */
     ReadableStateField<bool> const *const time_valid_fp;
@@ -92,6 +99,8 @@ class AttitudeEstimator : public ControlTask<void>
     WritableStateField<bool> attitude_estimator_reset_cmd_f;
     WritableStateField<bool> attitude_estimator_mag_flag_f;
 
+    ReadableStateField<lin::Vector3f> const *adcs_cmd_mtr_cmd;
+
     /*
      */
     Fault attitude_estimator_fault;
@@ -100,6 +109,8 @@ class AttitudeEstimator : public ControlTask<void>
     gnc::AttitudeEstimatorData _data;
     gnc::AttitudeEstimatorState _state;
     gnc::AttitudeEstimate _estimate;
+
+    lin::Vector3f _cycle_slip_mtr_cmd;
 };
 
 #endif

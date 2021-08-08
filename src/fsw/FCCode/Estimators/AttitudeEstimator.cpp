@@ -65,14 +65,63 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_w_bias_body_sigma_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_L_body_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_reset_cmd_f.set(false);
-    attitude_estimator_mag_flag_f.set(true);
+    attitude_estimator_mag_flag_f.set(false);  // Prefer magnetometer two
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
     _estimate = gnc::AttitudeEstimate();
+    _cycle_slip_mtr_cmd = lin::zeros<lin::Vector3f>();
+}
+
+void AttitudeEstimator::init()
+{
+    adcs_cmd_mtr_cmd = FIND_READABLE_FIELD(lin::Vector3f, adcs_cmd.mtr_cmd);
 }
 
 void AttitudeEstimator::execute()
+{
+    _execute();
+
+    /* Cycle slip the MTR command.
+     */
+    _cycle_slip_mtr_cmd = adcs_cmd_mtr_cmd->get();
+}
+
+#ifdef FLIGHT
+#if defined(PAN_LEADER)
+static constexpr lin::Matrix3x3f D1 = 1.0e-03 * lin::Matrix3x3f {
+   0.280962247255082,  -0.491683932696393,  -0.401720651555603,
+  -0.721090299605407,   0.441166090209642,   0.305529143258913,
+   0.721090299605407,  -0.441166090209642,  -0.305529143258913
+};
+static constexpr lin::Matrix3x3f D2 = {
+  -0.000141173148867,  -0.000031487148399,   0.001398583009120,
+  -0.000002076075719,   0.000050863855107,  -0.001078521335830,
+   0.000141173148867,   0.000027681009582,  -0.001398583009120
+};
+static constexpr lin::Vector3f c = 1.0e-04 * lin::Vector3f {
+   -0.5108,    0.1698,   -0.3657
+};
+#elif defined(PAN_FOLLOWER)
+static constexpr lin::Matrix3x3f D1 = 1.0e-03 * lin::Matrix3x3f {
+   0.279578196775993,  -0.504832412247739,  -0.411409004909227,
+  -0.732162703438119,   0.437359951392147,   0.294802752045973,
+   0.733546753917209,  -0.434591850433969,  -0.293072688947111
+};
+static constexpr lin::Matrix3x3f D2 = {
+  -0.000144633275065,  -0.000035293287217,   0.001440796548732,
+  -0.000002422088338,   0.000050517842487,  -0.001114852660906,
+   0.000144633275065,   0.000035293287217,  -0.001440796548732
+};
+static constexpr lin::Vector3f c = 1.0e-04 * lin::Vector3f {
+    0.2716,    0.4158,   -0.6230
+};
+#else
+static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
+#endif
+#endif
+
+void AttitudeEstimator::_execute()
 {
     /* Handle the processing of magnetometer information.
      */
@@ -84,8 +133,13 @@ void AttitudeEstimator::execute()
 
         if (have_functional_magnetometer)
         {
-            auto const mag1 = adcs_mag1_fp->get();
-            auto const mag2 = adcs_mag2_fp->get();
+#ifdef FLIGHT
+            lin::Vector3f const mag1 = adcs_mag1_fp->get() - D1 * _cycle_slip_mtr_cmd - c;
+            lin::Vector3f const mag2 = adcs_mag2_fp->get() - D2 * _cycle_slip_mtr_cmd;
+#else
+            lin::Vector3f const mag1 = adcs_mag1_fp->get();
+            lin::Vector3f const mag2 = adcs_mag2_fp->get();
+#endif
 
             if (attitude_estimator_mag_flag_f.get())
             {
