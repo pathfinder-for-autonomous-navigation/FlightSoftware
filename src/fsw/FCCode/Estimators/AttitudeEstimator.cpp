@@ -32,7 +32,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       adcs_ssa_mode_fp(FIND_READABLE_FIELD(unsigned char, adcs_monitor.ssa_mode)),
       adcs_ssa_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.ssa_vec)),
       attitude_estimator_b_valid_f("attitude_estimator.b_valid", Serializer<bool>()),
-      attitude_estimator_b_body_f("attitude_estimator.b_body", Serializer<lin::Vector3f>(0.0, 1.0e-3, 12)),
+      attitude_estimator_b_body_f("attitude_estimator.b_body", Serializer<lin::Vector3f>(0.0, 5.0e-4, 12)),
       attitude_estimator_valid_f("attitude_estimator.valid", Serializer<bool>()),
       attitude_estimator_q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
       attitude_estimator_p_body_eci_sigma_f("attitude_estimator.p_body_eci_sigma_f", Serializer<lin::Vector3f>(0.0, 0.5, 14)),
