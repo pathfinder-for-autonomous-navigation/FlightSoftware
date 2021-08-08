@@ -10,6 +10,7 @@
 #include <lin/math.hpp>
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
+#include <lin/views.hpp>
 
 /* If the attitude estimator isn't valid for this many cycles while we're trying
  * to hold attitude the fault will be tripped.
@@ -75,7 +76,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
 
 void AttitudeEstimator::init()
 {
-    adcs_cmd_mtr_cmd = FIND_READABLE_FIELD(lin::Vector3f, adcs_cmd.mtr_cmd);
+    adcs_cmd_mtr_cmd = FIND_WRITABLE_FIELD(f_vector_t, adcs_cmd.mtr_cmd);
 }
 
 void AttitudeEstimator::execute()
@@ -84,7 +85,8 @@ void AttitudeEstimator::execute()
 
     /* Cycle slip the MTR command.
      */
-    _cycle_slip_mtr_cmd = adcs_cmd_mtr_cmd->get();
+    auto const mtr_cmd = adcs_cmd_mtr_cmd->get();
+    _cycle_slip_mtr_cmd = {mtr_cmd[0], mtr_cmd[1], mtr_cmd[2]};
 }
 
 #ifdef FLIGHT

@@ -53,6 +53,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       adcs_commander(registry), // needs inputs from attitude computer
       adcs_box_controller(registry, adcs)
 {
+    estimators.init();
     docking_controller.init();
     orbit_controller.init();
 
