@@ -41,7 +41,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_w_bias_body_sigma_f("attitude_estimator.w_bias_sigma_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
-      attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
+      attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1000),
+      attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>()),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
@@ -55,6 +56,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     add_readable_field(attitude_estimator_L_body_f);
     add_writable_field(attitude_estimator_reset_cmd_f);
     add_writable_field(attitude_estimator_mag_flag_f);
+    add_writable_field(attitude_estimator_ignore_sun_vectors_f);
     add_fault(attitude_estimator_fault);
 
     attitude_estimator_valid_f.set(false);
@@ -66,7 +68,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_w_bias_body_sigma_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_L_body_f.set(lin::zeros<lin::Vector3f>());
     attitude_estimator_reset_cmd_f.set(false);
-    attitude_estimator_mag_flag_f.set(false);  // Prefer magnetometer two
+    attitude_estimator_mag_flag_f.set(false);           // Prefer magnetometer two
+    attitude_estimator_ignore_sun_vectors_f.set(false); // Overwritten by EEPROM
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
@@ -135,7 +138,7 @@ void AttitudeEstimator::_execute()
 
         if (have_functional_magnetometer)
         {
-#ifdef FLIGHT
+#ifdef FLIGHT  // These offsets aren't modelled so only do this in flight
             lin::Vector3f const mag1 = adcs_mag1_fp->get() - D1 * _cycle_slip_mtr_cmd - c;
             lin::Vector3f const mag2 = adcs_mag2_fp->get() - D2 * _cycle_slip_mtr_cmd;
 #else
@@ -174,6 +177,7 @@ void AttitudeEstimator::_execute()
 
             _state = gnc::AttitudeEstimatorState();
             _estimate = gnc::AttitudeEstimate();
+
             return;
         }
     }
@@ -182,8 +186,9 @@ void AttitudeEstimator::_execute()
     auto const orbit_pos = orbit_pos_fp->get();
     auto const adcs_gyr = adcs_gyr_fp->get();
     auto const adcs_ssa_valid = adcs_ssa_mode_fp->get() == adcs::SSA_COMPLETE;
+    auto const ignore_sun_vectors = attitude_estimator_ignore_sun_vectors_f.get();
     auto const adcs_ssa = [&]() -> lin::Vector3f {
-        if (!adcs_ssa_valid)
+        if (!adcs_ssa_valid || ignore_sun_vectors)
         {
             return lin::nans<lin::Vector3f>();
         }
@@ -207,7 +212,12 @@ void AttitudeEstimator::_execute()
     }
     else
     {
-        if (adcs_ssa_valid)
+        if (ignore_sun_vectors)
+        {
+            gnc::attitude_estimator_reset(
+                    _state, time_s, {0.0f, 0.0f, 0.0f, 1.0f});
+        }
+        else if (adcs_ssa_valid)
         {
             gnc::attitude_estimator_reset(
                     _state, time_s, orbit_pos, b_body, adcs_ssa);

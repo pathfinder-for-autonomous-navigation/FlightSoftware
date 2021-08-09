@@ -3,7 +3,7 @@
 # - .github/workflows/hootl.yml
 
 # Testcases that require simulation
-from .attitude_fault_handler_case import AttitudeFaultHandlerCase
+from .attitude_estimator import AttitudeFaultHandlerCase, AttitudeNoSunVectorsInitializationCase
 from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
 from .piksi_fault_handler import PiksiFaultHandler

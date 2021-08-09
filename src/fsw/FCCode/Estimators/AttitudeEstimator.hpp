@@ -58,17 +58,17 @@ class AttitudeEstimator : public ControlTask<void>
   protected:
     void _execute();
 
-    /*
+    /* Fields from the time estimator.
      */
     ReadableStateField<bool> const *const time_valid_fp;
     InternalStateField<double> const *const time_s_fp;
 
-    /*
+    /* Fields from the orbit estimator.
      */
     ReadableStateField<bool> const *const orbit_valid_fp;
     ReadableStateField<lin::Vector3d> const *const orbit_pos_fp;
 
-    /*
+    /* Fields from the attitude estimator
      */
     ReadableStateField<bool> const *const adcs_gyr_functional_fp;
     ReadableStateField<lin::Vector3f> const *const adcs_gyr_fp;
@@ -79,12 +79,12 @@ class AttitudeEstimator : public ControlTask<void>
     ReadableStateField<unsigned char> const *const adcs_ssa_mode_fp;
     ReadableStateField<lin::Vector3f> const *const adcs_ssa_fp;
 
-    /*
+    /* Outputs for the current magnetic field measurement in the body frame.
      */
     ReadableStateField<bool> attitude_estimator_b_valid_f;
     ReadableStateField<lin::Vector3f> attitude_estimator_b_body_f;
 
-    /*
+    /* Outputs for the current attitude estimate.
      */
     ReadableStateField<bool> attitude_estimator_valid_f;
     ReadableStateField<lin::Vector4f> attitude_estimator_q_body_eci_f;
@@ -94,14 +94,18 @@ class AttitudeEstimator : public ControlTask<void>
     ReadableStateField<lin::Vector3f> attitude_estimator_w_bias_body_sigma_f;
     ReadableStateField<lin::Vector3f> attitude_estimator_L_body_f;
 
-    /*
+    /* Command fields to reset the estimator, magnetometer preference, and
+     * whether or not to ignore the sun vector measurements.
      */
     WritableStateField<bool> attitude_estimator_reset_cmd_f;
     WritableStateField<bool> attitude_estimator_mag_flag_f;
+    WritableStateField<bool> attitude_estimator_ignore_sun_vectors_f;
 
+    /* Fields from the ADCS commander.
+     */
     WritableStateField<f_vector_t> const *adcs_cmd_mtr_cmd;
 
-    /*
+    /* Faults.
      */
     Fault attitude_estimator_fault;
 
