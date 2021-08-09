@@ -135,7 +135,7 @@ void OrbitController::execute() {
     double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time_ms;
 
     // Schedule the valves for firing soon if the prop system is idle
-    if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::idle) {
+    if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::idle) { // should we keep the <=
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
@@ -165,7 +165,10 @@ void OrbitController::execute() {
         if (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach) {
             schedule_valves(J_body);
         }
-
+    }
+    else{
+        // 0 out schedules
+        schedule_valves(lin::zeros<lin::Vector3d>());
     }
 
 }
