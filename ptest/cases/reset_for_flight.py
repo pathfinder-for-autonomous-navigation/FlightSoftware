@@ -31,6 +31,7 @@ class ResetforFlight(SingleSatCase):
             self.ws("pan.deployed", False)
             self.ws("pan.deployment.elapsed", 0)
             self.ws("pan.kill_switch", 0)
+            self.ws("pan.attitude_estimator.ignore_sun_vectors", False)
             self.cycle()
 
             cycle_no = self.rs("pan.cycle_no")

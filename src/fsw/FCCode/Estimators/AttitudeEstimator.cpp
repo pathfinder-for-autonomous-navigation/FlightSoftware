@@ -42,7 +42,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_L_body_f("attitude_estimator.L_body", Serializer<lin::Vector3f>(0.0, 0.1, 14)),
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1000),
-      attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>()),
+      attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>(), 1),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
