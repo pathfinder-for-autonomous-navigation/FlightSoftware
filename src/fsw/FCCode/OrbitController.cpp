@@ -193,6 +193,10 @@ void OrbitController::execute() {
         if (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach) {
             schedule_valves(J_body);
         }
+        else{
+            // 0 out schedules
+            schedule_valves(lin::zeros<lin::Vector3d>());
+        }
     }
     else{
         // 0 out schedules
