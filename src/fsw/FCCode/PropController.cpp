@@ -281,12 +281,12 @@ bool PropState_AwaitPressurizing::can_enter() const
 {
     bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_schedule_valid = controller->validate_schedule();
-    // Enter Await Pressurizing rather than Pressurizing if we have MORE than enough time
-    // bool more_than_enough_time =
-    //     controller->cycles_until_firing.get() >= controller->min_cycles_needed();
+    // enter await pressurizing if orbit controller requests a firing.
+    bool requested =
+        controller->cycles_until_firing.get() > 0;
     bool is_functional = PropulsionSystem.is_functional();
 
-    return (was_idle && is_schedule_valid && is_functional);
+    return (was_idle && is_schedule_valid && is_functional && requested);
 }
 
 void PropState_AwaitPressurizing::enter()
@@ -391,7 +391,13 @@ bool PropState_Pressurizing::can_enter() const
     bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_functional = PropulsionSystem.is_functional();
 
-    return ((was_await_pressurizing || was_idle) && is_schedule_valid && is_functional);
+    // min_cycles_needed is actually an upper bound on how long we could need
+    bool is_time_to_pressurize = (
+            (controller->cycles_until_firing.get() <= controller->min_cycles_needed())
+            && (controller->cycles_until_firing.get() > 0)
+        );
+
+    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
