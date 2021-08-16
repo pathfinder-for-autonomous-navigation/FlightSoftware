@@ -8,6 +8,11 @@ Estimators::Estimators(StateFieldRegistry &registry)
       attitude_estimator(registry)
 { }
 
+void Estimators::init()
+{
+    attitude_estimator.init();
+}
+
 void Estimators::execute()
 {
     time_estimator.execute();

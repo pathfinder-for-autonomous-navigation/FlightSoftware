@@ -159,9 +159,9 @@ class PSimCase(PTestCase):
         # HAVT, and pass along the reading if applicable.
         magnetometer_is_valid = self.__sim[f"sensors.{satellite}.magnetometer.valid"]
 
-        sensors["adcs_monitor.havt_device1"] = magnetometer_is_valid
+        sensors["adcs_monitor.havt_device2"] = magnetometer_is_valid
         if magnetometer_is_valid:
-            sensors["adcs_monitor.mag1_vec"] = list(self.__sim[f"sensors.{satellite}.magnetometer.b"])
+            sensors["adcs_monitor.mag2_vec"] = list(self.__sim[f"sensors.{satellite}.magnetometer.b"])
 
         # Simulate the sun sensors
         #

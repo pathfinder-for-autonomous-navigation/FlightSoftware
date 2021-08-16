@@ -19,8 +19,8 @@
 AttitudeController::AttitudeController(StateFieldRegistry &registry) :
     TimedControlTask<void>(registry, "attitude_controller"),
     w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
-    attitude_estimator_b_valid_fp(FIND_INTERNAL_FIELD(bool, attitude_estimator.b_valid)),
-    b_body_rd_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.b_body)),
+    attitude_estimator_b_valid_fp(FIND_READABLE_FIELD(bool, attitude_estimator.b_valid)),
+    b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.b_body)),
     attitude_estimator_valid_fp(FIND_READABLE_FIELD(bool, attitude_estimator.valid)),
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     w_body_est_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.w_body)),

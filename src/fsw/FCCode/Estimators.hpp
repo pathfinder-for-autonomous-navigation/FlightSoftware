@@ -26,6 +26,7 @@ class Estimators : public TimedControlTask<void>
 
     Estimators(StateFieldRegistry &registry);
 
+    void init();
     void execute() override;
 
   private:
