@@ -1,6 +1,7 @@
 {
     "eeprom_saved_fields": {
-        "attitude_estimator.mag_flag": 1000,
+        "attitude_estimator.ignore_sun_vectors": 1,
+        "attitude_estimator.mag_flag": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
         "pan.bootcount": 1000,
