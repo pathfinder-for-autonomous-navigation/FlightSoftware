@@ -88,10 +88,12 @@ void OrbitController::execute() {
     // If we don't have all the information we need, don't calculate a firing
     if (!time_valid_fp->get() || !orbit_valid_fp->get() || !rel_orbit_valid_fp->get() ||
             !attitude_estimator_valid_fp->get()) {
-        sched_valve1_f.set(0);
-        sched_valve2_f.set(0);
-        sched_valve3_f.set(0);
-        sched_valve4_f.set(0);
+        return;
+    }
+    
+    // Don't fire unless we're in follower and follower close approach.
+    mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
+    if (!(mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach)){
         return;
     }
 
@@ -137,42 +139,24 @@ void OrbitController::execute() {
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
-    // Check if the satellite is around a firing point and the prop system is ready to fire
-    // and if the time and orbit data is valid
-    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
+    // Collect the output of the PD controller and get the needed impulse
+    lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr_smoothed, dv_smoothed);
 
-        // Collect the output of the PD controller and get the needed impulse
-        lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr_smoothed, dv_smoothed);
+    // Save J_ecef to statefield
+    J_ecef_f.set(J_ecef);
 
-        // Save J_ecef to statefield
-        J_ecef_f.set(J_ecef);
+    // Transform the impulse from ecef frame to the eci frame
+    lin::Vector4d q_eci_ecef;
+    gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+    lin::Vector3d J_eci;
+    gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
 
-        // Transform the impulse from ecef frame to the eci frame
-        lin::Vector4d q_eci_ecef;
-        gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
-        lin::Vector3d J_eci;
-        gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
+    // Transform the impulse from eci frame to the body frame of the spacecraft
+    lin::Vector4f q_body_eci = q_body_eci_fp->get();
+    lin::Vector3d J_body;
+    gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
-        // Transform the impulse from eci frame to the body frame of the spacecraft
-        lin::Vector4f q_body_eci = q_body_eci_fp->get();
-        lin::Vector3d J_body;
-        gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
-
-        // Communicate desired impulse to the prop controller.
-        mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
-        if (mission_state == mission_state_t::follower || mission_state == mission_state_t::follower_close_approach) {
-            schedule_valves(J_body);
-        }
-        else{
-            // 0 out schedules
-            schedule_valves(lin::zeros<lin::Vector3d>());
-        }
-    }
-    else{
-        // 0 out schedules
-        schedule_valves(lin::zeros<lin::Vector3d>());
-    }
-
+    schedule_valves(J_body);
 }
 
 double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel) {
