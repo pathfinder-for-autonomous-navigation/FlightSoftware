@@ -35,7 +35,8 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
     sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
     J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.025,10)),
-    alpha_f("orbit.control.alpha", Serializer<double>(0,1,10))
+    alpha_f("orbit.control.alpha", Serializer<double>(0,1,10)),
+    near_field_nodes_f("orbit.control.near_field_nodes", Serializer<unsigned int>(300))
 
 {
     add_writable_field(sched_valve1_f);
@@ -72,6 +73,8 @@ void OrbitController::execute() {
     lin::Vector3d dv = baseline_vel_fp->get();
 
     if (rel_orbit_valid_fp->get()) {
+        unsigned int near_field_nodes = near_field_nodes_f.get();
+        
         if (!lin::all(lin::isfinite(dr_smoothed))) {
             dr_smoothed = dr;
         } else {
