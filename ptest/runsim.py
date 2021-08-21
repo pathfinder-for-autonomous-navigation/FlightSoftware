@@ -53,7 +53,6 @@ class PTest(object):
         self.set_up_radios()
         self.set_up_testcase()
 
-        testcase_error = False
         self.testcase.start()
 
         if self.is_interactive:
@@ -196,6 +195,7 @@ class PTest(object):
             device.disconnect()
         for binary in self.binaries:
             binary['subprocess'].terminate()
+            binary['subprocess'].wait()
             os.close(binary['pty_master_fd'])
             os.close(binary['pty_slave_fd'])
 
