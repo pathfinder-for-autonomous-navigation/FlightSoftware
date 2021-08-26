@@ -134,7 +134,7 @@ function getCoord(s, num) {
  * @param {*} start starting point of the time range
  * @param {*} end ending point of the time range
  * @param {*} id the field being searched for
- * @returns 
+ * @returns an array of all telemetry points for the given id within the request time frame
  */
 Telemetry.prototype.ReceiveTelemetry = async function(start, end, id){
   let new_id = ''
