@@ -1737,6 +1737,14 @@
             "type": "double",
             "writable": true
         },
+        "orbit.control.num_near_field_nodes": {
+            "bitsize": 9,
+            "flow_id": 26,
+            "max": 300,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "orbit.control.valve1": {
             "bitsize": 10,
             "flow_id": 26,
@@ -3229,7 +3237,8 @@
                 "orbit.control.valve3",
                 "orbit.control.valve4",
                 "orbit.control.J_ecef",
-                "orbit.control.alpha"
+                "orbit.control.alpha",
+                "orbit.control.num_near_field_nodes"
             ],
             "id": 26,
             "priority": 25

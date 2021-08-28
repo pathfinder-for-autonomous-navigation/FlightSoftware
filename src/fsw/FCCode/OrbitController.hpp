@@ -105,6 +105,6 @@ public:
     WritableStateField<unsigned int> sched_valve4_f;
     WritableStateField<lin::Vector3d> J_ecef_f;
     WritableStateField<double> alpha_f;
-    WritableStateField<unsigned int> near_field_nodes_f;
+    WritableStateField<unsigned int> num_near_field_nodes_f;
 
 };
