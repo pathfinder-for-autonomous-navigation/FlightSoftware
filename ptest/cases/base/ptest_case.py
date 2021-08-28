@@ -98,9 +98,6 @@ class PTestCase(object):
                     self.logger.put(tb)
                     self.finish(True)
                     return
-                except NotImplementedError:
-                    self.finish(True)
-                    return
 
         if self.is_interactive:
             self.testcase_thread = threading.Thread(name="Testcase execution", target=_run, daemon=True)
