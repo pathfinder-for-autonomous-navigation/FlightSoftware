@@ -283,7 +283,7 @@ unsigned int OrbitController::prop_min_cycles_needed() {
 }
 
 void OrbitController::node_generator(std::array<double, 360> &firing_nodes_near, unsigned int num_nodes){
-    for (int i = 0; i < firing_nodes_near.size(); i++) {
+    for (unsigned int i = 0; i < firing_nodes_near.size(); i++) {
         firing_nodes_near[i] = (pi/90) * i;
         if (firing_nodes_near[i] > pi) {
             firing_nodes_near[i] = firing_nodes_near[i]- 2*pi;
