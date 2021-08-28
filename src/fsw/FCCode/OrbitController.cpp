@@ -291,7 +291,7 @@ void OrbitController::node_generator(std::array<double, 360> &firing_nodes_near,
             firing_nodes_near[i] = firing_nodes_near[i]- 2*PI;
         }
         if (i > num_nodes - 1) {
-            firing_nodes_near[i] = NULL;
+            firing_nodes_near[i] = 0;
         }
     }
 }
