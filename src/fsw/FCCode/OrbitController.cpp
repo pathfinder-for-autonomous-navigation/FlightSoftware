@@ -10,12 +10,7 @@ const constexpr double OrbitController::valve_time_lin_reg_intercept;
 // Firing nodes
 constexpr double pi = gnc::constant::pi;
 static constexpr std::array<double, 3> firing_nodes_far = {pi/3, pi, -pi/3};
-static constexpr std::array<double, 18> firing_nodes_near = {pi/18, pi/6, pi*(5/18), pi*(7/18), pi/2, pi*(11/18), 
-                                pi*(13/18), pi*(5/6), pi*(17/18), -pi*(17/18),
-                                -pi*(5/6), -pi*(13/18), -pi*(11/18), -pi/2,
-                                -pi*(7/18), -pi*(5/18), -pi/6, -pi/18};
-
-static constexpr auto gain_factor = static_cast<double>(firing_nodes_near.size()) / firing_nodes_far.size();
+static std::array<double, 360> firing_nodes_near;
 
 OrbitController::OrbitController(StateFieldRegistry &r) : 
     TimedControlTask<void>(r, "orbit_control_ct"),
@@ -35,7 +30,8 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
     sched_valve4_f("orbit.control.valve4", Serializer<unsigned int>(1000)),
     J_ecef_f("orbit.control.J_ecef", Serializer<lin::Vector3d>(0,0.025,10)),
-    alpha_f("orbit.control.alpha", Serializer<double>(0,1,10))
+    alpha_f("orbit.control.alpha", Serializer<double>(0,1,10)),
+    num_near_field_nodes_f("orbit.control.num_near_field_nodes", Serializer<unsigned int>(300))
 
 {
     add_writable_field(sched_valve1_f);
@@ -44,12 +40,14 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     add_writable_field(sched_valve4_f);
     add_writable_field(J_ecef_f);
     add_writable_field(alpha_f);
+    add_writable_field(num_near_field_nodes_f);
     sched_valve1_f.set(0);
     sched_valve2_f.set(0);
     sched_valve3_f.set(0);
     sched_valve4_f.set(0);
     J_ecef_f.set(lin::zeros<lin::Vector3d>());
     alpha_f.set(0.4);
+    num_near_field_nodes_f.set(180);
     dr_smoothed = lin::nans<lin::Vector3d>();
     dv_smoothed = lin::nans<lin::Vector3d>();
 }
@@ -190,7 +188,7 @@ double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, c
         }
         return min_time;
     };
-
+    node_generator(firing_nodes_near, num_near_field_nodes_f.get());
     return (rel_orbit_state == static_cast<unsigned char>(rel_orbit_state_t::estimating)) ? 
             next_node(firing_nodes_near) : next_node(firing_nodes_far);
 }
@@ -213,6 +211,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, const lin::Vector3d &
     data.d = gnc::constant::K_d;
     data.energy_gain = gnc::constant::K_e;   // Energy gain                   (J)
     data.h_gain = gnc::constant::K_h;        // Angular momentum gain         (kg m^2/sec)
+    static auto gain_factor = static_cast<double>(num_near_field_nodes_f.get()) / firing_nodes_far.size();
     
     if (rel_orbit_state==static_cast<unsigned char>(rel_orbit_state_t::estimating)) {
         data.p /= gain_factor;  
@@ -281,4 +280,16 @@ unsigned int OrbitController::prop_min_cycles_needed() {
                (ctrl_cycles_per_filling_period_fp->get() +
                 ctrl_cycles_per_cooling_period_fp->get()) +
            4;
+}
+
+void OrbitController::node_generator(std::array<double, 360> &firing_nodes_near, unsigned int num_nodes){
+    for (unsigned int i = 0; i < firing_nodes_near.size(); i++) {
+        firing_nodes_near[i] = (pi/90) * i;
+        if (firing_nodes_near[i] > pi) {
+            firing_nodes_near[i] = firing_nodes_near[i]- 2*pi;
+        }
+        if (i > num_nodes - 1) {
+            firing_nodes_near[i] = 0;
+        }
+    }
 }

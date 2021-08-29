@@ -30,7 +30,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {23, false, {"adcs_monitor.ssa_voltage0", "adcs_monitor.ssa_voltage1", "adcs_monitor.ssa_voltage2", "adcs_monitor.ssa_voltage3", "adcs_monitor.ssa_voltage4", "adcs_monitor.ssa_voltage5", "adcs_monitor.ssa_voltage6", "adcs_monitor.ssa_voltage7", "adcs_monitor.ssa_voltage8", "adcs_monitor.ssa_voltage9"}},
 {24, false, {"adcs_monitor.ssa_voltage10", "adcs_monitor.ssa_voltage11", "adcs_monitor.ssa_voltage12", "adcs_monitor.ssa_voltage13", "adcs_monitor.ssa_voltage14", "adcs_monitor.ssa_voltage15", "adcs_monitor.ssa_voltage16", "adcs_monitor.ssa_voltage17", "adcs_monitor.ssa_voltage18", "adcs_monitor.ssa_voltage19"}},
 {25, true, {"docksys.docked"}},
-{26, true, {"orbit.control.valve1", "orbit.control.valve2", "orbit.control.valve3", "orbit.control.valve4", "orbit.control.J_ecef", "orbit.control.alpha"}},
+{26, true, {"orbit.control.valve1", "orbit.control.valve2", "orbit.control.valve3", "orbit.control.valve4", "orbit.control.J_ecef", "orbit.control.alpha", "orbit.control.num_near_field_nodes"}},
 {27, false, {"prop.cycles_until_firing", "prop.sched_intertank1", "prop.sched_intertank2"}},
 {28, false, {"adcs_cmd.rwa_speed_cmd", "adcs_cmd.rwa_torque_cmd", "adcs_cmd.mtr_cmd"}},
 {29, false, {"timing.adcs_commander.avg_wait", "timing.adcs_commander.num_lates", "timing.adcs_controller.avg_wait", "timing.adcs_controller.num_lates", "timing.estimators.avg_wait", "timing.estimators.num_lates", "timing.adcs_monitor.avg_wait", "timing.adcs_monitor.num_lates", "timing.attitude_controller.avg_wait", "timing.attitude_controller.num_lates", "timing.clock_ct.avg_wait", "timing.clock_ct.num_lates", "timing.dcdc_ct.avg_wait", "timing.dcdc_ct.num_lates", "timing.debug.avg_wait", "timing.debug.num_lates"}},
