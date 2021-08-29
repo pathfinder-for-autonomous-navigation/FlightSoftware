@@ -99,11 +99,11 @@ class PTestCase(object):
                     self.finish(True)
                     return
 
-        # if self.is_interactive:
-        self.testcase_thread = threading.Thread(name="Testcase execution", target=_run, daemon=True)
-        self.testcase_thread.start()
-        # else:
-        #     _run()
+        if self.is_interactive:
+            self.testcase_thread = threading.Thread(name="Testcase execution", target=_run, daemon=True)
+            self.testcase_thread.start()
+        else:
+            _run()
 
     def run(self):
         """Implemented by the subclass testcase providing the actual testcase
