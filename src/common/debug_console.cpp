@@ -14,6 +14,7 @@
     #include <iostream>
     #include <mutex>
     #include <thread>
+    #include <atomic>
 #else
     #include <Arduino.h>
 
@@ -67,7 +68,7 @@ static std::thread reader_thread;
 
 /** @brief Used to signal the reader thread to halt.
  */
-static volatile bool reader_thread_is_running = false;
+static std::atomic<bool> reader_thread_is_running(false);
 
 /** @brief Producer consumer queue facilitating communication between the main
  *         thread and reader thread.
@@ -147,6 +148,17 @@ void debug_console::open() {
     reader_thread = std::thread([&]() -> void {
         std::string input;
         while (reader_thread_is_running) {
+
+            // a timer that will kill the reader thread if we are no longer running the reader
+            std::thread([&]
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                if (!reader_thread_is_running){
+                    std::terminate();
+                }
+            }).detach();
+
             std::getline(std::cin, input);
 
             std::unique_lock<std::mutex> lock{input_queue_mutex};

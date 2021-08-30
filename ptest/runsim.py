@@ -195,7 +195,7 @@ class PTest(object):
         for device in self.devices.values():
             device.disconnect()
         for binary in self.binaries:
-            binary['subprocess'].kill()
+            binary['subprocess'].terminate()
             os.close(binary['pty_master_fd'])
             os.close(binary['pty_slave_fd'])
 
