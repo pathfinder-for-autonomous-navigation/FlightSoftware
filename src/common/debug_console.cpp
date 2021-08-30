@@ -152,7 +152,7 @@ void debug_console::open() {
             // a timer that will kill the reader thread if we are no longer running the reader
             std::thread([&]
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
                 if (!reader_thread_is_running){
                     std::terminate();
