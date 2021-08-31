@@ -41,7 +41,7 @@ class TestFixture {
 
     AttitudeEstimator attitude_estimator;
 
-    InternalStateField<bool> const *const attitude_estimator_b_valid_fp;
+    ReadableStateField<bool> const *const attitude_estimator_b_valid_fp;
     ReadableStateField<bool> const *const attitude_estimator_valid_fp;
     WritableStateField<bool> const *const attitude_estimator_reset_cmd_fp;
 
@@ -65,7 +65,7 @@ class TestFixture {
           adcs_ssa_mode_fp(registry.create_readable_field<unsigned char>("adcs_monitor.ssa_mode", 3)),
           adcs_ssa_fp(registry.create_readable_lin_vector_field<float>("adcs_monitor.ssa_vec", 0, 1, 1)),
           attitude_estimator(registry),
-          attitude_estimator_b_valid_fp(registry.find_internal_field_t<bool>("attitude_estimator.b_valid")),
+          attitude_estimator_b_valid_fp(registry.find_readable_field_t<bool>("attitude_estimator.b_valid")),
           attitude_estimator_valid_fp(registry.find_readable_field_t<bool>("attitude_estimator.valid")),
           attitude_estimator_reset_cmd_fp(registry.find_writable_field_t<bool>("attitude_estimator.reset_cmd"))
     { }

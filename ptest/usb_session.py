@@ -554,3 +554,5 @@ class USBSession(object):
         self.datastore.stop()
         self.logger.stop()
         self.raw_logger.stop()
+
+        print(f' - Finished terminating for {self.device_name}.')

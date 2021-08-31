@@ -19,8 +19,8 @@ class TestFixture {
     StateFieldRegistryMock registry;
 
     // Input state fields to attitude controller
-    std::shared_ptr<InternalStateField<bool>> attitude_estimator_b_valid_fp;
-    std::shared_ptr<InternalStateField<lin::Vector3f>> b_body_rd_fp;
+    std::shared_ptr<ReadableStateField<bool>> attitude_estimator_b_valid_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3f>> b_body_rd_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_wheels_rd_fp;
     std::shared_ptr<ReadableStateField<bool>> attitude_estimator_valid_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
@@ -46,8 +46,8 @@ class TestFixture {
     WritableStateField<lin::Vector3f>* m_body_cmd_fp;
 
     TestFixture() : registry() {
-        attitude_estimator_b_valid_fp = registry.create_internal_field<bool>("attitude_estimator.b_valid");
-        b_body_rd_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.b_body");
+        attitude_estimator_b_valid_fp = registry.create_readable_field<bool>("attitude_estimator.b_valid");
+        b_body_rd_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.b_body", 0, 1.0e-4, 12);
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
         attitude_estimator_valid_fp = registry.create_readable_field<bool>("attitude_estimator.valid");
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");

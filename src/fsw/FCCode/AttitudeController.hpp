@@ -29,8 +29,8 @@ class AttitudeController : public TimedControlTask<void> {
     ReadableStateField<lin::Vector3f> *const w_wheels_rd_fp;
 
     // Inputs from the attitude estimator
-    InternalStateField<bool> const *const attitude_estimator_b_valid_fp;
-    InternalStateField<lin::Vector3f> const *const b_body_rd_fp;
+    ReadableStateField<bool> const *const attitude_estimator_b_valid_fp;
+    ReadableStateField<lin::Vector3f> const *const b_body_rd_fp;
     ReadableStateField<bool> const *const attitude_estimator_valid_fp;
     ReadableStateField<lin::Vector4f> const *const q_body_eci_est_fp;
     InternalStateField<lin::Vector3f> const *const w_body_est_fp;

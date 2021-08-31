@@ -72,6 +72,14 @@ public:
     WritableStateField<unsigned int>* ctrl_cycles_per_filling_period_fp;
     WritableStateField<unsigned int>* ctrl_cycles_per_cooling_period_fp;
 
+    /**
+     * @brief Function takes in the number of firing nodes and mutates the
+     * array to contain the firing nodes for near field. The size of 360
+     * is chosen to be large enough to allow a firing every degree (~15 secs)
+     */
+
+    void node_generator(std::array<double, 360> &nodes_list, unsigned int num_nodes);
+
     // Input statefields for time, position, velocity, and baseline
     // position/velocity in ECEF
     const InternalStateField<double>* const time_fp;
@@ -97,5 +105,6 @@ public:
     WritableStateField<unsigned int> sched_valve4_f;
     WritableStateField<lin::Vector3d> J_ecef_f;
     WritableStateField<double> alpha_f;
+    WritableStateField<unsigned int> num_near_field_nodes_f;
 
 };

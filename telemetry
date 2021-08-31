@@ -1073,6 +1073,20 @@
             "type": "lin float vector",
             "writable": false
         },
+        "attitude_estimator.b_body": {
+            "bitsize": 43,
+            "flow_id": 6,
+            "max": 9.9999997474e-05,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude_estimator.b_valid": {
+            "bitsize": 1,
+            "flow_id": 6,
+            "type": "bool",
+            "writable": false
+        },
         "attitude_estimator.fault.base": {
             "bitsize": 1,
             "flow_id": 7,
@@ -1721,6 +1735,14 @@
             "max": 1.0,
             "min": 0.0,
             "type": "double",
+            "writable": true
+        },
+        "orbit.control.num_near_field_nodes": {
+            "bitsize": 9,
+            "flow_id": 26,
+            "max": 300,
+            "min": 0,
+            "type": "unsigned int",
             "writable": true
         },
         "orbit.control.valve1": {
@@ -2933,7 +2955,9 @@
                 "attitude_estimator.w_bias_body",
                 "attitude_estimator.p_body_eci_sigma_f",
                 "attitude_estimator.w_bias_sigma_body",
-                "attitude_estimator.mag_flag"
+                "attitude_estimator.mag_flag",
+                "attitude_estimator.b_valid",
+                "attitude_estimator.b_body"
             ],
             "id": 6,
             "priority": 5
@@ -3213,7 +3237,8 @@
                 "orbit.control.valve3",
                 "orbit.control.valve4",
                 "orbit.control.J_ecef",
-                "orbit.control.alpha"
+                "orbit.control.alpha",
+                "orbit.control.num_near_field_nodes"
             ],
             "id": 26,
             "priority": 25

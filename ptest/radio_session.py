@@ -294,3 +294,5 @@ class RadioSession(object):
         self.check_queue_thread.join()
         self.http_thread.terminate()
         self.http_thread.join()
+
+        print(f' - Finished terminating for {self.device_name}.')
