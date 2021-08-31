@@ -1,0 +1,27 @@
+summary: "Return all values of a given field and index within a certain range of time"
+tags: 
+  - "Search ElasticSearch"
+description: "This is used for searching for fields within a certain time range."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - name: index
+    in: query
+    type: string
+    required: true
+    description: The index from which data is requested
+  - name: field
+    in: query
+    type: string
+    required: true
+    description: The field requested
+  - name: start
+    type: string
+    required: true
+    description: The starting point of the query
+  - name: end
+    type: string
+    required: true
+    description: The end point of the query

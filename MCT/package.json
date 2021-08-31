@@ -7,7 +7,7 @@
     "start": "node server-files/server.js",
     "postinstall": "cd node_modules/openmct && npm install",
     "setup": "cd .. && ./MCT/generators/mct_setup.sh && cd MCT",
-    "test": "node server-files/server.js test"
+    "test": "node --inspect server-files/server.js "
   },
   "repository": {
     "type": "git",
