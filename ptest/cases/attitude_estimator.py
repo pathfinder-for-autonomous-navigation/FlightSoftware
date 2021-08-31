@@ -83,4 +83,8 @@ class AttitudeNoSunVectorsInitializationCase(SingleSatStandbyCase):
             raise TestCaseFailure(
                     "The attitude estimator should've reset without sun vector data")
 
+        self.ws("attitude_estimator.ignore_sun_vectors", False)
+        self.cycle()
+        self.cycle()
+
         self.finish()
