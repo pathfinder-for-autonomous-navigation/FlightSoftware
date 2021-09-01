@@ -78,7 +78,7 @@ class IridiumEmailProcessor(object):
             # If the attachment is a json string, then return the json
             # as a python dictionary
             data=json.loads(str(payload.decode('utf8').rstrip("\x00")))
-            data["time.downlink_received"]=str(datetime.now().isoformat())
+            data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
         else:
             # Run downlink parser and return json
             f=open("data.sbd", "wb")
@@ -89,7 +89,7 @@ class IridiumEmailProcessor(object):
             data = json.loads(self.console.readline().rstrip())
             if data is not None:
                 data=data["data"]
-                data["time.downlink_received"]=str(datetime.now().isoformat())
+                data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
             os.remove("data.sbd")
 
         return data
@@ -207,7 +207,7 @@ class IridiumEmailProcessor(object):
             "mtmsn":self.mtmsn, 
             "confirmation-mtmsn": self.confirmation_mtmsn,
             "send-uplinks": self.send_uplinks,
-            "time.downlink_received": str(datetime.now().isoformat())
+            "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
         })
 
         # Index iridium report in elasticsearch
