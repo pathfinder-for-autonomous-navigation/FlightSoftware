@@ -153,7 +153,6 @@ void debug_console::open() {
             std::thread([&]
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
                 if (!reader_thread_is_running){
                     std::terminate();
                 }
