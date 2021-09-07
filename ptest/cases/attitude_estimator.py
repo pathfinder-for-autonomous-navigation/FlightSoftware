@@ -50,6 +50,24 @@ class AttitudeNoSunVectorsInitializationCase(SingleSatStandbyCase):
         vector readings, and then force another initialization without the sun
         vector reading.
         """
+        self.cycle()
+        self.cycle()
+        
+        # First disable the sunsensor and check that we remain in standby
+        self.ws("attitude_estimator.ignore_sun_vectors", True)
+        for _ in range(10):
+            self.cycle()
+            
+        if not self.rs("attitude_estimator.valid"):
+            raise TestCaseFailure(
+                    "The attitude estimator should remain valid, if it was previously valid"
+                    ", and then we begin ignoring the sun vectors")
+            
+        # Disable ignoring the sunvectors, requiring them for the filter to remain valid
+        self.ws("attitude_estimator.ignore_sun_vectors", False)
+        self.cycle()
+        
+        # Now disable the sunsensors to test that the filter becomes invalid.
         self.ws_psim("sensors.leader.sun_sensors.disabled", True)
         self.cycle()
         self.cycle()
