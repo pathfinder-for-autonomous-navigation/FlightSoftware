@@ -1,5 +1,7 @@
 {
     "eeprom_saved_fields": {
+        "attitude_estimator.ignore_sun_vectors": 1,
+        "attitude_estimator.mag_flag": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
         "pan.bootcount": 1000,
@@ -1116,6 +1118,12 @@
         "attitude_estimator.fault.unsignal": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.ignore_sun_vectors": {
+            "bitsize": 1,
+            "flow_id": 2,
             "type": "bool",
             "writable": true
         },
@@ -2913,6 +2921,7 @@
                 "orbit.pos",
                 "orbit.vel",
                 "attitude_estimator.valid",
+                "attitude_estimator.ignore_sun_vectors",
                 "attitude_estimator.q_body_eci",
                 "attitude_estimator.L_body",
                 "rel_orbit.state"

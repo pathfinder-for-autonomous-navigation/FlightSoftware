@@ -12,13 +12,17 @@ class ResetforFlight(SingleSatCase):
 
         #printing original states
         self.print_header("initial pan.bootcount: \n" 
-                        + str(self.rs("pan.bootcount")))
+                + str(self.rs("pan.bootcount")))
         self.print_header("initial pan.deployed: \n" 
                 + str(self.rs("pan.deployed")))
         self.print_header("initial pan.deployment.elapsed: \n" 
-                        + str(self.rs("pan.deployment.elapsed")))
+                + str(self.rs("pan.deployment.elapsed")))
         self.print_header("initial pan.kill_switch: \n" 
                 + str(self.rs("pan.kill_switch")))
+        self.print_header("initial attitude_estimator.ignore_sun_vectors: \n" 
+                + str(self.rs("attitude_estimator.ignore_sun_vectors")))
+        self.print_header("initial attitude_estimator.mag_flag: \n" 
+                + str(self.rs("attitude_estimator.mag_flag")))
 
         cycle_no = self.rs("pan.cycle_no")
         #pan.bootcount & pan.deployed have longest save duration of 1000 cycles 
@@ -31,19 +35,25 @@ class ResetforFlight(SingleSatCase):
             self.ws("pan.deployed", False)
             self.ws("pan.deployment.elapsed", 0)
             self.ws("pan.kill_switch", 0)
+            self.ws("attitude_estimator.ignore_sun_vectors", False)
+            self.ws("attitude_estimator.mag_flag", False)
             self.cycle()
 
             cycle_no = self.rs("pan.cycle_no")
 
         #printing updated states after cycling
         self.print_header("final pan.bootcount: \n" 
-                            + str(self.rs("pan.bootcount")))
+                + str(self.rs("pan.bootcount")))
         self.print_header("final pan.deployed: \n" 
-                    + str(self.rs("pan.deployed")))
+                + str(self.rs("pan.deployed")))
         self.print_header("final pan.deployment.elapsed: \n" 
-                            + str(self.rs("pan.deployment.elapsed")))
+                + str(self.rs("pan.deployment.elapsed")))
         self.print_header("final pan.kill_switch: \n" 
-                    + str(self.rs("pan.kill_switch")))
+                + str(self.rs("pan.kill_switch")))
+        self.print_header("initial attitude_estimator.ignore_sun_vectors: \n" 
+                + str(self.rs("attitude_estimator.ignore_sun_vectors")))
+        self.print_header("initial attitude_estimator.mag_flag: \n" 
+                + str(self.rs("attitude_estimator.mag_flag")))
 
 
         self.print_header("Flight Reset Complete")
