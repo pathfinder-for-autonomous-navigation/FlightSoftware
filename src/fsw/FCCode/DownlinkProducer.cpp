@@ -185,11 +185,20 @@ void DownlinkProducer::execute() {
 void DownlinkProducer::check_fault_signalled() {
     // Define faults we want to check in the order we want (need to add the rest of the flows)
     // Faults listed last in this list will end up with a higher flow priority if signalled
-    std::array<Fault *, 4> const active_faults{
-        FIND_FAULT(adcs_monitor.wheel1_fault.base),
+    std::array<Fault *, 13> const active_faults{
+        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
         FIND_FAULT(adcs_monitor.wheel2_fault.base),
         FIND_FAULT(adcs_monitor.wheel3_fault.base),
-        FIND_FAULT(adcs_monitor.wheel_pot_fault.base)
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),
+        FIND_FAULT(adcs_monitor.functional_fault.base),
+        FIND_FAULT(prop.pressurize_fail.base),
+        FIND_FAULT(attitude_estimator.fault.base),
+        FIND_FAULT(gomspace.low_batt.base),
+        FIND_FAULT(prop.overpressured.base),
+        FIND_FAULT(prop.tank2_temp_high.base),
+        FIND_FAULT(prop.tank1_temp_high.base),
+        FIND_FAULT(piksi_fh.dead),
+        FIND_FAULT(gomspace.get_hk.base)
     };
 
     for (auto *fault : active_faults)
@@ -197,15 +206,15 @@ void DownlinkProducer::check_fault_signalled() {
         if (fault->is_faulted()) {
             // Get the flow with the related fault info
             for(size_t idx = 0; idx < flows.size(); idx++) {
-                std::vector<std::string> fields = flows[idx].field_list;
+                std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
                 for (size_t i = 0; i < fields.size(); i++) {
-                    
+                    std::string field = fields[i]->name();
+                    // If the flow contains the fault base in it, shift it towards the top of the flow data list
+                    if (!field.compare(fault->name())){
+                        
+                    }
                 }
             }
-
-            // Shift that flow higher
-
-
         }
     }
 
