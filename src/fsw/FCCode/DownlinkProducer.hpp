@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
@@ -60,6 +61,8 @@ class DownlinkProducer : public TimedControlTask<void> {
      * most urgent downlink flow group based on the Quake manager's state.
      */
     void execute() override;
+
+    void check_fault_signalled();
 
     /**
      * @brief Destructor; clears the memory allocated for the snapshot

@@ -109,6 +109,9 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
+    // If a fault is signalled, reorder the flows so that the relevant information is downlinked earlier
+    check_fault_signalled();
+
     // Set the snapshot size in order to let the Quake Manager know about
     // the size of the current downlink.
     snapshot_size_bytes_f.set(compute_downlink_size());
@@ -177,6 +180,35 @@ void DownlinkProducer::execute() {
         toggle_flow(toggle_flow_id_fp->get());
         toggle_flow_id_fp->set(0);
     }
+}
+
+void DownlinkProducer::check_fault_signalled() {
+    // Define faults we want to check in the order we want (need to add the rest of the flows)
+    // Faults listed last in this list will end up with a higher flow priority if signalled
+    std::array<Fault *, 4> const active_faults{
+        FIND_FAULT(adcs_monitor.wheel1_fault.base),
+        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel3_fault.base),
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base)
+    };
+
+    for (auto *fault : active_faults)
+    {
+        if (fault->is_faulted()) {
+            // Get the flow with the related fault info
+            for(size_t idx = 0; idx < flows.size(); idx++) {
+                std::vector<std::string> fields = flows[idx].field_list;
+                for (size_t i = 0; i < fields.size(); i++) {
+                    
+                }
+            }
+
+            // Shift that flow higher
+
+
+        }
+    }
+
 }
 
 DownlinkProducer::~DownlinkProducer() {
