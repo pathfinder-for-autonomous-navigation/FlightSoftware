@@ -204,17 +204,22 @@ void DownlinkProducer::check_fault_signalled() {
     for (auto *fault : active_faults)
     {
         if (fault->is_faulted()) {
-            // Get the flow with the related fault info
+
+            // Loop through list of flows and get the flow with the related fault info
             for(size_t idx = 0; idx < flows.size(); idx++) {
                 std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
                 for (size_t i = 0; i < fields.size(); i++) {
                     std::string field = fields[i]->name();
+
                     // If the flow contains the fault base in it, shift it towards the top of the flow data list
                     if (!field.compare(fault->name())){
-                        
+                        unsigned char flow_id;
+                        flows[idx].id_sr.deserialize(&flow_id);
+                        shift_flow_priorities(flow_id, 3);
                     }
                 }
             }
+
         }
     }
 
