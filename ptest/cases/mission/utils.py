@@ -45,6 +45,10 @@ fc_fields = [
     "prop.overpressured.base",
     "prop.tank2_temp_high.base",
     "prop.tank1_temp_high.base"
+    "prop.tank2.pressure",
+    "prop.threshold_firing_pressure",
+    
+    "orbit.control.J_ecef",
 ]
 
 psim_fields_per_satellite = [

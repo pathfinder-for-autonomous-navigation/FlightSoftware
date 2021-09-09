@@ -65,6 +65,9 @@ void OrbitController::init() {
 
 void OrbitController::execute() {
 
+    printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>('a'));
+
+
     // Applies exponential smoothing if relative orbit estimate is valid
     // Sets smoothed values to nans if relative orbit estimate is invalid
     double alpha = alpha_f.get();
@@ -148,7 +151,6 @@ void OrbitController::execute() {
 
         // Save J_ecef to statefield
         J_ecef_f.set(J_ecef);
-
         // Transform the impulse from ecef frame to the eci frame
         lin::Vector4d q_eci_ecef;
         gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
