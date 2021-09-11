@@ -3,7 +3,6 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
-#include <common/StateFieldRegistry.hpp>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:

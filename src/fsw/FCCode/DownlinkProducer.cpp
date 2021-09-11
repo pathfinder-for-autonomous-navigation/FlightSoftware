@@ -197,7 +197,7 @@ void DownlinkProducer::check_fault_signalled() {
         FIND_FAULT(prop.overpressured.base),
         FIND_FAULT(prop.tank2_temp_high.base),
         FIND_FAULT(prop.tank1_temp_high.base),
-        FIND_FAULT(piksi_fh.dead),
+        FIND_FAULT(piksi_fh.dead.base),
         FIND_FAULT(gomspace.get_hk.base)
     };
 

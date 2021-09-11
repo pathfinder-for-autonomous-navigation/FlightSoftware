@@ -11,6 +11,19 @@ struct TestFixture {
     std::unique_ptr<DownlinkProducer> downlink_producer;
 
     std::shared_ptr<ReadableStateField<unsigned int>> foo1_fp;
+    std::shared_ptr<Fault> adcs_wheel1_fault_fp;
+    std::shared_ptr<Fault> adcs_wheel2_fault_fp;
+    std::shared_ptr<Fault> adcs_wheel3_fault_fp;
+    std::shared_ptr<Fault> adcs_wheelpot_fault_fp;
+    std::shared_ptr<Fault> adcs_functional_fault_fp;
+    std::shared_ptr<Fault> prop_pressurize_fault_fp;
+    std::shared_ptr<Fault> attitude_estimator_fault_fp;
+    std::shared_ptr<Fault> gs_low_batt_fault_fp;
+    std::shared_ptr<Fault> prop_overpressured_fault_fp;
+    std::shared_ptr<Fault> tank2_temp_fault_fp;
+    std::shared_ptr<Fault> tank1_temp_fault_fp;
+    std::shared_ptr<Fault> piksi_dead_fault_fp;
+    std::shared_ptr<Fault> gs_hk_fault_fp;
     std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
     InternalStateField<char*>* snapshot_ptr_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
@@ -27,6 +40,19 @@ struct TestFixture {
         // Create field(s) for serialization and initialize them to
         // default values
         foo1_fp = registry.create_readable_field<unsigned int>("foo1");
+        adcs_wheel1_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1);
+        adcs_wheel2_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1);
+        adcs_wheel3_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1);
+        adcs_wheelpot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
+        adcs_functional_fault_fp = registry.create_fault("adcs_monitor.functional_fault", 1);
+        prop_pressurize_fault_fp = registry.create_fault("prop.pressurize_fail", 1);
+        attitude_estimator_fault_fp = registry.create_fault("attitude_estimator.fault", 1);
+        gs_low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
+        prop_overpressured_fault_fp = registry.create_fault("prop.overpressured", 1);
+        tank2_temp_fault_fp = registry.create_fault("prop.tank2_temp_high", 1);
+        tank1_temp_fault_fp = registry.create_fault("prop.tank1_temp_high", 1);
+        piksi_dead_fault_fp = registry.create_fault("piksi_fh.dead", 1);
+        gs_hk_fault_fp = registry.create_fault("gomspace.get_hk", 1);
         cycle_count_fp->set(20);
         foo1_fp->set(400);
 
@@ -502,6 +528,53 @@ void test_toggle() {
     TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get()); 
 }
 
+void test_fault_reordering() {
+    TestFixture tf;
+
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        },
+        {
+            2, true, {"foo1"} 
+        },
+        {
+            3, true, {"foo1"} 
+        },
+        {
+            4, true, {"foo1"} 
+        },
+        {
+            5, true, {"foo1"} 
+        },
+        {
+            6, true, {"adcs_monitor.wheel1_fault.base"} 
+        }
+    };
+    tf.init(flow_data);
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+
+    std::vector<int> desired_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+    
+    // Signal the fault and cycle
+    tf.adcs_wheel1_fault_fp->override();
+    tf.downlink_producer->execute();
+
+    // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,6,3,4,5};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -514,6 +587,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_shift_priorities);
     RUN_TEST(test_shift_statefield_cmd);
     RUN_TEST(test_toggle);
+    RUN_TEST(test_fault_reordering);
     return UNITY_END();
 }
 
