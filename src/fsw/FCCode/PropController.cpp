@@ -399,10 +399,14 @@ bool PropState_Pressurizing::can_enter() const
 prop_state_t PropState_Pressurizing::evaluate()
 {
     // if our desired time to fire has already passed, early exit to idle to try again
-    if (controller->cycles_until_firing.get() == 0)
+    if (controller->cycles_until_firing.get() == 0){
+        PropulsionSystem.reset();
         return prop_state_t::idle;
-    if (controller->can_enter_state(prop_state_t::handling_fault))
+    }
+    if (controller->can_enter_state(prop_state_t::handling_fault)){
+        PropulsionSystem.reset();
         return prop_state_t::handling_fault;
+    }
     return ActionCycleOpenClose::evaluate();
 }
 
@@ -414,6 +418,7 @@ prop_state_t PropState_Pressurizing::handle_out_of_cycles()
     if (controller->pressurize_fail_fault_f.is_faulted())
     {
         DD("[!] --> transitioning to handling_fault\n");
+        PropulsionSystem.reset();
         return prop_state_t::handling_fault;
     }
     // Fault is suppressed
