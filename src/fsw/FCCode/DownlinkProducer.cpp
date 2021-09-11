@@ -183,7 +183,7 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_fault_signalled() {
-    // Define faults we want to check in the order we want (need to add the rest of the flows)
+    // Define faults we want to check in the order we want
     // Faults listed last in this list will end up with a higher flow priority if signalled
     std::array<Fault *, 13> const active_faults{
         FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
