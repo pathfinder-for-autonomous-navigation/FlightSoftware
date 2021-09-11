@@ -390,7 +390,7 @@ bool PropState_Pressurizing::can_enter() const
 
     // min_cycles_needed is actually an upper bound on how long we could need
     bool is_time_to_pressurize = (
-            (controller->cycles_until_firing.get() <= controller->min_cycles_needed())
+            (controller->cycles_until_firing.get() <= controller->min_cycles_needed() - 1)
         );
 
     return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
