@@ -164,10 +164,11 @@ void test_pressurizing_to_idle_out_of_cycles(){
     TestFixture tf;
     PropulsionSystem.set_is_functional(true);
     tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 400, 12, 800, 2*tf.pc->min_cycles_needed());
+    tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed()/2);
     tf.step();
-
-
+    check_state(prop_state_t::pressurizing);
+    tf.execute_until_state_change(); // assume we dont hit target pressure
+    check_state(prop_state_t::idle);
 }
 
 void test_pressurize_to_firing()

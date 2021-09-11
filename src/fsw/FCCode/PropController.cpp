@@ -399,7 +399,7 @@ bool PropState_Pressurizing::can_enter() const
 prop_state_t PropState_Pressurizing::evaluate()
 {
     // if our desired time to fire has already passed, early exit to idle to try again
-    if (controller->cycles_until_firing.get() == 0){
+    if (controller->cycles_until_firing.get() <= 1){
         PropulsionSystem.reset();
         return prop_state_t::idle;
     }
