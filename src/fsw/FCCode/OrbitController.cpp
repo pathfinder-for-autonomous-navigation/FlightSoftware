@@ -147,15 +147,6 @@ void OrbitController::execute() {
     // Collect the output of the PD controller and get the needed impulse
     lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr_smoothed, dv_smoothed);
 
-<<<<<<< HEAD
-        // Save J_ecef to statefield
-        J_ecef_f.set(J_ecef);
-        // Transform the impulse from ecef frame to the eci frame
-        lin::Vector4d q_eci_ecef;
-        gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
-        lin::Vector3d J_eci;
-        gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
-=======
     // Save J_ecef to statefield
     J_ecef_f.set(J_ecef);
 
@@ -164,7 +155,6 @@ void OrbitController::execute() {
     gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
     lin::Vector3d J_eci;
     gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
->>>>>>> origin/gnc-upgrade
 
     // Transform the impulse from eci frame to the body frame of the spacecraft
     lin::Vector4f q_body_eci = q_body_eci_fp->get();
