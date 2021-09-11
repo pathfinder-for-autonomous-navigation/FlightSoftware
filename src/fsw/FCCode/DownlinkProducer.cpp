@@ -186,17 +186,17 @@ void DownlinkProducer::check_fault_signalled() {
     // Define faults we want to check in the order we want
     // Faults listed last in this list will end up with a higher flow priority if signalled
     std::array<Fault *, 13> const active_faults{
-        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
-        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
         FIND_FAULT(adcs_monitor.wheel3_fault.base),
-        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),
-        FIND_FAULT(adcs_monitor.functional_fault.base),
-        FIND_FAULT(prop.pressurize_fail.base),
-        FIND_FAULT(attitude_estimator.fault.base),
+        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
         FIND_FAULT(gomspace.low_batt.base),
-        FIND_FAULT(prop.overpressured.base),
-        FIND_FAULT(prop.tank2_temp_high.base),
         FIND_FAULT(prop.tank1_temp_high.base),
+        FIND_FAULT(prop.tank2_temp_high.base),
+        FIND_FAULT(attitude_estimator.fault.base),
+        FIND_FAULT(adcs_monitor.functional_fault.base),
+        FIND_FAULT(prop.overpressured.base),
+        FIND_FAULT(prop.pressurize_fail.base),
         FIND_FAULT(piksi_fh.dead.base),
         FIND_FAULT(gomspace.get_hk.base)
     };

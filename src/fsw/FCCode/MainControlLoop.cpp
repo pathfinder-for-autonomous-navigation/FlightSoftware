@@ -22,7 +22,11 @@
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data)
+        const std::vector<DownlinkProducer::FlowData>& flow_data,
+        const std::vector<DownlinkProducer::FlowData>& startup_flows,
+        const std::vector<DownlinkProducer::FlowData>& detumble_flows,
+        const std::vector<DownlinkProducer::FlowData>& close_approach_flows,
+        const std::vector<DownlinkProducer::FlowData>& docking_docked_flows) 
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
