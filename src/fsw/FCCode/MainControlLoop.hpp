@@ -60,6 +60,8 @@ class MainControlLoop : public ControlTask<void> {
 
     EEPROMController eeprom_controller;
 
+    WritableStateField<unsigned char> *mission_state_fp;
+
     /**
      * @brief Total memory use, in bytes.
      */
@@ -92,6 +94,12 @@ class MainControlLoop : public ControlTask<void> {
     AttitudeController attitude_controller; // needs adcs.state from MissionManager
     ADCSCommander adcs_commander; // will need inputs from computer++
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
+
+    std::vector<DownlinkProducer::FlowData> startup;
+    std::vector<DownlinkProducer::FlowData> detumble;
+    std::vector<DownlinkProducer::FlowData> close_approach;
+    std::vector<DownlinkProducer::FlowData> docking_docked;
+    std::vector<DownlinkProducer::FlowData> original_flows;
 
    public:
     /*
