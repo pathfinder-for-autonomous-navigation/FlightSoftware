@@ -182,6 +182,37 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
+
+    /**
+     * @brief Defines faults we want to check are signalled
+     * If a fault is signalled, the telemetry flow with the fault information will be moved up in the flow data vector
+     * Faults listed last in this list will end up with a higher flow priority if signalled
+     */ 
+    std::array<Fault *, 13> const active_faults{
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
+        FIND_FAULT(adcs_monitor.wheel3_fault.base),
+        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
+        FIND_FAULT(gomspace.low_batt.base),
+        FIND_FAULT(prop.tank1_temp_high.base),
+        FIND_FAULT(prop.tank2_temp_high.base),
+        FIND_FAULT(attitude_estimator.fault.base),
+        FIND_FAULT(adcs_monitor.functional_fault.base),
+        FIND_FAULT(prop.overpressured.base),
+        FIND_FAULT(prop.pressurize_fail.base),
+        FIND_FAULT(piksi_fh.dead.base),
+        FIND_FAULT(gomspace.get_hk.base)
+    };
+
+    /**
+     * @brief The id of the flow next to the one containing all the faults.
+     */
+    unsigned char fault_id;
+
+    /**
+     * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
+     */
+    bool faults_flow_shifted;
 };
 
 #endif

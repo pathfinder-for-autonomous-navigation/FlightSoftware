@@ -45,6 +45,8 @@ void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     snapshot = new char[max_downlink_size];
     snapshot_ptr_f.set(snapshot);
     snapshot_size_bytes_f.set(max_downlink_size);
+
+    faults_flow_shifted = false;
 }
 
 size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
@@ -183,39 +185,36 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_fault_signalled() {
-    // Define faults we want to check in the order we want
-    // Faults listed last in this list will end up with a higher flow priority if signalled
-    std::array<Fault *, 13> const active_faults{
-        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
-        FIND_FAULT(adcs_monitor.wheel3_fault.base),
-        FIND_FAULT(adcs_monitor.wheel2_fault.base),
-        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
-        FIND_FAULT(gomspace.low_batt.base),
-        FIND_FAULT(prop.tank1_temp_high.base),
-        FIND_FAULT(prop.tank2_temp_high.base),
-        FIND_FAULT(attitude_estimator.fault.base),
-        FIND_FAULT(adcs_monitor.functional_fault.base),
-        FIND_FAULT(prop.overpressured.base),
-        FIND_FAULT(prop.pressurize_fail.base),
-        FIND_FAULT(piksi_fh.dead.base),
-        FIND_FAULT(gomspace.get_hk.base)
-    };
 
     for (auto *fault : active_faults)
     {
         if (fault->is_faulted()) {
+            bool found_fault = false; // stop looping through the the list of flows once we find the flow with all the faults
 
             // Loop through list of flows and get the flow with the related fault info
-            for(size_t idx = 0; idx < flows.size(); idx++) {
+            for(size_t idx = 0; idx < flows.size() && !found_fault; idx++) {
                 std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
-                for (size_t i = 0; i < fields.size(); i++) {
+                for (size_t i = 0; i < fields.size() && !found_fault; i++) {
                     std::string field = fields[i]->name();
 
-                    // If the flow contains the fault base in it, shift it towards the top of the flow data list
                     if (!field.compare(fault->name())){
-                        unsigned char flow_id;
+                        found_fault = true; // Signal that we found the flow with the faults in it and can stop looping
+
+                        unsigned char flow_id; // Store the id of the flow with all the fault info
                         flows[idx].id_sr.deserialize(&flow_id);
-                        shift_flow_priorities(flow_id, 3);
+
+                        // If we haven't already, shift the flow towards the top of the flow data list
+                        if (!faults_flow_shifted){
+                            flows[idx-1].id_sr.deserialize(&fault_id); // store the id of the flow originally right behind the flow with faults
+                            shift_flow_priorities(flow_id, 3);
+                            faults_flow_shifted = true;
+                        }
+
+                        // If we had already shifted the flow with all the faults up before, then move it back down to its original position
+                        else{
+                            shift_flow_priorities(flow_id, fault_id);
+                            faults_flow_shifted = false;
+                        }
                     }
                 }
             }

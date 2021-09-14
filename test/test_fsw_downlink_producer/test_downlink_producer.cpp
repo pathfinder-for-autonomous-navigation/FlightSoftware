@@ -573,6 +573,16 @@ void test_fault_reordering() {
         flows[i].id_sr.deserialize(&flow_id);
         TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
     }
+
+    // Check that the flow with the fault is only shifted up for one control cycle
+    tf.downlink_producer->execute();
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
 }
 
 int test_downlink_producer_task() {
