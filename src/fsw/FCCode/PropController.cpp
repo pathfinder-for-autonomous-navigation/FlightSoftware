@@ -170,7 +170,7 @@ PropState &PropController::get_state(prop_state_t state) const
 }
 
 bool PropController::validate_schedule()
-{
+{ 
     return is_valid_schedule(sched_valve1_fp->get(),
                              sched_valve2_fp->get(),
                              sched_valve3_fp->get(),

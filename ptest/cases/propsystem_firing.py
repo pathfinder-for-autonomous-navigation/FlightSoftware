@@ -1,8 +1,11 @@
-from .base import DualSatCase
 from .utils import Enums, TestCaseFailure
 import time
 
-class PropFiringCase(DualSatCase):
+from .mission import (
+    DualSatNearFieldCase
+)
+
+class PropFiringCase(DualSatNearFieldCase):
 
     def __init__(self, *args, **kwargs): #allows for interaction with the terminal during ptesting
         super().__init__(*args, **kwargs)
@@ -19,6 +22,8 @@ class PropFiringCase(DualSatCase):
             self.print_rs("prop.state")
             propNum = self.rs("prop.state")
             self.print_rs("orbit.control.valve1")
+            self.print_rs("orbit.valid")
+            self.print_rs("rel_orbit.state")
             self.print_rs("prop.cycles_until_firing")
             #self.print_rs("prop.tank2.pressure")
         self.ws("prop.state", 6) #get prop state into await firing mode
