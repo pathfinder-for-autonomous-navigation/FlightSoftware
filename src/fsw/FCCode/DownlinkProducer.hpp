@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
+#include "mission_state_t.enum"
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
@@ -213,6 +214,10 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
      */
     bool faults_flow_shifted;
+
+    WritableStateField<unsigned char> *mission_state_fp;
+
+    unsigned char current_state;
 };
 
 #endif

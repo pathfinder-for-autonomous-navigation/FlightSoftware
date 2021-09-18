@@ -1,6 +1,7 @@
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
+#include <flow_data.hpp>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
                                  snapshot_ptr_f("downlink.ptr"),
@@ -11,6 +12,9 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
+
+    mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
+    current_state = mission_state_fp->get();
 }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
@@ -111,6 +115,31 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
+    // Initialize the flows depending on the mission state
+    if (current_state != mission_state_fp->get()){
+        switch (static_cast<mission_state_t>(mission_state_fp->get())){
+            case mission_state_t::startup: 
+                init_flows(PAN::startup_flows);
+                break;
+            case mission_state_t::detumble:
+                init_flows(PAN::detumble_flows);
+                break;
+            case mission_state_t::follower_close_approach:
+                init_flows(PAN::close_approach_flows);
+                break;
+            case mission_state_t::docking:
+                init_flows(PAN::docking_docked_flows);
+                break;
+            case mission_state_t::docked:
+                init_flows(PAN::docking_docked_flows);
+                break;
+            default:
+                init_flows(PAN::flow_data);
+                break;
+        }
+    }
+    current_state = mission_state_fp->get();
+
     // If a fault is signalled, reorder the flows so that the relevant information is downlinked earlier
     check_fault_signalled();
 

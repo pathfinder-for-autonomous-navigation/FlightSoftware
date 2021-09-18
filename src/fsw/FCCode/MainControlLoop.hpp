@@ -95,12 +95,6 @@ class MainControlLoop : public ControlTask<void> {
     ADCSCommander adcs_commander; // will need inputs from computer++
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
-    std::vector<DownlinkProducer::FlowData> startup;
-    std::vector<DownlinkProducer::FlowData> detumble;
-    std::vector<DownlinkProducer::FlowData> close_approach;
-    std::vector<DownlinkProducer::FlowData> docking_docked;
-    std::vector<DownlinkProducer::FlowData> original_flows;
-
    public:
     /*
      * @brief Construct a new Main Control Loop Task object
@@ -109,11 +103,7 @@ class MainControlLoop : public ControlTask<void> {
      * @param flow_data Metadata for telemetry flows.
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data, 
-        const std::vector<DownlinkProducer::FlowData>& startup_flows,
-        const std::vector<DownlinkProducer::FlowData>& detumble_flows,
-        const std::vector<DownlinkProducer::FlowData>& close_approach_flows,
-        const std::vector<DownlinkProducer::FlowData>& docking_docked_flows);
+        const std::vector<DownlinkProducer::FlowData>& flow_data);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

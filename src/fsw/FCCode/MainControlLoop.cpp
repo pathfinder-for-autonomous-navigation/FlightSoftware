@@ -22,11 +22,7 @@
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data,
-        const std::vector<DownlinkProducer::FlowData>& startup_flows,
-        const std::vector<DownlinkProducer::FlowData>& detumble_flows,
-        const std::vector<DownlinkProducer::FlowData>& close_approach_flows,
-        const std::vector<DownlinkProducer::FlowData>& docking_docked_flows) 
+        const std::vector<DownlinkProducer::FlowData>& flow_data) 
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
@@ -85,11 +81,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
     eeprom_controller.init();
     // Since all telemetry fields have been added to the registry, initialize flows
-    startup = startup_flows;
-    detumble = detumble_flows;
-    close_approach = close_approach_flows;
-    docking_docked = docking_docked_flows;
-    original_flows = flow_data;
     downlink_producer.init_flows(flow_data);
     
     // grab downlink sizes, intialize MO buffers
@@ -148,7 +139,6 @@ void MainControlLoop::execute() {
     TRACKED_CONSTANT_SC(unsigned int, quake_duration, 30000);
     TRACKED_CONSTANT_SC(unsigned int, docking_duration, 10000);
     TRACKED_CONSTANT_SC(unsigned int, eeprom_duration, 16600);
-    unsigned char current_state = mission_state_fp->get();
 
     clock_manager.execute();
 
@@ -161,30 +151,6 @@ void MainControlLoop::execute() {
     uplink_consumer.execute_on_time(uplink_duration);
     estimators.execute_on_time(attitude_estimator_duration);
     mission_manager.execute_on_time(mission_duration);
-    
-    if (current_state != mission_state_fp->get()){
-        switch (static_cast<mission_state_t>(mission_state_fp->get())){
-            case mission_state_t::startup: 
-                downlink_producer.init_flows(startup);
-                break;
-            case mission_state_t::detumble:
-                downlink_producer.init_flows(detumble);
-                break;
-            case mission_state_t::follower_close_approach:
-                downlink_producer.init_flows(close_approach);
-                break;
-            case mission_state_t::docking:
-                downlink_producer.init_flows(docking_docked);
-                break;
-            case mission_state_t::docked:
-                downlink_producer.init_flows(docking_docked);
-                break;
-            default:
-                downlink_producer.init_flows(original_flows);
-                break;
-        }
-    }
-
     dcdc_controller.execute_on_time(dcdc_duration);
     attitude_controller.execute_on_time(attitude_controller_duration);
     adcs_commander.execute_on_time(adcs_commander_duration);
