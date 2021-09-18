@@ -123,10 +123,10 @@ class DualSatCase(PTestCase):
                 device.dbtelem()
 
     def rs(self, name, print=False):
-        return self.leader.rs(name, print=print)
+        return self.follower.rs(name, print=print)
 
     def print_rs(self, name):
-        return self.leader.rs(name, print=True)
+        return self.follower.rs(name, print=True)
 
     def ws(self, name, val, print=False):
         self.leader.ws(name, val, print=print)
