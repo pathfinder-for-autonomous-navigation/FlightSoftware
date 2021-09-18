@@ -60,8 +60,6 @@ class MainControlLoop : public ControlTask<void> {
 
     EEPROMController eeprom_controller;
 
-    WritableStateField<unsigned char> *mission_state_fp;
-
     /**
      * @brief Total memory use, in bytes.
      */

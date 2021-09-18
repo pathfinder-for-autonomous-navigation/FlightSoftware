@@ -22,7 +22,7 @@
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data) 
+        const std::vector<DownlinkProducer::FlowData>& flow_data)
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
@@ -96,8 +96,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     sys_time_t init_time = TimedControlTaskBase::get_system_time();
     control_cycle_duration_f.set(0);
     prev_sys_time = init_time;
-
-    mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
 }
     /**
      * @brief Convert a duration object into microseconds.

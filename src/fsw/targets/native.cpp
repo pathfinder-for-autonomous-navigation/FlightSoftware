@@ -2,7 +2,6 @@
 #include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 
-
 #ifndef UNIT_TEST
 int main() {
     StateFieldRegistry registry;
