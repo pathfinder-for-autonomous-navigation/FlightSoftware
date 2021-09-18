@@ -112,7 +112,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     }
 
 void MainControlLoop::execute() {
-    
+
     // Compute memory usage
     #ifdef DESKTOP
     memory_use_f.set(getCurrentRSS());
