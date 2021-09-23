@@ -121,3 +121,7 @@ class DualSatCase(PTestCase):
             #    device.scrape_uplink()
             if device.enable_auto_dbtelem:
                 device.dbtelem()
+    def rs(self, name, print=False):
+        return self.follower.rs(name, print=print)
+    def print_rs(self, name):
+        return self.follower.rs(name, print=True)
