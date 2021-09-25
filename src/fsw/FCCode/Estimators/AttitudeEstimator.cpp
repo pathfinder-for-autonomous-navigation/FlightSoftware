@@ -17,6 +17,8 @@
  */
 TRACKED_CONSTANT_SC(size_t, ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE, 150);
 
+const int frobenius_norm;
+
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry) 
     : ControlTask<void>(registry),
       time_valid_fp(FIND_READABLE_FIELD(bool, time.valid)),
@@ -167,7 +169,7 @@ void AttitudeEstimator::_execute()
         auto const should_reset = !time_valid_fp->get() ||
                 !orbit_valid_fp->get() || !adcs_gyr_functional_fp->get() ||
                 !attitude_estimator_b_valid_f.get() ||
-                attitude_estimator_reset_cmd_f.get();
+                attitude_estimator_reset_cmd_f.get() || lin::fro(_estimate) > frobenius_norm;
 
         if (should_reset)
         {
