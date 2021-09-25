@@ -38,6 +38,8 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     DownlinkProducer(StateFieldRegistry& registry);
 
+    void init(); 
+
     /**
      * @brief Initialize flows for the Downlink Producer. This function
      * should be called in the main control loop after the instantiation of all
@@ -189,21 +191,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      * If a fault is signalled, the telemetry flow with the fault information will be moved up in the flow data vector
      * Faults listed last in this list will end up with a higher flow priority if signalled
      */ 
-    std::array<Fault *, 13> const active_faults{
-        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
-        FIND_FAULT(adcs_monitor.wheel3_fault.base),
-        FIND_FAULT(adcs_monitor.wheel2_fault.base),
-        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
-        FIND_FAULT(gomspace.low_batt.base),
-        FIND_FAULT(prop.tank1_temp_high.base),
-        FIND_FAULT(prop.tank2_temp_high.base),
-        FIND_FAULT(attitude_estimator.fault.base),
-        FIND_FAULT(adcs_monitor.functional_fault.base),
-        FIND_FAULT(prop.overpressured.base),
-        FIND_FAULT(prop.pressurize_fail.base),
-        FIND_FAULT(piksi_fh.dead.base),
-        FIND_FAULT(gomspace.get_hk.base)
-    };
+    std::array<Fault *, 13> active_faults;
 
     /**
      * @brief The id of the flow next to the one containing all the faults.
