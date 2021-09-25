@@ -2,9 +2,9 @@
     "seed" : 0,
     "devices" : [
         {
-            "name": "FlightControllerFollower",
+            "name": "FlightControllerLeader",
             "run_mode": "teensy",
-            "port": "/dev/cu.usbmodem48717401",
+            "port": "/dev/ttyACM0",
             "baud_rate": 1152000,
             "http_port": 8088,
             "imei": "",
@@ -12,7 +12,7 @@
             "enable_auto_dbtelem": false
         },
         {
-            "name": "FlightControllerLeader",
+            "name": "FlightControllerFollower",
             "run_mode": "native",
             "pio_target": "fsw_native_follower_autotelem",
             "http_port" : 8089,
