@@ -186,7 +186,7 @@ class GomspaceCheckoutCase(SingleSatCase):
 
 class CheckBatteryLevel(SingleSatCase):
     def run(self):
-        voltage = float(self.read_state("gomspace.vbatt"))
+        voltage = float(self.rs("gomspace.vbatt"))
         self.logger.put("                                 ")
         self.logger.put("=================================")
         self.logger.put("=================================")
