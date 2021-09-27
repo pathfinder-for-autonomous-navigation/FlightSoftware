@@ -38,6 +38,11 @@ class DownlinkProducer : public TimedControlTask<void> {
     DownlinkProducer(StateFieldRegistry& registry);
 
     /**
+     * @brief initialize active faults 
+     */
+    void init(); 
+
+    /**
      * @brief Initialize flows for the Downlink Producer. This function
      * should be called in the main control loop after the instantiation of all
      * state fields.
@@ -182,6 +187,19 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
+
+    /**
+     * @brief The id of the flow next to the one containing all the faults.
+     */
+    unsigned char fault_id;
+
+    /**
+     * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
+     */
+    bool faults_flow_shifted;
+
+    std::array<Fault *, 13> active_faults;
+
 };
 
 #endif
