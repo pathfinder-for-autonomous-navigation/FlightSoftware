@@ -158,6 +158,11 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
 
+    /**
+     * @brief 
+     */
+    void shift_flow_priorities_idx(unsigned char id, size_t idx);
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
@@ -189,9 +194,9 @@ class DownlinkProducer : public TimedControlTask<void> {
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
 
     /**
-     * @brief The id of the flow next to the one containing all the faults.
+     * @brief The index of the flow containing all the faults.
      */
-    unsigned char fault_id;
+    unsigned char fault_idx;
 
     /**
      * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
