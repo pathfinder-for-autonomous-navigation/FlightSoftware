@@ -58,6 +58,7 @@ struct TestFixture {
 
         downlink_producer = std::make_unique<DownlinkProducer>(registry);
         downlink_producer->init_flows(flow_data);
+        downlink_producer->init();
         snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
                                     "downlink.snap_size");
@@ -548,13 +549,16 @@ void test_fault_reordering() {
             5, true, {"foo1"} 
         },
         {
-            6, true, {"adcs_monitor.wheel1_fault.base"} 
+            6, true, {"foo1"} 
+        },
+        {
+            7, true, {"adcs_monitor.wheel1_fault.base"} 
         }
     };
     tf.init(flow_data);
     std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
 
-    std::vector<int> desired_ids={1,2,3,4,5,6};
+    std::vector<int> desired_ids={1,2,3,4,5,6,7};
     for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
@@ -567,7 +571,21 @@ void test_fault_reordering() {
 
     // Get the new flow vector and check that the flows have been reordered as desired
     flows=tf.downlink_producer->get_flows();
-    desired_ids={1,2,6,3,4,5};
+    desired_ids={1,2,7,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // unsignal the fault and cycle
+    tf.adcs_wheel1_fault_fp->un_override();
+    tf.adcs_wheel1_fault_fp->suppress();
+    tf.downlink_producer->execute();
+
+    // // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6,7};
     for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);

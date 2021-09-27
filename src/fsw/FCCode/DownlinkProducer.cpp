@@ -14,7 +14,7 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
 }
 
 void DownlinkProducer::init(){
-    DownlinkProducer::active_faults = {
+    active_faults = {
         FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
         FIND_FAULT(adcs_monitor.wheel3_fault.base),
         FIND_FAULT(adcs_monitor.wheel2_fault.base),
@@ -202,14 +202,11 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_fault_signalled() {
-    // Define faults we want to check in the order we want
-    // Faults listed last in this list will end up with a higher flow priority if signalled
 
+    bool found_fault = false; // stop looping through the the list of flows once we find the flow with all the faults
     for (auto *fault : active_faults)
     {
-        if (fault->is_faulted()) {
-            bool found_fault = false; // stop looping through the the list of flows once we find the flow with all the faults
-
+        if (fault->is_faulted()) {   
             // Loop through list of flows and get the flow with the related fault info
             for(size_t idx = 0; idx < flows.size() && !found_fault; idx++) {
                 std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
@@ -219,25 +216,20 @@ void DownlinkProducer::check_fault_signalled() {
                     if (!field.compare(fault->name())){
                         found_fault = true; // Signal that we found the flow with the faults in it and can stop looping
 
-                        unsigned char flow_id; // Store the id of the flow with all the fault info
-                        flows[idx].id_sr.deserialize(&flow_id);
-
                         // If we haven't already, shift the flow towards the top of the flow data list
                         if (!faults_flow_shifted){
-                            flows[idx-1].id_sr.deserialize(&fault_id); // store the id of the flow originally right behind the flow with faults
-                            shift_flow_priorities(flow_id, 3);
+                            fault_idx = idx; // store the id of the flow with faults
+                            shift_flow_priorities_idx(7, 2);
                             faults_flow_shifted = true;
-                        }
-
-                        // If we had already shifted the flow with all the faults up before, then move it back down to its original position
-                        else{
-                            shift_flow_priorities(flow_id, fault_id);
-                            faults_flow_shifted = false;
                         }
                     }
                 }
             }
         }
+    }
+    if (!found_fault && faults_flow_shifted) {
+        faults_flow_shifted = false;
+        shift_flow_priorities_idx(7, fault_idx);
     }
 }
 
@@ -352,6 +344,39 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     }
     else if (idx2>idx1) {
         for (size_t i = idx1; i < idx2; i++) {
+            std::swap(flows[i],flows[i+1]);
+        }
+    }
+}
+
+void DownlinkProducer::shift_flow_priorities_idx(unsigned char id, size_t idx) {
+    if(id > flows.size()) {
+        printf(debug_severity::error, "Flow with ID %d was not found when "
+                                      "trying to shift to index %d.", id, idx);
+        assert(false);
+    }
+    if(idx > flows.size()) {
+        printf(debug_severity::error, "Flow in index %d was not found when "
+                                      "trying to shift with flow ID %d.", idx, id);
+        assert(false);
+    }
+
+    size_t current_idx = 0;
+    for(size_t i = 0; i < flows.size(); i++) {
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        if (flow_id == id) {
+            current_idx = i;
+        }
+    }
+    
+    if (current_idx>idx) {
+        for (size_t i = current_idx; i > idx; i--) {
+            std::swap(flows[i], flows[i-1]);
+        }
+    }
+    else if (idx>current_idx) {
+        for (size_t i = current_idx; i < idx; i++) {
             std::swap(flows[i],flows[i+1]);
         }
     }
