@@ -11,6 +11,11 @@ class PropFiringCase(DualSatNearFieldCase):
         super().__init__(*args, **kwargs)
         self.debug_to_console = True
 
+    def post_boot(self):
+        super(PropFiringCase, self).post_boot()
+        self.follower.ws("adcs.state", 1)
+        self.follower.ws("dcdc.ADCSMotor_cmd", False)
+
     def run(self):
         self.follower.ws("prop.threshold_firing_pressure", 10)
         propNum = self.rs("prop.state")
@@ -19,13 +24,13 @@ class PropFiringCase(DualSatNearFieldCase):
             self.print_rs("prop.state")
             propNum = self.rs("prop.state")
             self.print_rs("orbit.control.valve1")
-            self.print_rs("orbit.valid")
-            self.print_rs("rel_orbit.state")
             self.print_rs("prop.cycles_until_firing")
-            #self.ws("prop.state", 6) #get prop state into await firing mode
             self.print_rs("orbit.control.J_ecef")
             self.print_rs("prop.state")
             self.print_rs("orbit.control.valve1")
             self.print_rs("prop.cycles_until_firing")
-            self.print_rs("pan.state")
+            self.print_rs("gomspace.vbatt")
+            self.print_rs("dcdc.SpikeDock")
+            self.print_rs("adcs.state")
+
             self.cycle()
