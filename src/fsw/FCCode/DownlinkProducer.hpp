@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
+#include "mission_state_t.enum"
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
@@ -38,6 +39,11 @@ class DownlinkProducer : public TimedControlTask<void> {
     DownlinkProducer(StateFieldRegistry& registry);
 
     /**
+     * @brief initialize active faults 
+     */
+    void init(); 
+
+    /**
      * @brief Initialize flows for the Downlink Producer. This function
      * should be called in the main control loop after the instantiation of all
      * state fields.
@@ -60,6 +66,11 @@ class DownlinkProducer : public TimedControlTask<void> {
      * most urgent downlink flow group based on the Quake manager's state.
      */
     void execute() override;
+
+    /**
+     * Reorder telemetry flows based on the new mission state
+     */
+    void check_mission_state_change();
 
     /**
      * @brief Destructor; clears the memory allocated for the snapshot
@@ -151,6 +162,8 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
 
+    void shift_flow_priorities_idx(unsigned char id, size_t idx);
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
@@ -180,6 +193,12 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
+
+    const WritableStateField<unsigned char>* mission_state_fp;
+
+    std::array<Fault *, 13> active_faults;
+
+    unsigned char current_state;
 };
 
 #endif

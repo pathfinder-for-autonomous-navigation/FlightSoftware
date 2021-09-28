@@ -1,6 +1,7 @@
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
+#include <flow_data.hpp>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
                                  snapshot_ptr_f("downlink.ptr"),
@@ -12,6 +13,27 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
 }
+
+void DownlinkProducer::init(){
+    active_faults = {
+        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
+        FIND_FAULT(adcs_monitor.wheel3_fault.base),
+        FIND_FAULT(adcs_monitor.wheel2_fault.base),
+        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
+        FIND_FAULT(gomspace.low_batt.base),
+        FIND_FAULT(prop.tank1_temp_high.base),
+        FIND_FAULT(prop.tank2_temp_high.base),
+        FIND_FAULT(attitude_estimator.fault.base),
+        FIND_FAULT(adcs_monitor.functional_fault.base),
+        FIND_FAULT(prop.overpressured.base),
+        FIND_FAULT(prop.pressurize_fail.base),
+        FIND_FAULT(piksi_fh.dead.base),
+        FIND_FAULT(gomspace.get_hk.base)
+    };
+
+    mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
+    current_state = mission_state_fp->get();
+ }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     toggle_flow_id_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.toggle_id", Serializer<unsigned char>(flow_data.size()));
@@ -109,6 +131,9 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
+    check_mission_state_change();
+    current_state = mission_state_fp->get();
+
     // Set the snapshot size in order to let the Quake Manager know about
     // the size of the current downlink.
     snapshot_size_bytes_f.set(compute_downlink_size());
@@ -176,6 +201,54 @@ void DownlinkProducer::execute() {
     if (toggle_flow_id_fp->get()>0) {
         toggle_flow(toggle_flow_id_fp->get());
         toggle_flow_id_fp->set(0);
+    }
+}
+
+void DownlinkProducer::check_mission_state_change() {
+    if (current_state!=mission_state_fp->get()) {
+        switch(static_cast<mission_state_t>(mission_state_fp->get())){
+            case mission_state_t::startup:
+                // first reset to default flow order configuration
+                init_flows(PAN::flow_data);
+
+                // then make changes to flow order as desired. For example:
+                shift_flow_priorities_idx(16, 2);
+
+            case mission_state_t::detumble:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::initialization_hold:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::standby:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::follower:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::leader:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::follower_close_approach:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::leader_close_approach:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::docking:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::docked:
+                init_flows(PAN::flow_data);
+
+            case mission_state_t::safehold:
+                init_flows(PAN::flow_data);
+
+            default:
+                init_flows(PAN::flow_data);
+
+        }
+
     }
 }
 
@@ -290,6 +363,39 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     }
     else if (idx2>idx1) {
         for (size_t i = idx1; i < idx2; i++) {
+            std::swap(flows[i],flows[i+1]);
+        }
+    }
+}
+
+void DownlinkProducer::shift_flow_priorities_idx(unsigned char id, size_t idx) {
+    if(id > flows.size()) {
+        printf(debug_severity::error, "Flow with ID %d was not found when "
+                                      "trying to shift to index %d.", id, idx);
+        assert(false);
+    }
+    if(idx > flows.size()) {
+        printf(debug_severity::error, "Flow in index %d was not found when "
+                                      "trying to shift with flow ID %d.", idx, id);
+        assert(false);
+    }
+
+    size_t current_idx = 0;
+    for(size_t i = 0; i < flows.size(); i++) {
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        if (flow_id == id) {
+            current_idx = i;
+        }
+    }
+
+    if (current_idx>idx) {
+        for (size_t i = current_idx; i > idx; i--) {
+            std::swap(flows[i], flows[i-1]);
+        }
+    }
+    else if (idx>current_idx) {
+        for (size_t i = current_idx; i < idx; i++) {
             std::swap(flows[i],flows[i+1]);
         }
     }
