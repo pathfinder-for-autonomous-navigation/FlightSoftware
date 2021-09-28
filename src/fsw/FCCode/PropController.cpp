@@ -281,12 +281,9 @@ bool PropState_AwaitPressurizing::can_enter() const
 {
     bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_schedule_valid = controller->validate_schedule();
-    // Enter Await Pressurizing rather than Pressurizing if we have MORE than enough time
-    bool more_than_enough_time =
-        controller->cycles_until_firing.get() >= controller->min_cycles_needed();
     bool is_functional = PropulsionSystem.is_functional();
 
-    return (was_idle && is_schedule_valid && more_than_enough_time && is_functional);
+    return (was_idle && is_schedule_valid && is_functional);
 }
 
 void PropState_AwaitPressurizing::enter()
@@ -391,17 +388,25 @@ bool PropState_Pressurizing::can_enter() const
     bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_functional = PropulsionSystem.is_functional();
 
-    // It is time to pressurize when we have min_cycles_needed - 1 cycles left
-    bool is_time_to_pressurize =
-        controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
-    
+    // min_cycles_needed is actually an upper bound on how long we could need
+    bool is_time_to_pressurize = (
+            (controller->cycles_until_firing.get() <= controller->min_cycles_needed() - 1)
+        );
+
     return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
 {
-    if (controller->can_enter_state(prop_state_t::handling_fault))
+    // if our desired time to fire has already passed, early exit to idle to try again
+    if (controller->cycles_until_firing.get() <= 1){
+        PropulsionSystem.reset();
+        return prop_state_t::idle;
+    }
+    if (controller->can_enter_state(prop_state_t::handling_fault)){
+        PropulsionSystem.reset();
         return prop_state_t::handling_fault;
+    }
     return ActionCycleOpenClose::evaluate();
 }
 
@@ -413,6 +418,7 @@ prop_state_t PropState_Pressurizing::handle_out_of_cycles()
     if (controller->pressurize_fail_fault_f.is_faulted())
     {
         DD("[!] --> transitioning to handling_fault\n");
+        PropulsionSystem.reset();
         return prop_state_t::handling_fault;
     }
     // Fault is suppressed

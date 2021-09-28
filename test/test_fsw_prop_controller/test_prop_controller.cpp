@@ -160,6 +160,17 @@ void test_pressurize_to_firing_helper(bool functional = true)
     else check_state(prop_state_t::idle);
 }
 
+void test_pressurizing_to_idle_out_of_cycles(){
+    TestFixture tf;
+    PropulsionSystem.set_is_functional(true);
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed()/2);
+    tf.step();
+    check_state(prop_state_t::pressurizing);
+    tf.execute_until_state_change(); // assume we dont hit target pressure
+    check_state(prop_state_t::idle);
+}
+
 void test_pressurize_to_firing()
 {
     test_pressurize_to_firing_helper();
@@ -474,6 +485,7 @@ int test_prop_controller()
     RUN_TEST(test_idle_to_await_pressurize);
     RUN_TEST(test_await_pressurize_to_pressurize);
     RUN_TEST(test_pressurize_to_await_firing);
+    RUN_TEST(test_pressurizing_to_idle_out_of_cycles);
     RUN_TEST(test_pressurize_to_firing);
     RUN_TEST(test_pressurizing);
     RUN_TEST(test_pressurize_fail);
