@@ -185,12 +185,10 @@ void MissionManager::dispatch_startup()
     }
 
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
-    if (bootcount_fp->get() == 1) {
-        if (deployment_wait_elapsed_f.get() < deployment_wait)
-        {
-            deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
-            return;
-        }
+    if (deployment_wait_elapsed_f.get() < deployment_wait)
+    {
+        deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
+        return;
     }
 
     // Step 2. Once we've complete the deployment wait, if any, we want to turn
