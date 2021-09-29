@@ -56,7 +56,6 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     add_writable_field(kill_switch_f);
 
     bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
-    bootcount_fp->set(bootcount_fp->get() + 1);
 
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
 
@@ -94,6 +93,10 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
+}
+
+void MissionManager::init(){
+    bootcount_fp->set(bootcount_fp->get() + 1);
 }
 
 void MissionManager::execute()
