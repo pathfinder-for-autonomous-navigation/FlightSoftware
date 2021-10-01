@@ -1,3 +1,4 @@
+#include <iostream>
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
@@ -15,27 +16,14 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
 }
 
 void DownlinkProducer::init(){
-    active_faults = {
-        FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
-        FIND_FAULT(adcs_monitor.wheel3_fault.base),
-        FIND_FAULT(adcs_monitor.wheel2_fault.base),
-        FIND_FAULT(adcs_monitor.wheel1_fault.base), // this one isnt in flow_data.cpp
-        FIND_FAULT(gomspace.low_batt.base),
-        FIND_FAULT(prop.tank1_temp_high.base),
-        FIND_FAULT(prop.tank2_temp_high.base),
-        FIND_FAULT(attitude_estimator.fault.base),
-        FIND_FAULT(adcs_monitor.functional_fault.base),
-        FIND_FAULT(prop.overpressured.base),
-        FIND_FAULT(prop.pressurize_fail.base),
-        FIND_FAULT(piksi_fh.dead.base),
-        FIND_FAULT(gomspace.get_hk.base)
-    };
-
     mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
     current_state = mission_state_fp->get();
  }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
+    last_used_flow_data = flow_data;
+    // const_cast<const std::vector<FlowData>*>(&last_used_flow_data);
+
     toggle_flow_id_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.toggle_id", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id1_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id1", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id2_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id2", Serializer<unsigned char>(flow_data.size()));
@@ -205,48 +193,18 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_mission_state_change() {
+    const std::vector<DownlinkProducer::FlowData>& flow_data = last_used_flow_data;
     if (current_state!=mission_state_fp->get()) {
         switch(static_cast<mission_state_t>(mission_state_fp->get())){
-            case mission_state_t::startup:
-                // first reset to default flow order configuration
-                init_flows(PAN::flow_data);
-
-                // then make changes to flow order as desired. For example:
-                shift_flow_priorities_idx(16, 2);
-
-            case mission_state_t::detumble:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::initialization_hold:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::standby:
-                init_flows(PAN::flow_data);
-
             case mission_state_t::follower:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::leader:
-                init_flows(PAN::flow_data);
-
+                init_flows(flow_data);
+                shift_flow_priorities_idx(16, 13);
             case mission_state_t::follower_close_approach:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::leader_close_approach:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::docking:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::docked:
-                init_flows(PAN::flow_data);
-
-            case mission_state_t::safehold:
-                init_flows(PAN::flow_data);
-
+                init_flows(flow_data);
+                shift_flow_priorities_idx(16, 13);
             default:
-                init_flows(PAN::flow_data);
-
+                // std::cout <<"default"<< std::endl;
+                init_flows(flow_data);
         }
 
     }

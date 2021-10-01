@@ -72,6 +72,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void check_mission_state_change();
 
+
     /**
      * @brief Destructor; clears the memory allocated for the snapshot
      * buffer.
@@ -182,6 +183,8 @@ class DownlinkProducer : public TimedControlTask<void> {
     unsigned int num_active_flows = 0;
     std::vector<Flow> flows;
 
+    std::vector<DownlinkProducer::FlowData> last_used_flow_data;
+
     /**
      * @brief Fields used to shift flows. Moves the flow with id1 to the flow with 
      * id2's position. Default is <0,0> (No flow can have an id of 0).
@@ -196,9 +199,9 @@ class DownlinkProducer : public TimedControlTask<void> {
 
     const WritableStateField<unsigned char>* mission_state_fp;
 
-    std::array<Fault *, 13> active_faults;
-
     unsigned char current_state;
+
+
 };
 
 #endif
