@@ -1,4 +1,3 @@
-#include <iostream>
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
@@ -21,7 +20,6 @@ void DownlinkProducer::init(){
  }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
-
     toggle_flow_id_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.toggle_id", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id1_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id1", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id2_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id2", Serializer<unsigned char>(flow_data.size()));
