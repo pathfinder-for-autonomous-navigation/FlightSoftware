@@ -3,12 +3,6 @@ from .utils import Enums, TestCaseFailure
 
 class FullMissionCase(DualSatCase, PSimCase):
 
-  firstStartup = True
-  firstDetumble = True
-  firstStandby = True
-  firstFarField = True
-  firstNearField = True
-
   def __init__(self, *args, **kwargs):
     super(FullMissionCase, self).__init__(*args, **kwargs)
     self.leader_skip_deployment_wait = True
