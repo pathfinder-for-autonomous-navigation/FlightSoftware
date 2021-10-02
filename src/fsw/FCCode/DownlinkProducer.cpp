@@ -399,7 +399,7 @@ void DownlinkProducer::shift_flow_priorities_idx(unsigned char id, size_t idx) {
         assert(false);
     }
     #endif
-    
+
     size_t current_idx = 0;
     for(size_t i = 0; i < flows.size(); i++) {
         unsigned char flow_id;
