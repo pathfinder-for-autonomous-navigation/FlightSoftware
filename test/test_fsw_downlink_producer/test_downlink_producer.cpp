@@ -583,7 +583,7 @@ void test_fault_reordering() {
     tf.adcs_wheel1_fault_fp->suppress();
     tf.downlink_producer->execute();
 
-    // // Get the new flow vector and check that the flows have been reordered as desired
+    // Get the new flow vector and check that the flows have been reordered as desired
     flows=tf.downlink_producer->get_flows();
     desired_ids={1,2,3,4,5,6,7};
     for (size_t i = 0; i<flows.size(); i++){

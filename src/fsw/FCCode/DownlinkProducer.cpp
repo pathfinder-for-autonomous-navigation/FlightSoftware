@@ -202,35 +202,36 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_fault_signalled() {
+    bool found_fault = find_faults();
+    if (found_fault && !faults_flow_shifted){
+        shift_flow_priorities_idx(7, 2);
+        faults_flow_shifted = true;
+    }
+    else if (!found_fault && faults_flow_shifted) {
+        faults_flow_shifted = false;
+        shift_flow_priorities_idx(7, fault_idx);
+    }
+}
 
-    bool found_fault = false; // stop looping through the the list of flows once we find the flow with all the faults
+bool DownlinkProducer::find_faults() {
     for (auto *fault : active_faults)
     {
         if (fault->is_faulted()) {   
             // Loop through list of flows and get the flow with the related fault info
-            for(size_t idx = 0; idx < flows.size() && !found_fault; idx++) {
+            for(size_t idx = 0; idx < flows.size(); idx++) {
                 std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
-                for (size_t i = 0; i < fields.size() && !found_fault; i++) {
+                for (size_t i = 0; i < fields.size(); i++) {
                     std::string field = fields[i]->name();
 
                     if (!field.compare(fault->name())){
-                        found_fault = true; // Signal that we found the flow with the faults in it and can stop looping
-
-                        // If we haven't already, shift the flow towards the top of the flow data list
-                        if (!faults_flow_shifted){
-                            fault_idx = idx; // store the id of the flow with faults
-                            shift_flow_priorities_idx(7, 2);
-                            faults_flow_shifted = true;
-                        }
+                        fault_idx = idx;
+                        return true;
                     }
                 }
             }
         }
     }
-    if (!found_fault && faults_flow_shifted) {
-        faults_flow_shifted = false;
-        shift_flow_priorities_idx(7, fault_idx);
-    }
+    return false;
 }
 
 DownlinkProducer::~DownlinkProducer() {
@@ -314,6 +315,7 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
 }
 
 void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
+    #ifndef FLIGHT
     if(id1 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
                                       "trying to shift with flow ID %d.", id1, id2);
@@ -324,6 +326,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
                                       "trying to shift with flow ID %d.", id2, id1);
         assert(false);
     }
+    #endif
 
     size_t idx1 = 0, idx2 = 0;
     for(size_t idx = 0; idx < flows.size(); idx++) {
@@ -350,6 +353,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
 }
 
 void DownlinkProducer::shift_flow_priorities_idx(unsigned char id, size_t idx) {
+    #ifndef FLIGHT
     if(id > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
                                       "trying to shift to index %d.", id, idx);
@@ -360,6 +364,7 @@ void DownlinkProducer::shift_flow_priorities_idx(unsigned char id, size_t idx) {
                                       "trying to shift with flow ID %d.", idx, id);
         assert(false);
     }
+    #endif
 
     size_t current_idx = 0;
     for(size_t i = 0; i < flows.size(); i++) {
