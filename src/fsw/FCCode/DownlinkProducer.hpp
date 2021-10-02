@@ -172,18 +172,16 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
 
+    /**
+     * @brief Shift the flow with the given id to the given index in the flow order.
+     * Does not change the active status.
+     */
     void shift_flow_priorities_idx(unsigned char id, size_t idx);
 
     /*
      * Restore the original flow order
      */
     void reset_flows();
-    
-    /**
-     * @brief Shift the flow with the given id to the given index in the flow order.
-     * Does not change the active status.
-     */
-    void shift_flow_priorities_idx(unsigned char id, size_t idx);
 
   protected:
     /** @brief Pointer to cycle count. */

@@ -1,7 +1,6 @@
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
-#include <flow_data.hpp>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
                                  snapshot_ptr_f("downlink.ptr"),
@@ -206,6 +205,39 @@ void DownlinkProducer::execute() {
         toggle_flow(toggle_flow_id_fp->get());
         toggle_flow_id_fp->set(0);
     }
+}
+
+void DownlinkProducer::check_fault_signalled() {
+    bool found_fault = find_faults();
+    if (found_fault && !faults_flow_shifted){
+        shift_flow_priorities_idx(7, 2);
+        faults_flow_shifted = true;
+    }
+    else if (!found_fault && faults_flow_shifted) {
+        faults_flow_shifted = false;
+        shift_flow_priorities_idx(7, fault_idx);
+    }
+}
+
+bool DownlinkProducer::find_faults() {
+    for (auto *fault : active_faults)
+    {
+        if (fault->is_faulted()) {   
+            // Loop through list of flows and get the flow with the related fault info
+            for(size_t idx = 0; idx < flows.size(); idx++) {
+                std::vector<ReadableStateFieldBase *> fields = flows[idx].field_list;
+                for (size_t i = 0; i < fields.size(); i++) {
+                    std::string field = fields[i]->name();
+
+                    if (!field.compare(fault->name())){
+                        fault_idx = idx;
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
 void DownlinkProducer::check_mission_state_change() {
