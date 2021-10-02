@@ -57,7 +57,7 @@ class FullMissionCase(DualSatCase, PSimCase):
     else:
       self.logger.put("Leader Radio is Enabled")
 
-
+    # Check piksi is not off
     leader_piksi_off = self.leader.print_rs("gomspace.piksi_off")
     if leader_piksi_off:
       raise TestCaseFailure(f"Leader Piksi_off is {leader_piksi_off} when it should be False")
@@ -81,6 +81,7 @@ class FullMissionCase(DualSatCase, PSimCase):
 
     # Wait for near field
     while self.follower.rs("pan.state") != Enums.mission_states["follower_close_approach"] or self.leader.rs("pan.state") != Enums.mission_states["leader_close_approach"]:
+      # Set directly to close approach
       self.leader.ws("pan.state", Enums.mission_states["leader_close_approach"])
       self.follower.ws("pan.state", Enums.mission_states["follower_close_approach"])
       self.cycle()
