@@ -20,11 +20,6 @@ class FullMissionCase(DualSatCase, PSimCase):
     if not follower_piksi_off:
       raise TestCaseFailure( f"Follower Piksi_off is {follower_piksi_off} when it should be True")
 
-    # Disable to radio to see if it can reenable by standby
-    self.logger.put("SETTING FOLLOWER RADIO TO DISABLED:")
-    self.follower.print_ws("radio.state", 5)
-    self.logger.put("SETTING LEADER RADIO TO DISABLED:")
-    self.leader.print_ws("radio.state", 5)
 
   def run(self):
 
@@ -61,6 +56,14 @@ class FullMissionCase(DualSatCase, PSimCase):
        raise TestCaseFailure(f"Leader Radio State is Disabled")
     else:
       self.logger.put("Leader Radio is Enabled")
+
+
+    leader_piksi_off = self.leader.print_rs("gomspace.piksi_off")
+    if leader_piksi_off:
+      raise TestCaseFailure(f"Leader Piksi_off is {leader_piksi_off} when it should be False")
+    follower_piksi_off = self.follower.print_rs("gomspace.piksi_off")
+    if follower_piksi_off:
+      raise TestCaseFailure( f"Follower Piksi_off is {follower_piksi_off} when it should be False")
 
     # Set satellite designations
     self.logger.put("Setting follower sat designation to trigger Far Field / Follower State.")
