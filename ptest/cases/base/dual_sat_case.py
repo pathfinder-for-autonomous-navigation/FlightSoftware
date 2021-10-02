@@ -19,6 +19,7 @@ class DualSatCase(PTestCase):
         self.follower_skip_deployment_wait = True
         self.leader_suppress_faults = True
         self.follower_suppress_faults = True
+        self.check_initial_state = True
 
     def populate_devices(self, devices, radios):
         if devices:
@@ -81,7 +82,7 @@ class DualSatCase(PTestCase):
         follower_initial_state = Enums.mission_states[self.follower_initial_state]
         follower_state = self.flight_controller_follower.smart_read("pan.state")
         self.logger.put("[TESTCASE] Boot utility waiting to reach initial states.")
-        while leader_state != leader_initial_state or follower_state != follower_initial_state:
+        while (leader_state != leader_initial_state or follower_state != follower_initial_state) and self.check_initial_state:
             if cycles > self.initial_state_timeout:
                 raise TestCaseFailure(f"Failed to reach desired states of {leader_initial_state} and {follower_initial_state}, was {leader_state} and {follower_state}.")
 

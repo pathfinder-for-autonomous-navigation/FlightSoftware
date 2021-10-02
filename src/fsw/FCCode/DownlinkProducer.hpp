@@ -67,6 +67,15 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void execute() override;
 
+    void check_fault_signalled();
+
+    /**
+     * @brief Checks if any faults in active_faults are faulted. If so, it stores 
+     * the index of the flow with all the faults in fault_idx. Returns true if a 
+     * fault is faulted and false if all the faults are unfaulted.
+     */
+    bool find_faults();
+
     /**
      * Reorder telemetry flows based on the new mission state
      */
@@ -169,6 +178,12 @@ class DownlinkProducer : public TimedControlTask<void> {
      * Restore the original flow order
      */
     void reset_flows();
+    
+    /**
+     * @brief Shift the flow with the given id to the given index in the flow order.
+     * Does not change the active status.
+     */
+    void shift_flow_priorities_idx(unsigned char id, size_t idx);
 
   protected:
     /** @brief Pointer to cycle count. */
@@ -204,6 +219,17 @@ class DownlinkProducer : public TimedControlTask<void> {
 
     unsigned char current_state;
 
+    /**
+     * @brief The index of the flow containing all the faults.
+     */
+    unsigned char fault_idx;
+
+    /**
+     * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
+     */
+    bool faults_flow_shifted;
+
+    std::array<Fault *, 13> active_faults;
 
 };
 
