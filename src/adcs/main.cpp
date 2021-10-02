@@ -190,7 +190,12 @@ void update_rwa() {
   lin::Vector3f rwa_cmd;
 
   // Check for valid ADCS mode and the current command is new
-  if (registers.mode != ADCSMode::ADCS_ACTIVE || registers.rwa.cmd_flg != CMDFlag::UPDATED) return;
+  if (registers.mode != ADCSMode::ADCS_ACTIVE || registers.rwa.cmd_flg != CMDFlag::UPDATED)
+  {
+    rwa_mode = 0; //stop wheels
+    rwa::actuate(rwa_mode, rwa_cmd);
+    return;
+  }
   // Attempt atomic copy of the reaction wheel mode and command
   registers.rwa.cmd_flg = CMDFlag::OUTDATED;
   rwa_mode = registers.rwa.mode;
