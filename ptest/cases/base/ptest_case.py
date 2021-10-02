@@ -23,6 +23,10 @@ class FancyFlightController(object):
             self.__logger.put("{} is {}".format(name, value))
 
         return value
+    
+    def print_rs(self, name: str):
+        """Reads a statefield, returns it, and prints it."""
+        return self.rs(name, print=True)
 
     def ws(self, name: str, value, print: bool=False):
         """Writes a statefield and prints it to the logger if requested.
@@ -30,6 +34,10 @@ class FancyFlightController(object):
         self.__flight_controller.write_state(name, value)
         if print:
             self.__logger.put("{} set to {}".format(name, value))
+
+    def print_ws(self, name: str, value):
+        """Writes a statefield, and prints it."""
+        self.ws(name, value, print=True)
 
     @property
     def mission_state(self) -> str:
