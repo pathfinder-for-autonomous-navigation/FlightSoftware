@@ -21,8 +21,6 @@ void DownlinkProducer::init(){
  }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
-    last_used_flow_data = flow_data;
-    // const_cast<const std::vector<FlowData>*>(&last_used_flow_data);
 
     toggle_flow_id_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.toggle_id", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id1_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id1", Serializer<unsigned char>(flow_data.size()));
@@ -193,20 +191,30 @@ void DownlinkProducer::execute() {
 }
 
 void DownlinkProducer::check_mission_state_change() {
-    const std::vector<DownlinkProducer::FlowData>& flow_data = last_used_flow_data;
     if (current_state!=mission_state_fp->get()) {
         switch(static_cast<mission_state_t>(mission_state_fp->get())){
             case mission_state_t::follower:
-                init_flows(flow_data);
+                reset_flows();
                 shift_flow_priorities_idx(16, 13);
+                break;
             case mission_state_t::follower_close_approach:
-                init_flows(flow_data);
+                reset_flows();
                 shift_flow_priorities_idx(16, 13);
+                break;
             default:
-                // std::cout <<"default"<< std::endl;
-                init_flows(flow_data);
+                reset_flows();
+                break;
         }
+    }
+}
 
+void DownlinkProducer::reset_flows() {
+    for(size_t idx = 0; idx < flows.size(); idx++) {
+        unsigned char flow_id;
+        flows[idx].id_sr.deserialize(&flow_id);
+        if (flow_id != idx+1) {
+            shift_flow_priorities_idx(flow_id, flow_id-1);
+        }
     }
 }
 

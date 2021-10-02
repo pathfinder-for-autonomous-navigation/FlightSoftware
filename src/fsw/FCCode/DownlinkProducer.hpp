@@ -165,6 +165,11 @@ class DownlinkProducer : public TimedControlTask<void> {
 
     void shift_flow_priorities_idx(unsigned char id, size_t idx);
 
+    /*
+     * Restore the original flow order
+     */
+    void reset_flows();
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
@@ -182,8 +187,6 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     unsigned int num_active_flows = 0;
     std::vector<Flow> flows;
-
-    std::vector<DownlinkProducer::FlowData> last_used_flow_data;
 
     /**
      * @brief Fields used to shift flows. Moves the flow with id1 to the flow with 
