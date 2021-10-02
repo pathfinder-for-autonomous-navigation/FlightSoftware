@@ -43,6 +43,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1),
       attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>(), 1),
+      attitude_estimator_reset_persistance_reached("attitude_estimator.reset_persistance_reached", Serializer<bool>(), 1),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
@@ -57,6 +58,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     add_writable_field(attitude_estimator_reset_cmd_f);
     add_writable_field(attitude_estimator_mag_flag_f);
     add_writable_field(attitude_estimator_ignore_sun_vectors_f);
+    add_writable_field(attitude_estimator_reset_persistance_reached);
     add_fault(attitude_estimator_fault);
 
     attitude_estimator_valid_f.set(false);
@@ -70,6 +72,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_reset_cmd_f.set(false);
     attitude_estimator_mag_flag_f.set(false);           // Prefer magnetometer two
     attitude_estimator_ignore_sun_vectors_f.set(false); // Overwritten by EEPROM
+    attitude_estimator_reset_persistance_reached.set(false);
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
@@ -187,6 +190,7 @@ void AttitudeEstimator::_execute()
     auto const adcs_gyr = adcs_gyr_fp->get();
     auto const adcs_ssa_valid = adcs_ssa_mode_fp->get() == adcs::SSA_COMPLETE;
     auto const ignore_sun_vectors = attitude_estimator_ignore_sun_vectors_f.get();
+    auto const exceed_persistance = attitude_estimator_reset_persistance_reached.get();
     auto const adcs_ssa = [&]() -> lin::Vector3f {
         if (!adcs_ssa_valid || ignore_sun_vectors)
         {
@@ -217,7 +221,7 @@ void AttitudeEstimator::_execute()
             gnc::attitude_estimator_reset(
                     _state, time_s, {0.0f, 0.0f, 0.0f, 1.0f});
         }
-        else if (adcs_ssa_valid)
+        else if ((adcs_ssa_valid) || (exceed_persistance))
         {
             gnc::attitude_estimator_reset(
                     _state, time_s, orbit_pos, b_body, adcs_ssa);

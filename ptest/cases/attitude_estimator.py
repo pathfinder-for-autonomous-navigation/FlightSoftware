@@ -106,3 +106,18 @@ class AttitudeNoSunVectorsInitializationCase(SingleSatStandbyCase):
         self.cycle()
 
         self.finish()
+
+class AttitudePersistanceExceededCase(SingleSatStandbyCase):
+        """Checking if we exceed the covariance frobenius norm's safety with a persistance value and
+        reset attitude_estimator if exceeded
+        """
+
+        def run(self):
+            """We will allow the attitude_estimator to initialize and then immediately check the
+            covariance frobenius norm's post-safety value with the persistance value
+            """
+            self.cycle()
+            self.cycle()
+            #continue adding next time to accomplish what the comment above says to do
+
+

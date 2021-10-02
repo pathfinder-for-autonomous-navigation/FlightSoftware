@@ -105,10 +105,13 @@ class AttitudeEstimator : public ControlTask<void>
      */
     WritableStateField<f_vector_t> const *adcs_cmd_mtr_cmd;
 
+    /* Whether the exceeding of the baseline covariance frobenius norm persists
+    */
+    WritableStateField<bool> attitude_estimator_reset_persistance_reached;
+
     /* Faults.
      */
     Fault attitude_estimator_fault;
-
   private:
     gnc::AttitudeEstimatorData _data;
     gnc::AttitudeEstimatorState _state;
