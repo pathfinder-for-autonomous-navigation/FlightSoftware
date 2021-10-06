@@ -50,6 +50,7 @@ fc_fields = [
 psim_fields_per_satellite = [
     "truth.{}.attitude.w",
     "truth.{}.attitude.L",
+    "truth.{}.attitude.L.norm",
     "truth.{}.wheels.t",
     "truth.{}.wheels.w",
     "truth.{}.orbit.r.ecef",

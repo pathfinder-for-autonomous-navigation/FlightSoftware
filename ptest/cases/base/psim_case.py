@@ -175,6 +175,9 @@ class PSimCase(PTestCase):
         else:
             sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_FAILURE']
 
+        # Simulate the reaction wheels speed read
+        sensors["adcs_monitor.rwa_speed_rd"] = list(self.__sim[f"truth.{satellite}.wheels.w"])
+
         return sensors
 
     def rs_psim(self, name: str):
