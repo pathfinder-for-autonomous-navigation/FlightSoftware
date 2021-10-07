@@ -184,7 +184,7 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
+    // Step 1. Wait for the deployment timer length.
     if (deployment_wait_elapsed_f.get() < deployment_wait)
     {
         deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);

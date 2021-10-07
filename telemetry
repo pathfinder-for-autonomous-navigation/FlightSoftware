@@ -4,7 +4,7 @@
         "attitude_estimator.mag_flag": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
-        "pan.bootcount": 1,
+        "pan.bootcount": 100,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
         "pan.kill_switch": 100,
