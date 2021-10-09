@@ -141,6 +141,9 @@ void on_i2c_recieve(unsigned int bytes) {
       else if (registers.rwa.mode == RWAMode::RWA_SPEED_CTRL)
         for (unsigned int i = 0; i < 3; i++)
           f[i] = utl::fp(t[i], rwa::min_speed_command, rwa::max_speed_command);
+      else if (registers.rwa.mode == RWAMode::RWA_DISABLED)
+        for (unsigned int i = 0; i < 3; i++)
+          f[i] = 0;
       else
         break;
       
