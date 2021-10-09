@@ -375,21 +375,15 @@ void test_bootcount(){
     // Can be found in telemetry file
     TEST_ASSERT_TRUE(tf.registry.find_eeprom_saved_field("pan.bootcount") != nullptr); 
         
-    // When satellite is first booted, bootcount == 1
-    // Should initialize at 0, then increase when MissionManager is created
-    TEST_ASSERT_EQUAL(1, tf.get_bootcount());  
+    // Should initialize at 0
+    TEST_ASSERT_EQUAL(0, tf.get_bootcount());  
 
-    // EEPROM is represented as a local var
-    unsigned int pseudoboot = tf.get_bootcount();
-    TEST_ASSERT_EQUAL(1, pseudoboot);
+    
+    // Value increments by one when init() function is called
+    tf.mission_manager->init();    
+    TEST_ASSERT_EQUAL(1, tf.get_bootcount());
 
-    // Reboot the satellite with the bootcount value stored in EEPROM
-    TestFixture tf2(mission_state_t::startup, pseudoboot);
-
-    // Test that deployment does not wait when bootcount >1
-    TEST_ASSERT_EQUAL(0, tf2.deployment_wait_elapsed_fp->get());
-    TEST_ASSERT_EQUAL(2, tf2.get_bootcount());
-        
+    // Further EEPROM bootcount testing is waived per PTest results in #813.        
 }
 
 int test_mission_manager() {

@@ -64,6 +64,12 @@ public:
 
     void set(mission_state_t state);
 
+    /**
+     * @brief A post constructor initialization function. This is to increment boot count.
+     * 
+     */
+    void init();
+
 protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
