@@ -185,9 +185,9 @@ void MissionManager::dispatch_startup()
     }
 
     // Step 1. Wait for the deployment timer length.
-    if (deployment_wait_elapsed_f.get() < deployment_wait_thresh)
+    if (deployment_wait_elapsed_f.get() < deployment_wait_batch_thresh)
     {
-        if(control_cycle_count % deployment_wait_incr == 0)
+        if(control_cycle_count % deployment_wait_batch_size == 0)
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
         return;
     }
@@ -199,7 +199,7 @@ void MissionManager::dispatch_startup()
     piksi_off_fp->set(false);
 
     // At this point the Piksi should be off, so setting this to true
-    // will skip turning it off, and only turn it on.
+    // will turn it on.
     piksi_powercycle_fp->set(true);
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {

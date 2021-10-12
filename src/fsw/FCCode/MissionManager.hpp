@@ -34,10 +34,10 @@ public:
     TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);         // Meters
 
     /**
-     * @brief The number of control cycles that pass before we increment deployment wait.
+     * @brief The number of control cycles that pass before we increment deployment elapsed counter
      * 
      */
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_incr, 100);
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_batch_size, 100);
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
@@ -45,7 +45,11 @@ public:
      */
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
     
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_thresh, deployment_wait/deployment_wait_incr + 1);
+    /**
+     * @brief The number of batches of control cycles that need to pass
+     * 
+     */
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_batch_thresh, deployment_wait/deployment_wait_batch_size + 1);
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */
@@ -194,6 +198,11 @@ protected:
      * @brief True if the satellite has exited the deployment timing phase.
      */
     ReadableStateField<bool> is_deployed_f;
+
+    /**
+     * @brief This counts the number of batches of control cycles that have elapsed
+     * 
+     */
     ReadableStateField<unsigned char> deployment_wait_elapsed_f;
 
     /**
