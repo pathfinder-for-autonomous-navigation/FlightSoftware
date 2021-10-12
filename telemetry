@@ -1830,11 +1830,11 @@
             "writable": false
         },
         "pan.bootcount": {
-            "bitsize": 28,
+            "bitsize": 8,
             "flow_id": 1,
-            "max": 268435455,
+            "max": 255,
             "min": 0,
-            "type": "unsigned int",
+            "type": "unsigned char",
             "writable": false
         },
         "pan.cc_duration": {
