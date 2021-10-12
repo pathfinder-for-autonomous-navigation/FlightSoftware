@@ -4,7 +4,7 @@
 #include <gnc/constants.hpp>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) : registry()
+TestFixture::TestFixture(mission_state_t initial_state, unsigned char bootcount) : registry()
 {
     attitude_estimator_valid_fp = registry.create_readable_field<bool>(
         "attitude_estimator.valid");
@@ -27,7 +27,7 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    bootcount_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount"); 
+    bootcount_fp = registry.create_readable_field<unsigned char, 1000>("pan.bootcount"); 
     bootcount_fp->set(bootcount);
 
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
@@ -68,7 +68,7 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     docking_config_cmd_fp = registry.find_writable_field_t<bool>("docksys.config_cmd");
     mission_state_fp = registry.find_writable_field_t<unsigned char>("pan.state");
     is_deployed_fp = registry.find_readable_field_t<bool>("pan.deployed");
-    deployment_wait_elapsed_fp = registry.find_readable_field_t<unsigned int>(
+    deployment_wait_elapsed_fp = registry.find_readable_field_t<unsigned char>(
         "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
 

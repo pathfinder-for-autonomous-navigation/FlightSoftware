@@ -55,7 +55,7 @@ public:
   std::shared_ptr<WritableStateField<bool>> piksi_off_fp;
   std::shared_ptr<WritableStateField<bool>> piksi_powercycle_fp;
 
-  std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
+  std::shared_ptr<ReadableStateField<unsigned char>> bootcount_fp;
 
   std::unique_ptr<MissionManager> mission_manager;
 
@@ -68,10 +68,10 @@ public:
   WritableStateField<bool> *docking_config_cmd_fp;
   WritableStateField<unsigned char> *mission_state_fp;
   ReadableStateField<bool> *is_deployed_fp;
-  ReadableStateField<unsigned int> *deployment_wait_elapsed_fp;
+  ReadableStateField<unsigned char> *deployment_wait_elapsed_fp;
   WritableStateField<unsigned char> *sat_designation_fp;
 
-  TestFixture(mission_state_t initial_state = mission_state_t::startup, unsigned int bootcount = 0);
+  TestFixture(mission_state_t initial_state = mission_state_t::startup, unsigned char bootcount = 0);
 
   // Set and assert functions for various mission states.
   void set(fault_response_t response);
