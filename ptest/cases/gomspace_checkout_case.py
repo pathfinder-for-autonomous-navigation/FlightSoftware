@@ -51,13 +51,17 @@ class GomspaceCheckoutCase(SingleSatCase):
 
     def run(self):
         self.ws('pan.state', 0)
-        self.ws('pan.deployment.elapsed', 106)
+        self.ws('pan.deployment.elapsed', 106) # set it to post deployment
+        self.ws('gomspace.get_hk.suppress', False)
         self.cycle()
         now = time.time()
         
-        # let 10 seconds pass until case is over
+        # let 10 seconds pass to allow additional time for piksi to turn on
         while time.time() - now < 10:
             self.cycle()
+
+        if self.print_rs("gomspace.get_hk.base") == True:
+            raise TestCaseFailure('Gomspace unable to respond over I2C.')
 
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
@@ -199,6 +203,8 @@ class GomspaceCheckoutCase(SingleSatCase):
             self.logger.put("Could not update counter_reset")
             self.failed = True
 
+        # Dont run these sections as they cause the gomspace to power cycle or reboot
+
         # gs_reset_cmd = self.str_to_bool(
         #     self.read_state("gomspace.gs_reset_cmd"))
         # gs_reset_cmd_updated = self.str_to_bool(self.write_state(
@@ -207,13 +213,13 @@ class GomspaceCheckoutCase(SingleSatCase):
         #     self.logger.put("Could not update gs_reset")
         #     self.failed = True
 
-        gs_reboot_cmd = self.str_to_bool(
-            self.read_state("gomspace.gs_reboot_cmd"))
-        gs_reboot_cmd_updated = self.str_to_bool(self.write_state(
-            "gomspace.gs_reboot_cmd", not gs_reboot_cmd))
-        if gs_reboot_cmd == gs_reboot_cmd_updated:
-            self.logger.put("Could not update gs_reboot")
-            self.failed = True
+        # gs_reboot_cmd = self.str_to_bool(
+        #     self.read_state("gomspace.gs_reboot_cmd"))
+        # gs_reboot_cmd_updated = self.str_to_bool(self.write_state(
+        #     "gomspace.gs_reboot_cmd", not gs_reboot_cmd))
+        # if gs_reboot_cmd == gs_reboot_cmd_updated:
+        #     self.logger.put("Could not update gs_reboot")
+        #     self.failed = True
 
         for _ in range(10):
             self.cycle()
