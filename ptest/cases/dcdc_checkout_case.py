@@ -12,6 +12,8 @@ class DCDCCheckoutCase(SingleSatCase):
         self.__prop = None
         self.__disable_command = None
         self.__reset_command = None
+        
+        self.check_initial_state = False
 
     @property
     def adcs_command(self) -> bool:
@@ -108,6 +110,12 @@ class DCDCCheckoutCase(SingleSatCase):
         if not self.adcs_command or not self.adcs or \
                 not self.prop_command or not self.prop or self.reset_command:
             self.abort("Failed to reset the DCDCs.")
+
+    def post_boot(self):
+        '''Keep it in the manual state which does not auotnomously control DCDCs'''
+        self.ws('pan.state', Enums.mission_states['manual'])
+        self.ws('pan.deployment_elapsed', 0)
+        self.cycle()
 
     def run(self):
         self.cycle()
