@@ -55,13 +55,12 @@ class GomspaceCheckoutCase(SingleSatCase):
         self.cycle()
         now = time.time()
         
+        # let 10 seconds pass until case is over
         while time.time() - now < 10:
             self.cycle()
 
-        # self.flight_controller.write_state('gomspace.piksi_off', False)
         self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
-        # self.write_state("gomspace.piksi_off", "false")
 
         # readable fields
         vboost = [int(self.read_state("gomspace.vboost.output" + str(i)))
@@ -122,56 +121,59 @@ class GomspaceCheckoutCase(SingleSatCase):
         pptmode = self.read_state("gomspace.pptmode")
         self.logger.put("pptmode is: " + str(pptmode))
 
-        outputs = self.print_and_get_output_outputs()
-
-        self.print_header("Waiting for all outputs to be on")
-        while (not all(outputs)):
-            outputs = self.print_and_get_output_outputs()
-            self.cycle()
-
-        # writable fields
-        cycle_no_init = int(self.read_state("pan.cycle_no"))
-        cycle_no = cycle_no_init
-
-        # power cycling
-        # start power cycle
-        for i in range(1,7):
-            self.write_state(f'gomspace.power_cycle_output{i}_cmd', True)
-                                  
-        self.cycle()
-        self.print_header('Commanded all outputs to be off')
-        self.cycle()
-        self.print_cycle_cmds()
-        self.print_and_get_output_outputs()
-
-        # wait for outputs to be off
-        while (not all(out == False for out in outputs)):
-            outputs = self.print_and_get_output_outputs()
-            self.cycle()
-            cycle_no = int(self.read_state("pan.cycle_no"))
-            if cycle_no - cycle_no_init == 600:
-                cycle_no = int(self.read_state("pan.cycle_no"))
-                self.logger.put("failed on cycle: " + str(cycle_no))
-                raise TestCaseFailure("Power cycled outputs could not turn off after 600 cycles (1 minute)")
+        if self.flight_controller.is_teensy:
+            self.print_header('Running checkout case on teensy.')
             
-        self.print_header('Waiting for all outputs to be on.')            
-
-        # wait for outputs to turn on again
-        while (not all(out == True for out in outputs)):
             outputs = self.print_and_get_output_outputs()
-            self.cycle()
-            cycle_no = int(self.read_state("pan.cycle_no"))
-            if cycle_no - cycle_no_init == 600:
-                cycle_no = int(self.read_state("pan.cycle_no"))
-                self.logger.put("failed on cycle: " + str(cycle_no))
-                raise TestCaseFailure("Power cycled outputs could not turn on after 600 cycles (1 minute)")
 
-        # check if finished power cycling
-        power_cycle_output_cmd = self.print_cycle_cmds()
-        for n in range(0, len(power_cycle_output_cmd)):
-            if power_cycle_output_cmd[n] == True:
-                self.logger.put("Could not update power_cycle_output" + str(n))
-                self.failed = True
+            self.print_header("Waiting for all outputs to be on")
+            while (not all(outputs)):
+                outputs = self.print_and_get_output_outputs()
+                self.cycle()
+
+            # writable fields
+            cycle_no_init = int(self.read_state("pan.cycle_no"))
+            cycle_no = cycle_no_init
+
+            # power cycling
+            # start power cycle
+            for i in range(1,7):
+                self.write_state(f'gomspace.power_cycle_output{i}_cmd', True)
+                                    
+            self.cycle()
+            self.print_header('Commanded all outputs to be off')
+            self.cycle()
+            self.print_cycle_cmds()
+            self.print_and_get_output_outputs()
+
+            # wait for outputs to be off
+            while (not all(out == False for out in outputs)):
+                outputs = self.print_and_get_output_outputs()
+                self.cycle()
+                cycle_no = int(self.read_state("pan.cycle_no"))
+                if cycle_no - cycle_no_init == 600:
+                    cycle_no = int(self.read_state("pan.cycle_no"))
+                    self.logger.put("failed on cycle: " + str(cycle_no))
+                    raise TestCaseFailure("Power cycled outputs could not turn off after 600 cycles (1 minute)")
+                
+            self.print_header('Waiting for all outputs to be on.')            
+
+            # wait for outputs to turn on again
+            while (not all(out == True for out in outputs)):
+                outputs = self.print_and_get_output_outputs()
+                self.cycle()
+                cycle_no = int(self.read_state("pan.cycle_no"))
+                if cycle_no - cycle_no_init == 600:
+                    cycle_no = int(self.read_state("pan.cycle_no"))
+                    self.logger.put("failed on cycle: " + str(cycle_no))
+                    raise TestCaseFailure("Power cycled outputs could not turn on after 600 cycles (1 minute)")
+
+            # check if finished power cycling
+            power_cycle_output_cmd = self.print_cycle_cmds()
+            for n in range(0, len(power_cycle_output_cmd)):
+                if power_cycle_output_cmd[n] == True:
+                    self.logger.put("Could not update power_cycle_output" + str(n))
+                    self.failed = True
 
         self.print_header('Checking can update command fields.')            
 
