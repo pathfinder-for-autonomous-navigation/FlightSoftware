@@ -5,7 +5,7 @@
         "cycle.auto": 1,
         "cycle.start": 1,
         "pan.bootcount": 100,
-        "pan.deployed": 1000,
+        "pan.deployed": 1,
         "pan.deployment.elapsed": 1,
         "pan.kill_switch": 100,
         "pan.state": 1

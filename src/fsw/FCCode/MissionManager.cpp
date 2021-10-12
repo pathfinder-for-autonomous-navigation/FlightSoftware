@@ -35,7 +35,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     wheel_pot_fault_fp(FIND_FAULT(adcs_monitor.wheel_pot_fault.base)),
     pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
     mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
-    is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
+    is_deployed_f("pan.deployed", Serializer<bool>(), 1),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned char>(), 1),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
     enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
