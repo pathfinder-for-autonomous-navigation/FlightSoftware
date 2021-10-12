@@ -36,7 +36,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
     mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
-    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
+    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned char>(), 1),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
     enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
     kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
@@ -185,9 +185,10 @@ void MissionManager::dispatch_startup()
     }
 
     // Step 1. Wait for the deployment timer length.
-    if (deployment_wait_elapsed_f.get() < deployment_wait)
+    if (deployment_wait_elapsed_f.get() < deployment_wait_thresh)
     {
-        deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
+        if(control_cycle_count % deployment_wait_incr == 0)
+            deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
         return;
     }
 
@@ -196,6 +197,10 @@ void MissionManager::dispatch_startup()
     // hardware faults that would necessitate going into an initialization hold.
     // If such faults exist, go into initialization hold, otherwise detumble.
     piksi_off_fp->set(false);
+
+    // At this point the Piksi should be off, so setting this to true
+    // will skip turning it off, and only turn it on.
+    piksi_powercycle_fp->set(true);
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {
         set(radio_state_t::config);

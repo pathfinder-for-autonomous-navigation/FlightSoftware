@@ -34,11 +34,18 @@ public:
     TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);         // Meters
 
     /**
+     * @brief The number of control cycles that pass before we increment deployment wait.
+     * 
+     */
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_incr, 100);
+
+    /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period. Should be equivalent to 30 minutes.
      */
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
-
+    
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_thresh, deployment_wait/deployment_wait_incr + 1);
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */
@@ -187,7 +194,7 @@ protected:
      * @brief True if the satellite has exited the deployment timing phase.
      */
     ReadableStateField<bool> is_deployed_f;
-    ReadableStateField<unsigned int> deployment_wait_elapsed_f;
+    ReadableStateField<unsigned char> deployment_wait_elapsed_f;
 
     /**
      * @brief 2 if the satellite is the follower satellite. 1 if the
