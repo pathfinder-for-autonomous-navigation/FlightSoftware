@@ -35,11 +35,18 @@ class GomspaceCheckoutCase(SingleSatCase):
         else:
             raise ValueError
 
-    def print_current_outputs(self) -> List[bool]:
+    def print_and_get_output_outputs(self) -> List[bool]:
         '''Get all the current output states, and return a list of boolean current states'''
-        outputs = [self.read_state("gomspace.output.output" + str(i)) for i in range(1, 7)]
+        outputs = [self.read_state('gomspace.output.output' + str(i)) for i in range(1, 7)]
         outputs = [self.str_to_bool(x) for x in outputs]
         self.logger.put(f'Outputs: {outputs}')
+        return outputs
+
+    def print_cycle_cmds(self) -> List[bool]:
+        '''Get all the current output states, and return a list of boolean current states'''
+        outputs = [self.read_state(f'gomspace.power_cycle_output' + str(i) + '_cmd') for i in range(1, 7)]
+        outputs = [self.str_to_bool(x) for x in outputs]
+        self.logger.put(f'Outputs Commands: {outputs}')
         return outputs
 
     def run(self):
@@ -81,7 +88,7 @@ class GomspaceCheckoutCase(SingleSatCase):
         for n in range(0, len(curout)):
             self.logger.put("curout" + str(n) + " is: " + str(curout[n]) + " mA")
 
-        outputs = self.print_current_outputs()
+        outputs = self.print_and_get_output_outputs()
 
         for n in range(0, len(outputs)):
             out_n = outputs[n]
@@ -115,15 +122,16 @@ class GomspaceCheckoutCase(SingleSatCase):
         pptmode = self.read_state("gomspace.pptmode")
         self.logger.put("pptmode is: " + str(pptmode))
 
-        # writable fields
-        cycle_no_init = int(self.read_state("pan.cycle_no"))
-        cycle_no = cycle_no_init
-
-        outputs = self.print_current_outputs()
+        outputs = self.print_and_get_output_outputs()
 
         self.print_header("Waiting for all outputs to be on")
         while (not all(outputs)):
+            outputs = self.print_and_get_output_outputs()
             self.cycle()
+
+        # writable fields
+        cycle_no_init = int(self.read_state("pan.cycle_no"))
+        cycle_no = cycle_no_init
 
         # power cycling
         # start power cycle
@@ -132,39 +140,34 @@ class GomspaceCheckoutCase(SingleSatCase):
                                   
         self.cycle()
         self.print_header('Commanded all outputs to be off')
-
-        self.print_current_outputs()
-
-        while (not all(outputs)): 
-            outputs = self.print_current_outputs()
-            self.cycle()
+        self.cycle()
+        self.print_cycle_cmds()
+        self.print_and_get_output_outputs()
 
         # wait for outputs to be off
-        while (not all(out == False for out in outputs)) and cycle_no - cycle_no_init < 600:
-            outputs = self.print_current_outputs()
+        while (not all(out == False for out in outputs)):
+            outputs = self.print_and_get_output_outputs()
             self.cycle()
             cycle_no = int(self.read_state("pan.cycle_no"))
             if cycle_no - cycle_no_init == 600:
-                self.logger.put(
-                    "Power cycled outputs could not turn off after 600 cycles (1 minute)")
                 cycle_no = int(self.read_state("pan.cycle_no"))
                 self.logger.put("failed on cycle: " + str(cycle_no))
-                self.failed = True
+                raise TestCaseFailure("Power cycled outputs could not turn off after 600 cycles (1 minute)")
             
         self.print_header('Waiting for all outputs to be on.')            
 
         # wait for outputs to turn on again
-        while (not all(out == True for out in outputs)) and cycle_no - cycle_no_init < 600:
-            outputs = self.print_current_outputs()
+        while (not all(out == True for out in outputs)):
+            outputs = self.print_and_get_output_outputs()
             self.cycle()
             cycle_no = int(self.read_state("pan.cycle_no"))
             if cycle_no - cycle_no_init == 600:
-                self.logger.put(
-                    "Power cycled outputs could not turn on after 600 cycles (1 minute)")
-                self.failed = True
+                cycle_no = int(self.read_state("pan.cycle_no"))
+                self.logger.put("failed on cycle: " + str(cycle_no))
+                raise TestCaseFailure("Power cycled outputs could not turn on after 600 cycles (1 minute)")
 
         # check if finished power cycling
-        power_cycle_output_cmd = self.print_current_outputs()
+        power_cycle_output_cmd = self.print_cycle_cmds()
         for n in range(0, len(power_cycle_output_cmd)):
             if power_cycle_output_cmd[n] == True:
                 self.logger.put("Could not update power_cycle_output" + str(n))
@@ -210,8 +213,13 @@ class GomspaceCheckoutCase(SingleSatCase):
             self.logger.put("Could not update gs_reboot")
             self.failed = True
 
+        for _ in range(10):
+            self.cycle()
+
         if self.failed: 
             raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
+
+        self.print_header("Gomspace Checkout Case Successful.")
 
         self.finish()
 
