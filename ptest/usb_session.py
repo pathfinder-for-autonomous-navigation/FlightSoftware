@@ -195,7 +195,7 @@ class USBSession(object):
                         logline += str(data['uplink'])
                     else:
                         logline = f"[{data['time']}] Failed to send telemetry to FlightSoftware."
-                    print("\n" + logline)
+                    # print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                 else:
                     if 'err' in data:

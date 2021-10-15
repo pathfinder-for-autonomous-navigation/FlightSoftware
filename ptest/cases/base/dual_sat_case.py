@@ -20,6 +20,8 @@ class DualSatCase(PTestCase):
         self.leader_suppress_faults = True
         self.follower_suppress_faults = True
         self.check_initial_state = True
+        
+        self.debug_to_console = True
 
     def populate_devices(self, devices, radios):
         if devices:

@@ -12,14 +12,15 @@
 #include <lin/math.hpp>
 #include <lin/references.hpp>
 
-#if (defined(UNIT_TEST) && defined(DESKTOP))
-#include <cstdio>
-#define DD(fstring, ...) std::printf("[RelativeOrbitEstimator.cpp:%d]: ", __LINE__); \
-                         std::printf(fstring, ##__VA_ARGS__); \
-                         std::printf("\n")
-#else
-#define DD(fstring, ...) static_assert(true, "")
-#endif
+/*
+// #if (defined(UNIT_TEST) && defined(DESKTOP))
+// #include <cstdio>
+// #define printf(debug_severity::error, fstring, ...) std::printf("[RelativeOrbitEstimator.cpp:%d]: ", __LINE__); \
+//                          std::printf(fstring, ##__VA_ARGS__); \
+//                          std::printf("\n")
+// #else
+// #define printf(debug_severity::error, fstring, ...) static_assert(true, "")
+// #endif*/
 
 // Estimator process noise
 TRACKED_CONSTANT_SC(double, RelOrbit_sqrtQ_r, 1.0e-8);
@@ -108,10 +109,10 @@ void RelativeOrbitEstimator::execute()
 
         if (should_reset)
         {
-            DD("Resetting the relative orbit estimator:");
-            DD("\ttime.valid          = %d", time_valid_fp->get());
-            DD("\torbit.valid         = %d", orbit_valid_fp->get());
-            DD("\trel_orbit.reset_cmd = %d", rel_orbit_reset_cmd_f.get());
+            printf(debug_severity::error, "Resetting the relative orbit estimator:");
+            printf(debug_severity::error, "\ttime.valid          = %d", time_valid_fp->get());
+            printf(debug_severity::error, "\torbit.valid         = %d", orbit_valid_fp->get());
+            printf(debug_severity::error, "\trel_orbit.reset_cmd = %d", rel_orbit_reset_cmd_f.get());
 
             rel_orbit_state_f.set(cast_state(rel_orbit_state_t::invalid));
             rel_orbit_reset_cmd_f.set(false);
@@ -156,7 +157,7 @@ void RelativeOrbitEstimator::execute()
         {
             auto const ns = static_cast<unsigned long long>(time_gps - _uplink_t);
 
-            DD("Queued uplink stale by %lld ns.", ns);
+            printf(debug_severity::error, "Queued uplink stale by %lld ns.", ns);
 
             if (ns < 2u * PAN::control_cycle_time_ns)
             {
@@ -167,9 +168,9 @@ void RelativeOrbitEstimator::execute()
                 _orbit = orb::Orbit(orb::MINGPSTIME_NS, _uplink_r, _uplink_v);
                 _orbit.shortupdate(signed_ns, time_earth_w, _);
 
-                DD("Initializing absolute orbital state with queued uplink:");
-                DD("\tr = %f,%f,%f", _uplink_r(0), _uplink_r(1), _uplink_r(2));
-                DD("\tv = %f,%f,%f", _uplink_v(0), _uplink_v(1), _uplink_v(2));
+                printf(debug_severity::error, "Initializing absolute orbital state with queued uplink:");
+                printf(debug_severity::error, "\tr = %f,%f,%f", _uplink_r(0), _uplink_r(1), _uplink_r(2));
+                printf(debug_severity::error, "\tv = %f,%f,%f", _uplink_v(0), _uplink_v(1), _uplink_v(2));
             }
 
             _uplink_t = get_gps_zero();
@@ -184,14 +185,17 @@ void RelativeOrbitEstimator::execute()
 
         if (have_new_uplink)
         {
+            printf(debug_severity::error, "utime: %u, %u, %d", uplink_time.wn, uplink_time.tow, uplink_time.ns);
+
             auto const have_uplink_queued = _uplink_t > get_gps_zero();
             auto const new_uplink_is_ahead = uplink_time > time_gps;
             auto const new_uplink_is_closer = uplink_time < _uplink_t;
+            printf(debug_severity::error, "mytime: %u, %u, %d", time_gps.wn, time_gps.tow, time_gps.ns);
 
-            DD("New uplink received:");
-            DD("\thave_uplink_queued   = %i", have_uplink_queued);
-            DD("\tnew_uplink_is_ahead  = %i", new_uplink_is_ahead);
-            DD("\tnew_uplink_is_closer = %i", new_uplink_is_closer);
+            printf(debug_severity::error, "New uplink received:");
+            printf(debug_severity::error, "\thave_uplink_queued   = %i", have_uplink_queued);
+            printf(debug_severity::error, "\tnew_uplink_is_ahead  = %i", new_uplink_is_ahead);
+            printf(debug_severity::error, "\tnew_uplink_is_closer = %i", new_uplink_is_closer);
 
             if (new_uplink_is_ahead && (!have_uplink_queued || new_uplink_is_closer))
             {
@@ -199,9 +203,9 @@ void RelativeOrbitEstimator::execute()
                 _uplink_r = rel_orbit_uplink_pos_f.get();
                 _uplink_v = rel_orbit_uplink_vel_f.get();
 
-                DD("Moving new uplink into the queue:");
-                DD("\tr = %f,%f,%f", _uplink_r(0), _uplink_r(1), _uplink_r(2));
-                DD("\tv = %f,%f,%f", _uplink_v(0), _uplink_v(1), _uplink_v(2));
+                printf(debug_severity::error, "Moving new uplink into the queue:");
+                printf(debug_severity::error, "\tr = %f,%f,%f", _uplink_r(0), _uplink_r(1), _uplink_r(2));
+                printf(debug_severity::error, "\tv = %f,%f,%f", _uplink_v(0), _uplink_v(1), _uplink_v(2));
             }
         }
 
@@ -247,9 +251,9 @@ void RelativeOrbitEstimator::execute()
                         lin::Vector3d baseline_dv =
                                 1.0e9 * (piksi_baseline_pos - _previous_baseline_pos) / double(_previous_baseline_ns);
 
-                        DD("Initializing the relative orbit estimate with:");
-                        DD("\trel_pos = %f,%f,%f", -piksi_baseline_pos(0), -piksi_baseline_pos(1), -piksi_baseline_pos(2));
-                        DD("\trel_vel = %f,%f,%f", -baseline_dv(0), -baseline_dv(1), -baseline_dv(2));
+                        printf(debug_severity::error, "Initializing the relative orbit estimate with:");
+                        printf(debug_severity::error, "\trel_pos = %f,%f,%f", -piksi_baseline_pos(0), -piksi_baseline_pos(1), -piksi_baseline_pos(2));
+                        printf(debug_severity::error, "\trel_vel = %f,%f,%f", -baseline_dv(0), -baseline_dv(1), -baseline_dv(2));
 
                         _relative_orbit = gnc::RelativeOrbitEstimate(
                                 time_earth_w, orbit_pos, orbit_vel, -piksi_baseline_pos, -baseline_dv, S);
@@ -310,13 +314,13 @@ void RelativeOrbitEstimator::execute()
         TRACKED_CONSTANT_SC(unsigned int, REL_ORBIT_CC_PREDICT_LIMIT, 5000);
         if (_cycles_without_rtk > REL_ORBIT_CC_PREDICT_LIMIT)
         {
-            DD("Control cycle predict limit reached for relative orbit "
+            printf(debug_severity::error, "Control cycle predict limit reached for relative orbit "
                "estimation; resetting the relative estimate:");
-            DD("\t_orbit.valid() = %i", _orbit.valid());
-            DD("\tpos     = %f,%f,%f", orbit_pos(0), orbit_pos(1), orbit_pos(2));
-            DD("\tvel     = %f,%f,%f", orbit_vel(0), orbit_vel(1), orbit_vel(2));
-            DD("\trel_pos = %f,%f,%f", rel_pos(0), rel_pos(1), rel_pos(2));
-            DD("\trel_vel = %f,%f,%f", rel_vel(0), rel_vel(1), rel_vel(2));
+            printf(debug_severity::error, "\t_orbit.valid() = %i", _orbit.valid());
+            printf(debug_severity::error, "\tpos     = %f,%f,%f", orbit_pos(0), orbit_pos(1), orbit_pos(2));
+            printf(debug_severity::error, "\tvel     = %f,%f,%f", orbit_vel(0), orbit_vel(1), orbit_vel(2));
+            printf(debug_severity::error, "\trel_pos = %f,%f,%f", rel_pos(0), rel_pos(1), rel_pos(2));
+            printf(debug_severity::error, "\trel_vel = %f,%f,%f", rel_vel(0), rel_vel(1), rel_vel(2));
 
             _cycles_without_rtk = 0;
             _relative_orbit = gnc::RelativeOrbitEstimate();

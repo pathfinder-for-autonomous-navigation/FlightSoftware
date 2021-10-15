@@ -45,7 +45,7 @@ void TimeEstimator::execute()
     }
 
     auto const piksi_mode = static_cast<piksi_mode_t>(piksi_state_fp->get());
-    auto const piksi_dns = static_cast<unsigned long long>(1000 * piksi_microdelta_fp->get());
+    // auto const piksi_dns = static_cast<unsigned long long>(1000 * piksi_microdelta_fp->get());
     auto const gps_epoch_ns = static_cast<unsigned long long>(gps_time_t(
             gnc::constant::init_gps_week_number, gnc::constant::init_gps_time_of_week,
             gnc::constant::init_gps_nanoseconds));
@@ -56,13 +56,13 @@ void TimeEstimator::execute()
         case piksi_mode_t::spp:
         case piksi_mode_t::float_rtk:
         case piksi_mode_t::fixed_rtk:
-            time_gps_f.set(piksi_time_fp->get() + piksi_dns);
+            // time_gps_f.set(piksi_time_fp->get() + piksi_dns);
             time_valid_f.set(true);
             break;
 
         // No valid time reading from Piksi
         default:
-            time_gps_f.set(time_gps_f.get() + PAN::control_cycle_time_ns);
+            // time_gps_f.set(time_gps_f.get() + PAN::control_cycle_time_ns);
             break;
     }
 

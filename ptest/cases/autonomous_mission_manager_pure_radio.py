@@ -12,7 +12,16 @@ class OrbitData(NamedTuple):
     pos: list
     vel: list
     time: list
-
+    
+    def __str__(self):
+        ret = ''
+        ret += str(self.pos)
+        ret += '\n'
+        ret += str(self.vel)
+        ret += '\n'
+        ret += str(self.time)
+        ret += '\n'
+        return ret
 class AutonomousMissionController(AMCCase):
     def state_check(self, satellite, designation):
         satellite_state = satellite.read_state("pan.state")
@@ -67,6 +76,8 @@ class AutonomousMissionController(AMCCase):
     def readDownlinkData(self, satellite):
         pos = str_to_val(satellite.read_state("orbit.pos"))
         vel = str_to_val(satellite.read_state("orbit.vel"))
+        print('raw')
+        print(satellite.read_state("time.gps"))
         time = GPSTime(*(str_to_val(satellite.read_state("time.gps")))).to_list()
         return OrbitData(pos, vel, time)
 
@@ -80,7 +91,7 @@ class AutonomousMissionController(AMCCase):
         satellite.write_multiple_states(uplink_orbit_data_fields, list(orbit))
 
     # default forward propagation time of 10 minutes
-    def propagate_orbits(self, orbit, propagation_time=10 * 60 * 1000000000):
+    def propagate_orbits(self, orbit, propagation_time=10 * 60 * 1e9):
 
         # get default sim configs
         configs = ["sensors/base", "truth/base", "truth/detumble"]
@@ -95,7 +106,7 @@ class AutonomousMissionController(AMCCase):
 
         # step sim to desired time
         sim = Simulation(SingleOrbitGnc, config)
-        while sim["truth.t.ns"] < config["truth.t.ns"] + propagation_time:
+        while sim["truth.t.ns"] < config["truth.t.ns"] + int(propagation_time):
             sim.step()
 
         # return the sim propagated orbit
@@ -129,6 +140,10 @@ class AutonomousMissionController(AMCCase):
             downlinked_data_vals_leader = self.readDownlinkData(self.leader)
             downlinked_data_vals_follower = self.readDownlinkData(self.follower)
 
+            print('down')
+            print(downlinked_data_vals_leader)
+            print(downlinked_data_vals_follower)
+
             # propagate the orbits of each satellite using psim
             propagated_data_vals_leader = self.propagate_orbits(
                 downlinked_data_vals_leader
@@ -136,6 +151,10 @@ class AutonomousMissionController(AMCCase):
             propagated_data_vals_follower = self.propagate_orbits(
                 downlinked_data_vals_follower
             )
+
+            print("Prop")
+            print(propagated_data_vals_leader)
+            print(propagated_data_vals_follower)
 
             # uplink the leader's data to the follower and vice versa
             self.writeUplinkData(self.follower, propagated_data_vals_leader)
