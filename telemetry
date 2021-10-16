@@ -2,7 +2,6 @@
     "eeprom_saved_fields": {
         "attitude_estimator.ignore_sun_vectors": 1,
         "attitude_estimator.mag_flag": 1,
-        "attitude_estimator.reset_persistance_reached": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
         "pan.bootcount": 100,
@@ -1154,10 +1153,20 @@
             "type": "bool",
             "writable": true
         },
-        "attitude_estimator.reset_persistance_reached": {
-            "bitsize": 1,
+        "attitude_estimator.reset_persistance": {
+            "bitsize": 10,
             "flow_id": "undefined",
-            "type": "bool",
+            "max": 1000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "attitude_estimator.safety": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 1000000,
+            "min": 0,
+            "type": "unsigned int",
             "writable": true
         },
         "attitude_estimator.valid": {
