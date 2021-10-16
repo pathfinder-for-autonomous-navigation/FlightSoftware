@@ -109,6 +109,10 @@ class AttitudeEstimator : public ControlTask<void>
     */
     WritableStateField<unsigned int> attitude_estimator_reset_persistance;
 
+    /* Field for covariance factor of safety
+    */
+    WritableStateField<unsigned int> attitude_estimator_safety;
+
     /* Faults.
      */
     Fault attitude_estimator_fault;

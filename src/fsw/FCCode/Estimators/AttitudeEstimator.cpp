@@ -45,6 +45,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1),
       attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>(), 1),
       attitude_estimator_reset_persistance("attitude_estimator.reset_persistance", Serializer<unsigned int>(1000)),
+      attitude_estimator_safety("attitude_estimator.safety", Serializer<unsigned int>(1000000)),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
@@ -60,6 +61,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     add_writable_field(attitude_estimator_mag_flag_f);
     add_writable_field(attitude_estimator_ignore_sun_vectors_f);
     add_writable_field(attitude_estimator_reset_persistance);
+    add_writable_field(attitude_estimator_safety);
     add_fault(attitude_estimator_fault);
 
     attitude_estimator_valid_f.set(false);
@@ -74,6 +76,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_mag_flag_f.set(false);           // Prefer magnetometer two
     attitude_estimator_ignore_sun_vectors_f.set(false); // Overwritten by EEPROM
     attitude_estimator_reset_persistance.set(0);
+    attitude_estimator_safety.set(10000);
+
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
@@ -172,7 +176,6 @@ void AttitudeEstimator::_execute()
                 !orbit_valid_fp->get() || !adcs_gyr_functional_fp->get() ||
                 !attitude_estimator_b_valid_f.get() ||
                 attitude_estimator_reset_cmd_f.get();
-
         if (should_reset)
         {
             attitude_estimator_valid_f.set(false);
@@ -210,11 +213,11 @@ void AttitudeEstimator::_execute()
     * 1000 (for the safety factor), trigger the persistance state field, accounting for SSA valid and invalid. */
     
     
-    if (fro_norm > 3.86e-7 * 1000000 && !adcs_ssa_valid) {
+    if (fro_norm > 3.86e-7 * (attitude_estimator_safety.get()) && !adcs_ssa_valid) {
         attitude_estimator_reset_persistance.set(attitude_estimator_reset_persistance.get() + 1);
     }
 
-    else if (fro_norm > 8.35e-10 * 1000000 && adcs_ssa_valid) {
+    else if (fro_norm > 8.35e-10 * (attitude_estimator_safety.get()) && adcs_ssa_valid) {
         attitude_estimator_reset_persistance.set(attitude_estimator_reset_persistance.get() + 1);
     }
 
@@ -225,20 +228,22 @@ void AttitudeEstimator::_execute()
     auto exceed_persistance = false;
 
     // This should be based off persistance
-    if (attitude_estimator_reset_persistance.get() == 20) {
+
+    if (attitude_estimator_reset_persistance.get() == 30) {
         exceed_persistance = true;
     }
 
     // One if statement for no ssa covariance and one if statement for ssa valid covariance 
 
     if (!adcs_ssa_valid && exceed_persistance) {
+        printf(debug_severity::error, "Our code resets: %d\n", static_cast<unsigned int>(0));
         gnc::attitude_estimator_reset(_state, time_s, {0.0f, 0.0f, 0.0f, 1.0f});
+
     }
     else if (adcs_ssa_valid && exceed_persistance) {
+        printf(debug_severity::error, "Our code resets: %d\n", static_cast<unsigned int>(0));
         gnc::attitude_estimator_reset(_state, time_s, orbit_pos, b_body, adcs_ssa);
     }
-
-    
 
     /* Attempt to update or initialize the attitude estimator.
      */
