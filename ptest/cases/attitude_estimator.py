@@ -127,7 +127,10 @@ class AttitudePersistanceExceededCase(SingleSatStandbyCase):
 
             for _ in range(10):
                 #Add something that checks the attitude_estimator every cycle
+<<<<<<< HEAD
                 self.rs("attitude_estimator.valid")
+=======
+>>>>>>> de5b7331437f2595b0147260f4d5387d153e9174
                 self.cycle()
 
 

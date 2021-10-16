@@ -203,13 +203,13 @@ void AttitudeEstimator::_execute()
 
     /* The Current Frobenius Norm */
 
-    //float fro_norm= lin::fro(_estimate.P);
+    float fro_norm= lin::fro(_estimate.P);
 
     /* Make sure to set the attitude_estimator_reset_persistance_reached to false check this, this is the logic
     that triggers the state field to allow for a reset of attitude_estimator. Once you exceed baseline frobenius norm
     * 1000 (for the safety factor), trigger the persistance state field, accounting for SSA valid and invalid. */
     
-    /*
+    
     if (fro_norm > 3.86e-7 * 1000000 && !adcs_ssa_valid) {
         attitude_estimator_reset_persistance_reached.set(true);
     }
@@ -229,7 +229,7 @@ void AttitudeEstimator::_execute()
         gnc::attitude_estimator_reset(_state, time_s, orbit_pos, b_body, adcs_ssa);
     }
 
-    */
+    
 
     /* Attempt to update or initialize the attitude estimator.
      */
