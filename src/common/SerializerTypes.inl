@@ -793,6 +793,14 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         std::copy(wn_bits.begin(), wn_bits.end(), it); it += wn_sz.bitsize();
         std::copy(tow_bits.begin(), tow_bits.end(), it); it += tow_sz.bitsize();
         std::copy(ns_bits.begin(), ns_bits.end(), it);
+
+        // bit_array::const_iterator it2 = it;
+        printf("SER:\n");
+        for(bit_array::const_iterator it2 = serialized_val.begin() + 1; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
+            // std::cout << *it2 << std::endl;
+            printf("%d", *it2);
+        }
+        printf("\n");
     }
 
     bool deserialize(const char* val, gps_time_t* dest) override {
@@ -809,6 +817,14 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         if (*it) { dest->is_set = true; }
         else { dest->is_set = false; return; }
         it += 1;
+
+        // bit_array::const_iterator it2 = it;
+        printf("DESER:\n");
+        for(bit_array::const_iterator it2 = it; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
+            // std::cout << *it2 << std::endl;
+            printf("%d", *it2);
+        }
+        printf("\n");
 
         bit_array& wn_bits = wn_sz.get_bit_array();
         bit_array& tow_bits = tow_sz.get_bit_array();

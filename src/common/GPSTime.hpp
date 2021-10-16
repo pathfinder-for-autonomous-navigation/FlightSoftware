@@ -14,7 +14,7 @@ struct gps_time_t {
 
     /** Default constructor **/
     gps_time_t() {
-        is_set = true;
+        is_set = false;
         wn = 0;
         tow = 0;
         ns = 0;

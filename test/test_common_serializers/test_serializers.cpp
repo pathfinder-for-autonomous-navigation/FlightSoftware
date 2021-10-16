@@ -626,11 +626,16 @@ void test_gpstime_serializer() {
     TEST_ASSERT_FALSE(result.is_set);
 
     // Serialization of initialized GPS time
-    gps_time_t input2(2300,3,3);
+    printf("INPUT2\n");
+    gps_time_t input2(2045,3,3);
     gpstime_serializer->serialize(input2);
+    // fixed_array<bool>& ba = gpstime_serializer->get_bit_array();
+    // char * buff = (char *)malloc(sizeof(char) * 100);
+    // printf("BA: %s", ba.to_string(buff, 0));
     gpstime_serializer->deserialize(&result);
     TEST_ASSERT(result == input2);
 
+    printf("INPUT3\n");
     // Deserialization from a string
     gps_time_t input3(2400,2,2);
     TEST_ASSERT_FALSE(gpstime_serializer->deserialize("2400,2", &result));
