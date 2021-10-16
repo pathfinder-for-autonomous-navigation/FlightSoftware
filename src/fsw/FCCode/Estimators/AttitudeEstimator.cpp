@@ -169,7 +169,7 @@ void AttitudeEstimator::_execute()
         auto const should_reset = !time_valid_fp->get() ||
                 !orbit_valid_fp->get() || !adcs_gyr_functional_fp->get() ||
                 !attitude_estimator_b_valid_f.get() ||
-                attitude_estimator_reset_cmd_f.get() || lin::fro(_estimate) > frobenius_norm;
+                attitude_estimator_reset_cmd_f.get() || lin::fro(_estimate.P) > frobenius_norm;
 
         if (should_reset)
         {
