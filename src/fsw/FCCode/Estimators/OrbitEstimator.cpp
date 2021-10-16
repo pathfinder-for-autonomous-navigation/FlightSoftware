@@ -57,17 +57,18 @@ OrbitEstimator::OrbitEstimator(StateFieldRegistry &registry)
 
 void OrbitEstimator::execute()
 {
-    auto const should_reset = !time_valid_fp->get() || orbit_reset_cmd_f.get();
+    // auto const should_reset = !time_valid_fp->get() || orbit_reset_cmd_f.get();
+    // orbit_valid_f.set(true);
 
-    if (should_reset)
-    {
-        orbit_valid_f.set(false);
-        orbit_reset_cmd_f.set(false);
+    // if (should_reset)
+    // {
+    //     orbit_valid_f.set(false);
+    //     orbit_reset_cmd_f.set(false);
 
-        _estimate = orb::OrbitEstimate();
+    //     _estimate = orb::OrbitEstimate();
 
-        return;
-    }
+    //     return;
+    // }
 
     auto const piksi_mode = static_cast<piksi_mode_t>(piksi_state_fp->get());
     auto const piksi_dns = static_cast<unsigned long long>(1000 * piksi_microdelta_fp->get());
@@ -111,7 +112,7 @@ void OrbitEstimator::execute()
             break;
     }
 
-    orbit_valid_f.set(_estimate.valid());
+    // orbit_valid_f.set(_estimate.valid());
     if (_estimate.valid())
     {
         auto const S = _estimate.S();
@@ -121,4 +122,5 @@ void OrbitEstimator::execute()
         orbit_vel_f.set(_estimate.vecef());
         orbit_vel_sigma_f.set(lin::ref<lin::Vector3d>(lin::diag(S), 3, 0));
     }
+    // orbit_valid_f.set(true);
 }

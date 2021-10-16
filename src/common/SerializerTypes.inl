@@ -796,12 +796,12 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         std::copy(ns_bits.begin(), ns_bits.end(), it);
 
         // bit_array::const_iterator it2 = it;
-        printf("SER:\n");
-        for(bit_array::const_iterator it2 = serialized_val.begin() + 1; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
-            // std::cout << *it2 << std::endl;
-            printf("%d", *it2);
-        }
-        printf("\n");
+        // printf("SER:\n");
+        // for(bit_array::const_iterator it2 = serialized_val.begin() + 1; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
+        //     // std::cout << *it2 << std::endl;
+        //     printf("%d", *it2);
+        // }
+        // printf("\n");
     }
 
     bool deserialize(const char* val, gps_time_t* dest) override {
@@ -820,12 +820,12 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         it += 1;
 
         // bit_array::const_iterator it2 = it;
-        printf("DESER:\n");
-        for(bit_array::const_iterator it2 = it; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
-            // std::cout << *it2 << std::endl;
-            printf("%d", *it2);
-        }
-        printf("\n");
+        // printf("DESER:\n");
+        // for(bit_array::const_iterator it2 = it; it2 != serialized_val.begin() + 1 + wn_sz.bitsize() + tow_sz.bitsize() + ns_sz.bitsize(); ++it2){
+        //     // std::cout << *it2 << std::endl;
+        //     printf("%d", *it2);
+        // }
+        // printf("\n");
 
         bit_array& wn_bits = wn_sz.get_bit_array();
         bit_array& tow_bits = tow_sz.get_bit_array();
@@ -836,17 +836,17 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
 
         unsigned int wn;
         wn_sz.deserialize(&wn);
-        printf("RAW WN: %u\n", wn);
+        // printf("RAW WN: %u\n", wn);
         
         dest->wn = static_cast<unsigned short>(wn);
-        printf("SHORT WN: %hu\n", dest->wn);
-        
+        // printf("SHORT WN: %hu\n", dest->wn);
+
         tow_sz.deserialize(&(dest->tow));
         ns_sz.deserialize(&(dest->ns));
     }
 
     const char* print(const gps_time_t& src) const override {
-        printf("%hu, %d, %d", src.wn, src.tow, src.ns);
+        // printf("%hu, %d, %d", src.wn, src.tow, src.ns);
         sprintf(this->printed_val, "%hu,%d,%d", src.wn, src.tow, src.ns);
         return this->printed_val;
     }

@@ -181,15 +181,15 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                     const std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
                     field->set_bit_array(field_bits);
 
-                    printf("DP:\n");
-                    for(bit_array::const_iterator it2 = frame_bits.begin(); field_end_it; ++it2){
-                        // std::cout << *it2 << std::endl;
-                        printf("%d", *it2);
-                    }
-                    printf("\n");
+                    // printf("DP:\n");
+                    // for(bit_array::const_iterator it2 = frame_bits.begin(); it2 != field_end_it; ++it2){
+                    //     // std::cout << *it2 << std::endl;
+                    //     printf("%d", *it2);
+                    // }
+                    // printf("\n");
 
                     field->deserialize();
-
+                    // printf("STR: %s", field->name().c_str());
                     ret["data"][field->name()] = std::string(field->print());
                     frame_bits.erase(frame_bits.begin(), field_end_it);
                 }
