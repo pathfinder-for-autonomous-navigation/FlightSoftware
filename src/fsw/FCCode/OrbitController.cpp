@@ -47,7 +47,7 @@ OrbitController::OrbitController(StateFieldRegistry &r) :
     sched_valve4_f.set(0);
     J_ecef_f.set(lin::zeros<lin::Vector3d>());
     alpha_f.set(0.4);
-    num_near_field_nodes_f.set(180);
+    num_near_field_nodes_f.set(360);
     dr_smoothed = lin::nans<lin::Vector3d>();
     dv_smoothed = lin::nans<lin::Vector3d>();
 }

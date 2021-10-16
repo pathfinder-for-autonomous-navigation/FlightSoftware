@@ -2,6 +2,7 @@
     "eeprom_saved_fields": {
         "attitude_estimator.ignore_sun_vectors": 1,
         "attitude_estimator.mag_flag": 1,
+        "attitude_estimator.reset_persistance_reached": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
         "pan.bootcount": 100,
@@ -1148,6 +1149,12 @@
             "writable": false
         },
         "attitude_estimator.reset_cmd": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "attitude_estimator.reset_persistance_reached": {
             "bitsize": 1,
             "flow_id": "undefined",
             "type": "bool",
