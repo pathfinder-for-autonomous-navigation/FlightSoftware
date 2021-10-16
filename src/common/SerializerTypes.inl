@@ -824,6 +824,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
     }
 
     const char* print(const gps_time_t& src) const override {
+        printf("%hu, %d, %d", src.wn, src.tow, src.ns);
         sprintf(this->printed_val, "%hu,%d,%d", src.wn, src.tow, src.ns);
         return this->printed_val;
     }

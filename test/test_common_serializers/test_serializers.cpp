@@ -638,8 +638,8 @@ void test_gpstime_serializer() {
     TEST_ASSERT(result == input3);
 
     // Printing
-    gps_time_t input4(2500,4,4);
-    TEST_ASSERT_EQUAL_STRING("2500,4,4", gpstime_serializer->print(input4));
+    gps_time_t input4(2501,4,4);
+    TEST_ASSERT_EQUAL_STRING("2501,4,4", gpstime_serializer->print(input4));
 }
 
 void test_serializers() {
