@@ -3,9 +3,9 @@
 #include <set>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
+                                 disable_mission_state_change_f("downlink.disable_mission_state_telem", Serializer<bool>()),
                                  snapshot_ptr_f("downlink.ptr"),
-                                 snapshot_size_bytes_f("downlink.snap_size"),
-                                 disable_mission_state_change_f("downlink.disable_mission_state_telem", Serializer<bool>())
+                                 snapshot_size_bytes_f("downlink.snap_size")
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
@@ -135,7 +135,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
-    if (disable_mission_state_change_f.get()) {
+    if (!disable_mission_state_change_f.get()) {
         check_mission_state_change();
     }
     current_state = mission_state_fp->get();

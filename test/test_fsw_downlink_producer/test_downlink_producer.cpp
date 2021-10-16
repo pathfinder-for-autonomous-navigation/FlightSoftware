@@ -689,6 +689,102 @@ void test_state_flow_reordering() {
     }
 }
 
+void test_disable_state_flow_reordering() {
+    TestFixture tf;
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        },
+        {
+            2, true, {"foo1"} 
+        },
+        {
+            3, true, {"foo1"} 
+        },
+        {
+            4, true, {"foo1"} 
+        },
+        {
+            5, true, {"foo1"} 
+        },
+        {
+            6, true, {"foo1"} 
+        },
+        {
+            7, true, {"foo1"} 
+        }, 
+        {
+            8, true, {"foo1"} 
+        },
+        {
+            9, true, {"foo1"} 
+        },
+        {
+            10, true, {"foo1"} 
+        },
+        {
+            11, true, {"foo1"} 
+        },
+        {
+            12, true, {"foo1"} 
+        },
+        {
+            13, true, {"foo1"} 
+        },
+        {
+            14, true, {"foo1"} 
+        }, 
+        {
+            15, true, {"foo1"} 
+        },
+        {
+            16, true, {"foo1"} 
+        },
+        {
+            17, true, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+
+    std::vector<int> desired_ids={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // Set disable flag to true
+    tf.downlink_producer->disable_mission_state_change_f.set(true);
+
+    // change state to follower
+    tf.pan_state_fp->set(static_cast<unsigned char>(mission_state_t::follower));
+    tf.downlink_producer->execute();
+
+    // Get the new flow vector and check that the flows have not been reordered
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // change state to any state that is not follower or follower_close_approach
+    tf.pan_state_fp->set(static_cast<unsigned char>(mission_state_t::standby));
+
+    tf.downlink_producer->execute();
+
+    // Get the new flow vector and check that the flows have still not been reordered
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -703,6 +799,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_toggle);
     RUN_TEST(test_fault_reordering);
     RUN_TEST(test_state_flow_reordering);
+    RUN_TEST(test_disable_state_flow_reordering);
     return UNITY_END();
 }
 

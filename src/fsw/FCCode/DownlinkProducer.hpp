@@ -183,6 +183,11 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void reset_flows();
 
+    /**
+     * @brief Statefield used to disable changing mission state telemetry flow order
+     */
+    WritableStateField<bool> disable_mission_state_change_f;
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
@@ -212,11 +217,6 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
-
-    /**
-     * @brief Statefield used to disable changing mission state telemetry flow order
-     */
-    WritableStateField<bool> disable_mission_state_change_f;
 
     const WritableStateField<unsigned char>* mission_state_fp;
 
