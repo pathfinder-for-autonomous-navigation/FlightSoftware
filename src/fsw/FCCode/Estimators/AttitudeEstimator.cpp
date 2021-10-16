@@ -11,6 +11,7 @@
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
 #include <lin/views.hpp>
+#include <orb/Orbit.h>
 
 /* If the attitude estimator isn't valid for this many cycles while we're trying
  * to hold attitude the fault will be tripped.
@@ -43,7 +44,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1),
       attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>(), 1),
-      attitude_estimator_reset_persistance_reached("attitude_estimator.reset_persistance_reached", Serializer<bool>(), 1),
+      attitude_estimator_reset_persistance_reached("attitude_estimator.reset_persistance_reached", Serializer<bool>(), 0),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
@@ -190,7 +191,6 @@ void AttitudeEstimator::_execute()
     auto const adcs_gyr = adcs_gyr_fp->get();
     auto const adcs_ssa_valid = adcs_ssa_mode_fp->get() == adcs::SSA_COMPLETE;
     auto const ignore_sun_vectors = attitude_estimator_ignore_sun_vectors_f.get();
-    auto const exceed_persistance = attitude_estimator_reset_persistance_reached.get();
     auto const adcs_ssa = [&]() -> lin::Vector3f {
         if (!adcs_ssa_valid || ignore_sun_vectors)
         {
@@ -200,6 +200,33 @@ void AttitudeEstimator::_execute()
         return s / lin::norm(s);
     }();
     auto const b_body = attitude_estimator_b_body_f.get();
+
+    /* The Current Frobenius Norm */
+
+    float fro_norm= lin::fro(lin::nans<lin::Vector3d>());
+
+    /* Make sure to set the attitude_estimator_reset_persistance_reached to false check this, this is the logic
+    that triggers the state field to allow for a reset of attitude_estimator. Once you exceed baseline frobenius norm
+    * 1000 (for the safety factor), trigger the persistance state field, accounting for SSA valid and invalid. */
+    
+    if (fro_norm > 3.86e-7 * 1000 && !adcs_ssa_valid) {
+        attitude_estimator_reset_persistance_reached.set(true);
+    }
+
+    else if (fro_norm > 8.35e-10 * 1000 && adcs_ssa_valid) {
+        attitude_estimator_reset_persistance_reached.set(true);
+    }
+
+    auto const exceed_persistance = attitude_estimator_reset_persistance_reached.get();
+
+    /* One if statement for no ssa covariance and one if statement for ssa valid covariance */
+
+    if (!adcs_ssa_valid && exceed_persistance) {
+        gnc::attitude_estimator_reset(_state, time_s, {0.0f, 0.0f, 0.0f, 1.0f});
+    }
+    else if (adcs_ssa_valid && exceed_persistance) {
+        gnc::attitude_estimator_reset(_state, time_s, orbit_pos, b_body, adcs_ssa);
+    }
 
     /* Attempt to update or initialize the attitude estimator.
      */
@@ -216,12 +243,12 @@ void AttitudeEstimator::_execute()
     }
     else
     {
-        if (ignore_sun_vectors)
+        if (ignore_sun_vectors) 
         {
             gnc::attitude_estimator_reset(
                     _state, time_s, {0.0f, 0.0f, 0.0f, 1.0f});
         }
-        else if ((adcs_ssa_valid) || (exceed_persistance))
+        else if (adcs_ssa_valid)
         {
             gnc::attitude_estimator_reset(
                     _state, time_s, orbit_pos, b_body, adcs_ssa);
