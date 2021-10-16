@@ -1279,6 +1279,12 @@
             "type": "unsigned int",
             "writable": true
         },
+        "downlink.disable_mission_state_telem": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "downlink.shift_id1": {
             "bitsize": 6,
             "flow_id": 34,
