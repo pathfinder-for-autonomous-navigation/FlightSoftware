@@ -213,6 +213,11 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
 
+    /**
+     * @brief Statefield used to disable changing mission state telemetry flow order
+     */
+    WritableStateField<bool> disable_mission_state_change_f;
+
     const WritableStateField<unsigned char>* mission_state_fp;
 
     unsigned char current_state;

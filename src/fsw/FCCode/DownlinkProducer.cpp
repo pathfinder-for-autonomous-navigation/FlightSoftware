@@ -4,13 +4,17 @@
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
                                  snapshot_ptr_f("downlink.ptr"),
-                                 snapshot_size_bytes_f("downlink.snap_size")
+                                 snapshot_size_bytes_f("downlink.snap_size"),
+                                 disable_mission_state_change_f("downlink.disable_mission_state_telem", Serializer<bool>())
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
+    add_writable_field(disable_mission_state_change_f);
+
+    disable_mission_state_change_f.set(false);
 }
 
 void DownlinkProducer::init(){
@@ -131,7 +135,9 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
-    check_mission_state_change();
+    if (disable_mission_state_change_f.get()) {
+        check_mission_state_change();
+    }
     current_state = mission_state_fp->get();
     
     // If a fault is signalled, reorder the flows so that the relevant information is downlinked earlier
