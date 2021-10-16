@@ -783,6 +783,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         else { *it = false; return; }
         it += 1;
 
+        printf("SRC.WN: %hu\n",src.wn);
         wn_sz.serialize(src.wn);
         tow_sz.serialize(src.tow);
         ns_sz.serialize(src.ns);
@@ -834,7 +835,12 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         ns_bits.assign(it, it + ns_sz.bitsize());
 
         unsigned int wn;
-        wn_sz.deserialize(&wn); dest->wn = static_cast<unsigned short>(wn);
+        wn_sz.deserialize(&wn);
+        printf("RAW WN: %u\n", wn);
+        
+        dest->wn = static_cast<unsigned short>(wn);
+        printf("SHORT WN: %hu\n", dest->wn);
+        
         tow_sz.deserialize(&(dest->tow));
         ns_sz.deserialize(&(dest->ns));
     }
