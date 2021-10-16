@@ -113,13 +113,17 @@ class AttitudePersistanceExceededCase(SingleSatStandbyCase):
         """
 
         def run(self):
-            """We will allow the attitude_estimator to initialize and then immediately check the
-            covariance frobenius norm's post-safety value with the persistance value
+            """We will allow the attitude_estimator to initialize
             """
             self.cycle()
             self.cycle()
 
+            #Basic test to see if the attitude_estimator gets reset
             self.ws("attitude_estimator.reset_persistance_reached", True)
+
+            for _ in range(10):
+                #Add something that checks the attitude_estimator every cycle
+                self.cycle()
 
 
 
