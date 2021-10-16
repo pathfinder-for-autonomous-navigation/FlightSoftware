@@ -107,7 +107,7 @@ class AttitudeEstimator : public ControlTask<void>
 
     /* Whether the exceeding of the baseline covariance frobenius norm persists
     */
-    WritableStateField<bool> attitude_estimator_reset_persistance_reached;
+    WritableStateField<unsigned int> attitude_estimator_reset_persistance;
 
     /* Faults.
      */

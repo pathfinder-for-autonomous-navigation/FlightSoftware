@@ -44,7 +44,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
       attitude_estimator_reset_cmd_f("attitude_estimator.reset_cmd", Serializer<bool>()),
       attitude_estimator_mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>(), 1),
       attitude_estimator_ignore_sun_vectors_f("attitude_estimator.ignore_sun_vectors", Serializer<bool>(), 1),
-      attitude_estimator_reset_persistance_reached("attitude_estimator.reset_persistance_reached", Serializer<bool>(), 1),
+      attitude_estimator_reset_persistance("attitude_estimator.reset_persistance", Serializer<unsigned int>(1000)),
       attitude_estimator_fault("attitude_estimator.fault", ATTITUDE_ESTIMATOR_FAULT_PERSISTANCE)
 {
     add_readable_field(attitude_estimator_b_valid_f);
@@ -59,7 +59,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     add_writable_field(attitude_estimator_reset_cmd_f);
     add_writable_field(attitude_estimator_mag_flag_f);
     add_writable_field(attitude_estimator_ignore_sun_vectors_f);
-    add_writable_field(attitude_estimator_reset_persistance_reached);
+    add_writable_field(attitude_estimator_reset_persistance);
     add_fault(attitude_estimator_fault);
 
     attitude_estimator_valid_f.set(false);
@@ -73,7 +73,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry)
     attitude_estimator_reset_cmd_f.set(false);
     attitude_estimator_mag_flag_f.set(false);           // Prefer magnetometer two
     attitude_estimator_ignore_sun_vectors_f.set(false); // Overwritten by EEPROM
-    attitude_estimator_reset_persistance_reached.set(false);
+    attitude_estimator_reset_persistance.set(0);
 
     _state = gnc::AttitudeEstimatorState();
     _data = gnc::AttitudeEstimatorData();
@@ -205,20 +205,29 @@ void AttitudeEstimator::_execute()
 
     float fro_norm= lin::fro(_estimate.P);
 
-    /* Make sure to set the attitude_estimator_reset_persistance_reached to false check this, this is the logic
+    /* Make sure to set the attitude_estimator_reset_persistance to false check this, this is the logic
     that triggers the state field to allow for a reset of attitude_estimator. Once you exceed baseline frobenius norm
     * 1000 (for the safety factor), trigger the persistance state field, accounting for SSA valid and invalid. */
     
     
     if (fro_norm > 3.86e-7 * 1000000 && !adcs_ssa_valid) {
-        attitude_estimator_reset_persistance_reached.set(true);
+        attitude_estimator_reset_persistance.set(attitude_estimator_reset_persistance.get() + 1);
     }
 
     else if (fro_norm > 8.35e-10 * 1000000 && adcs_ssa_valid) {
-        attitude_estimator_reset_persistance_reached.set(true);
+        attitude_estimator_reset_persistance.set(attitude_estimator_reset_persistance.get() + 1);
     }
 
-    auto const exceed_persistance = attitude_estimator_reset_persistance_reached.get();
+    else {
+        attitude_estimator_reset_persistance.set(0);
+    }
+
+    auto exceed_persistance = false;
+
+    // This should be based off persistance
+    if (attitude_estimator_reset_persistance.get() == 20) {
+        exceed_persistance = true;
+    }
 
     // One if statement for no ssa covariance and one if statement for ssa valid covariance 
 
