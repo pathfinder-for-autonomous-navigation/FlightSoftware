@@ -203,7 +203,7 @@ void AttitudeEstimator::_execute()
 
     /* The Current Frobenius Norm */
 
-    float fro_norm= lin::fro(lin::nans<lin::Vector3d>());
+    float fro_norm= lin::fro(_estimate.P);
 
     /* Make sure to set the attitude_estimator_reset_persistance_reached to false check this, this is the logic
     that triggers the state field to allow for a reset of attitude_estimator. Once you exceed baseline frobenius norm
