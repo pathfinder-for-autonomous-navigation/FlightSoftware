@@ -118,6 +118,8 @@ class AttitudePersistanceExceededCase(SingleSatStandbyCase):
             """
             self.cycle()
             self.cycle()
-            #continue adding next time to accomplish what the comment above says to do
+
+            self.ws("attitude_estimator.reset_persistance_reached", True)
+
 
 
