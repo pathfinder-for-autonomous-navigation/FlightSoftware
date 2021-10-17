@@ -475,7 +475,7 @@ void test_vec_serializer() {
     //make the another serialier with same inputs
     auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(7160,7360,vec_bitsize);
 
-    vector_t vec({0, 7200, 0});
+    vector_t vec({std::nan(""), -7200.0, 1.0});
     vec_serializer->serialize(vec);
     downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
     vector_t result1;
@@ -493,7 +493,7 @@ void test_vec_serializer() {
     else err_fmt_str = err_fmt_str_d;
 
     std::array<T, 3> result_arr1 = to_stdarray(result1);
-    sprintf(err_str, err_fmt_str, 69, 0.0, 7200.0, 0.0, result_arr1[0], result_arr1[1],
+    sprintf(err_str, err_fmt_str, 69, 1.0, -7200.0, -1.0, result_arr1[0], result_arr1[1],
         result_arr1[2], mag_err);
 
     // assert less than .1% magnitude of error vector
