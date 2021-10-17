@@ -364,3 +364,7 @@ class StateCmdPrompt(Cmd):
         '''
         self.do_quit(None)
         return True
+    
+    def do_special(self, args):
+        '''Call the special function'''
+        self.testcase.special_function()
