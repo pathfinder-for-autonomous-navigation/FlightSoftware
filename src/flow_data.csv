@@ -1,4 +1,4 @@
-,,,,,,,,,,,,,,,,,,,,
+When making changes to this file remember to perform the following steps:,,,,,,,,,,,,,,,,,,,,
 1. Change the last generator in /test/test_fsw_downlink_producer/packet_gen.py,,,,,,,,,,,,,,,,,,,,
 2. Run the file in the previous step and get an output.,,,,,,,,,,,,,,,,,,,,
 3. Save the output in the /test/dat/DownlinkParser/downlink* files,,,,,,,,,,,,,,,,,,,,
