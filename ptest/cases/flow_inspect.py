@@ -47,7 +47,12 @@ class FlowInspect(SingleSatCase):
         self.cycle()
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
         
-
+        self.cycle()
+        self.cycle()
+        self.ws('time.gps', '2047,125,-233')        
+        self.ws('orbit.pos', '6773000,0,0')
+        self.ws('orbit.vel', '1,7200,1')
+        self.ws('gomspace.vbatt', 6900)        
         # get every single statefield in ptest
         # build a dict of the results
 
