@@ -470,6 +470,35 @@ void test_vec_serializer() {
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.002, 0, mag_err, err_str);
     }
 
+    auto vec_serializer = std::make_shared<Serializer<vector_t>>(7160,7360,vec_bitsize);
+    
+    //make the another serialier with same inputs
+    auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(7160,7360,vec_bitsize);
+
+    vector_t vec({0, 7200, 0});
+    vec_serializer->serialize(vec);
+    downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
+    vector_t result1;
+    downlink_deserializer->deserialize(&result1);
+    T mag_err = lin::norm(lin::view<lin::Vector<T, 3>>(vec.data()) - lin::view<lin::Vector<T, 3>>(result1.data()));
+
+    static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
+        "vector was {%f,%f,%f}; mag_err: %f";
+    static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output"
+        "vector was {%lf,%lf,%lf}; mag_err: %lf";
+    char err_str[200];
+    memset(err_str, 0, 200);
+    const char* err_fmt_str = nullptr;
+    if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
+    else err_fmt_str = err_fmt_str_d;
+
+    std::array<T, 3> result_arr1 = to_stdarray(result1);
+    sprintf(err_str, err_fmt_str, 69, 0.0, 7200.0, 0.0, result_arr1[0], result_arr1[1],
+        result_arr1[2], mag_err);
+
+    // assert less than .1% magnitude of error vector
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1, 0, mag_err, err_str);
+
     // Test deserialization from a string
     auto serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
     vector_t result;
