@@ -175,6 +175,12 @@ class PSimCase(PTestCase):
         else:
             sensors["adcs_monitor.ssa_mode"] = Enums.ssa_modes['SSA_FAILURE']
 
+        # Simulate wheel speeds
+        #
+        # As wheel speeds are required for magnetometer data offsets now,
+        # wheel speeds must be simmed
+        sensors['adcs_monitor.rwa_speed_rd'] = list(self.__sim[f'truth.{satellite}.wheels.w'])
+
         return sensors
 
     def rs_psim(self, name: str):
