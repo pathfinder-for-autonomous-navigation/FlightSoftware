@@ -56,6 +56,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     estimators.init();
     docking_controller.init();
     orbit_controller.init();
+    downlink_producer.init();
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
@@ -80,6 +81,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     control_cycle_ms_f.set(PAN::control_cycle_time_ms);
 
     eeprom_controller.init();
+    mission_manager.init(); // init after eeprom so that boot count is incremented.
+
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
     

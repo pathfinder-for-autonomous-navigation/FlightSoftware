@@ -25,11 +25,12 @@ class SingleSatCase(PTestCase):
     """
     def __init__(self, *args, **kwargs):
         super(SingleSatCase, self).__init__(*args, **kwargs)
-
+        
         self.initial_state = "startup"
         self.initial_state_timeout = 100
         self.skip_deployment_wait = False
         self.suppress_faults = True
+        self.check_initial_state = True
 
     def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
@@ -63,7 +64,7 @@ class SingleSatCase(PTestCase):
         initial_state = Enums.mission_states[self.initial_state]
         state = self.flight_controller.smart_read("pan.state")
         self.logger.put("[TESTCASE] Boot utility waiting to reach initial state.")
-        while state != initial_state:
+        while state != initial_state and self.check_initial_state:
             if cycles > self.initial_state_timeout:
                 raise TestCaseFailure(f"Failed to reach desired state of {initial_state}, was {state}.")
 

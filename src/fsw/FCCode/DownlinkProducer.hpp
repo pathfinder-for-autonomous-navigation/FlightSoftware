@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
+#include "mission_state_t.enum"
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
@@ -38,6 +39,11 @@ class DownlinkProducer : public TimedControlTask<void> {
     DownlinkProducer(StateFieldRegistry& registry);
 
     /**
+     * @brief initialize active faults 
+     */
+    void init(); 
+
+    /**
      * @brief Initialize flows for the Downlink Producer. This function
      * should be called in the main control loop after the instantiation of all
      * state fields.
@@ -60,6 +66,21 @@ class DownlinkProducer : public TimedControlTask<void> {
      * most urgent downlink flow group based on the Quake manager's state.
      */
     void execute() override;
+
+    void check_fault_signalled();
+
+    /**
+     * @brief Checks if any faults in active_faults are faulted. If so, it stores 
+     * the index of the flow with all the faults in fault_idx. Returns true if a 
+     * fault is faulted and false if all the faults are unfaulted.
+     */
+    bool find_faults();
+
+    /**
+     * Reorder telemetry flows based on the new mission state
+     */
+    void check_mission_state_change();
+
 
     /**
      * @brief Destructor; clears the memory allocated for the snapshot
@@ -151,6 +172,17 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
 
+    /**
+     * @brief Shift the flow with the given id to the given index in the flow order.
+     * Does not change the active status.
+     */
+    void shift_flow_priorities_idx(unsigned char id, size_t idx);
+
+    /*
+     * Restore the original flow order
+     */
+    void reset_flows();
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
@@ -180,6 +212,23 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
     std::unique_ptr<WritableStateField<unsigned char>> toggle_flow_id_fp;
+
+    const WritableStateField<unsigned char>* mission_state_fp;
+
+    unsigned char current_state;
+
+    /**
+     * @brief The index of the flow containing all the faults.
+     */
+    unsigned char fault_idx;
+
+    /**
+     * @brief Checks if the flow with all the faults has been shifted (due to a fault being recently signalled)
+     */
+    bool faults_flow_shifted;
+
+    std::array<Fault *, 13> active_faults;
+
 };
 
 #endif
