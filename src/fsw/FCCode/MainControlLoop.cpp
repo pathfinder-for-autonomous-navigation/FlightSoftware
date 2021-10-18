@@ -134,7 +134,7 @@ void MainControlLoop::execute() {
     TRACKED_CONSTANT_SC(unsigned int, dcdc_duration, 1000);
     TRACKED_CONSTANT_SC(unsigned int, attitude_controller_duration, 1000);
     TRACKED_CONSTANT_SC(unsigned int, adcs_commander_duration, 1000);
-    TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_duration, 10000);
+    //TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_duration, 10000);
     TRACKED_CONSTANT_SC(unsigned int, orbit_duration, 5000);
     TRACKED_CONSTANT_SC(unsigned int, prop_duration, 28000);
     TRACKED_CONSTANT_SC(unsigned int, downlink_duration, 1000);
@@ -156,7 +156,7 @@ void MainControlLoop::execute() {
     dcdc_controller.execute_on_time(dcdc_duration);
     attitude_controller.execute_on_time(attitude_controller_duration);
     adcs_commander.execute_on_time(adcs_commander_duration);
-    adcs_box_controller.execute_on_time(adcs_box_controller_duration);
+    //adcs_box_controller.execute_on_time(adcs_box_controller_duration);
     orbit_controller.execute_on_time(orbit_duration);
     prop_controller.execute_on_time(prop_duration);
     downlink_producer.execute_on_time(downlink_duration);
