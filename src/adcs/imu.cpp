@@ -49,7 +49,7 @@ static void update_mag1(unsigned char mag1_mode, float mag_flt) {
   //   mag1.calibrate();
   // TODO :  ^^^^ --> Implement calibrate function
 
-  // Attempt a read if ready and ensure it was succesful
+  // Attempt a read if ready and ensure it was successful
   if (!mag1.is_functional()) return;
   if (!mag1.is_ready()) return;
   if (!mag1.read()) return;
@@ -60,7 +60,7 @@ static void update_mag1(unsigned char mag1_mode, float mag_flt) {
     utl::fp(mag1.get_b_y(), min_mag1_rd_mag, max_mag1_rd_mag),
     utl::fp(mag1.get_b_z(), min_mag1_rd_mag, max_mag1_rd_mag)
   };
-  data = mag1_to_body * data;
+  data = (mag1_to_body * data).eval();
 
   // Update the filtered magnetic field reading for magnetometer one
   mag1_rd = mag1_rd + (data - mag1_rd) * mag_flt;
@@ -93,7 +93,7 @@ static void update_mag2(unsigned char mag2_mode, float mag_flt) {
     utl::fp(mag2.get_b_y(), min_mag2_rd_mag, max_mag2_rd_mag),
     utl::fp(mag2.get_b_z(), min_mag2_rd_mag, max_mag2_rd_mag)
   };
-  data = mag2_to_body * data;
+  data = (mag2_to_body * data).eval();
 
   // Update the filtered magnetic field reading for magnetometer two
   mag2_rd = mag2_rd + (data - mag2_rd) * mag_flt;
@@ -135,7 +135,7 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     utl::fp(gyr.get_omega_y(), min_rd_omega, max_rd_omega),
     utl::fp(gyr.get_omega_z(), min_rd_omega, max_rd_omega)
   };
-  data = gyr_to_body * data;
+  data = (gyr_to_body * data).eval();
 
   // Read in temperature data and filter
   temp_data = utl::fp(gyr.get_temp(), min_rd_temp, max_rd_temp);
