@@ -19,12 +19,15 @@ class FieldCreatorTask : public ControlTask<void>
 {
 public:
   ReadableStateField<unsigned int> bootcount_f;
+  ReadableStateField<bool> cursed_bit_f;
 
   FieldCreatorTask(StateFieldRegistry &r)
       : ControlTask<void>(r),
-        bootcount_f("pan.bootcount", Serializer<unsigned int>(0xfffffff), 1000)
+        bootcount_f("pan.bootcount", Serializer<unsigned int>(0xfffffff), 1000),
+        cursed_bit_f("cursed", Serializer<bool>())
   {
     add_readable_field(bootcount_f);
+    add_readable_field(cursed_bit_f);
   }
 
   ~FieldCreatorTask() = default;

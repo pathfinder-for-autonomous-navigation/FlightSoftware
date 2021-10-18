@@ -79,7 +79,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
     const size_t field_size = field_bits.size();
 
     std::string field;
-    for (int i = 0; i < field_size; i++) field += field_bits[i] ? "1" : "0";
+    for (size_t i = 0; i < field_size; i++) field += field_bits[i] ? "1" : "0";
 
     debug_console::printf(debug_severity::info, "Printing bits at position %d: %s", packet_offset, field.c_str());
 
