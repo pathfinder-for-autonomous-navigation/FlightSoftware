@@ -1177,7 +1177,7 @@
         },
         "cursed": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 2,
             "type": "bool",
             "writable": false
         },
@@ -2923,6 +2923,7 @@
             "fields": [
                 "time.valid",
                 "orbit.valid",
+                "cursed",
                 "time.gps",
                 "orbit.pos",
                 "orbit.vel",

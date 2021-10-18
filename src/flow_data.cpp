@@ -6,7 +6,7 @@
 
 const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {1, true, {"pan.state", "pan.deployed", "pan.sat_designation", "pan.bootcount", "pan.deployment.elapsed", "pan.cycle_no"}},
-{2, true, {"time.valid", "orbit.valid", "time.gps", "orbit.pos", "orbit.vel", "attitude_estimator.valid", "attitude_estimator.ignore_sun_vectors", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
+{2, true, {"time.valid", "orbit.valid", "cursed", "time.gps", "orbit.pos", "orbit.vel", "attitude_estimator.valid", "attitude_estimator.ignore_sun_vectors", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
 {3, false, {"orbit.pos_sigma", "orbit.vel_sigma"}},
 {4, false, {"rel_orbit.pos", "rel_orbit.vel"}},
 {5, false, {"rel_orbit.rel_pos", "rel_orbit.rel_vel", "rel_orbit.rel_pos_sigma", "rel_orbit.rel_vel_sigma"}},
