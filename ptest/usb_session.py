@@ -445,7 +445,9 @@ class USBSession(object):
         telem_json_data = json.loads(line)
 
         if telem_json_data is not None:
-                telem_json_data = telem_json_data["data"]
+            print(telem_json_data["metadata"]["log"])
+            telem_json_data = telem_json_data["data"]
+
         return telem_json_data
 
     def dbtelem(self):
