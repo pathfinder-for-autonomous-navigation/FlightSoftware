@@ -909,7 +909,7 @@
         },
         "adcs_monitor.wheel1_fault.base": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 7,
             "type": "bool",
             "writable": true
         },
@@ -1177,7 +1177,7 @@
         },
         "cursed": {
             "bitsize": 1,
-            "flow_id": 2,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": false
         },
@@ -2923,7 +2923,6 @@
             "fields": [
                 "time.valid",
                 "orbit.valid",
-                "cursed",
                 "time.gps",
                 "orbit.pos",
                 "orbit.vel",
@@ -2983,7 +2982,7 @@
             "fields": [
                 "adcs_monitor.functional_fault.base",
                 "piksi_fh.dead.base",
-                "adcs_monitor.wheel2_fault.base",
+                "adcs_monitor.wheel1_fault.base",
                 "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel3_fault.base",
                 "adcs_monitor.wheel_pot_fault.base",

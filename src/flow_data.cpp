@@ -6,12 +6,12 @@
 
 const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {1, true, {"pan.state", "pan.deployed", "pan.sat_designation", "pan.bootcount", "pan.deployment.elapsed", "pan.cycle_no"}},
-{2, true, {"time.valid", "orbit.valid", "cursed", "time.gps", "orbit.pos", "orbit.vel", "attitude_estimator.valid", "attitude_estimator.ignore_sun_vectors", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
+{2, true, {"time.valid", "orbit.valid", "time.gps", "orbit.pos", "orbit.vel", "attitude_estimator.valid", "attitude_estimator.ignore_sun_vectors", "attitude_estimator.q_body_eci", "attitude_estimator.L_body", "rel_orbit.state"}},
 {3, false, {"orbit.pos_sigma", "orbit.vel_sigma"}},
 {4, false, {"rel_orbit.pos", "rel_orbit.vel"}},
 {5, false, {"rel_orbit.rel_pos", "rel_orbit.rel_vel", "rel_orbit.rel_pos_sigma", "rel_orbit.rel_vel_sigma"}},
 {6, false, {"attitude_estimator.w_bias_body", "attitude_estimator.p_body_eci_sigma_f", "attitude_estimator.w_bias_sigma_body", "attitude_estimator.mag_flag", "attitude_estimator.b_valid", "attitude_estimator.b_body"}},
-{7, true, {"adcs_monitor.functional_fault.base", "piksi_fh.dead.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel_pot_fault.base", "prop.overpressured.base", "prop.pressurize_fail.base", "prop.tank2_temp_high.base", "prop.tank1_temp_high.base", "gomspace.low_batt.base", "gomspace.get_hk.base", "attitude_estimator.fault.base"}},
+{7, true, {"adcs_monitor.functional_fault.base", "piksi_fh.dead.base", "adcs_monitor.wheel1_fault.base", "adcs_monitor.wheel2_fault.base", "adcs_monitor.wheel3_fault.base", "adcs_monitor.wheel_pot_fault.base", "prop.overpressured.base", "prop.pressurize_fail.base", "prop.tank2_temp_high.base", "prop.tank1_temp_high.base", "gomspace.low_batt.base", "gomspace.get_hk.base", "attitude_estimator.fault.base"}},
 {8, true, {"gomspace.vbatt", "gomspace.cursun", "gomspace.cursys", "gomspace.temp.output1", "gomspace.temp.output2", "gomspace.temp.output3", "gomspace.temp.output4"}},
 {9, false, {"gomspace.vboost.output1", "gomspace.vboost.output2", "gomspace.vboost.output3", "gomspace.curin.output1", "gomspace.curin.output2", "gomspace.curin.output3"}},
 {10, false, {"gomspace.curout.output1", "gomspace.curout.output2", "gomspace.curout.output3", "gomspace.curout.output4", "gomspace.curout.output5", "gomspace.curout.output6", "gomspace.output.output1", "gomspace.output.output2", "gomspace.output.output3", "gomspace.output.output4", "gomspace.output.output5", "gomspace.output.output6"}},
