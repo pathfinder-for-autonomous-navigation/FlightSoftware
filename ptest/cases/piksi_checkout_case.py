@@ -8,6 +8,7 @@ class PiksiCheckoutCase(SingleSatCase):
         super(PiksiCheckoutCase, self).__init__(*args, **kwargs)
 
         self.debug_to_console = True
+        self.check_initial_state = False
      
     def print_piksi_state(self):
         st = self.rs("piksi.state")
