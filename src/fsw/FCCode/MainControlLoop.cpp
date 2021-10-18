@@ -56,7 +56,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     estimators.init();
     docking_controller.init();
     orbit_controller.init();
-    downlink_producer.init();
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP

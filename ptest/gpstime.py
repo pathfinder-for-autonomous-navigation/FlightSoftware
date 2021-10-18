@@ -10,7 +10,7 @@ class GPSTime(object):
         if(len(args) == 3):
             self.wn = args[0]
             self.tow = args[1]
-            self.ns = args[1]
+            self.ns = args[2]
         elif(len(args) == 1):
             '''
             pan_ns_count_in should be a gps time *since* the PAN Epoch
