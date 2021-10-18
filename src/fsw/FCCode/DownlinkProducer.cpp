@@ -14,9 +14,6 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
 }
 
 void DownlinkProducer::init(){
-    mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
-    current_state = mission_state_fp->get();
-
     active_faults = {
         FIND_FAULT(adcs_monitor.wheel_pot_fault.base),  
         FIND_FAULT(adcs_monitor.wheel3_fault.base),
@@ -131,9 +128,6 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
-    check_mission_state_change();
-    current_state = mission_state_fp->get();
-    
     // If a fault is signalled, reorder the flows so that the relevant information is downlinked earlier
     check_fault_signalled();
 
@@ -238,34 +232,6 @@ bool DownlinkProducer::find_faults() {
         }
     }
     return false;
-}
-
-void DownlinkProducer::check_mission_state_change() {
-    if (current_state!=mission_state_fp->get()) {
-        switch(static_cast<mission_state_t>(mission_state_fp->get())){
-            case mission_state_t::follower:
-                reset_flows();
-                shift_flow_priorities_idx(16, 13);
-                break;
-            case mission_state_t::follower_close_approach:
-                reset_flows();
-                shift_flow_priorities_idx(16, 13);
-                break;
-            default:
-                reset_flows();
-                break;
-        }
-    }
-}
-
-void DownlinkProducer::reset_flows() {
-    for(size_t idx = 0; idx < flows.size(); idx++) {
-        unsigned char flow_id;
-        flows[idx].id_sr.deserialize(&flow_id);
-        if (flow_id != idx+1) {
-            shift_flow_priorities_idx(flow_id, flow_id-1);
-        }
-    }
 }
 
 DownlinkProducer::~DownlinkProducer() {
