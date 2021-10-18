@@ -122,7 +122,7 @@ void debug_console::_print_json_msg(severity_t severity, const char* msg) {
 void debug_console::_print_error_state_field(char const *field_name,
         state_cmd_mode_t mode, state_field_error_t error_code) {
 #ifdef DESKTOP
-    DynamicJsonDocument doc(500);
+    DynamicJsonDocument doc(10000);
 #else
     StaticJsonDocument<200> doc;
 #endif
@@ -184,7 +184,7 @@ void debug_console::close() {
 void debug_console::printf(severity_t severity, const char* fmt, ...) {
     if (!is_open) return;
 
-    char buf[100];
+    char buf[1000];
     va_list args;
     va_start(args, fmt);
     vsnprintf(buf, sizeof(buf), fmt, args);

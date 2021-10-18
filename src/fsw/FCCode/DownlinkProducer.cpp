@@ -77,6 +77,12 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
                                        size_t& downlink_frame_offset)
 {
     const size_t field_size = field_bits.size();
+
+    std::string field;
+    for (int i = 0; i < field_size; i++) field += field_bits[i] ? "1" : "0";
+
+    debug_console::printf(debug_severity::info, "Printing bits at position %d: %s", packet_offset, field.c_str());
+
     const int field_overflow = (field_size + packet_offset)
         - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
 
@@ -128,9 +134,11 @@ void DownlinkProducer::execute() {
     // Add control cycle count to the initial packet
     cycle_count_fp->serialize();
     const bit_array& cycle_count_bits = cycle_count_fp->get_bit_array();
+    debug_console::printf(debug_severity::info, "cycle count");
     add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
+    int id = 1;
     for(auto const& flow : flows) {
         if (!flow.is_active) continue;
 
@@ -138,6 +146,7 @@ void DownlinkProducer::execute() {
         // care to add a downlink packet delimeter if the current
         // packet size exceeds 70 bytes.
         const bit_array& flow_id_bits = flow.id_sr.get_bit_array();
+        debug_console::printf(debug_severity::info, "flow id: %d, size %d", id, flow.get_packet_size());
         add_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
@@ -156,6 +165,7 @@ void DownlinkProducer::execute() {
                     downlink_frame_offset);
             }
         }
+        id++;
     }
 
     // If there are bits remaining in the last character of the downlink frame,
@@ -233,8 +243,11 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     size_t packet_size = 0;
     packet_size += id_sr.bitsize();
 
+    debug_console::printf(debug_severity::info, "New packet");
     for(auto const& field: field_list) {
-        packet_size += field->get_bit_array().size();
+        size_t field_size = field->get_bit_array().size();
+        debug_console::printf(debug_severity::info, "bitsize of field: %d", field_size);
+        packet_size += field_size;
     }
 
     return packet_size;
