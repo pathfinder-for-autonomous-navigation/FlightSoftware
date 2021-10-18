@@ -138,7 +138,7 @@ def main():
     SendMessage(sender, to, subject, msgHtml, msgPlain)
 
     # Send message with attachment: 
-    SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
+    SendMessage(sender, to, subject, msgHtml, msgPlain, 'temp.pdf')
 
 if __name__ == '__main__':
     main()

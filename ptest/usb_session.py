@@ -100,10 +100,10 @@ class USBSession(object):
 
         self.enable_auto_dbtelem = enable_auto_dbtelem
 
-        if self.username != "":
-            self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-            self.mail.login(self.username, self.password)
-            self.mail.select('"[Gmail]/Sent Mail"')
+        # if self.username != "":
+        #     self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        #     self.mail.login(self.username, self.password)
+        #     self.mail.select('"[Gmail]/Sent Mail"')
 
         self.debug_to_console = None
 

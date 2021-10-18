@@ -1,0 +1,230 @@
+[2021-10-18 12:54:02.205089] Sent:     {"mode": 119, "field": "fault_handler.enabled", "val": "false"}
+[2021-10-18 12:54:02.273293] Received: {"t":5865,"field":"fault_handler.enabled","val":"false"}
+[2021-10-18 12:54:02.273801] Sent:     {"mode": 119, "field": "piksi_fh.enabled", "val": "false"}
+[2021-10-18 12:54:02.279164] Received: {"t":5871,"field":"piksi_fh.enabled","val":"false"}
+[2021-10-18 12:54:02.279481] Sent:     {"mode": 119, "field": "qfh.enabled", "val": "false"}
+[2021-10-18 12:54:02.284155] Received: {"t":5876,"field":"qfh.enabled","val":"false"}
+[2021-10-18 12:54:02.284532] Sent:     {"mode": 119, "field": "gomspace.low_batt.suppress", "val": "true"}
+[2021-10-18 12:54:02.289196] Received: {"t":5881,"field":"gomspace.low_batt.suppress","val":"true"}
+[2021-10-18 12:54:02.289642] Sent:     {"mode": 119, "field": "gomspace.get_hk.base.suppress", "val": "true"}
+[2021-10-18 12:54:02.294220] Received: {"t":5887,"field":"gomspace.get_hk.base.suppress","mode":"write","err":"invalid field name"}
+[2021-10-18 12:54:02.294658] Sent:     {"mode": 119, "field": "prop.overpressured.suppress", "val": "true"}
+[2021-10-18 12:54:02.299204] Received: {"t":5892,"field":"prop.overpressured.suppress","val":"true"}
+[2021-10-18 12:54:02.299608] Sent:     {"mode": 119, "field": "prop.tank2_temp_high.suppress", "val": "true"}
+[2021-10-18 12:54:02.304196] Received: {"t":5897,"field":"prop.tank2_temp_high.suppress","val":"true"}
+[2021-10-18 12:54:02.304742] Sent:     {"mode": 119, "field": "prop.tank1_temp_high.suppress", "val": "true"}
+[2021-10-18 12:54:02.309158] Received: {"t":5902,"field":"prop.tank1_temp_high.suppress","val":"true"}
+[2021-10-18 12:54:02.309796] Sent:     {"mode": 119, "field": "adcs_monitor.functional_fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.314199] Received: {"t":5906,"field":"adcs_monitor.functional_fault.suppress","val":"true"}
+[2021-10-18 12:54:02.314618] Sent:     {"mode": 119, "field": "adcs_monitor.wheel1_fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.319181] Received: {"t":5911,"field":"adcs_monitor.wheel1_fault.suppress","val":"true"}
+[2021-10-18 12:54:02.319503] Sent:     {"mode": 119, "field": "adcs_monitor.wheel2_fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.324180] Received: {"t":5916,"field":"adcs_monitor.wheel2_fault.suppress","val":"true"}
+[2021-10-18 12:54:02.324570] Sent:     {"mode": 119, "field": "adcs_monitor.wheel3_fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.329211] Received: {"t":5921,"field":"adcs_monitor.wheel3_fault.suppress","val":"true"}
+[2021-10-18 12:54:02.329595] Sent:     {"mode": 119, "field": "adcs_monitor.wheel_pot_fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.334239] Received: {"t":5927,"field":"adcs_monitor.wheel_pot_fault.suppress","val":"true"}
+[2021-10-18 12:54:02.334749] Sent:     {"mode": 119, "field": "attitude_estimator.fault.suppress", "val": "true"}
+[2021-10-18 12:54:02.340217] Received: {"t":5932,"field":"attitude_estimator.fault.suppress","val":"true"}
+[2021-10-18 12:54:02.340608] Sent:     {"mode": 119, "field": "piksi_fh.dead.suppress", "val": "true"}
+[2021-10-18 12:54:02.345177] Received: {"t":5938,"field":"piksi_fh.dead.suppress","val":"true"}
+[2021-10-18 12:54:02.345510] Sent:     {"mode": 114, "field": "pan.state"}
+[2021-10-18 12:54:02.350201] Received: {"t":5942,"field":"pan.state","val":"0"}
+[2021-10-18 12:54:02.350429] Sent:     {"mode": 114, "field": "pan.one_day_ccno"}
+[2021-10-18 12:54:02.355261] Received: {"t":5947,"field":"pan.one_day_ccno","val":"508235"}
+[2021-10-18 12:54:02.355498] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2021-10-18 12:54:02.360216] Received: {"t":5953,"field":"pan.state","val":"11"}
+[2021-10-18 12:54:02.360558] Sent:     {"mode": 119, "field": "pan.deployment_elapsed", "val": "0"}
+[2021-10-18 12:54:02.365367] Received: {"t":5958,"field":"pan.deployment_elapsed","mode":"write","err":"invalid field name"}
+[2021-10-18 12:54:02.365751] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:02.370223] Received: {"t":5963,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:02.370513] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:02.443288] Received: {"t":6035,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:02.443629] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:02.448239] Received: {"t":6041,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:02.448580] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:02.453226] Received: {"t":6046,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:02.453531] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:02.458216] Received: {"t":6050,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:02.458417] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:02.463236] Received: {"t":6055,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:02.463456] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:02.468266] Received: {"t":6060,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:02.468632] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:02.473211] Received: {"t":6066,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:02.473561] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:02.613244] Received: {"t":6205,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:02.613814] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:02.619225] Received: {"t":6211,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:02.619486] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:02.624227] Received: {"t":6216,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:02.624570] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:02.629218] Received: {"t":6221,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:02.629526] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:02.634082] Received: {"t":6226,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:02.634334] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:02.639170] Received: {"t":6231,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:02.639652] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2021-10-18 12:54:02.644099] Received: {"t":6237,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:02.644515] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "true"}
+[2021-10-18 12:54:02.649152] Received: {"t":6241,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:02.649592] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:02.654149] Received: {"t":6246,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:02.654646] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:02.783178] Received: {"t":6375,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:02.783591] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:02.788153] Received: {"t":6381,"field":"dcdc.ADCSMotor","val":"true"}
+[2021-10-18 12:54:02.788516] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:02.793138] Received: {"t":6385,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:02.793446] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:02.798216] Received: {"t":6390,"field":"dcdc.SpikeDock","val":"true"}
+[2021-10-18 12:54:02.798498] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:02.803240] Received: {"t":6395,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:02.804717] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:02.809297] Received: {"t":6401,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:02.810201] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2021-10-18 12:54:02.815265] Received: {"t":6407,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:02.816861] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "false"}
+[2021-10-18 12:54:02.821285] Received: {"t":6414,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:02.821792] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:02.827324] Received: {"t":6419,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:02.828012] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:02.953191] Received: {"t":6545,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:02.953619] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:02.958227] Received: {"t":6551,"field":"dcdc.ADCSMotor","val":"true"}
+[2021-10-18 12:54:02.958707] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:02.963219] Received: {"t":6556,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:02.963657] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:02.968172] Received: {"t":6560,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:02.968579] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:02.973275] Received: {"t":6566,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:02.973678] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:02.978178] Received: {"t":6571,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:02.978937] Sent:     {"mode": 119, "field": "dcdc.reset_cmd", "val": "true"}
+[2021-10-18 12:54:02.983129] Received: {"t":6576,"field":"dcdc.reset_cmd","val":"true"}
+[2021-10-18 12:54:02.983471] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:02.988195] Received: {"t":6580,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:02.988631] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.123212] Received: {"t":6715,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:03.123726] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.128159] Received: {"t":6721,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:03.128473] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.133143] Received: {"t":6725,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:03.133449] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.138149] Received: {"t":6730,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:03.138454] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.143176] Received: {"t":6735,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.143540] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.148189] Received: {"t":6741,"field":"dcdc.reset_cmd","val":"true"}
+[2021-10-18 12:54:03.148714] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:03.153131] Received: {"t":6746,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:03.153494] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.292202] Received: {"t":6885,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:03.292661] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.297138] Received: {"t":6890,"field":"dcdc.ADCSMotor","val":"true"}
+[2021-10-18 12:54:03.297464] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.302163] Received: {"t":6894,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:03.302491] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.307134] Received: {"t":6899,"field":"dcdc.SpikeDock","val":"true"}
+[2021-10-18 12:54:03.307419] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.312291] Received: {"t":6904,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.312697] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.317278] Received: {"t":6910,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:03.317768] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "false"}
+[2021-10-18 12:54:03.323278] Received: {"t":6915,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:03.323845] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "true"}
+[2021-10-18 12:54:03.329195] Received: {"t":6921,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:03.329738] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:03.334175] Received: {"t":6927,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:03.334574] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.462375] Received: {"t":7055,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:03.462982] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.468231] Received: {"t":7060,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:03.468652] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.473121] Received: {"t":7066,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:03.473494] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.478218] Received: {"t":7070,"field":"dcdc.SpikeDock","val":"true"}
+[2021-10-18 12:54:03.478574] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.483249] Received: {"t":7076,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.483644] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.488236] Received: {"t":7081,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:03.488738] Sent:     {"mode": 119, "field": "dcdc.reset_cmd", "val": "true"}
+[2021-10-18 12:54:03.494237] Received: {"t":7086,"field":"dcdc.reset_cmd","val":"true"}
+[2021-10-18 12:54:03.494833] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:03.500228] Received: {"t":7092,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:03.500786] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.632122] Received: {"t":7224,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:03.632584] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.637069] Received: {"t":7229,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:03.637463] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.642191] Received: {"t":7234,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:03.642567] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.647121] Received: {"t":7240,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:03.647465] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.652160] Received: {"t":7244,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.652555] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.657132] Received: {"t":7249,"field":"dcdc.reset_cmd","val":"true"}
+[2021-10-18 12:54:03.657440] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:03.662153] Received: {"t":7254,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:03.662510] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.802183] Received: {"t":7394,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:03.802651] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.807049] Received: {"t":7400,"field":"dcdc.ADCSMotor","val":"true"}
+[2021-10-18 12:54:03.807353] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.812070] Received: {"t":7404,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:03.812432] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.817175] Received: {"t":7409,"field":"dcdc.SpikeDock","val":"true"}
+[2021-10-18 12:54:03.817624] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.822212] Received: {"t":7415,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.822737] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.828237] Received: {"t":7420,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:03.833639] Sent:     {"mode": 119, "field": "dcdc.disable_cmd", "val": "true"}
+[2021-10-18 12:54:03.834106] Received: {"t":7426,"field":"dcdc.disable_cmd","val":"true"}
+[2021-10-18 12:54:03.834371] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:03.839094] Received: {"t":7431,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:03.839455] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:03.972312] Received: {"t":7564,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:03.974388] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:03.978135] Received: {"t":7570,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:03.978409] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:03.983132] Received: {"t":7575,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:03.983455] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:03.988119] Received: {"t":7580,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:03.988424] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:03.993120] Received: {"t":7585,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:03.993473] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:03.998149] Received: {"t":7590,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:03.998546] Sent:     {"mode": 119, "field": "dcdc.reset_cmd", "val": "true"}
+[2021-10-18 12:54:04.003216] Received: {"t":7596,"field":"dcdc.reset_cmd","val":"true"}
+[2021-10-18 12:54:04.003623] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:04.008226] Received: {"t":7601,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:04.008603] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:04.142128] Received: {"t":7734,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2021-10-18 12:54:04.142530] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:04.147214] Received: {"t":7739,"field":"dcdc.ADCSMotor","val":"true"}
+[2021-10-18 12:54:04.148283] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:04.153136] Received: {"t":7745,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2021-10-18 12:54:04.153543] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:04.158142] Received: {"t":7751,"field":"dcdc.SpikeDock","val":"true"}
+[2021-10-18 12:54:04.158569] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:04.163123] Received: {"t":7756,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:04.163450] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:04.168040] Received: {"t":7760,"field":"dcdc.reset_cmd","val":"false"}
+[2021-10-18 12:54:04.168393] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "false"}
+[2021-10-18 12:54:04.173154] Received: {"t":7765,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:04.173522] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "false"}
+[2021-10-18 12:54:04.178261] Received: {"t":7771,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:04.184368] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 12:54:04.189231] Received: {"t":7781,"field":"cycle.start","val":"true"}
+[2021-10-18 12:54:04.189599] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2021-10-18 12:54:04.312495] Received: {"t":7904,"field":"dcdc.ADCSMotor_cmd","val":"false"}
+[2021-10-18 12:54:04.317833] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2021-10-18 12:54:04.321477] Received: {"t":7913,"field":"dcdc.ADCSMotor","val":"false"}
+[2021-10-18 12:54:04.321944] Sent:     {"mode": 114, "field": "dcdc.SpikeDock_cmd"}
+[2021-10-18 12:54:04.327533] Received: {"t":7919,"field":"dcdc.SpikeDock_cmd","val":"false"}
+[2021-10-18 12:54:04.330471] Sent:     {"mode": 114, "field": "dcdc.SpikeDock"}
+[2021-10-18 12:54:04.333198] Received: {"t":7925,"field":"dcdc.SpikeDock","val":"false"}
+[2021-10-18 12:54:04.334055] Sent:     {"mode": 114, "field": "dcdc.disable_cmd"}
+[2021-10-18 12:54:04.338143] Received: {"t":7930,"field":"dcdc.disable_cmd","val":"false"}
+[2021-10-18 12:54:04.338428] Sent:     {"mode": 114, "field": "dcdc.reset_cmd"}
+[2021-10-18 12:54:04.343139] Received: {"t":7935,"field":"dcdc.reset_cmd","val":"false"}

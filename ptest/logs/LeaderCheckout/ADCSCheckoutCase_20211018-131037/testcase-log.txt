@@ -1,0 +1,532 @@
+[2021-10-18 13:10:37.515377] [TESTCASE] Starting testcase.
+[2021-10-18 13:10:37.515502] [TESTCASE] Suppressing faults.
+[2021-10-18 13:10:37.583029] Turning off fault_handler
+[2021-10-18 13:10:37.588845] Turning off piksi_fh
+[2021-10-18 13:10:37.593777] Turning off qfh
+[2021-10-18 13:10:37.598856] Supressing gomspace.low_batt
+[2021-10-18 13:10:37.603939] Supressing gomspace.get_hk.base
+[2021-10-18 13:10:37.608798] Supressing prop.overpressured
+[2021-10-18 13:10:37.614019] Supressing prop.tank2_temp_high
+[2021-10-18 13:10:37.619838] Supressing prop.tank1_temp_high
+[2021-10-18 13:10:37.624818] Supressing adcs_monitor.functional_fault
+[2021-10-18 13:10:37.629858] Supressing adcs_monitor.wheel1_fault
+[2021-10-18 13:10:37.634681] Supressing adcs_monitor.wheel2_fault
+[2021-10-18 13:10:37.639844] Supressing adcs_monitor.wheel3_fault
+[2021-10-18 13:10:37.645000] Supressing adcs_monitor.wheel_pot_fault
+[2021-10-18 13:10:37.650807] Supressing attitude_estimator.fault
+[2021-10-18 13:10:37.655690] Supressing piksi_fh.dead
+[2021-10-18 13:10:37.655733] [TESTCASE] Auto-dbtelem INACTIVE
+[2021-10-18 13:10:37.655755] [TESTCASE] Scrape-uplink ACTIVE
+[2021-10-18 13:10:37.660818] [TESTCASE] Boot utility waiting to reach initial state.
+[2021-10-18 13:10:37.670759] 
+Begin ADCS Checkout Case
+[2021-10-18 13:10:37.936897] 
+Finished Initialization
+[2021-10-18 13:10:37.941832] adcs_monitor.functional is True
+[2021-10-18 13:10:38.209866] HAVT Read: 1111 1111 1111 1111 111
+[2021-10-18 13:10:40.051752] Initial HAVT Table:
+[2021-10-18 13:10:40.147771] HAVT Read: 1111 1111 1111 1111 111
+[2021-10-18 13:10:40.242826] 
+UN-RECOGNIZED HITL TEST BED. MAKE SURE HAVT_READ IS AS EXPECTED!
+[2021-10-18 13:10:40.437786] Post disabling all devices:
+[2021-10-18 13:10:40.589898] HAVT Read: 0000 0000 0000 0000 000
+[2021-10-18 13:10:40.789806] Post resetting all devices:
+[2021-10-18 13:10:40.941925] HAVT Read: 1111 1111 1111 1111 111
+[2021-10-18 13:10:41.036946] Reset-Disable Success. All initially functional devices remain functional.
+[2021-10-18 13:10:41.041707] 
+Begin Sensor Checkout
+[2021-10-18 13:10:41.046789] 
+Begin MAG1 Checkout
+[2021-10-18 13:10:41.051702] adcs_cmd.mag1_mode is 0
+[2021-10-18 13:10:41.056706] MAG1 Mode: IMU_MAG_NORMAL
+[2021-10-18 13:10:42.652955] MAG1 readings:
+[2021-10-18 13:10:42.653008] [5.9e-05, -3.3e-05, 1.4e-05], mag: 6.903622237637282e-05
+[2021-10-18 13:10:42.653021] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653034] [4.6e-05, 5e-06, 1.5e-05], mag: 4.864154602806124e-05
+[2021-10-18 13:10:42.653070] [1.3e-05, 1.3e-05, 1e-05], mag: 2.092844953645635e-05
+[2021-10-18 13:10:42.653081] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653093] [-1.4e-05, 5e-06, 9e-06], mag: 1.7378147196982768e-05
+[2021-10-18 13:10:42.653100] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653110] [-3.2e-05, -3.7e-05, 9e-06], mag: 4.973932046178355e-05
+[2021-10-18 13:10:42.653120] [-2.4e-05, -6.3e-05, 7e-06], mag: 6.777905281132217e-05
+[2021-10-18 13:10:42.653127] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653137] [4e-06, -8.6e-05, 1.2e-05], mag: 8.692525524840292e-05
+[2021-10-18 13:10:42.653143] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653154] [2e-05, -8.3e-05, 1.6e-05], mag: 8.686195945291587e-05
+[2021-10-18 13:10:42.653162] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653172] [5e-05, -6.4e-05, 1.4e-05], mag: 8.241359111214606e-05
+[2021-10-18 13:10:42.653204] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:42.653216] [5.2e-05, -2.1e-05, 1.7e-05], mag: 5.860034129593445e-05
+[2021-10-18 13:10:42.653250] 
+MAG1 CHECKOUT COMPLETE
+[2021-10-18 13:10:42.658801] 
+Begin MAG2 Checkout
+[2021-10-18 13:10:42.663769] adcs_cmd.mag2_mode is 0
+[2021-10-18 13:10:42.668758] MAG2 Mode: IMU_MAG_NORMAL
+[2021-10-18 13:10:44.352894] MAG2 readings:
+[2021-10-18 13:10:44.352969] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:44.353030] [2.6e-05, 1e-06, -9e-06], mag: 2.7531799795872408e-05
+[2021-10-18 13:10:44.353058] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:44.353097] [2.6e-05, 1e-06, -9e-06], mag: 2.7531799795872408e-05
+[2021-10-18 13:10:44.353119] [2.6e-05, 1e-06, -9e-06], mag: 2.7531799795872408e-05
+[2021-10-18 13:10:44.353141] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:44.353162] [2.6e-05, 1e-06, -9e-06], mag: 2.7531799795872408e-05
+[2021-10-18 13:10:44.353184] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:44.353206] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:44.353227] [2.6e-05, 0.0, -1e-05], mag: 2.785677655436824e-05
+[2021-10-18 13:10:44.353279] 
+MAG2 CHECKOUT COMPLETE
+[2021-10-18 13:10:44.363766] 
+MAG INDEPENDENCE CHECKOUT COMPLETE
+[2021-10-18 13:10:44.373699] MAG1 DISABLED
+[2021-10-18 13:10:44.373754] 
+Begin MAG2 Checkout
+[2021-10-18 13:10:44.521841] adcs_cmd.mag2_mode is 0
+[2021-10-18 13:10:44.526685] MAG2 Mode: IMU_MAG_NORMAL
+[2021-10-18 13:10:46.221849] MAG2 readings:
+[2021-10-18 13:10:46.221921] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:46.222050] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:46.222101] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222120] [2.6e-05, 1e-06, -1e-05], mag: 2.7874719729532707e-05
+[2021-10-18 13:10:46.222135] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222146] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222156] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222165] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222175] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222189] [2.7e-05, 1e-06, -1e-05], mag: 2.8809720581775867e-05
+[2021-10-18 13:10:46.222218] 
+MAG2 CHECKOUT COMPLETE
+[2021-10-18 13:10:46.232816] MAG1 RESET
+[2021-10-18 13:10:46.395740] MAG2 DISABLED
+[2021-10-18 13:10:46.395800] 
+Begin MAG1 Checkout
+[2021-10-18 13:10:46.560896] adcs_cmd.mag1_mode is 0
+[2021-10-18 13:10:46.566838] MAG1 Mode: IMU_MAG_NORMAL
+[2021-10-18 13:10:48.260883] MAG1 readings:
+[2021-10-18 13:10:48.260947] [2e-05, -6.5e-05, 1.8e-05], mag: 7.034912934784622e-05
+[2021-10-18 13:10:48.260965] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:48.260981] [4.2e-05, -2.6e-05, 1.7e-05], mag: 5.223983154643591e-05
+[2021-10-18 13:10:48.261004] [3.8e-05, -1e-06, 2e-05], mag: 4.295346318982906e-05
+[2021-10-18 13:10:48.261019] [1e-05, 2.4e-05, 1.6e-05], mag: 3.0528675044947495e-05
+[2021-10-18 13:10:48.261033] [-1.3e-05, 1.7e-05, 1.4e-05], mag: 2.5573423705088844e-05
+[2021-10-18 13:10:48.261066] [-2.9e-05, -6e-06, 1.7e-05], mag: 3.4146742157927746e-05
+[2021-10-18 13:10:48.261087] [-2.6e-05, -4.4e-05, 1.3e-05], mag: 5.273518749374084e-05
+[2021-10-18 13:10:48.261101] [-1e-05, -6.8e-05, 1.6e-05], mag: 7.05691150575094e-05
+[2021-10-18 13:10:48.261135] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:48.261176] [1.8e-05, -6.7e-05, 2e-05], mag: 7.22011080247388e-05
+[2021-10-18 13:10:48.261247] 
+$ SOFT ASSERTION ERROR: MAG1 reading out of expected (earth) bounds.
+[2021-10-18 13:10:48.261268] [4.2e-05, -4.3e-05, 1.7e-05], mag: 6.246599074696566e-05
+[2021-10-18 13:10:48.261308] 
+MAG1 CHECKOUT COMPLETE
+[2021-10-18 13:10:48.272045] MAG2 RESET
+[2021-10-18 13:10:48.272085] 
+MAG INDEPENDENCE CHECKOUT COMPLETE
+[2021-10-18 13:10:48.430017] 
+Begin GYR Checkout
+[2021-10-18 13:10:50.129892] GYR readings:
+[2021-10-18 13:10:50.129965] [0.029728, 0.011418, -0.020873], mag: 0.038076329090394205
+[2021-10-18 13:10:50.130017] [0.029595, 0.011818, -0.02054], mag: 0.0379133320746146
+[2021-10-18 13:10:50.130078] [0.029528, 0.012417, -0.019808], mag: 0.037662203029031636
+[2021-10-18 13:10:50.130127] [0.029528, 0.010886, -0.022338], mag: 0.03859266800831474
+[2021-10-18 13:10:50.130146] [0.029462, 0.011019, -0.019941], mag: 0.037243405939843904
+[2021-10-18 13:10:50.130193] [0.029728, 0.011951, -0.019808], mag: 0.037668783481816875
+[2021-10-18 13:10:50.130213] [0.03046, 0.011485, -0.021872], mag: 0.03921863344126106
+[2021-10-18 13:10:50.130292] [0.028529, 0.012084, -0.017677], mag: 0.03567076150014182
+[2021-10-18 13:10:50.130317] [0.030128, 0.011285, -0.021073], mag: 0.03845931536052091
+[2021-10-18 13:10:50.130332] [0.029994, 0.011552, -0.019408], mag: 0.037546760233074704
+[2021-10-18 13:10:50.130408] 
+GYR CHECKOUT COMPLETE
+[2021-10-18 13:10:50.135696] 
+BEGIN WHEEL CHECKOUT
+[2021-10-18 13:10:50.135708] Checking RWA POT functionality:
+[2021-10-18 13:10:50.639881] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2021-10-18 13:10:50.979892] Cycle No: 64, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:51.319896] Cycle No: 66, Speed Vec: [[-2.540649, -0.015991, -0.015991]]
+[2021-10-18 13:10:51.659796] Cycle No: 68, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:51.998848] Cycle No: 70, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:52.338834] Cycle No: 72, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:52.678822] Cycle No: 74, Speed Vec: [[-1.294312, -1.294312, -0.015991]]
+[2021-10-18 13:10:53.018743] Cycle No: 76, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:53.358749] Cycle No: 78, Speed Vec: [[-1.294312, -1.294312, -0.015991]]
+[2021-10-18 13:10:53.698795] Cycle No: 80, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:54.037840] Cycle No: 82, Speed Vec: [[-1.294312, -0.015991, -0.015991]]
+[2021-10-18 13:10:54.207861] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 10, got -1.294312. Diff exceed delta of 4.
+[2021-10-18 13:10:54.207917] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 10, got -1.294312. Diff exceed delta of 4.
+[2021-10-18 13:10:54.207957] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 10, got -0.015991. Diff exceed delta of 4.
+[2021-10-18 13:10:54.377716] gomspace.vbatt is 7936
+[2021-10-18 13:10:54.377760] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:10:54.551799] adcs_cmd.rwa_speed_cmd set to [20, 40, 50]
+[2021-10-18 13:10:59.645785] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2021-10-18 13:10:59.645835] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 20, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:10:59.645869] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 40, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:10:59.645959] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 50, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:00.664718] gomspace.vbatt is 7936
+[2021-10-18 13:11:00.664750] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:00.838825] adcs_cmd.rwa_speed_cmd set to [100, 200, 300]
+[2021-10-18 13:11:05.932785] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2021-10-18 13:11:05.932825] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 100, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:11:05.932837] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 200, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:05.932846] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 300, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:06.951745] gomspace.vbatt is 7936
+[2021-10-18 13:11:06.951785] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:07.125851] adcs_cmd.rwa_speed_cmd set to [-100, 100, -40]
+[2021-10-18 13:11:12.219791] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -40.635193]
+[2021-10-18 13:11:12.219865] 
+$ SOFT ASSERTION ERROR: Element #0, Expected -100, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:11:12.219897] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 100, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:13.238684] gomspace.vbatt is 7907
+[2021-10-18 13:11:13.238738] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:13.412754] adcs_cmd.rwa_speed_cmd set to [100, 50, 10]
+[2021-10-18 13:11:18.506663] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -1.294312]
+[2021-10-18 13:11:18.506715] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 100, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:11:18.506731] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 50, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:18.506751] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 10, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:11:19.525613] gomspace.vbatt is 7936
+[2021-10-18 13:11:19.525651] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:19.699718] adcs_cmd.rwa_speed_cmd set to [500, 500, 500]
+[2021-10-18 13:11:24.793708] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2021-10-18 13:11:24.793758] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 500, got -1.294312. Diff exceed delta of 1.
+[2021-10-18 13:11:24.793782] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 500, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:24.793836] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 500, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:25.812456] gomspace.vbatt is 7926
+[2021-10-18 13:11:25.812503] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:25.986662] adcs_cmd.rwa_speed_cmd set to [680, 680, 680]
+[2021-10-18 13:11:31.080590] adcs_monitor.rwa_speed_rd is [-2.540649, -0.015991, -0.015991]
+[2021-10-18 13:11:31.080699] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 680, got -2.540649. Diff exceed delta of 1.
+[2021-10-18 13:11:31.080726] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 680, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:31.080749] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 680, got -0.015991. Diff exceed delta of 1.
+[2021-10-18 13:11:32.099441] gomspace.vbatt is 7926
+[2021-10-18 13:11:32.099483] ADCS_CMD TARGET SPEED:
+[2021-10-18 13:11:32.273519] adcs_cmd.rwa_speed_cmd set to [-680, -680, -680]
+[2021-10-18 13:11:37.367662] adcs_monitor.rwa_speed_rd is [657.498047, -660.054749, -651.170288]
+[2021-10-18 13:11:37.367711] 
+$ SOFT ASSERTION ERROR: Element #0, Expected -680, got 657.498047. Diff exceed delta of 1.
+[2021-10-18 13:11:37.367731] 
+$ SOFT ASSERTION ERROR: Element #1, Expected -680, got -660.054749. Diff exceed delta of 1.
+[2021-10-18 13:11:37.367774] 
+$ SOFT ASSERTION ERROR: Element #2, Expected -680, got -651.170288. Diff exceed delta of 1.
+[2021-10-18 13:11:39.389663] 
+TORQUE TESTS:
+[2021-10-18 13:11:39.576515] gomspace.vbatt is 7851
+[2021-10-18 13:11:39.746609] adcs_monitor.rwa_speed_rd is [365.557251, -374.473694, -364.310852]
+[2021-10-18 13:11:39.746648] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:39.920689] adcs_cmd.rwa_torque_cmd set to [0.0001, 0, 0]
+[2021-10-18 13:11:40.935535] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:11:41.105606] adcs_monitor.rwa_speed_rd is [365.557251, -371.916992, -366.867554]
+[2021-10-18 13:11:41.276558] 
+[2021-10-18 13:11:42.294416] gomspace.vbatt is 7723
+[2021-10-18 13:11:42.464494] adcs_monitor.rwa_speed_rd is [365.557251, -374.473694, -364.310852]
+[2021-10-18 13:11:42.464526] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:42.638468] adcs_cmd.rwa_torque_cmd set to [0, 0.0001, 0]
+[2021-10-18 13:11:43.654426] adcs_monitor.rwa_torque_rd is [0.000127, 0.0, 0.0]
+[2021-10-18 13:11:43.824553] adcs_monitor.rwa_speed_rd is [357.951172, -368.113892, -366.867554]
+[2021-10-18 13:11:43.995444] 
+[2021-10-18 13:11:45.013347] gomspace.vbatt is 7688
+[2021-10-18 13:11:45.183451] adcs_monitor.rwa_speed_rd is [356.672729, -360.507751, -368.113892]
+[2021-10-18 13:11:45.183495] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:45.355385] adcs_cmd.rwa_torque_cmd set to [0, 0, 0.0001]
+[2021-10-18 13:11:46.373354] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:11:46.543491] adcs_monitor.rwa_speed_rd is [357.951172, -364.310852, -357.983093]
+[2021-10-18 13:11:46.714499] 
+[2021-10-18 13:11:47.732231] gomspace.vbatt is 7713
+[2021-10-18 13:11:47.902497] adcs_monitor.rwa_speed_rd is [356.672729, -364.310852, -357.983093]
+[2021-10-18 13:11:47.902540] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:48.076435] adcs_cmd.rwa_torque_cmd set to [-0.0001, 0, 0]
+[2021-10-18 13:11:49.091342] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:11:49.261439] adcs_monitor.rwa_speed_rd is [356.672729, -365.589233, -356.704712]
+[2021-10-18 13:11:49.433376] 
+[2021-10-18 13:11:50.450283] gomspace.vbatt is 7697
+[2021-10-18 13:11:50.621405] adcs_monitor.rwa_speed_rd is [356.672729, -363.032532, -357.983093]
+[2021-10-18 13:11:50.621442] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:50.793383] adcs_cmd.rwa_torque_cmd set to [0, -0.0001, 0]
+[2021-10-18 13:11:51.810324] adcs_monitor.rwa_torque_rd is [0.000124, 0.0, 0.0]
+[2021-10-18 13:11:51.980452] adcs_monitor.rwa_speed_rd is [363.000488, -373.195312, -355.426392]
+[2021-10-18 13:11:52.151335] 
+[2021-10-18 13:11:53.169205] gomspace.vbatt is 7704
+[2021-10-18 13:11:53.339417] adcs_monitor.rwa_speed_rd is [365.557251, -371.916992, -357.983093]
+[2021-10-18 13:11:53.339487] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:53.512370] adcs_cmd.rwa_torque_cmd set to [0, 0, -0.0001]
+[2021-10-18 13:11:54.529299] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:11:54.699319] adcs_monitor.rwa_speed_rd is [368.081909, -374.473694, -365.589233]
+[2021-10-18 13:11:54.870315] 
+[2021-10-18 13:11:55.888285] gomspace.vbatt is 7732
+[2021-10-18 13:11:56.058397] adcs_monitor.rwa_speed_rd is [368.081909, -371.916992, -368.113892]
+[2021-10-18 13:11:56.058439] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:56.232305] adcs_cmd.rwa_torque_cmd set to [0.002, 0, 0]
+[2021-10-18 13:11:57.247393] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:11:57.417351] adcs_monitor.rwa_speed_rd is [365.557251, -371.916992, -365.589233]
+[2021-10-18 13:11:57.589366] 
+[2021-10-18 13:11:58.607282] gomspace.vbatt is 7723
+[2021-10-18 13:11:58.777293] adcs_monitor.rwa_speed_rd is [368.081909, -375.752014, -365.589233]
+[2021-10-18 13:11:58.777325] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:11:58.950357] adcs_cmd.rwa_torque_cmd set to [0, 0.002, 0]
+[2021-10-18 13:11:59.966312] adcs_monitor.rwa_torque_rd is [0.001924, 0.0, 0.0]
+[2021-10-18 13:12:00.136334] adcs_monitor.rwa_speed_rd is [223.373901, -231.043945, -365.589233]
+[2021-10-18 13:12:00.307228] 
+[2021-10-18 13:12:01.325078] gomspace.vbatt is 7779
+[2021-10-18 13:12:01.495359] adcs_monitor.rwa_speed_rd is [175.14856, -181.540222, -368.113892]
+[2021-10-18 13:12:01.495404] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:01.667232] adcs_cmd.rwa_torque_cmd set to [0, 0, 0.002]
+[2021-10-18 13:12:02.685206] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:02.855265] adcs_monitor.rwa_speed_rd is [175.14856, -182.786621, -225.962524]
+[2021-10-18 13:12:03.026285] 
+[2021-10-18 13:12:04.044115] gomspace.vbatt is 7816
+[2021-10-18 13:12:04.214275] adcs_monitor.rwa_speed_rd is [175.14856, -182.786621, -175.180481]
+[2021-10-18 13:12:04.214313] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:04.388269] adcs_cmd.rwa_torque_cmd set to [-0.002, 0, 0]
+[2021-10-18 13:12:05.403256] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:05.573254] adcs_monitor.rwa_speed_rd is [176.42688, -181.540222, -175.180481]
+[2021-10-18 13:12:05.745273] 
+[2021-10-18 13:12:06.763043] gomspace.vbatt is 7798
+[2021-10-18 13:12:06.933329] adcs_monitor.rwa_speed_rd is [175.14856, -180.261841, -175.180481]
+[2021-10-18 13:12:06.933384] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:07.105241] adcs_cmd.rwa_torque_cmd set to [0, -0.002, 0]
+[2021-10-18 13:12:08.122180] adcs_monitor.rwa_torque_rd is [0.001924, 0.0, 0.0]
+[2021-10-18 13:12:08.292348] adcs_monitor.rwa_speed_rd is [319.856567, -326.248291, -176.458801]
+[2021-10-18 13:12:08.463313] 
+[2021-10-18 13:12:09.481053] gomspace.vbatt is 7713
+[2021-10-18 13:12:09.651218] adcs_monitor.rwa_speed_rd is [366.835571, -375.752014, -176.458801]
+[2021-10-18 13:12:09.651288] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:09.824295] adcs_cmd.rwa_torque_cmd set to [0, 0, -0.002]
+[2021-10-18 13:12:10.841247] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:11.011238] adcs_monitor.rwa_speed_rd is [365.557251, -373.195312, -318.610229]
+[2021-10-18 13:12:11.182213] 
+[2021-10-18 13:12:12.200036] gomspace.vbatt is 7697
+[2021-10-18 13:12:12.370205] adcs_monitor.rwa_speed_rd is [366.835571, -371.916992, -368.113892]
+[2021-10-18 13:12:12.370233] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:12.544231] adcs_cmd.rwa_torque_cmd set to [0.00418, 0, 0]
+[2021-10-18 13:12:13.559109] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:13.729246] adcs_monitor.rwa_speed_rd is [369.360229, -374.473694, -366.867554]
+[2021-10-18 13:12:13.901178] 
+[2021-10-18 13:12:14.919052] gomspace.vbatt is 7688
+[2021-10-18 13:12:15.089256] adcs_monitor.rwa_speed_rd is [368.081909, -373.195312, -370.670593]
+[2021-10-18 13:12:15.089296] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:15.263072] adcs_cmd.rwa_torque_cmd set to [0, 0.00418, 0]
+[2021-10-18 13:12:16.278124] adcs_monitor.rwa_torque_rd is [0.004137, 0.0, 0.0]
+[2021-10-18 13:12:16.448192] adcs_monitor.rwa_speed_rd is [58.372192, -66.010315, -369.392273]
+[2021-10-18 13:12:16.619094] 
+[2021-10-18 13:12:17.637022] gomspace.vbatt is 7826
+[2021-10-18 13:12:17.807251] adcs_monitor.rwa_speed_rd is [-46.994995, 39.324951, -368.113892]
+[2021-10-18 13:12:17.807370] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:17.979199] adcs_cmd.rwa_torque_cmd set to [0, 0, 0.00418]
+[2021-10-18 13:12:18.997087] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:19.167086] adcs_monitor.rwa_speed_rd is [-46.994995, 39.324951, -59.682495]
+[2021-10-18 13:12:19.338132] 
+[2021-10-18 13:12:20.356010] gomspace.vbatt is 7851
+[2021-10-18 13:12:20.526214] adcs_monitor.rwa_speed_rd is [-45.716675, 38.078613, 46.963013]
+[2021-10-18 13:12:20.526293] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:20.700108] adcs_cmd.rwa_torque_cmd set to [-0.00418, 0, 0]
+[2021-10-18 13:12:21.715050] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:21.885111] adcs_monitor.rwa_speed_rd is [-46.994995, 39.324951, 46.963013]
+[2021-10-18 13:12:22.057142] 
+[2021-10-18 13:12:23.074913] gomspace.vbatt is 7851
+[2021-10-18 13:12:23.245222] adcs_monitor.rwa_speed_rd is [-46.994995, 38.078613, 48.209351]
+[2021-10-18 13:12:23.245252] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:23.417145] adcs_cmd.rwa_torque_cmd set to [0, -0.00418, 0]
+[2021-10-18 13:12:24.434032] adcs_monitor.rwa_torque_rd is [0.004137, 0.0, 0.0]
+[2021-10-18 13:12:24.604157] adcs_monitor.rwa_speed_rd is [263.993164, -274.187927, 46.963013]
+[2021-10-18 13:12:24.775069] 
+[2021-10-18 13:12:25.793023] gomspace.vbatt is 7751
+[2021-10-18 13:12:25.963149] adcs_monitor.rwa_speed_rd is [369.360229, -376.998352, 48.209351]
+[2021-10-18 13:12:25.963171] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:26.136138] adcs_cmd.rwa_torque_cmd set to [0, 0, -0.00418]
+[2021-10-18 13:12:27.153104] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.0, 0.0]
+[2021-10-18 13:12:27.323085] adcs_monitor.rwa_speed_rd is [369.360229, -379.555054, -262.778748]
+[2021-10-18 13:12:27.494048] 
+[2021-10-18 13:12:28.511900] gomspace.vbatt is 7669
+[2021-10-18 13:12:28.681995] adcs_monitor.rwa_speed_rd is [368.081909, -378.276733, -370.670593]
+[2021-10-18 13:12:28.682024] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:28.856062] adcs_cmd.rwa_torque_cmd set to [0.002, 0.002, 0.002]
+[2021-10-18 13:12:29.871011] adcs_monitor.rwa_torque_rd is [0.001924, 0.0, 0.0]
+[2021-10-18 13:12:30.041107] adcs_monitor.rwa_speed_rd is [227.208862, -232.290283, -225.962524]
+[2021-10-18 13:12:30.212967] 
+[2021-10-18 13:12:31.230858] gomspace.vbatt is 7760
+[2021-10-18 13:12:31.401105] adcs_monitor.rwa_speed_rd is [177.7052, -186.621643, -176.458801]
+[2021-10-18 13:12:31.401145] ADCS_CMD TARGET TORQUE:
+[2021-10-18 13:12:31.575110] adcs_cmd.rwa_torque_cmd set to [-0.002, -0.002, -0.002]
+[2021-10-18 13:12:32.589979] adcs_monitor.rwa_torque_rd is [0.001926, 0.0, 0.0]
+[2021-10-18 13:12:32.760019] adcs_monitor.rwa_speed_rd is [322.381226, -330.051392, -317.363831]
+[2021-10-18 13:12:32.931128] 
+[2021-10-18 13:12:36.157884] 
+WHEEL CHECKOUT COMPLETE
+[2021-10-18 13:12:36.328961] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.334780] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.339736] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.344795] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.349734] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.354735] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.359842] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.364664] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.369719] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.374680] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.379719] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.384709] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.390097] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.395731] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.400874] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.405632] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.410740] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.415716] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.421119] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:36.426745] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:36.431730] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.436682] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.441732] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.446731] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.451758] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.456680] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.461730] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.466746] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.471765] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.476634] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.481728] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.486755] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.491721] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.496808] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.501775] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.506860] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.511668] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.516808] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.521706] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:36.526724] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:36.532004] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.543159] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.556063] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.565525] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.573044] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.578707] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.583744] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.588774] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.600110] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.605715] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.612032] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.624246] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.634509] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.639901] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.648095] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.656006] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.661710] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.666653] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.671685] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:36.676659] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:36.684128] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.699035] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.705400] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.710819] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.715753] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.720684] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.725802] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.730753] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.735827] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.740796] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.745797] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.750735] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.755747] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.760709] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.766040] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.771666] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.776722] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.781805] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.786891] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:36.793174] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:36.798945] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.804991] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.811090] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.816919] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.823491] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.828759] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.833673] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.838697] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.843653] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.848693] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.853905] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.858719] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.863662] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.868684] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.873694] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.878667] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.883660] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.888815] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.893673] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:36.898709] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:36.903648] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:36.908648] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:36.913597] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:36.919000] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:36.924681] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:36.929682] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:36.934699] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:36.939659] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:36.944631] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:36.950014] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:36.955658] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:36.960676] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:36.965730] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:36.970705] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:36.975681] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:36.980951] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:36.986678] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:36.991679] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:36.996804] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:37.001751] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:37.006813] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:37.011918] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:37.017685] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:37.022598] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:37.027742] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:37.032717] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:37.037819] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:37.042749] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:37.047765] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:37.052677] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:37.057672] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:37.062649] adcs_monitor.ssa_voltage11 is 0.0
+[2021-10-18 13:12:37.067720] adcs_monitor.ssa_voltage12 is 0.0
+[2021-10-18 13:12:37.073053] adcs_monitor.ssa_voltage13 is 0.0
+[2021-10-18 13:12:37.078666] adcs_monitor.ssa_voltage14 is 0.0
+[2021-10-18 13:12:37.083629] adcs_monitor.ssa_voltage15 is 0.0
+[2021-10-18 13:12:37.088699] adcs_monitor.ssa_voltage16 is 0.0
+[2021-10-18 13:12:37.093680] adcs_monitor.ssa_voltage17 is 0.0
+[2021-10-18 13:12:37.098696] adcs_monitor.ssa_voltage18 is 0.0
+[2021-10-18 13:12:37.104285] adcs_monitor.ssa_voltage19 is 0.0
+[2021-10-18 13:12:37.109688] adcs_monitor.ssa_voltage0 is 0.0
+[2021-10-18 13:12:37.114624] adcs_monitor.ssa_voltage1 is 0.0
+[2021-10-18 13:12:37.119640] adcs_monitor.ssa_voltage2 is 0.0
+[2021-10-18 13:12:37.124651] adcs_monitor.ssa_voltage3 is 0.0
+[2021-10-18 13:12:37.129736] adcs_monitor.ssa_voltage4 is 0.0
+[2021-10-18 13:12:37.135160] adcs_monitor.ssa_voltage5 is 0.0
+[2021-10-18 13:12:37.140657] adcs_monitor.ssa_voltage6 is 0.0
+[2021-10-18 13:12:37.145589] adcs_monitor.ssa_voltage7 is 0.0
+[2021-10-18 13:12:37.150851] adcs_monitor.ssa_voltage8 is 0.0
+[2021-10-18 13:12:37.155772] adcs_monitor.ssa_voltage9 is 0.0
+[2021-10-18 13:12:37.160769] adcs_monitor.ssa_voltage10 is 0.0
+[2021-10-18 13:12:37.166039] adcs_monitor.ssa_voltage11 is 0.0

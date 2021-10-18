@@ -1,0 +1,2 @@
+[2021-10-18 13:14:18.324952] (ERROR) Tried to write state value named "gomspace.get_hk.base.suppress" but encountered an error: invalid field name
+[2021-10-18 13:15:44.669952] (ERROR) [Quake Error] Execution failed at radio state 0 and fn_number 0 with error code 1

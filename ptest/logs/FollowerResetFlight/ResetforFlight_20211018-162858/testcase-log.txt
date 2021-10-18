@@ -1,0 +1,148 @@
+[2021-10-18 16:28:58.859668] [TESTCASE] Starting testcase.
+[2021-10-18 16:28:58.859760] [TESTCASE] Suppressing faults.
+[2021-10-18 16:28:58.925243] Turning off fault_handler
+[2021-10-18 16:28:58.930894] Turning off piksi_fh
+[2021-10-18 16:28:58.935857] Turning off qfh
+[2021-10-18 16:28:58.940869] Supressing gomspace.low_batt
+[2021-10-18 16:28:58.945986] Supressing gomspace.get_hk.base
+[2021-10-18 16:28:58.950817] Supressing prop.overpressured
+[2021-10-18 16:28:58.956361] Supressing prop.tank2_temp_high
+[2021-10-18 16:28:58.961855] Supressing prop.tank1_temp_high
+[2021-10-18 16:28:58.966876] Supressing adcs_monitor.functional_fault
+[2021-10-18 16:28:58.971851] Supressing adcs_monitor.wheel1_fault
+[2021-10-18 16:28:58.976933] Supressing adcs_monitor.wheel2_fault
+[2021-10-18 16:28:58.981808] Supressing adcs_monitor.wheel3_fault
+[2021-10-18 16:28:58.987300] Supressing adcs_monitor.wheel_pot_fault
+[2021-10-18 16:28:58.992860] Supressing attitude_estimator.fault
+[2021-10-18 16:28:58.997755] Supressing piksi_fh.dead
+[2021-10-18 16:28:58.997802] [TESTCASE] Auto-dbtelem INACTIVE
+[2021-10-18 16:28:58.997829] [TESTCASE] Scrape-uplink ACTIVE
+[2021-10-18 16:28:59.002839] [TESTCASE] Boot utility waiting to reach initial state.
+[2021-10-18 16:28:59.023853] 
+Starting Reset
+[2021-10-18 16:28:59.094956] 
+initial pan.bootcount: 
+1
+[2021-10-18 16:28:59.099826] 
+initial pan.deployed: 
+False
+[2021-10-18 16:28:59.104851] 
+initial pan.deployment.elapsed: 
+0
+[2021-10-18 16:28:59.109846] 
+initial pan.kill_switch: 
+0
+[2021-10-18 16:28:59.114783] 
+initial attitude_estimator.ignore_sun_vectors: 
+False
+[2021-10-18 16:28:59.119792] 
+initial attitude_estimator.mag_flag: 
+False
+[2021-10-18 16:28:59.129806] pan.cycle_no is 2
+[2021-10-18 16:28:59.269778] pan.cycle_no is 3
+[2021-10-18 16:28:59.440201] pan.cycle_no is 4
+[2021-10-18 16:28:59.609738] pan.cycle_no is 5
+[2021-10-18 16:28:59.779786] pan.cycle_no is 6
+[2021-10-18 16:28:59.949742] pan.cycle_no is 7
+[2021-10-18 16:29:00.119799] pan.cycle_no is 8
+[2021-10-18 16:29:00.289736] pan.cycle_no is 9
+[2021-10-18 16:29:00.458840] pan.cycle_no is 10
+[2021-10-18 16:29:00.628827] pan.cycle_no is 11
+[2021-10-18 16:29:00.798972] pan.cycle_no is 12
+[2021-10-18 16:29:00.968852] pan.cycle_no is 13
+[2021-10-18 16:29:01.138797] pan.cycle_no is 14
+[2021-10-18 16:29:01.310420] pan.cycle_no is 15
+[2021-10-18 16:29:01.478828] pan.cycle_no is 16
+[2021-10-18 16:29:01.648791] pan.cycle_no is 17
+[2021-10-18 16:29:01.822574] pan.cycle_no is 18
+[2021-10-18 16:29:01.988884] pan.cycle_no is 19
+[2021-10-18 16:29:02.158871] pan.cycle_no is 20
+[2021-10-18 16:29:02.328984] pan.cycle_no is 21
+[2021-10-18 16:29:02.497973] pan.cycle_no is 22
+[2021-10-18 16:29:02.667966] pan.cycle_no is 23
+[2021-10-18 16:29:02.838018] pan.cycle_no is 24
+[2021-10-18 16:29:03.007986] pan.cycle_no is 25
+[2021-10-18 16:29:03.177996] pan.cycle_no is 26
+[2021-10-18 16:29:03.347986] pan.cycle_no is 27
+[2021-10-18 16:29:03.517963] pan.cycle_no is 28
+[2021-10-18 16:29:03.688004] pan.cycle_no is 29
+[2021-10-18 16:29:03.858063] pan.cycle_no is 30
+[2021-10-18 16:29:04.027974] pan.cycle_no is 31
+[2021-10-18 16:29:04.197977] pan.cycle_no is 32
+[2021-10-18 16:29:04.368012] pan.cycle_no is 33
+[2021-10-18 16:29:04.538045] pan.cycle_no is 34
+[2021-10-18 16:29:04.707055] pan.cycle_no is 35
+[2021-10-18 16:29:04.877072] pan.cycle_no is 36
+[2021-10-18 16:29:05.047034] pan.cycle_no is 37
+[2021-10-18 16:29:05.217096] pan.cycle_no is 38
+[2021-10-18 16:29:05.386953] pan.cycle_no is 39
+[2021-10-18 16:29:05.557070] pan.cycle_no is 40
+[2021-10-18 16:29:05.727070] pan.cycle_no is 41
+[2021-10-18 16:29:05.897106] pan.cycle_no is 42
+[2021-10-18 16:29:06.067099] pan.cycle_no is 43
+[2021-10-18 16:29:06.237087] pan.cycle_no is 44
+[2021-10-18 16:29:06.407102] pan.cycle_no is 45
+[2021-10-18 16:29:06.577124] pan.cycle_no is 46
+[2021-10-18 16:29:06.746106] pan.cycle_no is 47
+[2021-10-18 16:29:06.916095] pan.cycle_no is 48
+[2021-10-18 16:29:07.086115] pan.cycle_no is 49
+[2021-10-18 16:29:07.256144] pan.cycle_no is 50
+[2021-10-18 16:29:07.426117] pan.cycle_no is 51
+[2021-10-18 16:29:07.596063] pan.cycle_no is 52
+[2021-10-18 16:29:07.766120] pan.cycle_no is 53
+[2021-10-18 16:29:07.936087] pan.cycle_no is 54
+[2021-10-18 16:29:08.106133] pan.cycle_no is 55
+[2021-10-18 16:29:08.276148] pan.cycle_no is 56
+[2021-10-18 16:29:08.446240] pan.cycle_no is 57
+[2021-10-18 16:29:08.616176] pan.cycle_no is 58
+[2021-10-18 16:29:08.785254] pan.cycle_no is 59
+[2021-10-18 16:29:08.955214] pan.cycle_no is 60
+[2021-10-18 16:29:09.125290] pan.cycle_no is 61
+[2021-10-18 16:29:09.295266] pan.cycle_no is 62
+[2021-10-18 16:29:09.465222] pan.cycle_no is 63
+[2021-10-18 16:29:09.635342] pan.cycle_no is 64
+[2021-10-18 16:29:09.805321] pan.cycle_no is 65
+[2021-10-18 16:29:09.976212] pan.cycle_no is 66
+[2021-10-18 16:29:10.145359] pan.cycle_no is 67
+[2021-10-18 16:29:10.315288] pan.cycle_no is 68
+[2021-10-18 16:29:10.485341] pan.cycle_no is 69
+[2021-10-18 16:29:10.655288] pan.cycle_no is 70
+[2021-10-18 16:29:10.824466] pan.cycle_no is 71
+[2021-10-18 16:29:10.994294] pan.cycle_no is 72
+[2021-10-18 16:29:11.164276] pan.cycle_no is 73
+[2021-10-18 16:29:11.334520] pan.cycle_no is 74
+[2021-10-18 16:29:11.504367] pan.cycle_no is 75
+[2021-10-18 16:29:11.674377] pan.cycle_no is 76
+[2021-10-18 16:29:11.844367] pan.cycle_no is 77
+[2021-10-18 16:29:12.014374] pan.cycle_no is 78
+[2021-10-18 16:29:12.184382] pan.cycle_no is 79
+[2021-10-18 16:29:12.354349] pan.cycle_no is 80
+[2021-10-18 16:29:12.524351] pan.cycle_no is 81
+[2021-10-18 16:29:12.694419] pan.cycle_no is 82
+[2021-10-18 16:29:12.864523] pan.cycle_no is 83
+[2021-10-18 16:29:13.033556] pan.cycle_no is 84
+[2021-10-18 16:29:13.203434] pan.cycle_no is 85
+[2021-10-18 16:29:13.373439] pan.cycle_no is 86
+[2021-10-18 16:29:13.543395] pan.cycle_no is 87
+[2021-10-18 16:29:13.713472] pan.cycle_no is 88
+[2021-10-18 16:29:13.883415] pan.cycle_no is 89
+[2021-10-18 16:29:14.053539] pan.cycle_no is 90
+[2021-10-18 16:29:14.223563] pan.cycle_no is 91
+[2021-10-18 16:29:14.393527] pan.cycle_no is 92
+[2021-10-18 16:29:14.563363] pan.cycle_no is 93
+[2021-10-18 16:29:14.733515] pan.cycle_no is 94
+[2021-10-18 16:29:14.903555] pan.cycle_no is 95
+[2021-10-18 16:29:15.072519] pan.cycle_no is 96
+[2021-10-18 16:29:15.242453] pan.cycle_no is 97
+[2021-10-18 16:29:15.412482] pan.cycle_no is 98
+[2021-10-18 16:29:15.582502] pan.cycle_no is 99
+[2021-10-18 16:29:15.752386] pan.cycle_no is 100
+[2021-10-18 16:29:15.922505] pan.cycle_no is 101
+[2021-10-18 16:29:16.092585] pan.cycle_no is 102
+[2021-10-18 16:29:16.262565] pan.cycle_no is 103
+[2021-10-18 16:29:16.432591] pan.cycle_no is 104
+[2021-10-18 16:29:16.602596] pan.cycle_no is 105
+[2021-10-18 16:29:16.772632] pan.cycle_no is 106
+[2021-10-18 16:29:16.942674] pan.cycle_no is 107
+[2021-10-18 16:29:17.111513] pan.cycle_no is 108
+[2021-10-18 16:29:17.281577] pan.cycle_no is 109

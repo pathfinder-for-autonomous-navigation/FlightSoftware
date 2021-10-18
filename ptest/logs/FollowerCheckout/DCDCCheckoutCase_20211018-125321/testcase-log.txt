@@ -1,0 +1,27 @@
+[2021-10-18 12:53:21.448792] [TESTCASE] Starting testcase.
+[2021-10-18 12:53:21.448865] [TESTCASE] Suppressing faults.
+[2021-10-18 12:53:21.456272] Turning off fault_handler
+[2021-10-18 12:53:21.461529] Turning off piksi_fh
+[2021-10-18 12:53:21.467468] Turning off qfh
+[2021-10-18 12:53:21.473472] Supressing gomspace.low_batt
+[2021-10-18 12:53:21.479876] Supressing gomspace.get_hk.base
+[2021-10-18 12:53:21.485551] Supressing prop.overpressured
+[2021-10-18 12:53:21.492112] Supressing prop.tank2_temp_high
+[2021-10-18 12:53:21.497516] Supressing prop.tank1_temp_high
+[2021-10-18 12:53:21.503535] Supressing adcs_monitor.functional_fault
+[2021-10-18 12:53:21.509535] Supressing adcs_monitor.wheel1_fault
+[2021-10-18 12:53:21.515555] Supressing adcs_monitor.wheel2_fault
+[2021-10-18 12:53:21.521406] Supressing adcs_monitor.wheel3_fault
+[2021-10-18 12:53:21.527307] Supressing adcs_monitor.wheel_pot_fault
+[2021-10-18 12:53:21.532136] Supressing attitude_estimator.fault
+[2021-10-18 12:53:21.537208] Supressing piksi_fh.dead
+[2021-10-18 12:53:21.537241] [TESTCASE] Auto-dbtelem INACTIVE
+[2021-10-18 12:53:21.537252] [TESTCASE] Scrape-uplink ACTIVE
+[2021-10-18 12:53:21.542553] [TESTCASE] Boot utility waiting to reach initial state.
+[2021-10-18 12:53:21.822201] Testcase failed:
+[2021-10-18 12:53:21.822245] 	adcs_command    = False
+[2021-10-18 12:53:21.822277] 	adcs            = False
+[2021-10-18 12:53:21.822303] 	prop_command    = True
+[2021-10-18 12:53:21.822329] 	prop            = True
+[2021-10-18 12:53:21.822381] 	disable_command = False
+[2021-10-18 12:53:21.822402] 	reset_command   = False

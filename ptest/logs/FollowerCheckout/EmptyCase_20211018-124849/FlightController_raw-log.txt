@@ -1,0 +1,38 @@
+[2021-10-18 12:48:49.695791] Sent:     {"mode": 119, "field": "fault_handler.enabled", "val": "false"}
+[2021-10-18 12:48:49.700868] Received: {"t":0,"field":"fault_handler.enabled","val":"false"}
+[2021-10-18 12:48:49.701217] Sent:     {"mode": 119, "field": "piksi_fh.enabled", "val": "false"}
+[2021-10-18 12:48:49.705748] Received: {"t":0,"field":"piksi_fh.enabled","val":"false"}
+[2021-10-18 12:48:49.706143] Sent:     {"mode": 119, "field": "qfh.enabled", "val": "false"}
+[2021-10-18 12:48:49.710776] Received: {"t":0,"field":"qfh.enabled","val":"false"}
+[2021-10-18 12:48:49.713059] Sent:     {"mode": 119, "field": "gomspace.low_batt.suppress", "val": "true"}
+[2021-10-18 12:48:49.717855] Received: {"t":7,"field":"gomspace.low_batt.suppress","val":"true"}
+[2021-10-18 12:48:49.718288] Sent:     {"mode": 119, "field": "gomspace.get_hk.base.suppress", "val": "true"}
+[2021-10-18 12:48:49.724251] Received: {"t":13,"field":"gomspace.get_hk.base.suppress","mode":"write","err":"invalid field name"}
+[2021-10-18 12:48:49.728034] Sent:     {"mode": 119, "field": "prop.overpressured.suppress", "val": "true"}
+[2021-10-18 12:48:49.729912] Received: {"t":19,"field":"prop.overpressured.suppress","val":"true"}
+[2021-10-18 12:48:49.736925] Sent:     {"mode": 119, "field": "prop.tank2_temp_high.suppress", "val": "true"}
+[2021-10-18 12:48:49.739985] Received: {"t":29,"field":"prop.tank2_temp_high.suppress","val":"true"}
+[2021-10-18 12:48:49.743425] Sent:     {"mode": 119, "field": "prop.tank1_temp_high.suppress", "val": "true"}
+[2021-10-18 12:48:49.748942] Received: {"t":38,"field":"prop.tank1_temp_high.suppress","val":"true"}
+[2021-10-18 12:48:49.751427] Sent:     {"mode": 119, "field": "adcs_monitor.functional_fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.756908] Received: {"t":46,"field":"adcs_monitor.functional_fault.suppress","val":"true"}
+[2021-10-18 12:48:49.757319] Sent:     {"mode": 119, "field": "adcs_monitor.wheel1_fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.761974] Received: {"t":51,"field":"adcs_monitor.wheel1_fault.suppress","val":"true"}
+[2021-10-18 12:48:49.762408] Sent:     {"mode": 119, "field": "adcs_monitor.wheel2_fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.767868] Received: {"t":57,"field":"adcs_monitor.wheel2_fault.suppress","val":"true"}
+[2021-10-18 12:48:49.768285] Sent:     {"mode": 119, "field": "adcs_monitor.wheel3_fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.772933] Received: {"t":63,"field":"adcs_monitor.wheel3_fault.suppress","val":"true"}
+[2021-10-18 12:48:49.773374] Sent:     {"mode": 119, "field": "adcs_monitor.wheel_pot_fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.779015] Received: {"t":68,"field":"adcs_monitor.wheel_pot_fault.suppress","val":"true"}
+[2021-10-18 12:48:49.779753] Sent:     {"mode": 119, "field": "attitude_estimator.fault.suppress", "val": "true"}
+[2021-10-18 12:48:49.784880] Received: {"t":74,"field":"attitude_estimator.fault.suppress","val":"true"}
+[2021-10-18 12:48:49.785304] Sent:     {"mode": 119, "field": "piksi_fh.dead.suppress", "val": "true"}
+[2021-10-18 12:48:49.790946] Received: {"t":80,"field":"piksi_fh.dead.suppress","val":"true"}
+[2021-10-18 12:48:49.791376] Sent:     {"mode": 114, "field": "pan.state"}
+[2021-10-18 12:48:49.796763] Received: {"t":86,"field":"pan.state","val":"11"}
+[2021-10-18 12:48:49.797426] Sent:     {"mode": 114, "field": "pan.one_day_ccno"}
+[2021-10-18 12:48:49.802925] Received: {"t":92,"field":"pan.one_day_ccno","val":"508235"}
+[2021-10-18 12:48:49.803597] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 12:48:49.808808] Received: {"t":98,"field":"pan.cycle_no","val":"720"}
+[2021-10-18 12:48:53.511212] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2021-10-18 12:48:53.515704] Received: {"t":3805,"field":"gomspace.vbatt","val":"8019"}

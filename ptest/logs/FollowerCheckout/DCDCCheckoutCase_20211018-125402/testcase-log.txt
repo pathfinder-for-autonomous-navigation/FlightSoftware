@@ -1,0 +1,34 @@
+[2021-10-18 12:54:02.204713] [TESTCASE] Starting testcase.
+[2021-10-18 12:54:02.204804] [TESTCASE] Suppressing faults.
+[2021-10-18 12:54:02.273501] Turning off fault_handler
+[2021-10-18 12:54:02.279245] Turning off piksi_fh
+[2021-10-18 12:54:02.284259] Turning off qfh
+[2021-10-18 12:54:02.289357] Supressing gomspace.low_batt
+[2021-10-18 12:54:02.294363] Supressing gomspace.get_hk.base
+[2021-10-18 12:54:02.299364] Supressing prop.overpressured
+[2021-10-18 12:54:02.304369] Supressing prop.tank2_temp_high
+[2021-10-18 12:54:02.309309] Supressing prop.tank1_temp_high
+[2021-10-18 12:54:02.314347] Supressing adcs_monitor.functional_fault
+[2021-10-18 12:54:02.319314] Supressing adcs_monitor.wheel1_fault
+[2021-10-18 12:54:02.324313] Supressing adcs_monitor.wheel2_fault
+[2021-10-18 12:54:02.329337] Supressing adcs_monitor.wheel3_fault
+[2021-10-18 12:54:02.334447] Supressing adcs_monitor.wheel_pot_fault
+[2021-10-18 12:54:02.340354] Supressing attitude_estimator.fault
+[2021-10-18 12:54:02.345254] Supressing piksi_fh.dead
+[2021-10-18 12:54:02.345281] [TESTCASE] Auto-dbtelem INACTIVE
+[2021-10-18 12:54:02.345292] [TESTCASE] Scrape-uplink ACTIVE
+[2021-10-18 12:54:02.350274] [TESTCASE] Boot utility waiting to reach initial state.
+[2021-10-18 12:54:02.639324] Testcase initialized correctly.
+[2021-10-18 12:54:02.639368] 
+[2021-10-18 12:54:02.639394] Step 1: Enable both DCDCs...
+[2021-10-18 12:54:02.809551] Success!
+[2021-10-18 12:54:02.809588] 
+[2021-10-18 12:54:02.809620] Step 2: Set only ADCS to be on and then attempt a reset command...
+[2021-10-18 12:54:03.317515] Success!
+[2021-10-18 12:54:03.317549] 
+[2021-10-18 12:54:03.317563] Step 3: Enable only Prop to be on and then attempt a reset command...
+[2021-10-18 12:54:03.828568] Success!
+[2021-10-18 12:54:03.828626] 
+[2021-10-18 12:54:03.828663] Step 4: Disable both DCDCs and attempt a reset command...
+[2021-10-18 12:54:04.168148] Success!
+[2021-10-18 12:54:04.168179] 

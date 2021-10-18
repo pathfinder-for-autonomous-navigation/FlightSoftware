@@ -1,0 +1,2046 @@
+[2021-10-18 16:19:11.988441] Sent:     {"mode": 119, "field": "fault_handler.enabled", "val": "false"}
+[2021-10-18 16:19:11.993301] Received: {"t":0,"field":"fault_handler.enabled","val":"false"}
+[2021-10-18 16:19:11.993867] Sent:     {"mode": 119, "field": "piksi_fh.enabled", "val": "false"}
+[2021-10-18 16:19:11.999126] Received: {"t":0,"field":"piksi_fh.enabled","val":"false"}
+[2021-10-18 16:19:11.999760] Sent:     {"mode": 119, "field": "qfh.enabled", "val": "false"}
+[2021-10-18 16:19:12.005236] Received: {"t":5,"field":"qfh.enabled","val":"false"}
+[2021-10-18 16:19:12.005836] Sent:     {"mode": 119, "field": "gomspace.low_batt.suppress", "val": "true"}
+[2021-10-18 16:19:12.011196] Received: {"t":11,"field":"gomspace.low_batt.suppress","val":"true"}
+[2021-10-18 16:19:12.011930] Sent:     {"mode": 119, "field": "gomspace.get_hk.base.suppress", "val": "true"}
+[2021-10-18 16:19:12.017475] Received: {"t":18,"field":"gomspace.get_hk.base.suppress","mode":"write","err":"invalid field name"}
+[2021-10-18 16:19:12.018226] Sent:     {"mode": 119, "field": "prop.overpressured.suppress", "val": "true"}
+[2021-10-18 16:19:12.023219] Received: {"t":24,"field":"prop.overpressured.suppress","val":"true"}
+[2021-10-18 16:19:12.023892] Sent:     {"mode": 119, "field": "prop.tank2_temp_high.suppress", "val": "true"}
+[2021-10-18 16:19:12.029175] Received: {"t":30,"field":"prop.tank2_temp_high.suppress","val":"true"}
+[2021-10-18 16:19:12.029851] Sent:     {"mode": 119, "field": "prop.tank1_temp_high.suppress", "val": "true"}
+[2021-10-18 16:19:12.035202] Received: {"t":35,"field":"prop.tank1_temp_high.suppress","val":"true"}
+[2021-10-18 16:19:12.035808] Sent:     {"mode": 119, "field": "adcs_monitor.functional_fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.041228] Received: {"t":41,"field":"adcs_monitor.functional_fault.suppress","val":"true"}
+[2021-10-18 16:19:12.041936] Sent:     {"mode": 119, "field": "adcs_monitor.wheel1_fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.047101] Received: {"t":48,"field":"adcs_monitor.wheel1_fault.suppress","val":"true"}
+[2021-10-18 16:19:12.047798] Sent:     {"mode": 119, "field": "adcs_monitor.wheel2_fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.053138] Received: {"t":53,"field":"adcs_monitor.wheel2_fault.suppress","val":"true"}
+[2021-10-18 16:19:12.053777] Sent:     {"mode": 119, "field": "adcs_monitor.wheel3_fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.059090] Received: {"t":59,"field":"adcs_monitor.wheel3_fault.suppress","val":"true"}
+[2021-10-18 16:19:12.059646] Sent:     {"mode": 119, "field": "adcs_monitor.wheel_pot_fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.064996] Received: {"t":65,"field":"adcs_monitor.wheel_pot_fault.suppress","val":"true"}
+[2021-10-18 16:19:12.065517] Sent:     {"mode": 119, "field": "attitude_estimator.fault.suppress", "val": "true"}
+[2021-10-18 16:19:12.069946] Received: {"t":71,"field":"attitude_estimator.fault.suppress","val":"true"}
+[2021-10-18 16:19:12.070286] Sent:     {"mode": 119, "field": "piksi_fh.dead.suppress", "val": "true"}
+[2021-10-18 16:19:12.074918] Received: {"t":76,"field":"piksi_fh.dead.suppress","val":"true"}
+[2021-10-18 16:19:12.075326] Sent:     {"mode": 114, "field": "pan.state"}
+[2021-10-18 16:19:12.079917] Received: {"t":81,"field":"pan.state","val":"0"}
+[2021-10-18 16:19:12.080392] Sent:     {"mode": 114, "field": "pan.one_day_ccno"}
+[2021-10-18 16:19:12.084922] Received: {"t":86,"field":"pan.one_day_ccno","val":"508235"}
+[2021-10-18 16:19:12.085638] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2021-10-18 16:19:12.090850] Received: {"t":91,"field":"pan.state","val":"11"}
+[2021-10-18 16:19:12.091243] Sent:     {"mode": 119, "field": "cycle.auto", "val": "false"}
+[2021-10-18 16:19:12.095879] Received: {"t":97,"field":"cycle.auto","val":"false"}
+[2021-10-18 16:19:12.096328] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.100861] Received: {"t":102,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.101328] Sent:     {"mode": 114, "field": "pan.bootcount"}
+[2021-10-18 16:19:12.162932] Received: {"t":164,"field":"pan.bootcount","val":"2"}
+[2021-10-18 16:19:12.163497] Sent:     {"mode": 114, "field": "pan.deployed"}
+[2021-10-18 16:19:12.167796] Received: {"t":169,"field":"pan.deployed","val":"true"}
+[2021-10-18 16:19:12.168123] Sent:     {"mode": 114, "field": "pan.deployment.elapsed"}
+[2021-10-18 16:19:12.172879] Received: {"t":174,"field":"pan.deployment.elapsed","val":"106"}
+[2021-10-18 16:19:12.173109] Sent:     {"mode": 114, "field": "pan.kill_switch"}
+[2021-10-18 16:19:12.177923] Received: {"t":179,"field":"pan.kill_switch","val":"255"}
+[2021-10-18 16:19:12.178246] Sent:     {"mode": 114, "field": "attitude_estimator.ignore_sun_vectors"}
+[2021-10-18 16:19:12.182951] Received: {"t":184,"field":"attitude_estimator.ignore_sun_vectors","val":"true"}
+[2021-10-18 16:19:12.183284] Sent:     {"mode": 114, "field": "attitude_estimator.mag_flag"}
+[2021-10-18 16:19:12.187900] Received: {"t":189,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.188216] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.192919] Received: {"t":194,"field":"pan.cycle_no","val":"2"}
+[2021-10-18 16:19:12.193482] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.197833] Received: {"t":199,"field":"pan.cycle_no","val":"2"}
+[2021-10-18 16:19:12.198120] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:12.202884] Received: {"t":204,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:12.203095] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:12.207884] Received: {"t":209,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:12.208210] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:12.212919] Received: {"t":214,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:12.213232] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:12.217992] Received: {"t":219,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:12.218257] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:12.223056] Received: {"t":224,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:12.223552] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:12.228082] Received: {"t":229,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.228498] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.232949] Received: {"t":234,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.233359] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.334041] Received: {"t":334,"field":"pan.cycle_no","val":"3"}
+[2021-10-18 16:19:12.334399] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.338866] Received: {"t":339,"field":"pan.cycle_no","val":"3"}
+[2021-10-18 16:19:12.339317] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:12.343882] Received: {"t":344,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:12.344201] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:12.348890] Received: {"t":349,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:12.349232] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:12.353954] Received: {"t":354,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:12.354580] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:12.358884] Received: {"t":359,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:12.359252] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:12.363969] Received: {"t":364,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:12.364332] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:12.368996] Received: {"t":369,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.369441] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.373923] Received: {"t":374,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.374169] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.503988] Received: {"t":504,"field":"pan.cycle_no","val":"4"}
+[2021-10-18 16:19:12.504484] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.508937] Received: {"t":509,"field":"pan.cycle_no","val":"4"}
+[2021-10-18 16:19:12.509354] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:12.513950] Received: {"t":514,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:12.514487] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:12.518947] Received: {"t":519,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:12.519256] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:12.523978] Received: {"t":524,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:12.524458] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:12.528932] Received: {"t":529,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:12.529303] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:12.533922] Received: {"t":534,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:12.534302] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:12.539013] Received: {"t":539,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.539695] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.544933] Received: {"t":544,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.545267] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.674034] Received: {"t":674,"field":"pan.cycle_no","val":"5"}
+[2021-10-18 16:19:12.674440] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.679106] Received: {"t":679,"field":"pan.cycle_no","val":"5"}
+[2021-10-18 16:19:12.679637] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:12.684999] Received: {"t":684,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:12.685414] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:12.689939] Received: {"t":690,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:12.690319] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:12.695074] Received: {"t":695,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:12.695522] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:12.700120] Received: {"t":700,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:12.700541] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:12.706160] Received: {"t":705,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:12.706543] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:12.712085] Received: {"t":711,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.712529] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.717092] Received: {"t":717,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.717458] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.844065] Received: {"t":844,"field":"pan.cycle_no","val":"6"}
+[2021-10-18 16:19:12.844515] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:12.849003] Received: {"t":849,"field":"pan.cycle_no","val":"6"}
+[2021-10-18 16:19:12.849542] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:12.853988] Received: {"t":854,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:12.854443] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:12.859054] Received: {"t":859,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:12.859480] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:12.864073] Received: {"t":864,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:12.864542] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:12.869044] Received: {"t":869,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:12.869481] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:12.874096] Received: {"t":874,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:12.874532] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:12.879287] Received: {"t":879,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:12.879903] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:12.885042] Received: {"t":885,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:12.885410] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.014100] Received: {"t":1014,"field":"pan.cycle_no","val":"7"}
+[2021-10-18 16:19:13.014517] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.019048] Received: {"t":1019,"field":"pan.cycle_no","val":"7"}
+[2021-10-18 16:19:13.019443] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.024058] Received: {"t":1024,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.024490] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.029044] Received: {"t":1029,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.029726] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.034089] Received: {"t":1034,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.034515] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.039020] Received: {"t":1039,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.039427] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.044054] Received: {"t":1044,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.044515] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.049132] Received: {"t":1049,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.049644] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.055053] Received: {"t":1054,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.055474] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.184122] Received: {"t":1184,"field":"pan.cycle_no","val":"8"}
+[2021-10-18 16:19:13.184665] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.189072] Received: {"t":1189,"field":"pan.cycle_no","val":"8"}
+[2021-10-18 16:19:13.189458] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.194072] Received: {"t":1194,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.194493] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.199107] Received: {"t":1199,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.199828] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.204130] Received: {"t":1204,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.204571] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.209102] Received: {"t":1209,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.209469] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.214149] Received: {"t":1214,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.214419] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.219081] Received: {"t":1219,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.219312] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.224069] Received: {"t":1224,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.224378] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.354053] Received: {"t":1354,"field":"pan.cycle_no","val":"9"}
+[2021-10-18 16:19:13.354700] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.359062] Received: {"t":1359,"field":"pan.cycle_no","val":"9"}
+[2021-10-18 16:19:13.359353] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.364117] Received: {"t":1364,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.364421] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.369097] Received: {"t":1369,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.370807] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.374121] Received: {"t":1374,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.374323] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.379045] Received: {"t":1379,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.379259] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.384139] Received: {"t":1384,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.384417] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.389108] Received: {"t":1389,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.389338] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.394075] Received: {"t":1394,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.402805] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.524130] Received: {"t":1523,"field":"pan.cycle_no","val":"10"}
+[2021-10-18 16:19:13.524501] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.529110] Received: {"t":1529,"field":"pan.cycle_no","val":"10"}
+[2021-10-18 16:19:13.529355] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.534126] Received: {"t":1534,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.534463] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.539133] Received: {"t":1539,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.539515] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.544271] Received: {"t":1544,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.544793] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.550233] Received: {"t":1550,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.550830] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.556274] Received: {"t":1555,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.556717] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.562068] Received: {"t":1561,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.562448] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.567063] Received: {"t":1567,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.567405] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.694104] Received: {"t":1693,"field":"pan.cycle_no","val":"11"}
+[2021-10-18 16:19:13.694481] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.699046] Received: {"t":1699,"field":"pan.cycle_no","val":"11"}
+[2021-10-18 16:19:13.699452] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.704138] Received: {"t":1704,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.704527] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.709138] Received: {"t":1709,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.709436] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.714195] Received: {"t":1714,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.714639] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.719056] Received: {"t":1719,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.719469] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.724203] Received: {"t":1724,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.724653] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.729175] Received: {"t":1729,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.729737] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.734062] Received: {"t":1734,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.734380] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.863136] Received: {"t":1863,"field":"pan.cycle_no","val":"12"}
+[2021-10-18 16:19:13.863599] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:13.868155] Received: {"t":1868,"field":"pan.cycle_no","val":"12"}
+[2021-10-18 16:19:13.868650] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:13.873176] Received: {"t":1873,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:13.873567] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:13.878107] Received: {"t":1878,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:13.878426] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:13.883135] Received: {"t":1883,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:13.883458] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:13.888103] Received: {"t":1888,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:13.888460] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:13.893156] Received: {"t":1893,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:13.893431] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:13.898332] Received: {"t":1898,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:13.899034] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:13.904129] Received: {"t":1903,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:13.904434] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.033118] Received: {"t":2033,"field":"pan.cycle_no","val":"13"}
+[2021-10-18 16:19:14.033585] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.038093] Received: {"t":2038,"field":"pan.cycle_no","val":"13"}
+[2021-10-18 16:19:14.038380] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.043106] Received: {"t":2043,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.043585] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.048105] Received: {"t":2048,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.048564] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.053120] Received: {"t":2053,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.053469] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.058102] Received: {"t":2058,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.058518] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.063153] Received: {"t":2063,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.063571] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.068210] Received: {"t":2068,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.068778] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.073094] Received: {"t":2073,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.073446] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.203137] Received: {"t":2203,"field":"pan.cycle_no","val":"14"}
+[2021-10-18 16:19:14.203458] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.208114] Received: {"t":2208,"field":"pan.cycle_no","val":"14"}
+[2021-10-18 16:19:14.208520] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.213154] Received: {"t":2213,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.213546] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.218126] Received: {"t":2218,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.218471] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.223151] Received: {"t":2223,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.223522] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.228145] Received: {"t":2228,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.228505] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.233176] Received: {"t":2233,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.233556] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.238245] Received: {"t":2238,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.238821] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.243132] Received: {"t":2243,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.243484] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.373241] Received: {"t":2373,"field":"pan.cycle_no","val":"15"}
+[2021-10-18 16:19:14.373647] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.378232] Received: {"t":2378,"field":"pan.cycle_no","val":"15"}
+[2021-10-18 16:19:14.378616] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.383258] Received: {"t":2383,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.383565] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.388224] Received: {"t":2388,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.388541] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.393253] Received: {"t":2393,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.393569] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.398229] Received: {"t":2398,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.398601] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.403234] Received: {"t":2403,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.403608] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.408235] Received: {"t":2408,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.408811] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.413223] Received: {"t":2413,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.413499] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.543271] Received: {"t":2543,"field":"pan.cycle_no","val":"16"}
+[2021-10-18 16:19:14.543675] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.548246] Received: {"t":2548,"field":"pan.cycle_no","val":"16"}
+[2021-10-18 16:19:14.548673] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.553251] Received: {"t":2553,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.553617] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.558261] Received: {"t":2558,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.558611] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.563273] Received: {"t":2563,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.563587] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.568269] Received: {"t":2568,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.568640] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.573302] Received: {"t":2573,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.573581] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.578260] Received: {"t":2578,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.578758] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.583213] Received: {"t":2583,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.583542] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.713289] Received: {"t":2713,"field":"pan.cycle_no","val":"17"}
+[2021-10-18 16:19:14.713677] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.718270] Received: {"t":2718,"field":"pan.cycle_no","val":"17"}
+[2021-10-18 16:19:14.718732] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.723228] Received: {"t":2723,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.723569] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.728274] Received: {"t":2728,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.728730] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.733330] Received: {"t":2733,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.733663] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.738237] Received: {"t":2738,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.738696] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.743291] Received: {"t":2743,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.743653] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.748269] Received: {"t":2748,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.748777] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.753269] Received: {"t":2753,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.753579] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.883322] Received: {"t":2883,"field":"pan.cycle_no","val":"18"}
+[2021-10-18 16:19:14.883719] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:14.888313] Received: {"t":2888,"field":"pan.cycle_no","val":"18"}
+[2021-10-18 16:19:14.953689] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:14.958343] Received: {"t":2958,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:14.958615] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:14.963280] Received: {"t":2963,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:14.963565] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:14.968355] Received: {"t":2968,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:14.968587] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:14.973316] Received: {"t":2973,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:14.973530] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:14.978378] Received: {"t":2978,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:14.978582] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:14.983351] Received: {"t":2983,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:14.983610] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:14.988333] Received: {"t":2988,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:14.988608] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.053348] Received: {"t":3053,"field":"pan.cycle_no","val":"19"}
+[2021-10-18 16:19:15.053702] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.058336] Received: {"t":3058,"field":"pan.cycle_no","val":"19"}
+[2021-10-18 16:19:15.058696] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.063340] Received: {"t":3063,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.063708] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.068369] Received: {"t":3068,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.068754] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.073422] Received: {"t":3073,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.073834] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.078374] Received: {"t":3078,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.078778] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.083432] Received: {"t":3083,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.083825] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.088505] Received: {"t":3088,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.089131] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.094401] Received: {"t":3094,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.094845] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.223349] Received: {"t":3223,"field":"pan.cycle_no","val":"20"}
+[2021-10-18 16:19:15.223758] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.228364] Received: {"t":3228,"field":"pan.cycle_no","val":"20"}
+[2021-10-18 16:19:15.228709] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.233352] Received: {"t":3233,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.233672] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.238353] Received: {"t":3238,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.238664] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.243386] Received: {"t":3243,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.243732] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.248362] Received: {"t":3248,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.248797] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.253467] Received: {"t":3253,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.253802] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.258452] Received: {"t":3258,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.258848] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.263361] Received: {"t":3263,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.263684] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.393430] Received: {"t":3393,"field":"pan.cycle_no","val":"21"}
+[2021-10-18 16:19:15.393844] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.398390] Received: {"t":3398,"field":"pan.cycle_no","val":"21"}
+[2021-10-18 16:19:15.398770] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.403373] Received: {"t":3403,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.403705] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.408395] Received: {"t":3408,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.408765] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.413420] Received: {"t":3413,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.413747] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.418395] Received: {"t":3418,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.418666] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.423430] Received: {"t":3423,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.423774] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.428552] Received: {"t":3428,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.429017] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.434386] Received: {"t":3433,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.434685] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.563450] Received: {"t":3562,"field":"pan.cycle_no","val":"22"}
+[2021-10-18 16:19:15.563896] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.568409] Received: {"t":3568,"field":"pan.cycle_no","val":"22"}
+[2021-10-18 16:19:15.568819] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.573404] Received: {"t":3573,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.573731] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.578421] Received: {"t":3578,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.578722] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.583436] Received: {"t":3583,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.583807] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.588407] Received: {"t":3588,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.588756] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.593465] Received: {"t":3593,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.593820] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.598468] Received: {"t":3598,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.598905] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.603402] Received: {"t":3603,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.603749] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.733415] Received: {"t":3732,"field":"pan.cycle_no","val":"23"}
+[2021-10-18 16:19:15.733887] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.738342] Received: {"t":3738,"field":"pan.cycle_no","val":"23"}
+[2021-10-18 16:19:15.738683] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.743434] Received: {"t":3743,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.743810] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.748379] Received: {"t":3748,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.748655] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.753387] Received: {"t":3753,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.753603] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.758392] Received: {"t":3758,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.758656] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.763429] Received: {"t":3763,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.763789] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.768429] Received: {"t":3768,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.768952] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.773352] Received: {"t":3773,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.773640] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.902442] Received: {"t":3902,"field":"pan.cycle_no","val":"24"}
+[2021-10-18 16:19:15.902826] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:15.907399] Received: {"t":3907,"field":"pan.cycle_no","val":"24"}
+[2021-10-18 16:19:15.907826] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:15.912382] Received: {"t":3912,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:15.912616] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:15.917491] Received: {"t":3917,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:15.917744] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:15.922492] Received: {"t":3922,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:15.922904] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:15.927402] Received: {"t":3927,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:15.927619] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:15.932517] Received: {"t":3932,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:15.932836] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:15.937442] Received: {"t":3937,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:15.937819] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:15.942404] Received: {"t":3942,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:15.942622] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.072542] Received: {"t":4072,"field":"pan.cycle_no","val":"25"}
+[2021-10-18 16:19:16.072991] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.077464] Received: {"t":4077,"field":"pan.cycle_no","val":"25"}
+[2021-10-18 16:19:16.077794] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.082479] Received: {"t":4082,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.082700] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.087457] Received: {"t":4087,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.087761] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.092512] Received: {"t":4092,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.092872] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.097428] Received: {"t":4097,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.097670] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.102544] Received: {"t":4102,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.102757] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.107544] Received: {"t":4107,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.108018] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.112483] Received: {"t":4112,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.112769] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.242549] Received: {"t":4242,"field":"pan.cycle_no","val":"26"}
+[2021-10-18 16:19:16.243014] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.247524] Received: {"t":4247,"field":"pan.cycle_no","val":"26"}
+[2021-10-18 16:19:16.247875] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.252502] Received: {"t":4252,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.252798] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.257445] Received: {"t":4257,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.257742] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.262503] Received: {"t":4262,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.262761] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.267462] Received: {"t":4267,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.267796] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.272476] Received: {"t":4272,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.272780] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.277613] Received: {"t":4277,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.278368] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.283530] Received: {"t":4283,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.283982] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.412553] Received: {"t":4412,"field":"pan.cycle_no","val":"27"}
+[2021-10-18 16:19:16.412958] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.417536] Received: {"t":4417,"field":"pan.cycle_no","val":"27"}
+[2021-10-18 16:19:16.417941] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.422565] Received: {"t":4422,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.422964] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.427567] Received: {"t":4427,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.427915] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.432564] Received: {"t":4432,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.432895] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.437541] Received: {"t":4437,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.437874] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.442598] Received: {"t":4442,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.442926] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.447646] Received: {"t":4447,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.448016] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.452559] Received: {"t":4452,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.452914] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.582601] Received: {"t":4582,"field":"pan.cycle_no","val":"28"}
+[2021-10-18 16:19:16.583103] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.587596] Received: {"t":4587,"field":"pan.cycle_no","val":"28"}
+[2021-10-18 16:19:16.587947] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.592566] Received: {"t":4592,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.592910] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.597571] Received: {"t":4597,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.597915] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.602589] Received: {"t":4602,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.602992] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.607595] Received: {"t":4607,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.607958] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.612621] Received: {"t":4612,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.612923] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.617636] Received: {"t":4617,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.618282] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.623589] Received: {"t":4622,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.623912] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.752610] Received: {"t":4752,"field":"pan.cycle_no","val":"29"}
+[2021-10-18 16:19:16.753007] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.757611] Received: {"t":4757,"field":"pan.cycle_no","val":"29"}
+[2021-10-18 16:19:16.757975] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.762609] Received: {"t":4762,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.762914] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.767600] Received: {"t":4767,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.767943] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.772630] Received: {"t":4772,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.773021] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.777600] Received: {"t":4777,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.777935] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.782655] Received: {"t":4782,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.783044] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.787658] Received: {"t":4787,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.788149] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.792589] Received: {"t":4792,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.792937] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.922600] Received: {"t":4922,"field":"pan.cycle_no","val":"30"}
+[2021-10-18 16:19:16.922959] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:16.927613] Received: {"t":4927,"field":"pan.cycle_no","val":"30"}
+[2021-10-18 16:19:16.928009] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:16.932616] Received: {"t":4932,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:16.932982] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:16.937584] Received: {"t":4937,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:16.937921] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:16.942643] Received: {"t":4942,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:16.942994] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:16.947625] Received: {"t":4947,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:16.948026] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:16.952670] Received: {"t":4952,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:16.953032] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:16.957614] Received: {"t":4957,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:16.958119] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:16.962627] Received: {"t":4962,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:16.962894] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.092668] Received: {"t":5092,"field":"pan.cycle_no","val":"31"}
+[2021-10-18 16:19:17.092990] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.097646] Received: {"t":5097,"field":"pan.cycle_no","val":"31"}
+[2021-10-18 16:19:17.098012] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.102637] Received: {"t":5102,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.103014] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.107663] Received: {"t":5107,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.108013] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.112674] Received: {"t":5112,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.113012] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.117655] Received: {"t":5117,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.117968] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.122696] Received: {"t":5122,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.123079] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.127819] Received: {"t":5127,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.128839] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.133641] Received: {"t":5133,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.133999] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.262610] Received: {"t":5262,"field":"pan.cycle_no","val":"32"}
+[2021-10-18 16:19:17.262989] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.267605] Received: {"t":5267,"field":"pan.cycle_no","val":"32"}
+[2021-10-18 16:19:17.267996] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.272608] Received: {"t":5272,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.272951] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.277597] Received: {"t":5277,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.277932] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.282636] Received: {"t":5282,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.282958] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.287619] Received: {"t":5287,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.287852] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.292665] Received: {"t":5292,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.292969] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.297671] Received: {"t":5297,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.298011] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.302677] Received: {"t":5302,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.302992] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.432717] Received: {"t":5432,"field":"pan.cycle_no","val":"33"}
+[2021-10-18 16:19:17.433157] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.437649] Received: {"t":5437,"field":"pan.cycle_no","val":"33"}
+[2021-10-18 16:19:17.438009] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.442758] Received: {"t":5442,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.443080] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.447703] Received: {"t":5447,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.448036] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.452728] Received: {"t":5452,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.453044] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.457696] Received: {"t":5457,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.458062] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.462767] Received: {"t":5462,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.463368] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.468775] Received: {"t":5467,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.469162] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.473700] Received: {"t":5473,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.474116] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.602719] Received: {"t":5602,"field":"pan.cycle_no","val":"34"}
+[2021-10-18 16:19:17.603110] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.607720] Received: {"t":5607,"field":"pan.cycle_no","val":"34"}
+[2021-10-18 16:19:17.608159] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.612655] Received: {"t":5612,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.613059] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.617813] Received: {"t":5617,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.618058] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.622746] Received: {"t":5622,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.623157] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.627673] Received: {"t":5627,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.627917] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.632722] Received: {"t":5632,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.632954] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.637704] Received: {"t":5637,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.637945] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.642726] Received: {"t":5642,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.643070] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.772788] Received: {"t":5771,"field":"pan.cycle_no","val":"35"}
+[2021-10-18 16:19:17.773346] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.777689] Received: {"t":5777,"field":"pan.cycle_no","val":"35"}
+[2021-10-18 16:19:17.777943] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.782684] Received: {"t":5782,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.782863] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.787685] Received: {"t":5787,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.787913] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.792774] Received: {"t":5792,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.793018] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.797768] Received: {"t":5797,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.798037] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.802848] Received: {"t":5802,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.803059] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.807800] Received: {"t":5807,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.808083] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.812685] Received: {"t":5812,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.812896] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.941812] Received: {"t":5941,"field":"pan.cycle_no","val":"36"}
+[2021-10-18 16:19:17.942331] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:17.946781] Received: {"t":5946,"field":"pan.cycle_no","val":"36"}
+[2021-10-18 16:19:17.947048] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:17.951777] Received: {"t":5951,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:17.951987] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:17.956762] Received: {"t":5956,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:17.957024] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:17.961812] Received: {"t":5961,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:17.962129] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:17.966855] Received: {"t":5966,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:17.967143] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:17.971833] Received: {"t":5971,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:17.972163] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:17.976780] Received: {"t":5976,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:17.977070] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:17.981789] Received: {"t":5981,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:17.981989] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.111813] Received: {"t":6111,"field":"pan.cycle_no","val":"37"}
+[2021-10-18 16:19:18.112199] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.116789] Received: {"t":6116,"field":"pan.cycle_no","val":"37"}
+[2021-10-18 16:19:18.117174] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.121790] Received: {"t":6121,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.122065] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.126828] Received: {"t":6126,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.127232] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.131830] Received: {"t":6131,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.132164] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.136818] Received: {"t":6136,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.137170] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.141856] Received: {"t":6141,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.142199] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.146840] Received: {"t":6146,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.147193] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:18.151815] Received: {"t":6151,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:18.152172] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.281847] Received: {"t":6281,"field":"pan.cycle_no","val":"38"}
+[2021-10-18 16:19:18.282217] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.286834] Received: {"t":6286,"field":"pan.cycle_no","val":"38"}
+[2021-10-18 16:19:18.287240] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.291833] Received: {"t":6291,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.292182] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.296832] Received: {"t":6296,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.297187] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.301855] Received: {"t":6301,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.302170] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.306834] Received: {"t":6306,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.307252] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.311885] Received: {"t":6311,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.312248] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.316843] Received: {"t":6316,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.317250] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:18.321789] Received: {"t":6321,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:18.322063] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.451891] Received: {"t":6451,"field":"pan.cycle_no","val":"39"}
+[2021-10-18 16:19:18.452277] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.456863] Received: {"t":6456,"field":"pan.cycle_no","val":"39"}
+[2021-10-18 16:19:18.457232] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.461848] Received: {"t":6461,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.462204] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.466864] Received: {"t":6466,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.467218] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.471880] Received: {"t":6471,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.472215] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.476856] Received: {"t":6476,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.477177] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.481912] Received: {"t":6481,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.482207] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.486888] Received: {"t":6486,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.487134] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:18.491850] Received: {"t":6491,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:18.492124] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.621913] Received: {"t":6621,"field":"pan.cycle_no","val":"40"}
+[2021-10-18 16:19:18.622353] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.626887] Received: {"t":6626,"field":"pan.cycle_no","val":"40"}
+[2021-10-18 16:19:18.627229] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.631870] Received: {"t":6631,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.632186] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.636887] Received: {"t":6636,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.637315] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.641912] Received: {"t":6641,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.642200] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.646888] Received: {"t":6646,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.647190] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.651956] Received: {"t":6651,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.652301] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.656906] Received: {"t":6656,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.657207] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:18.661886] Received: {"t":6661,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:18.662122] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.791933] Received: {"t":6791,"field":"pan.cycle_no","val":"41"}
+[2021-10-18 16:19:18.792335] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.796926] Received: {"t":6796,"field":"pan.cycle_no","val":"41"}
+[2021-10-18 16:19:18.797263] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.801901] Received: {"t":6801,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.802175] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.806914] Received: {"t":6806,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.807229] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.811930] Received: {"t":6811,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.812220] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.816840] Received: {"t":6816,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.817090] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.821956] Received: {"t":6821,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.822259] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.826931] Received: {"t":6826,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.827193] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:18.831934] Received: {"t":6831,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:18.832235] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.961987] Received: {"t":6961,"field":"pan.cycle_no","val":"42"}
+[2021-10-18 16:19:18.962446] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:18.966935] Received: {"t":6966,"field":"pan.cycle_no","val":"42"}
+[2021-10-18 16:19:18.967270] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:18.971922] Received: {"t":6971,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:18.972270] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:18.976965] Received: {"t":6976,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:18.977309] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:18.981965] Received: {"t":6981,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:18.982261] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:18.986866] Received: {"t":6986,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:18.987186] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:18.991995] Received: {"t":6991,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:18.992219] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:18.996964] Received: {"t":6996,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:18.997308] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.001936] Received: {"t":7001,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.002225] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.131975] Received: {"t":7131,"field":"pan.cycle_no","val":"43"}
+[2021-10-18 16:19:19.132332] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.136956] Received: {"t":7136,"field":"pan.cycle_no","val":"43"}
+[2021-10-18 16:19:19.137313] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.141956] Received: {"t":7141,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.142244] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.146992] Received: {"t":7146,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.147314] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:19.151986] Received: {"t":7151,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:19.152305] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:19.156957] Received: {"t":7156,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:19.157324] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:19.162013] Received: {"t":7161,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:19.162333] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:19.166983] Received: {"t":7166,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:19.167292] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.171961] Received: {"t":7171,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.172289] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.302004] Received: {"t":7301,"field":"pan.cycle_no","val":"44"}
+[2021-10-18 16:19:19.302409] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.307012] Received: {"t":7306,"field":"pan.cycle_no","val":"44"}
+[2021-10-18 16:19:19.307338] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.311989] Received: {"t":7311,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.312307] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.316985] Received: {"t":7316,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.317415] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:19.322030] Received: {"t":7321,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:19.322312] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:19.327051] Received: {"t":7326,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:19.327342] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:19.332047] Received: {"t":7331,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:19.332376] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:19.336978] Received: {"t":7336,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:19.337364] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.341987] Received: {"t":7341,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.342263] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.472052] Received: {"t":7471,"field":"pan.cycle_no","val":"45"}
+[2021-10-18 16:19:19.472411] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.476999] Received: {"t":7476,"field":"pan.cycle_no","val":"45"}
+[2021-10-18 16:19:19.477449] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.482007] Received: {"t":7481,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.482305] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.487023] Received: {"t":7486,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.487385] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:19.492058] Received: {"t":7491,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:19.492452] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:19.497019] Received: {"t":7496,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:19.497355] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:19.502070] Received: {"t":7501,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:19.502437] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:19.507029] Received: {"t":7506,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:19.507371] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.512023] Received: {"t":7511,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.512311] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.642201] Received: {"t":7640,"field":"pan.cycle_no","val":"46"}
+[2021-10-18 16:19:19.642810] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.647133] Received: {"t":7646,"field":"pan.cycle_no","val":"46"}
+[2021-10-18 16:19:19.647543] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.652120] Received: {"t":7651,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.652556] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.657137] Received: {"t":7656,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.657608] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:19.662169] Received: {"t":7661,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:19.662600] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:19.667126] Received: {"t":7666,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:19.667614] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:19.672210] Received: {"t":7671,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:19.672672] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:19.677150] Received: {"t":7676,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:19.677592] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.682145] Received: {"t":7681,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.682539] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.812207] Received: {"t":7810,"field":"pan.cycle_no","val":"47"}
+[2021-10-18 16:19:19.812782] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.817136] Received: {"t":7816,"field":"pan.cycle_no","val":"47"}
+[2021-10-18 16:19:19.817581] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.822159] Received: {"t":7821,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.822614] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.827088] Received: {"t":7826,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.827388] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:19.832099] Received: {"t":7831,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:19.832525] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:19.837137] Received: {"t":7836,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:19.837706] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:19.843131] Received: {"t":7841,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:19.843573] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:19.848169] Received: {"t":7847,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:19.848603] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:19.853084] Received: {"t":7852,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:19.853459] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.981194] Received: {"t":7980,"field":"pan.cycle_no","val":"48"}
+[2021-10-18 16:19:19.981586] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:19.986174] Received: {"t":7985,"field":"pan.cycle_no","val":"48"}
+[2021-10-18 16:19:19.986604] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:19.991121] Received: {"t":7990,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:19.991572] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:19.996197] Received: {"t":7995,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:19.996597] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.001210] Received: {"t":8000,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.001630] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.006188] Received: {"t":8005,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.006612] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.011255] Received: {"t":8010,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.011712] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.016187] Received: {"t":8015,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.016633] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.021075] Received: {"t":8020,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.021694] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.151251] Received: {"t":8150,"field":"pan.cycle_no","val":"49"}
+[2021-10-18 16:19:20.151812] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.156196] Received: {"t":8155,"field":"pan.cycle_no","val":"49"}
+[2021-10-18 16:19:20.156614] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:20.161209] Received: {"t":8160,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:20.161640] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:20.166112] Received: {"t":8165,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:20.166452] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.171152] Received: {"t":8170,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.171650] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.176214] Received: {"t":8175,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.176661] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.181274] Received: {"t":8180,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.181720] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.186251] Received: {"t":8185,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.186763] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.191176] Received: {"t":8190,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.191613] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.321199] Received: {"t":8320,"field":"pan.cycle_no","val":"50"}
+[2021-10-18 16:19:20.321687] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.326218] Received: {"t":8325,"field":"pan.cycle_no","val":"50"}
+[2021-10-18 16:19:20.326660] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:20.331200] Received: {"t":8330,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:20.331628] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:20.336250] Received: {"t":8335,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:20.336690] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.341256] Received: {"t":8340,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.341719] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.346278] Received: {"t":8345,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.346735] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.351282] Received: {"t":8350,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.351858] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.356251] Received: {"t":8355,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.356722] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.361277] Received: {"t":8360,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.361742] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.491304] Received: {"t":8490,"field":"pan.cycle_no","val":"51"}
+[2021-10-18 16:19:20.491879] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.496290] Received: {"t":8495,"field":"pan.cycle_no","val":"51"}
+[2021-10-18 16:19:20.501192] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:20.501337] Received: {"t":8500,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:20.501626] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:20.506275] Received: {"t":8505,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:20.506568] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.511283] Received: {"t":8510,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.511753] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.516266] Received: {"t":8515,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.516805] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.521341] Received: {"t":8520,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.521680] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.526213] Received: {"t":8525,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.526551] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.531190] Received: {"t":8530,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.531541] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.661316] Received: {"t":8660,"field":"pan.cycle_no","val":"52"}
+[2021-10-18 16:19:20.661854] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.666309] Received: {"t":8665,"field":"pan.cycle_no","val":"52"}
+[2021-10-18 16:19:20.666647] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:20.671190] Received: {"t":8670,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:20.671613] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:20.676291] Received: {"t":8675,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:20.676736] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.681323] Received: {"t":8680,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.681732] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.686328] Received: {"t":8685,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.686733] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.691231] Received: {"t":8690,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.691675] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.696313] Received: {"t":8695,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.696759] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.701276] Received: {"t":8700,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.701630] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.831340] Received: {"t":8830,"field":"pan.cycle_no","val":"53"}
+[2021-10-18 16:19:20.831869] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:20.836329] Received: {"t":8835,"field":"pan.cycle_no","val":"53"}
+[2021-10-18 16:19:20.836748] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:20.841288] Received: {"t":8840,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:20.841734] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:20.846359] Received: {"t":8845,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:20.846701] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:20.851286] Received: {"t":8850,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:20.851675] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:20.856319] Received: {"t":8855,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:20.856755] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:20.861384] Received: {"t":8860,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:20.861822] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:20.866348] Received: {"t":8865,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:20.866755] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:20.871325] Received: {"t":8870,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:20.871748] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.001357] Received: {"t":9000,"field":"pan.cycle_no","val":"54"}
+[2021-10-18 16:19:21.001847] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.006334] Received: {"t":9005,"field":"pan.cycle_no","val":"54"}
+[2021-10-18 16:19:21.006679] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.011290] Received: {"t":9010,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.011742] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.016340] Received: {"t":9015,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.016757] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.021329] Received: {"t":9020,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.021715] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.026283] Received: {"t":9025,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.026685] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.031385] Received: {"t":9030,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.031885] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.036345] Received: {"t":9035,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.036671] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.041371] Received: {"t":9040,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.041786] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.171363] Received: {"t":9170,"field":"pan.cycle_no","val":"55"}
+[2021-10-18 16:19:21.171835] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.176348] Received: {"t":9175,"field":"pan.cycle_no","val":"55"}
+[2021-10-18 16:19:21.176747] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.181373] Received: {"t":9180,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.181857] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.186361] Received: {"t":9185,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.186712] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.191396] Received: {"t":9190,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.191829] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.196378] Received: {"t":9195,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.196838] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.201398] Received: {"t":9200,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.201795] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.206377] Received: {"t":9205,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.206765] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.211348] Received: {"t":9210,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.211790] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.341426] Received: {"t":9340,"field":"pan.cycle_no","val":"56"}
+[2021-10-18 16:19:21.341948] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.346370] Received: {"t":9345,"field":"pan.cycle_no","val":"56"}
+[2021-10-18 16:19:21.346738] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.351400] Received: {"t":9350,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.351847] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.356423] Received: {"t":9355,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.356900] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.361432] Received: {"t":9360,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.361882] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.366398] Received: {"t":9365,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.366821] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.371453] Received: {"t":9370,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.371877] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.376401] Received: {"t":9375,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.376877] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.381423] Received: {"t":9380,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.381881] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.511423] Received: {"t":9510,"field":"pan.cycle_no","val":"57"}
+[2021-10-18 16:19:21.511892] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.516408] Received: {"t":9515,"field":"pan.cycle_no","val":"57"}
+[2021-10-18 16:19:21.516786] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.521423] Received: {"t":9520,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.521858] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.526413] Received: {"t":9525,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.526781] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.531431] Received: {"t":9530,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.531768] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.536426] Received: {"t":9535,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.536861] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.541456] Received: {"t":9540,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.541870] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.546438] Received: {"t":9545,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.546849] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.551354] Received: {"t":9550,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.551717] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.681473] Received: {"t":9679,"field":"pan.cycle_no","val":"58"}
+[2021-10-18 16:19:21.681985] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.686449] Received: {"t":9685,"field":"pan.cycle_no","val":"58"}
+[2021-10-18 16:19:21.686774] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.691369] Received: {"t":9690,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.691872] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.696375] Received: {"t":9695,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.696821] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.701487] Received: {"t":9700,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.701863] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.706352] Received: {"t":9705,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.706820] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.711406] Received: {"t":9710,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.711726] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.716361] Received: {"t":9715,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.716775] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.721294] Received: {"t":9720,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.721504] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.851421] Received: {"t":9849,"field":"pan.cycle_no","val":"59"}
+[2021-10-18 16:19:21.851876] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:21.856358] Received: {"t":9855,"field":"pan.cycle_no","val":"59"}
+[2021-10-18 16:19:21.856734] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:21.861386] Received: {"t":9860,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:21.861743] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:21.866379] Received: {"t":9865,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:21.866732] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:21.871393] Received: {"t":9870,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:21.871713] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:21.876375] Received: {"t":9875,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:21.876755] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:21.881434] Received: {"t":9880,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:21.881776] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:21.886387] Received: {"t":9885,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:21.886734] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:21.891458] Received: {"t":9890,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:21.891889] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.020498] Received: {"t":10019,"field":"pan.cycle_no","val":"60"}
+[2021-10-18 16:19:22.020904] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.025503] Received: {"t":10024,"field":"pan.cycle_no","val":"60"}
+[2021-10-18 16:19:22.025960] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.030652] Received: {"t":10029,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.031478] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.035454] Received: {"t":10034,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.035817] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.040531] Received: {"t":10039,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.040975] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.045496] Received: {"t":10044,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.045948] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.050553] Received: {"t":10049,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.050993] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.055495] Received: {"t":10054,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.055977] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.060494] Received: {"t":10059,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.060953] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.190596] Received: {"t":10189,"field":"pan.cycle_no","val":"61"}
+[2021-10-18 16:19:22.191147] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.195525] Received: {"t":10194,"field":"pan.cycle_no","val":"61"}
+[2021-10-18 16:19:22.196007] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.200515] Received: {"t":10199,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.200940] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.205474] Received: {"t":10204,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.205852] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.210505] Received: {"t":10209,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.210887] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.215510] Received: {"t":10214,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.215942] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.220553] Received: {"t":10219,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.220921] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.225451] Received: {"t":10224,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.225930] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.230457] Received: {"t":10229,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.230903] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.360454] Received: {"t":10359,"field":"pan.cycle_no","val":"62"}
+[2021-10-18 16:19:22.360840] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.365424] Received: {"t":10364,"field":"pan.cycle_no","val":"62"}
+[2021-10-18 16:19:22.365888] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.370388] Received: {"t":10369,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.370841] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.375426] Received: {"t":10374,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.375828] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.380501] Received: {"t":10379,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.381037] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.385461] Received: {"t":10384,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.385721] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.390510] Received: {"t":10389,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.390864] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.395473] Received: {"t":10394,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.395904] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.400476] Received: {"t":10399,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.400900] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.530469] Received: {"t":10529,"field":"pan.cycle_no","val":"63"}
+[2021-10-18 16:19:22.530764] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.535478] Received: {"t":10534,"field":"pan.cycle_no","val":"63"}
+[2021-10-18 16:19:22.535970] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.540476] Received: {"t":10539,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.540921] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.545516] Received: {"t":10544,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.545943] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.550510] Received: {"t":10549,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.550936] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.555485] Received: {"t":10554,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.555972] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.560592] Received: {"t":10559,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.560973] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.565541] Received: {"t":10564,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.565965] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.570428] Received: {"t":10569,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.570763] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.700571] Received: {"t":10699,"field":"pan.cycle_no","val":"64"}
+[2021-10-18 16:19:22.701052] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.705551] Received: {"t":10704,"field":"pan.cycle_no","val":"64"}
+[2021-10-18 16:19:22.705958] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.710498] Received: {"t":10709,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.710843] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.715515] Received: {"t":10714,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.715857] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.720574] Received: {"t":10719,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.720973] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.725613] Received: {"t":10724,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.726029] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.730638] Received: {"t":10729,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.730995] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.735566] Received: {"t":10734,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.735909] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.740617] Received: {"t":10739,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.741001] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.870511] Received: {"t":10869,"field":"pan.cycle_no","val":"65"}
+[2021-10-18 16:19:22.870988] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:22.875611] Received: {"t":10874,"field":"pan.cycle_no","val":"65"}
+[2021-10-18 16:19:22.876010] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:22.880525] Received: {"t":10879,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:22.880994] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:22.885542] Received: {"t":10884,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:22.885938] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:22.890587] Received: {"t":10889,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:22.891071] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:22.895538] Received: {"t":10894,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:22.895986] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:22.900620] Received: {"t":10899,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:22.901124] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:22.905553] Received: {"t":10904,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:22.905981] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:22.910557] Received: {"t":10909,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:22.937480] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.040578] Received: {"t":11039,"field":"pan.cycle_no","val":"66"}
+[2021-10-18 16:19:23.041068] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.045550] Received: {"t":11044,"field":"pan.cycle_no","val":"66"}
+[2021-10-18 16:19:23.046051] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.050593] Received: {"t":11049,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.051029] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.055554] Received: {"t":11054,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.055931] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.060572] Received: {"t":11059,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.060852] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.065561] Received: {"t":11064,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.066085] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.070545] Received: {"t":11069,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.070831] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.075589] Received: {"t":11074,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.075896] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.080557] Received: {"t":11079,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.080913] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.210678] Received: {"t":11209,"field":"pan.cycle_no","val":"67"}
+[2021-10-18 16:19:23.211252] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.215620] Received: {"t":11214,"field":"pan.cycle_no","val":"67"}
+[2021-10-18 16:19:23.215973] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.220502] Received: {"t":11219,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.220822] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.225746] Received: {"t":11224,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.226096] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.230623] Received: {"t":11229,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.230948] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.235617] Received: {"t":11234,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.235980] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.240618] Received: {"t":11239,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.240932] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.245610] Received: {"t":11244,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.245976] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.250596] Received: {"t":11249,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.250894] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.380656] Received: {"t":11379,"field":"pan.cycle_no","val":"68"}
+[2021-10-18 16:19:23.381105] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.385593] Received: {"t":11384,"field":"pan.cycle_no","val":"68"}
+[2021-10-18 16:19:23.385867] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.390599] Received: {"t":11389,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.390982] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.395557] Received: {"t":11394,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.395797] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.400612] Received: {"t":11399,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.400862] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.405627] Received: {"t":11404,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.406071] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.410692] Received: {"t":11409,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.410923] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.415639] Received: {"t":11414,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.415965] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.420576] Received: {"t":11419,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.420816] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.550680] Received: {"t":11549,"field":"pan.cycle_no","val":"69"}
+[2021-10-18 16:19:23.551127] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.555622] Received: {"t":11554,"field":"pan.cycle_no","val":"69"}
+[2021-10-18 16:19:23.556073] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.560631] Received: {"t":11559,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.561099] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.565645] Received: {"t":11564,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.566029] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.570608] Received: {"t":11569,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.571023] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.575640] Received: {"t":11574,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.576111] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.580734] Received: {"t":11579,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.581194] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.585657] Received: {"t":11584,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.586055] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.590716] Received: {"t":11589,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.591191] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.720633] Received: {"t":11718,"field":"pan.cycle_no","val":"70"}
+[2021-10-18 16:19:23.721096] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.725666] Received: {"t":11724,"field":"pan.cycle_no","val":"70"}
+[2021-10-18 16:19:23.726073] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.730657] Received: {"t":11729,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.731064] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.735726] Received: {"t":11734,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.736109] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.740640] Received: {"t":11739,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.740927] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.745614] Received: {"t":11744,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.745932] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.750651] Received: {"t":11749,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.751024] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.755666] Received: {"t":11754,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.755964] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.760746] Received: {"t":11759,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.761158] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.890733] Received: {"t":11888,"field":"pan.cycle_no","val":"71"}
+[2021-10-18 16:19:23.891175] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:23.895682] Received: {"t":11894,"field":"pan.cycle_no","val":"71"}
+[2021-10-18 16:19:23.896048] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:23.900659] Received: {"t":11899,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:23.900966] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:23.905676] Received: {"t":11904,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:23.906113] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:23.910639] Received: {"t":11909,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:23.910991] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:23.915617] Received: {"t":11914,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:23.915909] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:23.920686] Received: {"t":11919,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:23.921001] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:23.925641] Received: {"t":11924,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:23.926007] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:23.930671] Received: {"t":11929,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:23.930973] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.060862] Received: {"t":12058,"field":"pan.cycle_no","val":"72"}
+[2021-10-18 16:19:24.061375] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.065767] Received: {"t":12064,"field":"pan.cycle_no","val":"72"}
+[2021-10-18 16:19:24.066205] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.070769] Received: {"t":12069,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.071071] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.075776] Received: {"t":12074,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.076205] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.080807] Received: {"t":12079,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.081241] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.085823] Received: {"t":12084,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.086231] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.090873] Received: {"t":12089,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.091278] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.095827] Received: {"t":12094,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.096264] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.100812] Received: {"t":12099,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.101267] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.229832] Received: {"t":12228,"field":"pan.cycle_no","val":"73"}
+[2021-10-18 16:19:24.230324] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.234827] Received: {"t":12233,"field":"pan.cycle_no","val":"73"}
+[2021-10-18 16:19:24.235253] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.239817] Received: {"t":12238,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.240253] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.244847] Received: {"t":12243,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.245304] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.249845] Received: {"t":12248,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.250391] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.255832] Received: {"t":12253,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.256255] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.260857] Received: {"t":12259,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.261258] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.265823] Received: {"t":12264,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.266223] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.270670] Received: {"t":12269,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.271013] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.399883] Received: {"t":12398,"field":"pan.cycle_no","val":"74"}
+[2021-10-18 16:19:24.400431] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.404818] Received: {"t":12403,"field":"pan.cycle_no","val":"74"}
+[2021-10-18 16:19:24.405264] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.409830] Received: {"t":12408,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.410229] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.414858] Received: {"t":12413,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.415355] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.419811] Received: {"t":12418,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.420113] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.424865] Received: {"t":12423,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.425329] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.429887] Received: {"t":12428,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.430275] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.434859] Received: {"t":12433,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.435383] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.439862] Received: {"t":12438,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.440303] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.569861] Received: {"t":12568,"field":"pan.cycle_no","val":"75"}
+[2021-10-18 16:19:24.570352] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.574888] Received: {"t":12573,"field":"pan.cycle_no","val":"75"}
+[2021-10-18 16:19:24.575355] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.579852] Received: {"t":12578,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.580287] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.584842] Received: {"t":12583,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.585329] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.589885] Received: {"t":12588,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.590309] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.594878] Received: {"t":12593,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.595339] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.599921] Received: {"t":12598,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.600435] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.604861] Received: {"t":12603,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.605329] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.609866] Received: {"t":12608,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.610357] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.739898] Received: {"t":12738,"field":"pan.cycle_no","val":"76"}
+[2021-10-18 16:19:24.740417] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.744868] Received: {"t":12743,"field":"pan.cycle_no","val":"76"}
+[2021-10-18 16:19:24.745319] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.749903] Received: {"t":12748,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.750361] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.754880] Received: {"t":12753,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.755374] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.759913] Received: {"t":12758,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.760386] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.764894] Received: {"t":12763,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.765423] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.769895] Received: {"t":12768,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.770194] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.774906] Received: {"t":12773,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.775347] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.779890] Received: {"t":12778,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.780302] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.909956] Received: {"t":12908,"field":"pan.cycle_no","val":"77"}
+[2021-10-18 16:19:24.910449] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:24.914903] Received: {"t":12913,"field":"pan.cycle_no","val":"77"}
+[2021-10-18 16:19:24.915338] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:24.919824] Received: {"t":12918,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:24.920228] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:24.924835] Received: {"t":12923,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:24.925276] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:24.929861] Received: {"t":12928,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:24.930365] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:24.934860] Received: {"t":12933,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:24.935334] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:24.939880] Received: {"t":12938,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:24.940339] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:24.944852] Received: {"t":12943,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:24.945272] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:24.949831] Received: {"t":12948,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:24.950250] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.079911] Received: {"t":13078,"field":"pan.cycle_no","val":"78"}
+[2021-10-18 16:19:25.080624] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.084895] Received: {"t":13083,"field":"pan.cycle_no","val":"78"}
+[2021-10-18 16:19:25.085302] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.089847] Received: {"t":13088,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.090244] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.094874] Received: {"t":13093,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.095154] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.099901] Received: {"t":13098,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.100366] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.104858] Received: {"t":13103,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.105313] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.109909] Received: {"t":13108,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.110436] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.114887] Received: {"t":13113,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.115373] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.119864] Received: {"t":13118,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.120285] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.249917] Received: {"t":13248,"field":"pan.cycle_no","val":"79"}
+[2021-10-18 16:19:25.250400] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.254874] Received: {"t":13253,"field":"pan.cycle_no","val":"79"}
+[2021-10-18 16:19:25.255324] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.259872] Received: {"t":13258,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.260295] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.264884] Received: {"t":13263,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.265315] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.269908] Received: {"t":13268,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.270381] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.274909] Received: {"t":13273,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.275330] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.279933] Received: {"t":13278,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.280391] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.284911] Received: {"t":13283,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.285391] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.289883] Received: {"t":13288,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.290402] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.419939] Received: {"t":13418,"field":"pan.cycle_no","val":"80"}
+[2021-10-18 16:19:25.420507] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.424893] Received: {"t":13423,"field":"pan.cycle_no","val":"80"}
+[2021-10-18 16:19:25.425363] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.429916] Received: {"t":13428,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.430370] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.434915] Received: {"t":13433,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.435370] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.439909] Received: {"t":13438,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.440377] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.444907] Received: {"t":13443,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.445348] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.449957] Received: {"t":13448,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.450383] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.454920] Received: {"t":13453,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.455354] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.459902] Received: {"t":13458,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.460290] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.589948] Received: {"t":13588,"field":"pan.cycle_no","val":"81"}
+[2021-10-18 16:19:25.590346] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.594951] Received: {"t":13593,"field":"pan.cycle_no","val":"81"}
+[2021-10-18 16:19:25.595274] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.599862] Received: {"t":13598,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.600158] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.604991] Received: {"t":13603,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.605483] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.609963] Received: {"t":13608,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.610321] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.614933] Received: {"t":13613,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.615295] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.619981] Received: {"t":13618,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.620355] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.624960] Received: {"t":13623,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.625308] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.629951] Received: {"t":13628,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.630341] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.759890] Received: {"t":13757,"field":"pan.cycle_no","val":"82"}
+[2021-10-18 16:19:25.760292] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.764948] Received: {"t":13763,"field":"pan.cycle_no","val":"82"}
+[2021-10-18 16:19:25.765344] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.770009] Received: {"t":13768,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.770350] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.774964] Received: {"t":13773,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.775291] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.779979] Received: {"t":13778,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.780289] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.784951] Received: {"t":13783,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.785355] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.790007] Received: {"t":13788,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.790420] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.794922] Received: {"t":13793,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.795204] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.799962] Received: {"t":13798,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.800210] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.930005] Received: {"t":13927,"field":"pan.cycle_no","val":"83"}
+[2021-10-18 16:19:25.930419] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:25.934910] Received: {"t":13933,"field":"pan.cycle_no","val":"83"}
+[2021-10-18 16:19:25.935280] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:25.940016] Received: {"t":13938,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:25.940367] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:25.944989] Received: {"t":13943,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:25.945356] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:25.950010] Received: {"t":13948,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:25.950314] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:25.954995] Received: {"t":13953,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:25.955327] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:25.960028] Received: {"t":13958,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:25.960335] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:25.964998] Received: {"t":13963,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:25.965422] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:25.969937] Received: {"t":13968,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:25.970225] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.100045] Received: {"t":14097,"field":"pan.cycle_no","val":"84"}
+[2021-10-18 16:19:26.100471] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.104987] Received: {"t":14103,"field":"pan.cycle_no","val":"84"}
+[2021-10-18 16:19:26.105306] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.110008] Received: {"t":14108,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.110419] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.114952] Received: {"t":14113,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.115233] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.120006] Received: {"t":14118,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.120409] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.125015] Received: {"t":14123,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.125504] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.130055] Received: {"t":14128,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.130503] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.134973] Received: {"t":14133,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.135283] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.139991] Received: {"t":14138,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.140262] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.269035] Received: {"t":14267,"field":"pan.cycle_no","val":"85"}
+[2021-10-18 16:19:26.269417] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.274016] Received: {"t":14272,"field":"pan.cycle_no","val":"85"}
+[2021-10-18 16:19:26.274308] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.279035] Received: {"t":14277,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.279320] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.284051] Received: {"t":14282,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.284383] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.289076] Received: {"t":14287,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.289550] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.293994] Received: {"t":14292,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.294353] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.299072] Received: {"t":14297,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.299565] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.304055] Received: {"t":14302,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.304490] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.309226] Received: {"t":14307,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.309703] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.439162] Received: {"t":14437,"field":"pan.cycle_no","val":"86"}
+[2021-10-18 16:19:26.439735] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.444126] Received: {"t":14442,"field":"pan.cycle_no","val":"86"}
+[2021-10-18 16:19:26.444633] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.449039] Received: {"t":14447,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.449415] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.454060] Received: {"t":14452,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.454399] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.459091] Received: {"t":14457,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.459492] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.464102] Received: {"t":14462,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.464553] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.469088] Received: {"t":14467,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.469504] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.474071] Received: {"t":14472,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.474473] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.479054] Received: {"t":14477,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.479532] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.609086] Received: {"t":14607,"field":"pan.cycle_no","val":"87"}
+[2021-10-18 16:19:26.609589] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.614068] Received: {"t":14612,"field":"pan.cycle_no","val":"87"}
+[2021-10-18 16:19:26.614427] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.619073] Received: {"t":14617,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.619508] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.624075] Received: {"t":14622,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.624600] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.629098] Received: {"t":14627,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.629405] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.634104] Received: {"t":14632,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.634454] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.639140] Received: {"t":14637,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.639591] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.644089] Received: {"t":14642,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.644561] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.649084] Received: {"t":14647,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.649534] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.779147] Received: {"t":14777,"field":"pan.cycle_no","val":"88"}
+[2021-10-18 16:19:26.779497] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.784089] Received: {"t":14782,"field":"pan.cycle_no","val":"88"}
+[2021-10-18 16:19:26.784514] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.789102] Received: {"t":14787,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.789465] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.794054] Received: {"t":14792,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.794324] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.799138] Received: {"t":14797,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.799484] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.804098] Received: {"t":14802,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.804504] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.809176] Received: {"t":14807,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.809509] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.814104] Received: {"t":14812,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.814389] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.819117] Received: {"t":14817,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.819373] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.949078] Received: {"t":14947,"field":"pan.cycle_no","val":"89"}
+[2021-10-18 16:19:26.949478] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:26.954165] Received: {"t":14952,"field":"pan.cycle_no","val":"89"}
+[2021-10-18 16:19:26.954500] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:26.959036] Received: {"t":14957,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:26.959439] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:26.964134] Received: {"t":14962,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:26.964518] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:26.969162] Received: {"t":14967,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:26.969484] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:26.974061] Received: {"t":14972,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:26.974329] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:26.979136] Received: {"t":14977,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:26.979437] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:26.984058] Received: {"t":14982,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:26.984442] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:26.989085] Received: {"t":14987,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:26.989436] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.119096] Received: {"t":15117,"field":"pan.cycle_no","val":"90"}
+[2021-10-18 16:19:27.119478] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.124128] Received: {"t":15122,"field":"pan.cycle_no","val":"90"}
+[2021-10-18 16:19:27.124499] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.129125] Received: {"t":15127,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.129527] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.134079] Received: {"t":15132,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.134379] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.139139] Received: {"t":15137,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.139478] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.144215] Received: {"t":15142,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.144763] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.150202] Received: {"t":15147,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.150459] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:27.155126] Received: {"t":15153,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:27.155483] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:27.160147] Received: {"t":15158,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:27.160373] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.289224] Received: {"t":15287,"field":"pan.cycle_no","val":"91"}
+[2021-10-18 16:19:27.289704] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.294092] Received: {"t":15292,"field":"pan.cycle_no","val":"91"}
+[2021-10-18 16:19:27.294431] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.299080] Received: {"t":15297,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.299322] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.304105] Received: {"t":15302,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.304384] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.309126] Received: {"t":15307,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.309393] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.314096] Received: {"t":15312,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.314377] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.319238] Received: {"t":15317,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.319639] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:27.324291] Received: {"t":15322,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:27.324780] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:27.330181] Received: {"t":15327,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:27.330429] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.459150] Received: {"t":15457,"field":"pan.cycle_no","val":"92"}
+[2021-10-18 16:19:27.459475] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.464167] Received: {"t":15462,"field":"pan.cycle_no","val":"92"}
+[2021-10-18 16:19:27.464528] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.469111] Received: {"t":15467,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.469363] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.474127] Received: {"t":15472,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.474370] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.479223] Received: {"t":15477,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.479469] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.484217] Received: {"t":15482,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.484631] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.489167] Received: {"t":15487,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.489409] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:27.494113] Received: {"t":15492,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:27.494278] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:27.499116] Received: {"t":15497,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:27.499320] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.629174] Received: {"t":15627,"field":"pan.cycle_no","val":"93"}
+[2021-10-18 16:19:27.629567] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.634131] Received: {"t":15632,"field":"pan.cycle_no","val":"93"}
+[2021-10-18 16:19:27.634415] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.639126] Received: {"t":15637,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.639331] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.644151] Received: {"t":15642,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.644405] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.649164] Received: {"t":15647,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.649404] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.654146] Received: {"t":15652,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.654421] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.659188] Received: {"t":15657,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.659518] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:27.664260] Received: {"t":15662,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:27.664753] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:27.669134] Received: {"t":15667,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:27.669411] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.799185] Received: {"t":15796,"field":"pan.cycle_no","val":"94"}
+[2021-10-18 16:19:27.799591] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.804152] Received: {"t":15802,"field":"pan.cycle_no","val":"94"}
+[2021-10-18 16:19:27.804546] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.809151] Received: {"t":15807,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.809513] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.814162] Received: {"t":15812,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.814481] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.819190] Received: {"t":15817,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.819550] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.824162] Received: {"t":15822,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.824516] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.829212] Received: {"t":15827,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.829570] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:27.834284] Received: {"t":15832,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:27.834820] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:27.839166] Received: {"t":15837,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:27.839503] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.969218] Received: {"t":15966,"field":"pan.cycle_no","val":"95"}
+[2021-10-18 16:19:27.969561] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:27.974180] Received: {"t":15972,"field":"pan.cycle_no","val":"95"}
+[2021-10-18 16:19:27.974493] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:27.979177] Received: {"t":15977,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:27.979353] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:27.984191] Received: {"t":15982,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:27.984424] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:27.989212] Received: {"t":15987,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:27.989463] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:27.994188] Received: {"t":15992,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:27.994462] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:27.999217] Received: {"t":15997,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:27.999427] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.004318] Received: {"t":16002,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.004737] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.009235] Received: {"t":16007,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.009517] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.139246] Received: {"t":16136,"field":"pan.cycle_no","val":"96"}
+[2021-10-18 16:19:28.139716] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.144202] Received: {"t":16142,"field":"pan.cycle_no","val":"96"}
+[2021-10-18 16:19:28.144556] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.149197] Received: {"t":16147,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.149532] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:28.154211] Received: {"t":16152,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:28.154545] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:28.159233] Received: {"t":16157,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:28.159565] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:28.164211] Received: {"t":16162,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:28.164581] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:28.169257] Received: {"t":16167,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:28.169659] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.174340] Received: {"t":16172,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.174997] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.180210] Received: {"t":16177,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.180550] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.308247] Received: {"t":16306,"field":"pan.cycle_no","val":"97"}
+[2021-10-18 16:19:28.308659] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.313220] Received: {"t":16311,"field":"pan.cycle_no","val":"97"}
+[2021-10-18 16:19:28.313624] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.318237] Received: {"t":16316,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.318510] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:28.323275] Received: {"t":16321,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:28.323566] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:28.328285] Received: {"t":16326,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:28.328741] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:28.333230] Received: {"t":16331,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:28.333560] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:28.338278] Received: {"t":16336,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:28.338632] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.343304] Received: {"t":16341,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.343941] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.348231] Received: {"t":16346,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.348556] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.478285] Received: {"t":16476,"field":"pan.cycle_no","val":"98"}
+[2021-10-18 16:19:28.478788] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.483245] Received: {"t":16481,"field":"pan.cycle_no","val":"98"}
+[2021-10-18 16:19:28.483681] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.488248] Received: {"t":16486,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.488612] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:28.493258] Received: {"t":16491,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:28.493580] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:28.498281] Received: {"t":16496,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:28.498619] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:28.503255] Received: {"t":16501,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:28.503639] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:28.508308] Received: {"t":16506,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:28.508629] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.513461] Received: {"t":16511,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.514284] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.519266] Received: {"t":16517,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.519618] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.648297] Received: {"t":16646,"field":"pan.cycle_no","val":"99"}
+[2021-10-18 16:19:28.648679] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.653270] Received: {"t":16651,"field":"pan.cycle_no","val":"99"}
+[2021-10-18 16:19:28.653628] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.658278] Received: {"t":16656,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.658642] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:28.663279] Received: {"t":16661,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:28.663611] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:28.668302] Received: {"t":16666,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:28.668658] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:28.673282] Received: {"t":16671,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:28.673658] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:28.678328] Received: {"t":16676,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:28.678699] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.683469] Received: {"t":16681,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.683893] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.688279] Received: {"t":16686,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.688597] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.818326] Received: {"t":16816,"field":"pan.cycle_no","val":"100"}
+[2021-10-18 16:19:28.818730] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.823298] Received: {"t":16821,"field":"pan.cycle_no","val":"100"}
+[2021-10-18 16:19:28.823603] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.828292] Received: {"t":16826,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.828665] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:28.833307] Received: {"t":16831,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:28.833699] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:28.838328] Received: {"t":16836,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:28.838704] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:28.843314] Received: {"t":16841,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:28.843636] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:28.848351] Received: {"t":16846,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:28.848704] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:28.853455] Received: {"t":16851,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:28.853764] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:28.858303] Received: {"t":16856,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:28.858627] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.989464] Received: {"t":16986,"field":"pan.cycle_no","val":"101"}
+[2021-10-18 16:19:28.989878] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:28.994404] Received: {"t":16992,"field":"pan.cycle_no","val":"101"}
+[2021-10-18 16:19:28.994820] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:28.999351] Received: {"t":16997,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:28.999718] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.004398] Received: {"t":17002,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.004674] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.009424] Received: {"t":17007,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.009731] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.014396] Received: {"t":17012,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.014722] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.019398] Received: {"t":17017,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.019820] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.024533] Received: {"t":17022,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.024924] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.029389] Received: {"t":17027,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.029734] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.159460] Received: {"t":17156,"field":"pan.cycle_no","val":"102"}
+[2021-10-18 16:19:29.159872] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.164435] Received: {"t":17162,"field":"pan.cycle_no","val":"102"}
+[2021-10-18 16:19:29.164830] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:29.169411] Received: {"t":17167,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:29.169753] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.174446] Received: {"t":17172,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.174851] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.179446] Received: {"t":17177,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.179794] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.184421] Received: {"t":17182,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.184811] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.189475] Received: {"t":17187,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.189691] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.194546] Received: {"t":17192,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.194982] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.199415] Received: {"t":17197,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.199732] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.329480] Received: {"t":17326,"field":"pan.cycle_no","val":"103"}
+[2021-10-18 16:19:29.329934] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.334437] Received: {"t":17332,"field":"pan.cycle_no","val":"103"}
+[2021-10-18 16:19:29.334772] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:29.339431] Received: {"t":17337,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:29.339779] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.344461] Received: {"t":17342,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.344786] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.349493] Received: {"t":17347,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.349800] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.354467] Received: {"t":17352,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.354811] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.359495] Received: {"t":17357,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.359850] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.364506] Received: {"t":17362,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.364957] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.369376] Received: {"t":17367,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.369755] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.499480] Received: {"t":17496,"field":"pan.cycle_no","val":"104"}
+[2021-10-18 16:19:29.499912] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.504468] Received: {"t":17502,"field":"pan.cycle_no","val":"104"}
+[2021-10-18 16:19:29.504868] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:29.509466] Received: {"t":17507,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:29.509798] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.514491] Received: {"t":17512,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.514726] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.519502] Received: {"t":17517,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.519865] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.524423] Received: {"t":17522,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.524765] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.529546] Received: {"t":17527,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.529894] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.534538] Received: {"t":17532,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.534953] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.539478] Received: {"t":17537,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.539751] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.668551] Received: {"t":17666,"field":"pan.cycle_no","val":"105"}
+[2021-10-18 16:19:29.669021] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.673481] Received: {"t":17671,"field":"pan.cycle_no","val":"105"}
+[2021-10-18 16:19:29.673866] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:29.678491] Received: {"t":17676,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:29.678796] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.683502] Received: {"t":17681,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.683809] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.688511] Received: {"t":17686,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.688835] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.693498] Received: {"t":17691,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.693868] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.698546] Received: {"t":17696,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.698951] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.703529] Received: {"t":17701,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.703929] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.708482] Received: {"t":17706,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.708775] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.838534] Received: {"t":17836,"field":"pan.cycle_no","val":"106"}
+[2021-10-18 16:19:29.838903] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:29.843506] Received: {"t":17841,"field":"pan.cycle_no","val":"106"}
+[2021-10-18 16:19:29.843896] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:29.848531] Received: {"t":17846,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:29.848857] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:29.853528] Received: {"t":17851,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:29.853803] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:29.858541] Received: {"t":17855,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:29.858768] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:29.863520] Received: {"t":17861,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:29.863822] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:29.868566] Received: {"t":17865,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:29.868784] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:29.873584] Received: {"t":17871,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:29.874143] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:29.878521] Received: {"t":17876,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:29.878807] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.008559] Received: {"t":18006,"field":"pan.cycle_no","val":"107"}
+[2021-10-18 16:19:30.008887] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.013536] Received: {"t":18011,"field":"pan.cycle_no","val":"107"}
+[2021-10-18 16:19:30.013916] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:30.018530] Received: {"t":18016,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.018813] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:30.023546] Received: {"t":18020,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.023851] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:30.028566] Received: {"t":18026,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.028847] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:30.033548] Received: {"t":18031,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.033851] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:30.038595] Received: {"t":18036,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.038931] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:30.043538] Received: {"t":18041,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:30.044043] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:30.048538] Received: {"t":18046,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:30.048814] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.178595] Received: {"t":18176,"field":"pan.cycle_no","val":"108"}
+[2021-10-18 16:19:30.179029] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.183575] Received: {"t":18181,"field":"pan.cycle_no","val":"108"}
+[2021-10-18 16:19:30.183945] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:30.188556] Received: {"t":18186,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.188855] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:30.193569] Received: {"t":18191,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.193917] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:30.198586] Received: {"t":18196,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.198856] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:30.203566] Received: {"t":18201,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.203894] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:30.208615] Received: {"t":18206,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.208920] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:30.213689] Received: {"t":18211,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:30.214386] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:30.219561] Received: {"t":18216,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:30.219860] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.348612] Received: {"t":18345,"field":"pan.cycle_no","val":"109"}
+[2021-10-18 16:19:30.349027] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.353601] Received: {"t":18351,"field":"pan.cycle_no","val":"109"}
+[2021-10-18 16:19:30.353952] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:30.358580] Received: {"t":18356,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.358907] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:30.363581] Received: {"t":18361,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.363934] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:30.368614] Received: {"t":18366,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.368903] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:30.373598] Received: {"t":18371,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.373928] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:30.378636] Received: {"t":18375,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.378993] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:30.383679] Received: {"t":18381,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:30.384076] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:30.388580] Received: {"t":18386,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:30.388901] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.518636] Received: {"t":18515,"field":"pan.cycle_no","val":"110"}
+[2021-10-18 16:19:30.519068] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.523598] Received: {"t":18521,"field":"pan.cycle_no","val":"110"}
+[2021-10-18 16:19:30.523975] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:30.528594] Received: {"t":18526,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.528936] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:30.533614] Received: {"t":18531,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.533975] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:30.538629] Received: {"t":18536,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.539011] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:30.543605] Received: {"t":18541,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.543979] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:30.548674] Received: {"t":18546,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.549043] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:30.553700] Received: {"t":18551,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:30.554252] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:30.559610] Received: {"t":18556,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:30.559953] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.688675] Received: {"t":18685,"field":"pan.cycle_no","val":"111"}
+[2021-10-18 16:19:30.689186] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.693658] Received: {"t":18691,"field":"pan.cycle_no","val":"111"}
+[2021-10-18 16:19:30.693934] Sent:     {"mode": 119, "field": "pan.bootcount", "val": "0"}
+[2021-10-18 16:19:30.698633] Received: {"t":18695,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.698970] Sent:     {"mode": 119, "field": "pan.deployed", "val": "false"}
+[2021-10-18 16:19:30.703635] Received: {"t":18701,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.704002] Sent:     {"mode": 119, "field": "pan.deployment.elapsed", "val": "0"}
+[2021-10-18 16:19:30.708660] Received: {"t":18706,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.709030] Sent:     {"mode": 119, "field": "pan.kill_switch", "val": "0"}
+[2021-10-18 16:19:30.713642] Received: {"t":18711,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.713962] Sent:     {"mode": 119, "field": "attitude_estimator.ignore_sun_vectors", "val": "false"}
+[2021-10-18 16:19:30.718690] Received: {"t":18716,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.719086] Sent:     {"mode": 119, "field": "attitude_estimator.mag_flag", "val": "false"}
+[2021-10-18 16:19:30.723688] Received: {"t":18721,"field":"attitude_estimator.mag_flag","val":"false"}
+[2021-10-18 16:19:30.724130] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2021-10-18 16:19:30.728668] Received: {"t":18726,"field":"cycle.start","val":"true"}
+[2021-10-18 16:19:30.728966] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2021-10-18 16:19:30.858712] Received: {"t":18855,"field":"pan.cycle_no","val":"112"}
+[2021-10-18 16:19:30.859211] Sent:     {"mode": 114, "field": "pan.bootcount"}
+[2021-10-18 16:19:30.863663] Received: {"t":18861,"field":"pan.bootcount","val":"0"}
+[2021-10-18 16:19:30.864053] Sent:     {"mode": 114, "field": "pan.deployed"}
+[2021-10-18 16:19:30.868659] Received: {"t":18866,"field":"pan.deployed","val":"false"}
+[2021-10-18 16:19:30.869046] Sent:     {"mode": 114, "field": "pan.deployment.elapsed"}
+[2021-10-18 16:19:30.873674] Received: {"t":18871,"field":"pan.deployment.elapsed","val":"0"}
+[2021-10-18 16:19:30.874076] Sent:     {"mode": 114, "field": "pan.kill_switch"}
+[2021-10-18 16:19:30.878593] Received: {"t":18876,"field":"pan.kill_switch","val":"0"}
+[2021-10-18 16:19:30.878935] Sent:     {"mode": 114, "field": "attitude_estimator.ignore_sun_vectors"}
+[2021-10-18 16:19:30.883721] Received: {"t":18880,"field":"attitude_estimator.ignore_sun_vectors","val":"false"}
+[2021-10-18 16:19:30.884092] Sent:     {"mode": 114, "field": "attitude_estimator.mag_flag"}
+[2021-10-18 16:19:30.888717] Received: {"t":18886,"field":"attitude_estimator.mag_flag","val":"false"}
