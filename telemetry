@@ -1175,6 +1175,12 @@
             "type": "lin float vector",
             "writable": false
         },
+        "cursed": {
+            "bitsize": 1,
+            "flow_id": 2,
+            "type": "bool",
+            "writable": false
+        },
         "cycle.auto": {
             "bitsize": 1,
             "flow_id": "undefined",
@@ -2916,8 +2922,9 @@
             "active": true,
             "fields": [
                 "time.valid",
-                "time.gps",
                 "orbit.valid",
+                "cursed",
+                "time.gps",
                 "orbit.pos",
                 "orbit.vel",
                 "attitude_estimator.valid",
@@ -2976,6 +2983,7 @@
             "fields": [
                 "adcs_monitor.functional_fault.base",
                 "piksi_fh.dead.base",
+                "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel3_fault.base",
                 "adcs_monitor.wheel_pot_fault.base",
