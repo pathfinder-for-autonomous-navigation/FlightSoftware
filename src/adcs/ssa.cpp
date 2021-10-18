@@ -10,9 +10,6 @@
 // Cornell Univeristy
 //
 
-// TODO : Fill in the sun sensor normal vectors
-// TODO : Consider pulling the algorithm from PSim
-
 #ifdef SSA_LOG_LEVEL
   #undef LOG_LEVEL
   #define LOG_LEVEL SSA_LOG_LEVEL
@@ -117,26 +114,31 @@ void update_sensors(float adc_flt) {
   LOG_TRACE_printlnF("Complete")
 }
 
-static lin::Matrix<float, 0, 3, 20, 3> A, Q;
-static lin::Vector<float, 0, 20> b;
-static lin::Matrix<float, 3, 3> R;
-static lin::Vector3f x;
-
 unsigned char calculate_sun_vector(lin::Vector3f &sun_vec) {
-  // Prepare least squares problem
-  std::size_t j = 0;
-  for (std::size_t i = 0; i < voltages.size(); i++) { // TODO : Only include is_functional ADCs
-    if (voltages(i) > sensor_voltage_thresh * lin::norm(lin::row(normals, i))) {
-      lin::row(A, j) = lin::row(normals, i);
-      b(j) = voltages(i);
-      j++;
+  lin::Matrixf<0, 3, 20, 3> A, Q;
+  lin::Vectorf<0, 20> b;
+  lin::Matrix<float, 3, 3> R;
+  lin::Vector3f x;
+
+  // Prepare the least squares problem
+  lin::size_t k = 0;
+  for (lin::size_t i = 0; i < 5; i++) {
+    // Skip ADCs that aren't functional
+    if (!adcs[i].is_functional()) continue;
+
+    for (lin::size_t j = 4 * i; j < 4 * i + 4; j++) {
+      if (voltages(j) > sensor_voltage_thresh) {
+        lin::row(A, k) = lin::row(normals, j);
+        b(k) = voltages(j);
+        k++;
+      }
     }
   }
   // Ensure system is overdefined
-  if (j < sensor_count_thresh) return SSAMode::SSA_FAILURE;
+  if (k < sensor_count_thresh) return SSAMode::SSA_FAILURE;
   // Calculate sun vector
-  b.resize(j, 1); // Hacky resize call
-  A.resize(j, 3);
+  b.resize(k, 1); // Hacky resize call
+  A.resize(k, 3);
   lin::qr(A, Q, R);
   lin::backward_sub(R, x, (lin::transpose(Q) * b).eval());
   // Return sun vector

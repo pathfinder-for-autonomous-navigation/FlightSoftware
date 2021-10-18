@@ -35,8 +35,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     wheel_pot_fault_fp(FIND_FAULT(adcs_monitor.wheel_pot_fault.base)),
     pressurize_fail_fp(FIND_FAULT(prop.pressurize_fail.base)),
     mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
-    is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
-    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
+    is_deployed_f("pan.deployed", Serializer<bool>(), 1),
+    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned char>(), 1),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2)),
     enter_close_approach_ccno_f("pan.enter_close_approach_ccno"),
     kill_switch_f("pan.kill_switch", Serializer<unsigned char>(), 100)
@@ -55,8 +55,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     add_internal_field(enter_close_approach_ccno_f);
     add_writable_field(kill_switch_f);
 
-    bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
-    bootcount_fp->set(bootcount_fp->get() + 1);
+    bootcount_fp = find_readable_field<unsigned char>("pan.bootcount", __FILE__, __LINE__);
 
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
 
@@ -94,6 +93,10 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
+}
+
+void MissionManager::init(){
+    bootcount_fp->set(bootcount_fp->get() + 1);
 }
 
 void MissionManager::execute()
@@ -181,13 +184,12 @@ void MissionManager::dispatch_startup()
         }
     }
 
-    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1.
-    if (bootcount_fp->get() == 1) {
-        if (deployment_wait_elapsed_f.get() < deployment_wait)
-        {
+    // Step 1. Wait for the deployment timer length.
+    if (deployment_wait_elapsed_f.get() < deployment_wait_batch_thresh)
+    {
+        if(control_cycle_count % deployment_wait_batch_size == 0)
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
-            return;
-        }
+        return;
     }
 
     // Step 2. Once we've complete the deployment wait, if any, we want to turn
@@ -195,6 +197,10 @@ void MissionManager::dispatch_startup()
     // hardware faults that would necessitate going into an initialization hold.
     // If such faults exist, go into initialization hold, otherwise detumble.
     piksi_off_fp->set(false);
+
+    // At this point the Piksi should be off, so setting this to true
+    // will turn it on.
+    piksi_powercycle_fp->set(true);
     if (radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled))
     {
         set(radio_state_t::config);

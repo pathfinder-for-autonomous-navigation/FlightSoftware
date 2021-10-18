@@ -10,7 +10,6 @@
 // Cornell Univeristy
 //
 
-// TODO : Fill in the normal vector matrices
 // TODO : Consider moving this definition to the psim repository
 
 #ifndef SRC_ADCS_SSA_CONFIG_HPP_
@@ -60,71 +59,39 @@ static unsigned long const adcx_timeout = 10000;
 /** Required number of sensors in view of the sun to calculate the sun vector
  *  via least squares. */
 static unsigned int const sensor_count_thresh = 4;
-/** Relative voltage threshold for a sun sensor to be considered in view of the
- *  sun. The actual voltage cutoff is the magnitude of the normal vector times
- *  this value. */
-static float const sensor_voltage_thresh = 0.5f;
+/** Voltage threshold for a sun sensor to be considered in view of the sun. */
+static float const sensor_voltage_thresh = 1.0f;
 
+static constexpr float s20 = std::cos(20.0);
+static constexpr float c20 = std::sin(20.0);
 /** Matrix containing the normal vectors for all sun sensors in the ADCS system.
  *  Should be defined for the leader and follower spacecraft individually. */
 static const lin::Matrix<float, 20, 3> normals({
-#ifdef PAN_LEADER
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f
-
-#elif PAN_FOLLOWER
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 0.0f
-
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
+  // Face 2 (+x)
+   c20,  0.f,  s20,
+   c20,  0.f, -s20,
+   c20, -s20,  0.f,
+   c20,  s20,  0.f,
+  // Face 3 (-y)
+  -s20, -c20,  0.f,
+   s20, -c20,  0.f,
+   0.f, -c20, -s20,
+   0.f, -c20,  s20,
+  // Face 4 (-x)
+  -c20,  s20,  0.f,
+  -c20, -s20,  0.f,
+  -c20,  0.f, -s20,
+  -c20,  0.f,  s20,
+  // Face 5 (+y)
+   s20,  c20,  0.f,
+  -s20,  c20,  0.f,
+   0.f,  c20, -s20,
+   0.f,  c20,  s20,
+  // Face 6 (+z)
+  -s20,  0.f,  c20,
+   s20,  0.f,  c20,
+   0.f, -s20,  c20,
+   0.f,  s20,  c20
 });
 }  // namespace ssa
 }  // namespace adcs

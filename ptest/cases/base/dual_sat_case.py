@@ -70,11 +70,11 @@ class DualSatCase(PTestCase):
 
         if self.leader_skip_deployment_wait:
             self.logger.put("[TESTCASE] Skipping leader deployment wait.")
-            self.flight_controller_leader.write_state("pan.deployment.elapsed", "15000")
+            self.flight_controller_leader.write_state("pan.deployment.elapsed", "106")
 
         if self.follower_skip_deployment_wait:
             self.logger.put("[TESTCASE] Skipping follower deployment wait.")
-            self.flight_controller_follower.write_state("pan.deployment.elapsed", "15000")
+            self.flight_controller_follower.write_state("pan.deployment.elapsed", "106")
 
         self.pre_boot()
 

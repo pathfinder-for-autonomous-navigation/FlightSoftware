@@ -34,11 +34,22 @@ public:
     TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);         // Meters
 
     /**
+     * @brief The number of control cycles that pass before we increment deployment elapsed counter
+     * 
+     */
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_batch_size, 100);
+
+    /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period. Should be equivalent to 30 minutes.
      */
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
-
+    
+    /**
+     * @brief The number of batches of control cycles that need to pass
+     * 
+     */
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait_batch_thresh, deployment_wait/deployment_wait_batch_size + 1);
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */
@@ -63,6 +74,12 @@ public:
         mission_state_t::initialization_hold};
 
     void set(mission_state_t state);
+
+    /**
+     * @brief A post constructor initialization function. This is to increment boot count.
+     * 
+     */
+    void init();
 
 protected:
     /**
@@ -181,7 +198,12 @@ protected:
      * @brief True if the satellite has exited the deployment timing phase.
      */
     ReadableStateField<bool> is_deployed_f;
-    ReadableStateField<unsigned int> deployment_wait_elapsed_f;
+
+    /**
+     * @brief This counts the number of batches of control cycles that have elapsed
+     * 
+     */
+    ReadableStateField<unsigned char> deployment_wait_elapsed_f;
 
     /**
      * @brief 2 if the satellite is the follower satellite. 1 if the
@@ -205,7 +227,7 @@ protected:
     /**
      * @brief Number of times the satellite has booted
      */
-    ReadableStateField<unsigned int> *bootcount_fp;
+    ReadableStateField<unsigned char> *bootcount_fp;
 
     /**
      * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)

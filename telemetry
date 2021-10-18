@@ -4,9 +4,9 @@
         "attitude_estimator.mag_flag": 1,
         "cycle.auto": 1,
         "cycle.start": 1,
-        "pan.bootcount": 1000,
-        "pan.deployed": 1000,
-        "pan.deployment.elapsed": 500,
+        "pan.bootcount": 100,
+        "pan.deployed": 1,
+        "pan.deployment.elapsed": 1,
         "pan.kill_switch": 100,
         "pan.state": 1
     },
@@ -909,7 +909,7 @@
         },
         "adcs_monitor.wheel1_fault.base": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 7,
             "type": "bool",
             "writable": true
         },
@@ -1830,11 +1830,11 @@
             "writable": false
         },
         "pan.bootcount": {
-            "bitsize": 28,
+            "bitsize": 8,
             "flow_id": 1,
-            "max": 268435455,
+            "max": 255,
             "min": 0,
-            "type": "unsigned int",
+            "type": "unsigned char",
             "writable": false
         },
         "pan.cc_duration": {
@@ -1868,11 +1868,11 @@
             "writable": false
         },
         "pan.deployment.elapsed": {
-            "bitsize": 14,
+            "bitsize": 8,
             "flow_id": 1,
-            "max": 15000,
+            "max": 255,
             "min": 0,
-            "type": "unsigned int",
+            "type": "unsigned char",
             "writable": false
         },
         "pan.kill_switch": {
@@ -2976,6 +2976,7 @@
             "fields": [
                 "adcs_monitor.functional_fault.base",
                 "piksi_fh.dead.base",
+                "adcs_monitor.wheel1_fault.base",
                 "adcs_monitor.wheel2_fault.base",
                 "adcs_monitor.wheel3_fault.base",
                 "adcs_monitor.wheel_pot_fault.base",
