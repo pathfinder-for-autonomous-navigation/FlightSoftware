@@ -70,7 +70,7 @@ jobs:
 
     - name: Hardware Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DCDCCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/hootl_speedup.json -t DCDCCheckoutCase -ni --clean
         python -m ptest runsim -c ptest/configs/hootl.json -t GomspaceCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t SpinMotorsCase -ni
         python -m ptest runsim -c ptest/configs/hootl_speedup.json -t ADCSCheckoutCase -ni
