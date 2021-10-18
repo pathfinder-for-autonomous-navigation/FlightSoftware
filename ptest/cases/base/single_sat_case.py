@@ -46,7 +46,7 @@ class SingleSatCase(PTestCase):
 
         if self.skip_deployment_wait:
             self.logger.put("[TESTCASE] Skipping deployment wait.")
-            self.flight_controller.write_state("pan.deployment.elapsed", "15000")
+            self.flight_controller.write_state("pan.deployment.elapsed", "106")
 
         if self.flight_controller.enable_auto_dbtelem:
             self.logger.put("[TESTCASE] Auto-dbtelem ACTIVE")

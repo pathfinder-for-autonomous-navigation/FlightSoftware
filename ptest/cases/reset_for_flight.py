@@ -3,6 +3,12 @@ from .utils import Enums, TestCaseFailure
 import math
 
 class ResetforFlight(SingleSatCase):
+    def __init__(self, *args, **kwargs):
+        super(ResetforFlight, self).__init__(*args, **kwargs)
+
+        self.debug_to_console = True
+        self.check_initial_state = False
+    
     def run(self):
         self.mission_state = "manual"
         self.ws( "cycle.auto", False )
@@ -27,10 +33,10 @@ class ResetforFlight(SingleSatCase):
         cycle_no = self.rs("pan.cycle_no")
         #pan.bootcount & pan.deployed have longest save duration of 1000 cycles 
         #additional 10 cycles to make sure fields are saved to EEPROM
-        cycle_duration = cycle_no + 1000 + 10 
+        cycle_duration = cycle_no + 100 + 10 
 
         while (cycle_no < cycle_duration):
-            self.print_header("cycle_no: " + str(self.rs("pan.cycle_no")))
+            self.print_rs('pan.cycle_no')
             self.ws("pan.bootcount", 0)
             self.ws("pan.deployed", False)
             self.ws("pan.deployment.elapsed", 0)
