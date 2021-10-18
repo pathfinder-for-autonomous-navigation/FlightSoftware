@@ -129,6 +129,55 @@ class StateCmdPrompt(Cmd):
         except KeyError:
             # args[0] is not an enum field.
             print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+            
+    def do_rs_psim(self, args):
+        '''
+        Read state. See usb_session.py for documentation.
+        '''
+        args = args.split()
+
+        if len(args) < 1:
+            print('Need to specify a state field to read')
+            return
+
+        start_time = timeit.default_timer()
+        try:
+            read_result = self.testcase.rs_psim(args[0])
+        except NameError:
+            read_result = None
+            print('Field with that name does not exist!')
+            return 
+            
+        elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
+        try:
+            human_readable_result = Enums()[args[0]][read_result]
+            print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+        except KeyError:
+            # args[0] is not an enum field.
+            print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")            
+            
+    def do_ws_psim(self, args):
+        '''
+        Write state. See usb_session.py for documentation.
+        '''
+        args = args.split()
+
+        if len(args) < 1:
+            print('Need to specify a state field to set')
+            return
+        elif len(args) < 2:
+            print('Need to specify the value to set')
+            return
+        
+        val = str_to_val(args[1])
+
+        start_time = timeit.default_timer()
+        write_succeeded = self.testcase.ws_psim(args[0], val)
+        elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
+        write_succeeded = "Succeeded" if write_succeeded else "Failed"
+        print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
     def do_ws(self, args):
         '''
@@ -315,3 +364,7 @@ class StateCmdPrompt(Cmd):
         '''
         self.do_quit(None)
         return True
+    
+    def do_special(self, args):
+        '''Call the special function'''
+        self.testcase.special_function()

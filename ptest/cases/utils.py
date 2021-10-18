@@ -95,9 +95,9 @@ def str_to_val(field):
         return float("NAN")
     elif '.' in field:
         return float(field)
-    elif field == 'true':
+    elif field.lower() == 'true':
         return True
-    elif field == 'false':
+    elif field.lower() == 'false':
         return False
     else:
         return int(field)

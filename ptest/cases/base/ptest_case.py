@@ -198,3 +198,6 @@ class PTestCase(object):
         else: 
             self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
+    def special_function(self):
+        '''A special function to be overriden by a case that can be called from the console'''
+        pass
