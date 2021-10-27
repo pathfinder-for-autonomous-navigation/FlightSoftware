@@ -245,8 +245,8 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     packet_size += id_sr.bitsize();
 
     debug_console::printf(debug_severity::info, "New packet");
-    for(auto const& field: field_list) {
-        packet_size += field->get_bit_array().size();
+    for (auto const &field : field_list)
+    {
         size_t field_size = field->get_bit_array().size();
         debug_console::printf(debug_severity::info, "bitsize of field: %d", field_size);
         packet_size += field_size;
