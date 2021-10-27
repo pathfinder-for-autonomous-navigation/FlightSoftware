@@ -40,7 +40,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         most_recent_frame = packet;
         ret["metadata"]["error"] = false;
         ret["metadata"]["flow_ids"] = json::array();
-
+        ret["metadata"]["log"] = json::array();
+        
         // Process the downlink frame in four steps.
 
         // Step 1: Manage the downlink frame at a bit level.
@@ -184,6 +185,11 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
 
                     ret["data"][field->name()] = std::string(field->print());
                     frame_bits.erase(frame_bits.begin(), field_end_it);
+
+                    std::string data;
+                    for(int i = 0; i < field->get_bit_array().size(); i++) data += field_bits[i] ? "1" : "0";
+                    ret["metadata"]["log"].push_back("Field " + field->name() + " bits: " + data);
+                    field->set_bit_array(field_bits);
                 }
             }
         }
