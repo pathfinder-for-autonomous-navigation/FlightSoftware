@@ -33,6 +33,7 @@ TimeEstimator::TimeEstimator(StateFieldRegistry &registry)
 
     time_valid_f.set(false);
     time_reset_cmd_f.set(false);
+    time_gps_f.set(time_gps_f.get() + PAN::control_cycle_time_ns);
 }
 
 void TimeEstimator::execute()
@@ -62,7 +63,8 @@ void TimeEstimator::execute()
 
         // No valid time reading from Piksi
         default:
-            time_gps_f.set(time_gps_f.get() + PAN::control_cycle_time_ns);
+            // time_gps_f.set(time_gps_f.get() + PAN::control_cycle_time_ns);
+            // time_gps_f.set(time_gps_f.get());
             break;
     }
 

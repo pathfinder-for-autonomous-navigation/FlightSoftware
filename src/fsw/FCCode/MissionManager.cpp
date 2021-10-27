@@ -55,7 +55,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry)
     add_internal_field(enter_close_approach_ccno_f);
     add_writable_field(kill_switch_f);
 
-    bootcount_fp = find_readable_field<unsigned char>("pan.bootcount", __FILE__, __LINE__);
+    bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
 
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
 

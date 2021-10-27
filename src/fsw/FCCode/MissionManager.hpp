@@ -227,7 +227,7 @@ protected:
     /**
      * @brief Number of times the satellite has booted
      */
-    ReadableStateField<unsigned char> *bootcount_fp;
+    ReadableStateField<unsigned int> *bootcount_fp;
 
     /**
      * @brief True if Gomspace is not supplying power to port that Piksi is connected to (OUT-1)
