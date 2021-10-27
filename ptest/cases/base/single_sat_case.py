@@ -107,8 +107,6 @@ class SingleSatCase(PTestCase):
 
         super(SingleSatCase, self).cycle()
 
-        if self.flight_controller.scrape:
-            self.flight_controller.scrape_uplink()
         if self.flight_controller.enable_auto_dbtelem:
             self.flight_controller.dbtelem()
 
