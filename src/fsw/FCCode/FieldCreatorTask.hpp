@@ -23,7 +23,7 @@ public:
 
   FieldCreatorTask(StateFieldRegistry &r)
       : ControlTask<void>(r),
-        bootcount_f("pan.bootcount", Serializer<unsigned int>(0xffffffff), 100),
+        bootcount_f("pan.bootcount", Serializer<unsigned int>(0x7fffffff), 100),
         cursed_bit_f("cursed", Serializer<bool>())
   {
     add_readable_field(bootcount_f);
