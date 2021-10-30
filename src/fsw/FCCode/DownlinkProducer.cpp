@@ -79,17 +79,23 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
     const size_t field_size = field_bits.size();
 
     std::string field;
-    for (int i = 0; i < field_size; i++)
-        field += field_bits[i] ? "1" : "0";
 
-    debug_console::printf(debug_severity::info, "Printing bits at position %d: %s", packet_offset, field.c_str());
+    bit_array field_bits_1s = bit_array(field_size);
+
+    for (int i = 0; i < field_size; i++)
+    {
+        field_bits_1s[i] = 1;
+        field += field_bits_1s[i] ? "1" : "0";
+    }
+
+    debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str());
 
     const int field_overflow = (field_size + packet_offset)
         - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
 
     if(field_overflow <= 0) {
         // Contiguously write field to snapshot buffer
-        field_bits.to_string(snapshot_ptr, downlink_frame_offset);
+        field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset);
         downlink_frame_offset += field_size;
         packet_offset += field_size;
     }
@@ -98,7 +104,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         const int x = field_size - field_overflow; // # of bits in field that don't overrun a packet
 
         // Copy first part of field
-        field_bits.to_string(snapshot_ptr, downlink_frame_offset, 0, x);
+        field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset, 0, x);
         downlink_frame_offset += x;
         packet_offset = 0;
 
@@ -109,7 +115,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         packet_offset += 1;
 
         // Copy the rest of the field
-        field_bits.to_string(snapshot_ptr, downlink_frame_offset, x, field_size);
+        field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset, x, field_size);
         downlink_frame_offset += field_overflow;
         packet_offset += field_overflow;
     }

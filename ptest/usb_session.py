@@ -157,6 +157,7 @@ class USBSession(object):
         '''
 
         while self.running_logger:
+            bit_debug_value_msgs = []
             try:
                 # Read line coming from device and parse it
                 if self.console.inWaiting() > 0:
@@ -172,6 +173,10 @@ class USBSession(object):
                     # The logline represents a debugging message created by Flight Software. Report the message to the logger.
                     logline = f"[{data['time']}] ({data['svrty']}) {data['msg']}"
                     self.logger.put(logline, add_time = False)
+
+                    if "FLOWINSPECT" in data['msg']:
+                        bit_debug_value_msgs.append(data['msg'])
+                        print(data['msg'])
 
                     # If we want debug to go to the console
                     if self.debug_to_console:
