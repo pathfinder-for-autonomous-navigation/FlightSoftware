@@ -172,16 +172,16 @@ void DownlinkProducer::execute() {
                 const bit_array& field_bits = field->get_bit_array();
                 debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %d, size %d", id, flow.get_packet_size());
 
-                std::string packet_str;
-                for (int j = 0; j < compute_downlink_size(); j++)
-                {
-                    char c = snapshot[j];
-                    for (int i = 7; i >= 0; --i)
-                    {
-                        packet_str += ((c & (1 << i)) ? '1' : '0');
-                    }
-                }
-                debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %s", packet_str.c_str());
+                // std::string packet_str;
+                // for (int j = 0; j < compute_downlink_size(); j++)
+                // {
+                //     char c = snapshot[j];
+                //     for (int i = 7; i >= 0; --i)
+                //     {
+                //         packet_str += ((c & (1 << i)) ? '1' : '0');
+                //     }
+                // }
+                // debug_console::printf(debug_severity::info, "FLOWINSPECT: %s", packet_str.c_str());
 
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
