@@ -71,7 +71,7 @@ size_t DownlinkProducer::compute_max_downlink_size() const {
     return compute_downlink_size(true);
 }
 
-static void add_bits_to_downlink_frame(const bit_array& field_bits,
+void DownlinkProducer::add_bits_to_downlink_frame(const bit_array& field_bits,
                                        char* snapshot_ptr,
                                        size_t& packet_offset,
                                        size_t& downlink_frame_offset)
@@ -82,7 +82,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 
     bit_array field_bits_1s = bit_array(field_size);
 
-    for (int i = 0; i < field_size; i++)
+    for (size_t i = 0; i < field_size; i++)
     {
         field_bits_1s[i] = 1;
         field += field_bits_1s[i] ? "1" : "0";
@@ -110,16 +110,51 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         downlink_frame_offset += x;
         packet_offset = 0;
 
+        std::string packet_str;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOWINSPECT: %s", packet_str.c_str());
+
         // Mark the header for a new packet
         char& packet_start = snapshot_ptr[(downlink_frame_offset / 70)];
         packet_start = bit_array::modify_bit(packet_start, 7, 0);
         downlink_frame_offset += 1;
         packet_offset += 1;
 
+        std::string packet_str1;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str1 += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOWINSPECT POST MARK: %s", packet_str.c_str());
+
+
         // Copy the rest of the field
         field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset, x, field_size);
         downlink_frame_offset += field_overflow;
         packet_offset += field_overflow;
+
+        std::string packet_str2;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str2 += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOW POST REST: %s", packet_str.c_str());
+
     }
 }
 
@@ -191,10 +226,10 @@ void DownlinkProducer::execute() {
     }
 
     std::string packet_str;
-    for (int j = 0; j < compute_downlink_size(); j++)
+    for (size_t  j = 0; j < compute_downlink_size(); j++)
     {
         char c = snapshot[j];
-        for (int i = 7; i >= 0; --i)
+        for (size_t i = 7; i >= 0; --i)
         {
             packet_str += ((c & (1 << i)) ? '1' : '0');
         }

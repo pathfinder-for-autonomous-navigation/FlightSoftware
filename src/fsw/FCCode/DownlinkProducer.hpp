@@ -54,6 +54,10 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     size_t compute_downlink_size(const bool compute_max = false) const;
     size_t compute_max_downlink_size() const;
+    void add_bits_to_downlink_frame(const bit_array& field_bits,
+                                        char* snapshot_ptr,
+                                        size_t& packet_offset,
+                                        size_t& downlink_frame_offset);
 
     /**
      * @brief Produce flow packets as needed, and keep track of the next

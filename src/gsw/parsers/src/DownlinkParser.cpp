@@ -196,7 +196,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                     field->deserialize();
 
                     std::string field_bit_str;
-                    for (int i = 0; i < field_bits.size(); i++)
+                    for (size_t  i = 0; i < field_bits.size(); i++)
                         field_bit_str += field_bits[i] ? "1" : "0";
                     // debug_console::printf(debug_severity::info, "FLOWINSPECT Downlink");
                     // debug_console::printf(debug_severity::info, "FLOWINSPECT Downlink: %s", field_bit_str.c_str());
@@ -209,7 +209,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                     frame_bits.erase(frame_bits.begin(), field_end_it);
 
                     std::string data;
-                    for(int i = 0; i < field->get_bit_array().size(); i++) data += field_bits[i] ? "1" : "0";
+                    for(size_t  i = 0; i < field->get_bit_array().size(); i++) data += field_bits[i] ? "1" : "0";
                     ret["metadata"]["log"].push_back("Field " + field->name() + " bits: " + data);
                     field->set_bit_array(field_bits);
                 }
