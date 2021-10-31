@@ -112,7 +112,8 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 
         // Mark the header for a new packet
         char& packet_start = snapshot_ptr[(downlink_frame_offset / 70)];
-        packet_start = bit_array::modify_bit(packet_start, 7, 0);
+        debug_console::printf(debug_severity::info, "FLOWINSPECT splitting packet start, d/70 %d %d", packet_start, (downlink_frame_offset / 70));
+        //packet_start = bit_array::modify_bit(packet_start, 7, 0); //cursed
         downlink_frame_offset += 1;
         packet_offset += 1;
 
@@ -163,14 +164,14 @@ void DownlinkProducer::execute() {
             if (event) {
                 // Event should be serialized when it is signaled
                 const bit_array& event_bits = event->get_bit_array();
-                debug_console::printf(debug_severity::info, "FLOWINSPECT event flow id: %d, size %d", id, flow.get_packet_size());
+                //debug_console::printf(debug_severity::info, "FLOWINSPECT event flow id: %d, size %d", id, flow.get_packet_size());
                 add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
             }
             else{
                 field->serialize();
                 const bit_array& field_bits = field->get_bit_array();
-                debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %d, size %d", id, flow.get_packet_size());
+                //debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %d, size %d", id, flow.get_packet_size());
 
                 // std::string packet_str;
                 // for (int j = 0; j < compute_downlink_size(); j++)
@@ -181,7 +182,7 @@ void DownlinkProducer::execute() {
                 //         packet_str += ((c & (1 << i)) ? '1' : '0');
                 //     }
                 // }
-                // debug_console::printf(debug_severity::info, "FLOWINSPECT: %s", packet_str.c_str());
+                // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str());
 
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
@@ -190,15 +191,16 @@ void DownlinkProducer::execute() {
         id++;
     }
 
-    std::string packet_str;
-    for (int j = 0; j < compute_downlink_size(); j++)
-    {
-        char c = snapshot[j];
-        for (int i = 7; i >= 0; --i)
-        {
-            packet_str += ((c & (1 << i)) ? '1' : '0');
-        }
-    }
+    // std::string packet_str;
+    // for (int j = 0; j < compute_downlink_size(); j++)
+    // {
+    //     char c = snapshot[j];
+    //     for (int i = 7; i >= 0; --i)
+    //     {
+    //         packet_str += ((c & (1 << i)) ? '1' : '0');
+    //     }
+    // }
+    // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str()
 
     //BAD 0s at this point
 
