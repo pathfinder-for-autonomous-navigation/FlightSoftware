@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <set>
 
-DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<void>(r, "downlink_ct"),
-                                 snapshot_ptr_f("downlink.ptr"),
-                                 snapshot_size_bytes_f("downlink.snap_size")
+DownlinkProducer::DownlinkProducer(StateFieldRegistry &r) : TimedControlTask<void>(r, "downlink_ct"),
+                                                            snapshot_ptr_f("downlink.ptr"),
+                                                            snapshot_size_bytes_f("downlink.snap_size")
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
@@ -13,7 +13,8 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r) : TimedControlTask<voi
     add_internal_field(snapshot_size_bytes_f);
 }
 
-void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
+void DownlinkProducer::init_flows(const std::vector<FlowData> &flow_data)
+{
     toggle_flow_id_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.toggle_id", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id1_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id1", Serializer<unsigned char>(flow_data.size()));
     shift_flows_id2_fp = std::make_unique<WritableStateField<unsigned char>>("downlink.shift_id2", Serializer<unsigned char>(flow_data.size()));
@@ -23,19 +24,22 @@ void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     toggle_flow_id_fp->set(0);
     shift_flows_id1_fp->set(0);
     shift_flows_id2_fp->set(0);
-    
+
     // Create flow objects out of the flow data. Ensure that
     // no two flows have the same ID.
     std::set<unsigned char> ids;
     const size_t num_flows = flow_data.size();
     flows.reserve(num_flows);
-    for (const FlowData& flow : flow_data) {
-        if (ids.find(flow.id) != ids.end()) {
+    for (const FlowData &flow : flow_data)
+    {
+        if (ids.find(flow.id) != ids.end())
+        {
             printf(debug_severity::error, "Two flows share the same ID: %d", flow.id);
             assert(false);
         }
-        flows.emplace_back(_registry, flow, num_flows); 
-        if (flow.is_active) num_active_flows++;
+        flows.emplace_back(_registry, flow, num_flows);
+        if (flow.is_active)
+            num_active_flows++;
     }
 
     // Set the snapshot size to the maximum possible downlink size,
@@ -47,10 +51,12 @@ void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     snapshot_size_bytes_f.set(max_downlink_size);
 }
 
-size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
+size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const
+{
     size_t downlink_max_size_bits = 0;
 
-    for (const Flow& flow : flows) {
+    for (const Flow &flow : flows)
+    {
         if (flow.is_active || compute_max)
             downlink_max_size_bits += flow.get_packet_size();
     }
@@ -67,14 +73,15 @@ size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
     return downlink_max_size_bytes;
 }
 
-size_t DownlinkProducer::compute_max_downlink_size() const {
+size_t DownlinkProducer::compute_max_downlink_size() const
+{
     return compute_downlink_size(true);
 }
 
-static void add_bits_to_downlink_frame(const bit_array& field_bits,
-                                       char* snapshot_ptr,
-                                       size_t& packet_offset,
-                                       size_t& downlink_frame_offset)
+void DownlinkProducer::add_bits_to_downlink_frame(const bit_array &field_bits,
+                                                  char *snapshot_ptr,
+                                                  size_t &packet_offset,
+                                                  size_t &downlink_frame_offset)
 {
     const size_t field_size = field_bits.size();
 
@@ -82,7 +89,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 
     bit_array field_bits_1s = bit_array(field_size);
 
-    for (int i = 0; i < field_size; i++)
+    for (size_t i = 0; i < field_size; i++)
     {
         field_bits_1s[i] = 1;
         field += field_bits_1s[i] ? "1" : "0";
@@ -90,16 +97,17 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 
     //debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str()); //all 1s this is fine
 
-    const int field_overflow = (field_size + packet_offset)
-        - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
+    const int field_overflow = (field_size + packet_offset) - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
 
-    if(field_overflow <= 0) {
+    if (field_overflow <= 0)
+    {
         // Contiguously write field to snapshot buffer
         field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset);
         downlink_frame_offset += field_size;
         packet_offset += field_size;
     }
-    else {
+    else
+    {
 
         debug_console::printf(debug_severity::info, "FLOWINSPECT splitting field size %d", field_size);
         // Split field across two packets
@@ -110,26 +118,60 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         downlink_frame_offset += x;
         packet_offset = 0;
 
+        std::string packet_str;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOWINSPECT: %s", packet_str.c_str());
+
         // Mark the header for a new packet
-        char& packet_start = snapshot_ptr[(downlink_frame_offset / 70)];
+        char &packet_start = snapshot_ptr[(downlink_frame_offset / 70)];
         debug_console::printf(debug_severity::info, "FLOWINSPECT splitting packet start, d/70 %d %d", packet_start, (downlink_frame_offset / 70));
         //packet_start = bit_array::modify_bit(packet_start, 7, 0); //cursed
         downlink_frame_offset += 1;
         packet_offset += 1;
 
+        std::string packet_str1;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str1 += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOWINSPECT POST MARK: %s", packet_str.c_str());
+
         // Copy the rest of the field
         field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset, x, field_size);
         downlink_frame_offset += field_overflow;
         packet_offset += field_overflow;
+
+        std::string packet_str2;
+        for (size_t j = 0; j < compute_downlink_size(); j++)
+        {
+            char c = snapshot[j];
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str2 += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+        debug_console::printf(debug_severity::info, "FLOW POST REST: %s", packet_str.c_str());
     }
 }
 
-void DownlinkProducer::execute() {
+void DownlinkProducer::execute()
+{
     // Set the snapshot size in order to let the Quake Manager know about
     // the size of the current downlink.
     snapshot_size_bytes_f.set(compute_downlink_size());
 
-    char* snapshot_ptr = snapshot_ptr_f.get();
+    char *snapshot_ptr = snapshot_ptr_f.get();
     // Create the required iterators
     size_t downlink_frame_offset = 0; // Bit offset from the beginning
                                       // of the snapshot buffer
@@ -143,34 +185,39 @@ void DownlinkProducer::execute() {
 
     // Add control cycle count to the initial packet
     cycle_count_fp->serialize();
-    const bit_array& cycle_count_bits = cycle_count_fp->get_bit_array();
+    const bit_array &cycle_count_bits = cycle_count_fp->get_bit_array();
     debug_console::printf(debug_severity::info, "cycle count");
     add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
-            downlink_frame_offset);
+                               downlink_frame_offset);
 
     int id = 1;
-    for(auto const& flow : flows) {
-        if (!flow.is_active) continue;
+    for (auto const &flow : flows)
+    {
+        if (!flow.is_active)
+            continue;
 
         // Add a flow field one at a time to the snapshot, taking
         // care to add a downlink packet delimeter if the current
         // packet size exceeds 70 bytes.
-        const bit_array& flow_id_bits = flow.id_sr.get_bit_array();
+        const bit_array &flow_id_bits = flow.id_sr.get_bit_array();
         add_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
-            downlink_frame_offset);
+                                   downlink_frame_offset);
 
-        for(auto& field : flow.field_list) {
-            Event* event = _registry.find_event(field->name());
-            if (event) {
+        for (auto &field : flow.field_list)
+        {
+            Event *event = _registry.find_event(field->name());
+            if (event)
+            {
                 // Event should be serialized when it is signaled
-                const bit_array& event_bits = event->get_bit_array();
+                const bit_array &event_bits = event->get_bit_array();
                 //debug_console::printf(debug_severity::info, "FLOWINSPECT event flow id: %d, size %d", id, flow.get_packet_size());
                 add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
-                    downlink_frame_offset);
+                                           downlink_frame_offset);
             }
-            else{
+            else
+            {
                 field->serialize();
-                const bit_array& field_bits = field->get_bit_array();
+                const bit_array &field_bits = field->get_bit_array();
                 //debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %d, size %d", id, flow.get_packet_size());
 
                 // std::string packet_str;
@@ -185,7 +232,7 @@ void DownlinkProducer::execute() {
                 // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str());
 
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
-                    downlink_frame_offset);
+                                           downlink_frame_offset);
             }
         }
         id++;
@@ -206,75 +253,87 @@ void DownlinkProducer::execute() {
 
     // If there are bits remaining in the last character of the downlink frame,
     // fill them with zeroes.
-    const unsigned int num_remaining_bits = 8 - (downlink_frame_offset % 8); 
-    for(int i = num_remaining_bits - 1; i >= 0; i--) {
-        char& last_char = snapshot_ptr[(downlink_frame_offset / 8)];
+    const unsigned int num_remaining_bits = 8 - (downlink_frame_offset % 8);
+    for (int i = num_remaining_bits - 1; i >= 0; i--)
+    {
+        char &last_char = snapshot_ptr[(downlink_frame_offset / 8)];
         last_char = bit_array::modify_bit(last_char, i, 0);
     }
 
     // Shift flow priorities
-    if (shift_flows_id1_fp->get()>0 && shift_flows_id2_fp->get()>0) {
+    if (shift_flows_id1_fp->get() > 0 && shift_flows_id2_fp->get() > 0)
+    {
         shift_flow_priorities(shift_flows_id1_fp->get(), shift_flows_id2_fp->get());
         shift_flows_id1_fp->set(0);
         shift_flows_id2_fp->set(0);
     }
 
-    if (toggle_flow_id_fp->get()>0) {
+    if (toggle_flow_id_fp->get() > 0)
+    {
         toggle_flow(toggle_flow_id_fp->get());
         toggle_flow_id_fp->set(0);
     }
 }
 
-DownlinkProducer::~DownlinkProducer() {
+DownlinkProducer::~DownlinkProducer()
+{
     delete[] snapshot;
 }
 
 #if defined GSW || defined DESKTOP
-const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
+const std::vector<DownlinkProducer::Flow> &DownlinkProducer::get_flows() const
+{
     return flows;
 }
 #endif
 
-DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
-                        const FlowData& flow_data,
-                        const size_t num_flows) : id_sr(num_flows),
-                                                  is_active(flow_data.is_active)
+DownlinkProducer::Flow::Flow(const StateFieldRegistry &r,
+                             const FlowData &flow_data,
+                             const size_t num_flows) : id_sr(num_flows),
+                                                       is_active(flow_data.is_active)
 {
-    if (flow_data.id > num_flows || flow_data.id == 0) {
+    if (flow_data.id > num_flows || flow_data.id == 0)
+    {
         printf(debug_severity::error, "Flow ID %d is invalid.", flow_data.id);
         assert(false);
     }
 
     id_sr.serialize(flow_data.id);
 
-    for(std::string const& field_name : flow_data.field_list) {
-        ReadableStateFieldBase* field_ptr = r.find_readable_field(field_name);
-        Event* event_ptr = r.find_event(field_name);
-        if (event_ptr && !field_ptr) {
-            ReadableStateFieldBase* casted_event_ptr = dynamic_cast<ReadableStateFieldBase*>(event_ptr);
+    for (std::string const &field_name : flow_data.field_list)
+    {
+        ReadableStateFieldBase *field_ptr = r.find_readable_field(field_name);
+        Event *event_ptr = r.find_event(field_name);
+        if (event_ptr && !field_ptr)
+        {
+            ReadableStateFieldBase *casted_event_ptr = dynamic_cast<ReadableStateFieldBase *>(event_ptr);
             field_list.push_back(casted_event_ptr);
         }
-        else if (field_ptr && !event_ptr){
+        else if (field_ptr && !event_ptr)
+        {
             field_list.push_back(field_ptr);
         }
-        else {
-            printf(debug_severity::error, 
-                "Field %s was not found in registry when constructing flows.",
-                field_name.c_str());
+        else
+        {
+            printf(debug_severity::error,
+                   "Field %s was not found in registry when constructing flows.",
+                   field_name.c_str());
             assert(false);
         }
     }
 
     const bool flow_too_large = get_packet_size() > num_bits_in_packet - 1 - 32;
-    if (flow_too_large) {
-        printf(debug_severity::error, 
-            "Flow %d is too large, with a size of %d bits.",
-            flow_data.id, get_packet_size());
+    if (flow_too_large)
+    {
+        printf(debug_severity::error,
+               "Flow %d is too large, with a size of %d bits.",
+               flow_data.id, get_packet_size());
         assert(false);
     }
 }
 
-size_t DownlinkProducer::Flow::get_packet_size() const {
+size_t DownlinkProducer::Flow::get_packet_size() const
+{
     // Get bitcount of all fields in the flow
     size_t packet_size = 0;
     packet_size += id_sr.bitsize();
@@ -290,57 +349,75 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     return packet_size;
 }
 
-void DownlinkProducer::toggle_flow(unsigned char id) {
-    if(id > flows.size()) {
+void DownlinkProducer::toggle_flow(unsigned char id)
+{
+    if (id > flows.size())
+    {
         printf(debug_severity::error, "Flow with ID %d was not found.", id);
         assert(false);
     }
 
-    for(size_t idx = 0; idx < flows.size(); idx++) {
+    for (size_t idx = 0; idx < flows.size(); idx++)
+    {
         unsigned char flow_id;
         flows[idx].id_sr.deserialize(&flow_id);
-        if (flow_id == id) {
-            bool& is_active = flows[idx].is_active;
-            if (is_active) num_active_flows--;
-            else num_active_flows++;
+        if (flow_id == id)
+        {
+            bool &is_active = flows[idx].is_active;
+            if (is_active)
+                num_active_flows--;
+            else
+                num_active_flows++;
             is_active = !is_active;
             break;
         }
     }
 }
 
-void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
-    if(id1 > flows.size()) {
+void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2)
+{
+    if (id1 > flows.size())
+    {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to shift with flow ID %d.", id1, id2);
+                                      "trying to shift with flow ID %d.",
+               id1, id2);
         assert(false);
     }
-    if(id2 > flows.size()) {
+    if (id2 > flows.size())
+    {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to shift with flow ID %d.", id2, id1);
+                                      "trying to shift with flow ID %d.",
+               id2, id1);
         assert(false);
     }
 
     size_t idx1 = 0, idx2 = 0;
-    for(size_t idx = 0; idx < flows.size(); idx++) {
+    for (size_t idx = 0; idx < flows.size(); idx++)
+    {
         unsigned char flow_id;
         flows[idx].id_sr.deserialize(&flow_id);
-        if (flow_id == id1) {
+        if (flow_id == id1)
+        {
             idx1 = idx;
         }
-        if (flow_id == id2) {
+        if (flow_id == id2)
+        {
             idx2 = idx;
         }
     }
-    
-    if (idx1>idx2) {
-        for (size_t i = idx1; i > idx2; i--) {
-            std::swap(flows[i], flows[i-1]);
+
+    if (idx1 > idx2)
+    {
+        for (size_t i = idx1; i > idx2; i--)
+        {
+            std::swap(flows[i], flows[i - 1]);
         }
     }
-    else if (idx2>idx1) {
-        for (size_t i = idx1; i < idx2; i++) {
-            std::swap(flows[i],flows[i+1]);
+    else if (idx2 > idx1)
+    {
+        for (size_t i = idx1; i < idx2; i++)
+        {
+            std::swap(flows[i], flows[i + 1]);
         }
     }
 }
