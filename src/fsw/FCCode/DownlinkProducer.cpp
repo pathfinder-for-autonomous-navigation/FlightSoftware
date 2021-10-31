@@ -88,7 +88,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         field += field_bits_1s[i] ? "1" : "0";
     }
 
-    debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str());
+    //debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str()); //all 1s this is fine
 
     const int field_overflow = (field_size + packet_offset)
         - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
@@ -100,6 +100,8 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
         packet_offset += field_size;
     }
     else {
+
+        debug_console::printf(debug_severity::info, "FLOWINSPECT splitting field size %d", field_size);
         // Split field across two packets
         const int x = field_size - field_overflow; // # of bits in field that don't overrun a packet
 
@@ -161,19 +163,44 @@ void DownlinkProducer::execute() {
             if (event) {
                 // Event should be serialized when it is signaled
                 const bit_array& event_bits = event->get_bit_array();
-                debug_console::printf(debug_severity::info, "flow id: %d, size %d", id, flow.get_packet_size());
+                debug_console::printf(debug_severity::info, "FLOWINSPECT event flow id: %d, size %d", id, flow.get_packet_size());
                 add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
             }
             else{
                 field->serialize();
                 const bit_array& field_bits = field->get_bit_array();
+                debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %d, size %d", id, flow.get_packet_size());
+
+                std::string packet_str;
+                for (int j = 0; j < compute_downlink_size(); j++)
+                {
+                    char c = snapshot[j];
+                    for (int i = 7; i >= 0; --i)
+                    {
+                        packet_str += ((c & (1 << i)) ? '1' : '0');
+                    }
+                }
+                debug_console::printf(debug_severity::info, "FLOWINSPECT flow id: %s", packet_str.c_str());
+
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
             }
         }
         id++;
     }
+
+    std::string packet_str;
+    for (int j = 0; j < compute_downlink_size(); j++)
+    {
+        char c = snapshot[j];
+        for (int i = 7; i >= 0; --i)
+        {
+            packet_str += ((c & (1 << i)) ? '1' : '0');
+        }
+    }
+
+    //BAD 0s at this point
 
     // If there are bits remaining in the last character of the downlink frame,
     // fill them with zeroes.

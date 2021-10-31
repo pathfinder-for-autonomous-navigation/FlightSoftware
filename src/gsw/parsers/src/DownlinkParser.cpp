@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <json.hpp>
+#include <iostream>
 
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
@@ -36,12 +37,23 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
     else {
         // The packet is the start of a new downlink frame.
         // Process the most recently collected frame.
+
+        std::string packet_str;
+        for (auto c : packet)
+        {
+            for (int i = 7; i >= 0; --i)
+            {
+                packet_str += ((c & (1 << i)) ? '1' : '0');
+            }
+        }
+
         const std::vector<char> frame_to_process = most_recent_frame;
         most_recent_frame = packet;
         ret["metadata"]["error"] = false;
         ret["metadata"]["flow_ids"] = json::array();
         ret["metadata"]["log"] = json::array();
-        
+        ret["metadata"]["packet_str"] = packet_str;
+
         // Process the downlink frame in four steps.
 
         // Step 1: Manage the downlink frame at a bit level.
@@ -182,6 +194,16 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                     const std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
                     field->set_bit_array(field_bits);
                     field->deserialize();
+
+                    std::string field_bit_str;
+                    for (int i = 0; i < field_bits.size(); i++)
+                        field_bit_str += field_bits[i] ? "1" : "0";
+                    // debug_console::printf(debug_severity::info, "FLOWINSPECT Downlink");
+                    // debug_console::printf(debug_severity::info, "FLOWINSPECT Downlink: %s", field_bit_str.c_str());
+                    // std::ofstream myfile;
+                    // myfile.open("flowinspect_dp.txt");
+                    // myfile << field_bit_str.c_str();
+                    // myfile.close();
 
                     ret["data"][field->name()] = std::string(field->print());
                     frame_bits.erase(frame_bits.begin(), field_end_it);

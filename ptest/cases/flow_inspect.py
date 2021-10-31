@@ -40,11 +40,11 @@ class FlowInspect(SingleSatCase):
         print(parsetelem_results)
         parsetelem_results ={k:str_to_val(v) for k,v in parsetelem_results.items()}
         
-        # print('PARSETELEM RESULTS: ')
-        # print(parsetelem_results)
+        print('PARSETELEM RESULTS: ')
+        print(parsetelem_results)
      
-        # print('RS RESULTS: ')       
-        # print(rs_results)
+        print('RS RESULTS: ')       
+        print(rs_results)
 
         diffs = [sf_name for sf_name in self.all_state_fields if parsetelem_results[sf_name] != rs_results[sf_name]]
         

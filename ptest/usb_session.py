@@ -451,6 +451,7 @@ class USBSession(object):
 
         if telem_json_data is not None:
             print(telem_json_data["metadata"]["log"])
+            print("FLOWINSPECT ret "+ telem_json_data["metadata"]["packet_str"])
             telem_json_data = telem_json_data["data"]
         return telem_json_data
 
