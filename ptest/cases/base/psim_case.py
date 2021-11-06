@@ -130,7 +130,7 @@ class PSimCase(PTestCase):
         gps_is_valid = self.__sim[f"sensors.{satellite}.gps.valid"]
 
         if gps_is_valid:
-            if self.__sim.get(f"sensors.{satellite}.cdgps.valid"):
+            if self.__sim.get(f"sensors.{satellite}.cdgps.valid") and self.allow_rtk:
                 sensors["piksi.state"] = Enums.piksi_modes["fixed_rtk"]
                 sensors["piksi.baseline_pos"] = list(self.__sim[f"sensors.{satellite}.cdgps.dr"])
             else:
