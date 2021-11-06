@@ -240,8 +240,9 @@ void DownlinkProducer::execute()
                 //     }
                 // }
                 // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str());
-                debug_console::printf(debug_severity::info, "field_name %s", field->name());
-                assert(false);
+                debug_console::printf(debug_severity::info, "field_name %s\n", field->name().c_str());
+                debug_console::printf(debug_severity::info, "fieldaa_name %d\n", 0);
+
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                                            downlink_frame_offset);
             }
