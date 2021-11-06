@@ -88,14 +88,24 @@ void DownlinkProducer::add_bits_to_downlink_frame(const bit_array &field_bits,
     std::string field;
 
     bit_array field_bits_1s = bit_array(field_size);
-
-    for (size_t i = 0; i < field_size; i++)
-    {
-        field_bits_1s[i] = 1;
-        field += field_bits_1s[i] ? "1" : "0";
+    
+    if(field_size == 62){
+        for (size_t i = 0; i < field_size; i++)
+        {
+            field_bits_1s[i] = 1;
+            field += field_bits_1s[i] ? "1" : "0";
+        }
+    }
+    else{
+        for (size_t i = 0; i < field_size; i++)
+        {
+            field_bits_1s[i] = 1;
+            field += field_bits_1s[i] ? "1" : "0";
+        }
     }
 
-    //debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str()); //all 1s this is fine
+    debug_console::printf(debug_severity::info, "FLOWINSPECT Printing bits at position %d: %s", packet_offset, field.c_str()); //all 1s this is fine
+    debug_console::printf(debug_severity::info, "FLOWINSPECT Downlink Offset at position %d", downlink_frame_offset); //all 1s this is fine
 
     const int field_overflow = (field_size + packet_offset) - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
 
@@ -132,7 +142,7 @@ void DownlinkProducer::add_bits_to_downlink_frame(const bit_array &field_bits,
         // Mark the header for a new packet
         char &packet_start = snapshot_ptr[(downlink_frame_offset / 70)];
         debug_console::printf(debug_severity::info, "FLOWINSPECT splitting packet start, d/70 %d %d", packet_start, (downlink_frame_offset / 70));
-        //packet_start = bit_array::modify_bit(packet_start, 7, 0); //cursed
+        packet_start = bit_array::modify_bit(packet_start, 7, 0); //cursed
         downlink_frame_offset += 1;
         packet_offset += 1;
 
@@ -145,7 +155,7 @@ void DownlinkProducer::add_bits_to_downlink_frame(const bit_array &field_bits,
                 packet_str1 += ((c & (1 << i)) ? '1' : '0');
             }
         }
-        debug_console::printf(debug_severity::info, "FLOWINSPECT POST MARK: %s", packet_str.c_str());
+        debug_console::printf(debug_severity::info, "FLOWINSPECT POST MARK: %s", packet_str1.c_str());
 
         // Copy the rest of the field
         field_bits_1s.to_string(snapshot_ptr, downlink_frame_offset, x, field_size);
@@ -161,7 +171,7 @@ void DownlinkProducer::add_bits_to_downlink_frame(const bit_array &field_bits,
                 packet_str2 += ((c & (1 << i)) ? '1' : '0');
             }
         }
-        debug_console::printf(debug_severity::info, "FLOW POST REST: %s", packet_str.c_str());
+        debug_console::printf(debug_severity::info, "FLOW POST REST: %s", packet_str2.c_str());
     }
 }
 
@@ -230,7 +240,8 @@ void DownlinkProducer::execute()
                 //     }
                 // }
                 // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str());
-
+                debug_console::printf(debug_severity::info, "field_name %s", field->name());
+                assert(false);
                 add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                                            downlink_frame_offset);
             }
@@ -238,16 +249,16 @@ void DownlinkProducer::execute()
         id++;
     }
 
-    // std::string packet_str;
-    // for (int j = 0; j < compute_downlink_size(); j++)
-    // {
-    //     char c = snapshot[j];
-    //     for (int i = 7; i >= 0; --i)
-    //     {
-    //         packet_str += ((c & (1 << i)) ? '1' : '0');
-    //     }
-    // }
-    // debug_console::printf(debug_severity::info, "FLOWINSPECT packet: %s", packet_str.c_str()
+    std::string packet_str;
+    for (size_t j = 0; j < compute_downlink_size(); j++)
+    {
+        char c = snapshot[j];
+        for (int i = 7; i >= 0; --i)
+        {
+            packet_str += ((c & (1 << i)) ? '1' : '0');
+        }
+    }
+    debug_console::printf(debug_severity::info, "FLOWINSPECT expect packet: %s", packet_str.c_str());
 
     //BAD 0s at this point
 
