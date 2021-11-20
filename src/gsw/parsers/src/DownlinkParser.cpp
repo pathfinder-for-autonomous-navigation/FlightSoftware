@@ -20,28 +20,18 @@ std::string DownlinkParser::process_downlink_file(const std::string& filename) {
 }
 
 bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nlohmann::json& ret){
-
-    // using json = nlohmann::json;
-    // json ret;
-
-    // The packet is the start of a new downlink frame.
-    // Process the most recently collected frame.
-    std::vector<char> found_flow_ids_end;
-    const std::vector<char> frame_to_process = packet;
-    most_recent_frame = packet;
+    // packet is a downlink packet to check, ret is the json object to modify with debugging data if required.
 
     std::string log_str;
     using json = nlohmann::json;
     ret["metadata"]["check_flow_ids"] = json::array();
 
-    // log_str += "New frame!";
-
     // Process the downlink frame in four steps.
 
-    // Step 1: Manage the downlink frame at a bit level.
-    std::vector<bool> frame_bits(frame_to_process.size() * 8);
-    for(size_t i = 0; i < frame_to_process.size(); i++) {
-        std::bitset<8> x(frame_to_process[i]);
+    // Step 1: Reverse the bits per byte in the packet.
+    std::vector<bool> frame_bits(packet.size() * 8);
+    for(size_t i = 0; i < packet.size(); i++) {
+        std::bitset<8> x(packet[i]);
         for(int j = 0; j < 8; j++) {
             frame_bits[i*8 + j] = x[7 - j];
         }
@@ -77,7 +67,7 @@ bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nloh
             log_str += "Flow ID incomplete.";
             ret["metadata"]["check_log"] = log_str;
 
-            // we hit the end
+            // We hit the end of the packet, so we can't process any more flows.
             break;
         }
         const std::vector<bool> flow_id_bits(frame_bits.begin(),
@@ -102,8 +92,7 @@ bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nloh
         }
 
         // Continue processing the flow.
-        // found_flow_ids_end.push_back(flow_id);
-        ret["metadata"]["check_flow_ids"].push_back(flow_id);
+        ret["metadata"]["check_flow_ids"].push_back(flow_id); // Log the newly found flow ID.
         frame_bits.erase(frame_bits.begin(), frame_bits.begin() + flow_id_bits.size());
 
         // Step 4.1.1. Find flow in Downlink Producer flows list and check if
@@ -188,14 +177,13 @@ bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nloh
         }
     }
 
-    const std::vector<unsigned char> first_packet_flow_ids{1,2,7,8,13,14};
-    // const std::vector<unsigned char> first_packet_flow_ids{1,2,7,8,13,14,15,17,18,19,25,26};
+    const std::vector<unsigned char> first_packet_flow_ids{1,2,7,8,13,14}; // default first packet flows
+    // const std::vector<unsigned char> all_flow_ids{1,2,7,8,13,14,15,17,18,19,25,26};
 
     const std::vector<unsigned char> ret_flow_ids = ret["metadata"]["check_flow_ids"];
     const bool matching = (first_packet_flow_ids == ret_flow_ids);
-    // assert(matching);
+    
     return matching;
-    // return true;
 }
 
 std::string DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
