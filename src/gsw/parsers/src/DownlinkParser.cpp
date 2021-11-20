@@ -178,6 +178,8 @@ bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nloh
     }
 
     const std::vector<unsigned char> first_packet_flow_ids{1,2,7,8,13,14}; // default first packet flows
+    const std::vector<unsigned char> second_packet_flow_ids{15,17,18,19,25,26}; // default second packet flows
+
     // const std::vector<unsigned char> all_flow_ids{1,2,7,8,13,14,15,17,18,19,25,26};
 
     const std::vector<unsigned char> ret_flow_ids = ret["metadata"]["check_flow_ids"];
