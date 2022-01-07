@@ -16,13 +16,16 @@ class OrbitData(NamedTuple):
 
 class MonteCarlo(AMCCase):
 
+    def get_sigmas(self):
+        pos_sigma = str_to_val(self.read_state("orbit.pos_sigma"))
+        vel_sigma = str_to_val(self.read_state("orbit.vel_sigma"))
+        return pos_sigma, vel_sigma
+
     def readDownlinkData(self, satellite):
         pos = str_to_val(satellite.read_state("orbit.pos"))
         vel = str_to_val(satellite.read_state("orbit.vel"))
         time = GPSTime(*(str_to_val(satellite.read_state("time.gps")))).to_list()
         return OrbitData(pos, vel, time)
-
-
 
     #TODO add step size option 
     def run_psim(self, 
@@ -33,7 +36,6 @@ class MonteCarlo(AMCCase):
                 runtime=11000000000 * 60 * 60 * 24 * 7, # 7 days 
                 ):
     
-
         # get sim configs TODO: get the configs we need
         configs = ["sensors/base", "truth/base", "truth/detumble"]
         configs = ["lib/common/psim/config/parameters/" + f + ".txt" for f in configs]
@@ -46,7 +48,6 @@ class MonteCarlo(AMCCase):
         config["truth.follower.orbit.r"] = lin.Vector3(follower_orbit.pos) + follower_r_noise
         config["truth.follower.orbit.v"] = lin.Vector3(follower_orbit.vel) + follower_v_noise
         config["truth.t.ns"] = GPSTime(*(follower_orbit.time)).to_pan_ns() 
-
 
         propagated_follower_orbits = []
 
@@ -62,9 +63,6 @@ class MonteCarlo(AMCCase):
             ))
 
         return propagated_follower_orbits
-
-
-
 
     def run(self):
 
@@ -83,17 +81,18 @@ class MonteCarlo(AMCCase):
         orbits_no_noise = self.run_psim(downlinked_data_vals_leader, 
                                 downlinked_data_vals_follower) 
 
+        pos_sigma, vel_sigma = self.get_sigmas()
+
         # run simulations w/ noise
         all_r_values = [] #list of positions for each trial
         for i in range(1000):
             orbits = self.run_psim(downlinked_data_vals_leader, 
                                 downlinked_data_vals_follower,
-                                follower_r_noise=lin.Vector3([0,0,0]), #TODO create noise
-                                follower_v_noise=lin.Vector3([0,0,0]), 
+                                follower_r_noise=np.random.normal(scale=pos_sigma),
+                                follower_v_noise=np.random.normal(scale=vel_sigma), 
                 )
             curr_r_values = orbits[-1].pos
             all_r_values.append(curr_r_values)
-            
 
         # post-process lists, calculate covariances to output ephemeris
         # TODO fix cov, formatting
