@@ -97,7 +97,7 @@ class MonteCarlo(AMCCase):
         # post-process lists, calculate covariances to output ephemeris
         # TODO fix cov, formatting
 
-        variance_per_step = np.var(all_r_values, axis=0) # we want the variance at each time step over all sims -> but we want a matrix so are we assuming independent or what data is missing here?
+        variance_per_step = np.cov(all_r_values, axis=0) # we want the variance at each time step over all sims -> but we want a matrix so are we assuming independent or what data is missing here?
 
         eph_file = open("Ephemeris.txt","a") # TODO correct naming
 
