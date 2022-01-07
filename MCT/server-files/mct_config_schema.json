@@ -1,9 +1,4 @@
 {
-  "login":  
-  {
-    "username": "",
-    "password": ""
-  },
   "devices": {
     "leader":{
       "enabled": false,
