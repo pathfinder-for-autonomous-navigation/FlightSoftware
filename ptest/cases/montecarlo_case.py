@@ -94,17 +94,18 @@ class MonteCarlo(AMCCase):
             curr_r_values = orbits[-1].pos
             all_r_values.append(curr_r_values)
 
-        # post-process lists, calculate covariances to output ephemeris
-        # TODO fix cov, formatting
 
-        variance_per_step = np.cov(all_r_values, axis=0) # we want the variance at each time step over all sims -> but we want a matrix so are we assuming independent or what data is missing here?
+        # post-process lists, calculate covariances to output ephemeris
+
+        np_all_r_values = np.array(all_r_values).transpose(1, 2, 0)
+        covariance_per_step = [np.cov(step_positions) for step_positions in np_all_r_values]
 
         eph_file = open("Ephemeris.txt","a") # TODO correct naming
 
         for i in range(len(orbits_no_noise)):
             date = orbits_no_noise[i].time #TODO format properly
             pos = orbits_no_noise[i].pos #TODO format properly
-            cov = variance_per_step[i] #TODO this is an array of length 3 rn
+            cov = covariance_per_step[i]
             
             s = "{date} {pos}\n{cov}\n".format(date, pos, cov)
             eph_file.write(s)
