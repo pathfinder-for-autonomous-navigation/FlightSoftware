@@ -136,7 +136,7 @@ class MonteCarlo(AMCCase):
         # TODO verify frames and units
         # TODO what is weeknum
 
-        astropy_times = [self.pan_time_to_astropy_time(t) for t in times]
+        astropy_times = [self.time_since_pan_epoch(t) for t in times]
         eci_positions = [ecef2eci(astropy_times[i], ecef_positions[i], [0,0,0], 0)[0] 
             for i in range(len(ecef_positions))]
         return eci_positions
@@ -154,12 +154,11 @@ class MonteCarlo(AMCCase):
         return f"{data_type}_{sat_num}_{common_name}_{day_time_group}_{oper_spec}_{meta_data}_{classification}.{file_ext}"
     
     @staticmethod
-    def pan_time_to_astropy_time(time):
+    def time_since_pan_epoch(time):
         pan_epoch = GPSTime.EPOCH_WN
         pan_gps_time = GPSTime(*time)
         time_in_seconds_since_pan_epoch = pan_gps_time.to_pan_seconds()
-        astropy_time = time2astropyTime(time_in_seconds_since_pan_epoch, pan_epoch) 
-        return astropy_time
+        return time_in_seconds_since_pan_epoch
 
     
     @staticmethod
@@ -190,21 +189,24 @@ class MonteCarlo(AMCCase):
         final_str = f"{year:04d}{doy:03d}{hour:02d}{minute:02d}{second:02d}.{millis:03.0f}"
         return final_str
                 
-    def batch_convert_to_formatted_times(self, times):
-        '''takes in gps times and converts to formatted times'''
-        utc_times = self.batch_convert_to_utc_time(times)
-        
+    def batch_convert_to_formatted_times(self, utc_times):
+        '''takes in gps times and converts to formatted times'''        
         formatted = [MonteCarlo.format_time(t) for t in utc_times]
         return formatted
 
-    def write_file(self, file_name, times, positions, covariances):
+    def write_file(self, times, positions, covariances):
         '''assumes times in utc, positions in eci, covariances
         
         positions in km, covariances km^2
         '''
-        eph_file = open(file_name, "w") # TODO correct naming
+        utc_times = self.batch_convert_to_utc_time(times)
+        first_utc_time = utc_times[0]
 
-        formatted_times = self.batch_convert_to_formatted_times(times)
+        # file_name = self.get_file_name(first_utc_time) # TODO UNCOMMENT
+        file_name = 'Ephemeris.txt'
+        eph_file = open(file_name, "w")
+
+        formatted_times = self.batch_convert_to_formatted_times(utc_times)
 
         # write header
         eph_file.write('header1\n')
@@ -227,7 +229,7 @@ class MonteCarlo(AMCCase):
             eph_file.write(s)
 
         eph_file.close()
-        print(f"Wrote {num_entries} to {file_name}.")
+        print(f"Wrote {num_entries} entries to {file_name}.")
 
     def run(self):
         print("Running Monte Carlo")
