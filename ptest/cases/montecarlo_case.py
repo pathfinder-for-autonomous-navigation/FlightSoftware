@@ -9,6 +9,7 @@ from typing import NamedTuple
 from ..gpstime import GPSTime
 from astropy.time import Time
 from .conversions import ecef2eci, time2astropyTime 
+from datetime import datetime
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
 RUNTIME = 1000000000 * 60 * 60 # 1 hr # TODO INCREASE TIME BACK TO 7 Days
@@ -178,19 +179,22 @@ class MonteCarlo(AMCCase):
         return utc_times
     
     @staticmethod
-    def format_time(time):
-        pass
+    def format_time(time: datetime):
+        '''yyyDOYhhmmss.sss''' # i think this is an error, should be yyyyDOYhhmmss.sss
+        year = time.year
+        doy = time.timetuple().tm_yday
+        hour = time.hour
+        minute = time.minute
+        second = time.second
+        millis = time.microsecond / 1000
+        final_str = f"{year:04d}{doy:03d}{hour:02d}{minute:02d}{second:02d}.{millis:03.0f}"
+        return final_str
                 
-        
     def batch_convert_to_formatted_times(self, times):
         '''takes in gps times and converts to formatted times'''
         utc_times = self.batch_convert_to_utc_time(times)
         
-        
-        ## FORMATTING
-        #“yyyDOYhhmmss.sss”)
-        # TODO!! Shihao
-        formatted = [str(x) for x in utc_times]
+        formatted = [MonteCarlo.format_time(t) for t in utc_times]
         return formatted
 
     def write_file(self, file_name, times, positions, covariances):
