@@ -7,7 +7,7 @@ import numpy as np
 from .utils import str_to_val, Enums
 from typing import NamedTuple
 from ..gpstime import GPSTime
-
+from astropy.time import Time
 
 class OrbitData(NamedTuple):
     pos: list
@@ -125,8 +125,26 @@ class MonteCarlo(AMCCase):
         # TODO FINISH THIS
         return fn
     
+    def time2astropyTime(time, init_gps_weeknum):
+        """
+        args:
+            time(double): time since init_GPS_week_number in seconds
+            init_gps_weeknum(int): initial GPS week number."""
+        return Time(init_gps_weeknum*7*24*60*60, time, scale='tai', format='gps')
+    
     def batch_convert_to_utc_time(self, times):
         # TODO CONVERT Shihao
+        
+        # get each gps time as time since the pan epoch,
+        # get the pan epoch
+        # feed times into astropy time with pan epoch
+        # get each utc version of astropy time
+
+        utc_times = []
+        print('times')
+        print(times)
+        
+        
         return times
         
     def batch_convert_to_formatted_times(self, times):
