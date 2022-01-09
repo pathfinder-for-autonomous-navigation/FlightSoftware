@@ -131,10 +131,12 @@ class MonteCarlo(AMCCase):
         return monte_carlo_position_runs
 
     def batch_convert_to_eci(self, ecef_positions, times):
-        return ecef_positions
+        # return ecef_positions
         # TODO verify frames and units
         # TODO what is weeknum
-        eci_positions = [ecef2eci(times[i], ecef_positions[i], [0,0,0], 0)[0] 
+
+        astropy_times = [self.pan_time_to_astropy_time(t) for t in times]
+        eci_positions = [ecef2eci(astropy_times[i], ecef_positions[i], [0,0,0], 0)[0] 
             for i in range(len(ecef_positions))]
         return eci_positions
 
@@ -149,14 +151,15 @@ class MonteCarlo(AMCCase):
         file_ext = "txt"
 
         return f"{data_type}_{sat_num}_{common_name}_{day_time_group}_{oper_spec}_{meta_data}_{classification}.{file_ext}"
-
+    
     @staticmethod
-    def time2astropyTime(time, init_gps_weeknum):
-        """
-        args:
-            time(double): time since init_GPS_week_number in seconds
-            init_gps_weeknum(int): initial GPS week number."""
-        return Time(init_gps_weeknum*7*24*60*60, time, scale='tai', format='gps')
+    def pan_time_to_astropy_time(time):
+        pan_epoch = GPSTime.EPOCH_WN
+        pan_gps_time = GPSTime(*time)
+        time_in_seconds_since_pan_epoch = pan_gps_time.to_pan_seconds()
+        astropy_time = time2astropyTime(time_in_seconds_since_pan_epoch, pan_epoch) 
+        return astropy_time
+
     
     @staticmethod
     def batch_convert_to_utc_time(times):
@@ -195,7 +198,7 @@ class MonteCarlo(AMCCase):
         
         positions in km, covariances km^2
         '''
-        eph_file = open(file_name, "a") # TODO correct naming
+        eph_file = open(file_name, "w") # TODO correct naming
 
         formatted_times = self.batch_convert_to_formatted_times(times)
 
