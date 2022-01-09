@@ -144,7 +144,7 @@ class MonteCarlo(AMCCase):
     def get_file_name(self, start_time):
         data_type = "MEME"
         sat_num = "12345" # TODO
-        common_name = "PANF" # TODO are we uploading for Leader as well
+        common_name = "PANF"
         day_time_group = start_time # TODO of form DOYHHMM in utc
         oper_spec = "operational" 
         meta_data = "" 
