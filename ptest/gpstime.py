@@ -36,7 +36,10 @@ class GPSTime(object):
         return self.to_ns() -  GPSTime(0).to_ns()
     
     def to_seconds(self):
-        return self.to_ns()*1e-9
+        return self.to_ns() * 1e-9
 
+    def to_pan_seconds(self):
+        return self.to_pan_ns() * 1e-9
+        
     def to_list(self):
         return [self.wn, self.tow, self.ns]
