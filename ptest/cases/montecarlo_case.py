@@ -10,6 +10,7 @@ from ..gpstime import GPSTime
 from astropy.time import Time
 from .conversions import ecef2eci, time2astropyTime 
 from datetime import datetime
+import os
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
 RUNTIME = 1000000000 * 60 * 60 * 2 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
@@ -18,6 +19,7 @@ CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
 NUM_MC_RUNS = 3
+DONE_FILE_NAME = 'done_file.done'
 
 class OrbitData(NamedTuple):
     pos: list
@@ -186,6 +188,12 @@ class MonteCarlo(AMCCase):
         formatted = [MonteCarlo.format_time(t) for t in utc_times]
         return formatted
 
+    def write_done_file(self, filename):
+        done_file = open(DONE_FILE_NAME, "w")
+        done_file.write("done")
+        done_file.close()
+        print('done file written')
+
     def write_file(self, times, positions, covariances):
         '''assumes times in utc, positions in eci, covariances
         
@@ -225,9 +233,13 @@ class MonteCarlo(AMCCase):
         eph_file.close()
         print(f"Wrote {num_entries} entries to {file_name}.")
 
+        self.write_done_file(DONE_FILE_NAME)
+
     def run(self):
         print("Running Monte Carlo")
 
+        if os.path.exists(DONE_FILE_NAME):
+            os.remove(DONE_FILE_NAME)
         # Setup
         self.leader = self.radio_leader
         self.follower = self.radio_follower
