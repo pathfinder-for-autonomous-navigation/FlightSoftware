@@ -12,7 +12,7 @@ from .conversions import ecef2eci, time2astropyTime
 from datetime import datetime
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 24 # 1 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 2 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
@@ -136,8 +136,8 @@ class MonteCarlo(AMCCase):
         # TODO verify frames and units
         # TODO what is weeknum
 
-        astropy_times = [self.time_since_pan_epoch(t) for t in times]
-        eci_positions = [ecef2eci(astropy_times[i], ecef_positions[i], [0,0,0], 0)[0] 
+        seconds_since_pan_epoch_times = [self.time_since_pan_epoch(t) for t in times]
+        eci_positions = [ecef2eci(seconds_since_pan_epoch_times[i], ecef_positions[i], [0,0,0], GPSTime.EPOCH_WN)[0] 
             for i in range(len(ecef_positions))]
         return eci_positions
 
@@ -163,15 +163,8 @@ class MonteCarlo(AMCCase):
     
     @staticmethod
     def batch_convert_to_utc_time(times):
-        
-        # get each gps time as time since the pan epoch
-        # get the pan epoch
-        # feed times into astropy time with pan epoch
-        # get each utc version of astropy time
-        pan_epoch = GPSTime.EPOCH_WN
-        pan_gps_times = [GPSTime(*t) for t in times]
-        times_in_seconds_since_pan_epoch = [t.to_pan_seconds() for t in pan_gps_times]
-        astropy_times = [time2astropyTime(t, pan_epoch) for t in times_in_seconds_since_pan_epoch]
+        times_in_seconds_since_pan_epoch = [MonteCarlo.time_since_pan_epoch(t) for t in times]
+        astropy_times = [time2astropyTime(t, GPSTime.EPOCH_WN) for t in times_in_seconds_since_pan_epoch]
         utc_times = [t.utc.to_datetime() for t in astropy_times]
         
         return utc_times
