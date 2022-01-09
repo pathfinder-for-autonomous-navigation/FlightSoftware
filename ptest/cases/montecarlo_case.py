@@ -12,7 +12,7 @@ from .conversions import ecef2eci, time2astropyTime
 from datetime import datetime
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 # 1 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 24 # 1 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
@@ -81,10 +81,10 @@ class MonteCarlo(AMCCase):
         config["truth.leader.orbit.r"] = lin.Vector3(leader_orbit.pos)
         config["truth.leader.orbit.v"] = lin.Vector3(leader_orbit.vel)
 
-        print(follower_r_noise)
+        # print(follower_r_noise)
         
-        print(follower_orbit.pos)
-        print(lin.Vector3(follower_orbit.pos))
+        # print(follower_orbit.pos)
+        # print(lin.Vector3(follower_orbit.pos))
 
         config["truth.follower.orbit.r"] = lin.Vector3(follower_orbit.pos) + follower_r_noise
         config["truth.follower.orbit.v"] = lin.Vector3(follower_orbit.vel) + follower_v_noise
@@ -163,9 +163,8 @@ class MonteCarlo(AMCCase):
     
     @staticmethod
     def batch_convert_to_utc_time(times):
-        # TODO CONVERT Shihao
         
-        # get each gps time as time since the pan epoch, TODO
+        # get each gps time as time since the pan epoch
         # get the pan epoch
         # feed times into astropy time with pan epoch
         # get each utc version of astropy time
@@ -215,6 +214,8 @@ class MonteCarlo(AMCCase):
         eph_file.write('MEME2000\n')
 
         num_entries = len(times)
+        print(f"Writing {num_entries} entries to {file_name}.")
+
         for i in range(num_entries):
             time = formatted_times[i]
             pos = positions[i]
@@ -266,7 +267,7 @@ class MonteCarlo(AMCCase):
         
         km_positions = [[meter / 1000 for meter in position] for position in eci_positions] # convert to km
 
-        self.write_file('Ephemeris.txt', times, km_positions, covariance_per_step) # TODO call get_file_name
+        self.write_file(times, km_positions, covariance_per_step) # TODO call get_file_name
 
         self.logger.put("EXITING MONTECARLO SIMS")
         self.finish()
