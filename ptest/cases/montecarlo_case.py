@@ -7,6 +7,14 @@ import numpy as np
 from .utils import str_to_val, Enums
 from typing import NamedTuple
 from ..gpstime import GPSTime
+from .conversions import ecef2eci 
+
+HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
+RUNTIME = 1000000000 * 60 * 60 # 1 hr # TODO INCREASE TIME BACK TO 7 Days
+# RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
+STEPS_PER_MIN = int(1000000000 * 60 / 170) # Number of simulation steps in one minute 
+STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
+NUM_MC_RUNS = 10
 
 
 class OrbitData(NamedTuple):
@@ -23,37 +31,43 @@ class MonteCarlo(AMCCase):
         return pos_sigma, vel_sigma
 
     def get_sigmas(self):
-        pos_sigma = str_to_val(self.read_state("orbit.pos_sigma"))
+        if HARDCODED:
+            return self.get_sigmas_hardcoded()
+        pos_sigma = str_to_val(self.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
         vel_sigma = str_to_val(self.read_state("orbit.vel_sigma"))
         return pos_sigma, vel_sigma
 
-    def read_downlink_data_hardcoded_leader(self):
+    def read_downlink_data_leader_hardcoded(self):
         '''Hardcoded version of get pos, vel, time, pulled from first few cycles of SingleSatStanby'''
         pos = [-3394650.605799, -3784598.685641, -4595138.924735]
         vel = [6165.990371, -3462.978608, -1700.082949]
         time = [2045, 3942980, 0]
         return OrbitData(pos, vel, time)
     
-    def read_downlink_data_hardcoded_follower(self):
+    def read_downlink_data_follower_hardcoded(self):
         pos = [-3392661.953954, -3785470.995339, -4595393.482806]
         vel = [6167.019697, -3462.423257, -1698.505773]
         time = [2045, 3942980, 0]
         return OrbitData(pos, vel, time)
 
     def readDownlinkData(self, satellite):
+        if HARDCODED:
+            if satellite == self.leader:
+                return self.read_downlink_data_leader_hardcoded()
+            else:
+                return self.read_downlink_data_follower_hardcoded()
+
         pos = str_to_val(satellite.read_state("orbit.pos"))
         vel = str_to_val(satellite.read_state("orbit.vel"))
         time = GPSTime(*(str_to_val(satellite.read_state("time.gps")))).to_list()
         return OrbitData(pos, vel, time)
 
-    #TODO add step size option 
     def run_psim(self, 
                  leader_orbit, 
                  follower_orbit,
                  follower_r_noise = lin.Vector3([0,0,0]), 
                  follower_v_noise = lin.Vector3([0,0,0]),
-                #  runtime=1000000000 * 60 * 60 * 24 * 7, # 7 days 
-                 runtime=1000000000 * 60 * 60, # 1 hr # TODO INCREASE TIME BACK TO 7 Days
+                 runtime=RUNTIME
                  ):
     
         # get sim configs TODO: get the configs we need
@@ -82,8 +96,7 @@ class MonteCarlo(AMCCase):
         while sim["truth.t.ns"] < config["truth.t.ns"] + runtime:
             sim.step()
 
-            steps_per_min = int(1000000000 * 60 / 170)
-            if steps % steps_per_min == 0:
+            if steps % STEPS_PER_LOG_ENTRY == 0:
                 propagated_follower_orbits.append(OrbitData(
                     list(sim["truth.follower.orbit.r"]),
                     list(sim["truth.follower.orbit.v"]),
@@ -102,28 +115,40 @@ class MonteCarlo(AMCCase):
     def generate_monte_carlo_data(self, downlinked_leader, downlinked_follower, pos_sigma, vel_sigma):
         # run simulations w/ noise
         monte_carlo_position_runs = [] #list of positions for each trial
-        for i in range(10):
-            list_of_orbit_datas = self.run_psim(downlinked_leader, 
+        for i in range(NUM_MC_RUNS):
+            list_of_orbit_data = self.run_psim(downlinked_leader, 
                                                 downlinked_follower,
                                                 follower_r_noise=lin.Vector3(np.random.normal(scale=pos_sigma)),
                                                 follower_v_noise=lin.Vector3(np.random.normal(scale=vel_sigma)), 
                 )
-            list_of_orbit_positions = [x.pos for x in list_of_orbit_datas]
+            list_of_orbit_positions = [x.pos for x in list_of_orbit_data]
             monte_carlo_position_runs.append(list_of_orbit_positions)
             
             if i % 1 == 0:
                 print(f"Finished {i} simulations")
                 
         return monte_carlo_position_runs
-    
-    def batch_convert_to_eci(self, ecef_positions, times):
-        # TODO CONVERT
-        return ecef_positions
 
-    def get_file_name(self):
-        fn = "foo"
-        # TODO FINISH THIS
-        return fn
+    def batch_convert_to_eci(self, ecef_positions, times):
+        return ecef_positions
+        # TODO verify frames and units
+        # TODO what is weeknum
+        eci_positions = [ecef2eci(times[i], ecef_positions[i], [0,0,0], 0)[0] 
+            for i in range(len(ecef_positions))]
+        return eci_positions
+
+    def get_file_name(self, start_time):
+        data_type = "MEME"
+        sat_num = "12345" # TODO
+        common_name = "PANF" # TODO are we uploading for Leader as well
+        day_time_group = start_time # TODO of form DOYHHMM in utc
+        oper_spec = "operational" 
+        meta_data = "" 
+        classification = "unclassified"
+        file_ext = "txt"
+
+        return f"{data_type}_{sat_num}_{common_name}_{day_time_group}_{oper_spec}_{meta_data}_{classification}.{file_ext}"
+
     
     def batch_convert_to_utc_time(self, times):
         # TODO CONVERT Shihao
@@ -174,20 +199,14 @@ class MonteCarlo(AMCCase):
     def run(self):
         print("Running Monte Carlo")
 
-        # setup
+        # Setup
         self.leader = self.radio_leader
         self.follower = self.radio_follower
 
-        # TODO configs for runtime, step size (log freq), num runs, noise sigma, ...  
-
-        # read the orbit data from each satellite from database
-        # downlinked_data_vals_leader = self.readDownlinkData(self.leader)
-        # downlinked_data_vals_follower = self.readDownlinkData(self.follower)
-        # TODO CHANGE OUT OF HARDCODED
-        downlinked_data_vals_leader = self.read_downlink_data_hardcoded_leader()
-        downlinked_data_vals_follower = self.read_downlink_data_hardcoded_follower()
-
-        pos_sigma, vel_sigma = self.get_sigmas_hardcoded()
+        # Read the orbit data from each satellite from database
+        downlinked_data_vals_leader = self.readDownlinkData(self.leader)
+        downlinked_data_vals_follower = self.readDownlinkData(self.follower)
+        pos_sigma, vel_sigma = self.get_sigmas()
 
         monte_carlo_position_runs = self.generate_monte_carlo_data(downlinked_data_vals_leader,
                                                                    downlinked_data_vals_follower,
@@ -195,7 +214,7 @@ class MonteCarlo(AMCCase):
                                                                    vel_sigma)
 
 
-        # post-process lists, calculate covariances to output ephemeris
+        # Post-process lists, calculate covariances to output ephemeris
 
         np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
         
@@ -212,7 +231,7 @@ class MonteCarlo(AMCCase):
         
         km_positions = [[meter / 1000 for meter in position] for position in eci_positions] # convert to km
 
-        self.write_file('Ephemeris.txt', times, km_positions, covariance_per_step)
+        self.write_file('Ephemeris.txt', times, km_positions, covariance_per_step) # TODO call get_file_name
 
         self.logger.put("EXITING MONTECARLO SIMS")
         self.finish()
