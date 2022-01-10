@@ -34,6 +34,22 @@ class RendevousOrbitPredictor(object):
   # Starts the first run (currently time of starting the script 
   #  - can be changed to a fixed point in the future)
   def start(self):
+    
+    # BEGIN HEADER CODE
+    # import runpy
+    # import os
+    # # os.system("python -m ptest runsim -c ptest/configs/amc.json -t MonteCarlo --clean -ni")
+    # # runpy.run_module("ptest", ['runsim', '-c', 'ptest/configs/amc.json', '-t', 'MonteCarlo', '--clean', '-ni'])
+    
+    # from subprocess import Popen, PIPE
+
+    # process = Popen(['python', '-m', 'ptest', 'runsim', '-c', 'ptest/configs/amc.json', '-t', 'MonteCarlo', '--clean', '-ni'], stdout=PIPE, stderr=PIPE)
+    # print("start")
+    # stdout, stderr = process.communicate()
+    # print("here")
+    # return
+    # END HEADER CODE
+  
     self.next = self.get_next_time()
     if self.next>= len(self.times):
       self.next_day_of_times()
