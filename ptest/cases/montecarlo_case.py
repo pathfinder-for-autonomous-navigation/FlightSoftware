@@ -1,6 +1,6 @@
 from .base import AMCCase
 import time
-from psim.sims import DualAttitudeOrbitGnc, DualOrbitGnc
+from psim.sims import DualAttitudeOrbitGnc, DualOrbitGnc, OrbitControllerTest
 from psim import Configuration, Simulation
 import lin
 import numpy as np
@@ -12,14 +12,19 @@ from .conversions import ecef2eci_mc_runs, ecef2eci, get_covariances, time2astro
 from datetime import datetime
 import os
 
+HALF = False
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 1 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 24 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 30
+NUM_MC_RUNS = 10
 DONE_FILE_NAME = 'done_file.done'
+
+
+np.random.seed(123)
+
 
 class OrbitData(NamedTuple):
     pos: list
@@ -34,7 +39,21 @@ class MonteCarlo(AMCCase):
         vel_sigma = [0.363415, 0.363415, 0.363415]
         return pos_sigma, vel_sigma
 
+
+    def get_sigmas_half(self):
+        '''Hardcoded version of sigmas pos, vel, pulled from first few cycles of SingleSatStanby'''
+        pos_sigma = [1.369557, 1.369557, 1.369559]
+        vel_sigma = [0.183415, 0.183415, 0.183415]
+        return pos_sigma, vel_sigma
+    
+
+    def get_zero_sigmas(self):
+        return [0,0,0], [0,0,0]
+
     def get_sigmas(self):
+        # return self.get_zero_sigmas()
+        if HALF:
+            return self.get_sigmas_half()
         if HARDCODED:
             return self.get_sigmas_hardcoded()
         pos_sigma = str_to_val(self.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
@@ -75,9 +94,12 @@ class MonteCarlo(AMCCase):
                  ):
     
         # get sim configs TODO: get the configs we need
-        configs = ["sensors/base", "truth/base", "truth/detumble"]
+        configs = ["sensors/base", "truth/base", "truth/vox_standby", "fc/base"]
         configs = ["lib/common/psim/config/parameters/" + f + ".txt" for f in configs]
         config = Configuration(configs)
+        
+        # set psim random seed to random number
+        config["seed"] = np.random.randint(0, 2**32 - 1)
 
         # update values to current 
         config["truth.leader.orbit.r"] = lin.Vector3(leader_orbit.pos)
@@ -95,7 +117,7 @@ class MonteCarlo(AMCCase):
         propagated_follower_orbits = []
 
         # step sim to desired time
-        sim = Simulation(DualOrbitGnc, config)
+        sim = Simulation(OrbitControllerTest, config)
         steps = 0
         while sim["truth.t.ns"] < config["truth.t.ns"] + runtime:
             sim.step()
@@ -108,18 +130,13 @@ class MonteCarlo(AMCCase):
                 ))
 
             steps += 1
-            
-            if steps % 100000 == 0:
-                print(steps)
-                print(sim['truth.t.ns'])
-                print(config["truth.t.ns"] + runtime)
 
         return propagated_follower_orbits
 
     def generate_monte_carlo_data(self, downlinked_leader, downlinked_follower, pos_sigma, vel_sigma):
         # run simulations w/ noise
         monte_carlo_position_runs = [] #list of positions for each trial
-        for i in range(NUM_MC_RUNS):
+        for i in range(1, NUM_MC_RUNS + 1):
             list_of_orbit_data = self.run_psim(downlinked_leader, 
                                                 downlinked_follower,
                                                 follower_r_noise=lin.Vector3(np.random.normal(scale=pos_sigma)),
@@ -128,8 +145,7 @@ class MonteCarlo(AMCCase):
             list_of_orbit_positions = [x.pos for x in list_of_orbit_data]
             monte_carlo_position_runs.append(list_of_orbit_positions)
             
-            if i % 1 == 0:
-                print(f"Finished {i} simulations")
+            print(f"Finished {i} simulations")
                 
         return monte_carlo_position_runs
 
@@ -275,14 +291,11 @@ class MonteCarlo(AMCCase):
 
         # Post-process lists, calculate covariances to output ephemeris
 
-        # np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
-        
-        # covariance_per_step = [np.cov(step_positions) for step_positions in np_monte_carlo_position_runs]
         start_covariance_time = time.time()
         pan_times = [MonteCarlo.time_since_pan_epoch(t) for t in times]
         monte_carlo_position_runs = np.array(monte_carlo_position_runs)
         print(monte_carlo_position_runs.shape)
-        mc_runs_eci = ecef2eci_mc_runs(pan_times, monte_carlo_position_runs, GPSTime.EPOCH_WN)
+        mc_runs_eci = ecef2eci_mc_runs(pan_times, monte_carlo_position_runs, GPSTime.EPOCH_WN) / 1000 # div by 1000 to convert to km
         covariance_per_step = get_covariances(mc_runs_eci)
         end_covariance_time = time.time()
         print(f'Spent {end_covariance_time - start_covariance_time} seconds calculating covariance, and converting to ECI.')
