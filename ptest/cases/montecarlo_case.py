@@ -8,7 +8,7 @@ from .utils import str_to_val, Enums
 from typing import NamedTuple
 from ..gpstime import GPSTime
 from astropy.time import Time
-from .conversions import ecef2eci, time2astropyTime 
+from .conversions import ecef2eci_mc_runs, ecef2eci, get_covariances, time2astropyTime
 from datetime import datetime
 import os
 
@@ -266,7 +266,7 @@ class MonteCarlo(AMCCase):
                                         follower_r_noise=lin.Vector3(),
                                         follower_v_noise=lin.Vector3())
 
-        times = [x.time for x in orbits_no_noise]
+        times = np.array([x.time for x in orbits_no_noise])
         ecef_positions = [x.pos for x in orbits_no_noise]
         eci_positions = self.batch_convert_to_eci(ecef_positions, times)
 
@@ -275,10 +275,18 @@ class MonteCarlo(AMCCase):
 
         # Post-process lists, calculate covariances to output ephemeris
 
-        np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
+        # np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
         
-        covariance_per_step = [np.cov(step_positions) for step_positions in np_monte_carlo_position_runs]
-
+        # covariance_per_step = [np.cov(step_positions) for step_positions in np_monte_carlo_position_runs]
+        start_covariance_time = time.time()
+        pan_times = [MonteCarlo.time_since_pan_epoch(t) for t in times]
+        monte_carlo_position_runs = np.array(monte_carlo_position_runs)
+        print(monte_carlo_position_runs.shape)
+        mc_runs_eci = ecef2eci_mc_runs(pan_times, monte_carlo_position_runs, GPSTime.EPOCH_WN)
+        covariance_per_step = get_covariances(mc_runs_eci)
+        end_covariance_time = time.time()
+        print(f'Spent {end_covariance_time - start_covariance_time} seconds calculating covariance, and converting to ECI.')
+    
         km_positions = [[meter / 1000 for meter in position] for position in eci_positions] # convert to km
 
         self.write_file(times, km_positions, covariance_per_step) # TODO call get_file_name
