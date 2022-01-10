@@ -136,9 +136,13 @@ class MonteCarlo(AMCCase):
     def batch_convert_to_eci(self, ecef_positions, times):
         # return ecef_positions
         print('Converting to ECI coordinates')
+        eci_start_time = time.time()
         seconds_since_pan_epoch_times = [self.time_since_pan_epoch(t) for t in times]
         eci_positions = [ecef2eci(seconds_since_pan_epoch_times[i], ecef_positions[i], [0,0,0], GPSTime.EPOCH_WN)[0] 
             for i in range(len(ecef_positions))]
+        eci_finish_time = time.time()
+        print(f'Spent {eci_finish_time - eci_start_time} seconds converting to ECI coordinates.')
+
         return eci_positions
 
     def get_file_name(self, start_time):
