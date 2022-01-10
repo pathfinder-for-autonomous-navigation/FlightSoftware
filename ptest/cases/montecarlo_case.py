@@ -13,12 +13,12 @@ from datetime import datetime
 import os
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 24 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 1 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 10
+NUM_MC_RUNS = 30
 DONE_FILE_NAME = 'done_file.done'
 
 class OrbitData(NamedTuple):
@@ -253,18 +253,14 @@ class MonteCarlo(AMCCase):
         downlinked_data_vals_follower = self.readDownlinkData(self.follower)
         pos_sigma, vel_sigma = self.get_sigmas()
 
+        mc_start_time = time.time()
         monte_carlo_position_runs = self.generate_monte_carlo_data(downlinked_data_vals_leader,
                                                                    downlinked_data_vals_follower,
                                                                    pos_sigma,
                                                                    vel_sigma)
 
-
-        # Post-process lists, calculate covariances to output ephemeris
-
-        np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
+        mc_finish_time = time.time()
         
-        covariance_per_step = [np.cov(step_positions) for step_positions in np_monte_carlo_position_runs]
-
         orbits_no_noise = self.run_psim(downlinked_data_vals_leader,
                                         downlinked_data_vals_follower,
                                         follower_r_noise=lin.Vector3(),
@@ -273,7 +269,16 @@ class MonteCarlo(AMCCase):
         times = [x.time for x in orbits_no_noise]
         ecef_positions = [x.pos for x in orbits_no_noise]
         eci_positions = self.batch_convert_to_eci(ecef_positions, times)
+
+        # monte_carlo_position_runs_eci = [self.batch_convert_to_eci(mc_pos_run, times) for mc_pos_run in monte_carlo_position_runs]
+        print(f'Spent {mc_finish_time - mc_start_time} seconds generating Monte Carlo data.')
+
+        # Post-process lists, calculate covariances to output ephemeris
+
+        np_monte_carlo_position_runs = np.array(monte_carlo_position_runs).transpose(1, 2, 0) / 1000 # convert to km
         
+        covariance_per_step = [np.cov(step_positions) for step_positions in np_monte_carlo_position_runs]
+
         km_positions = [[meter / 1000 for meter in position] for position in eci_positions] # convert to km
 
         self.write_file(times, km_positions, covariance_per_step) # TODO call get_file_name

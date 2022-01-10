@@ -6,8 +6,8 @@
 import astropy.units as u
 from astropy.coordinates import (ITRS,GCRS)
 from astropy.coordinates import (CartesianRepresentation,CartesianDifferential)
-from astropy.time import TimeDelta
 from astropy.time import Time
+import numpy as np
 
 def time2astropyTime(time,init_gps_weeknum):
     """
@@ -16,6 +16,33 @@ def time2astropyTime(time,init_gps_weeknum):
         init_gps_weeknum(int): initial GPS week number."""
     return Time(init_gps_weeknum*7*24*60*60, time, scale='tai', format='gps')
 
+def ecef2eci_mc_runs(times, mc_runs, init_gps_weeknum):
+    '''
+    Times and mc_runs have the same length.
+    args: mc_runs, a list of all mc_runs, each of which is a list of positions across the duration of the run
+    returns: a list of all the mc_runs, each of which is a list of positions in ECI
+    '''
+    num_times = len(times)
+    list_of_mc_snapshots = np.array(mc_runs).transpose((1,0,2))
+    list_of_mc_snapshots_eci = np.array([ecef2eci_same_time_batch(times[idx], list_of_mc_snapshots[idx], init_gps_weeknum) for idx in range(num_times)])
+    return list_of_mc_snapshots_eci
+
+def get_covariances(mc_snapshots_eci):
+    return np.array([np.cov(x.T) for x in mc_snapshots_eci])
+
+def ecef2eci_same_time_batch(time, vectors, init_gps_weeknum):
+    '''Converts a batch of position vectors at the same time into the ECI coordinate frame
+    
+    args:
+        vectors: a list of 3-element numpy arrays, each representing a position vector in ECEF
+        time: a single time in seconds since the GPS week number
+        init_gps_weeknum: the GPS week number
+    returns:
+        a list of 3-element numpy arrays representing the position in ECI coordinates, as a 2d numpy matrix
+    '''
+    vectors_transposed = np.array(vectors).T
+    return ecef2eci(time, vectors_transposed, vectors_transposed, init_gps_weeknum)[0].T
+    
 def ecef2eci(time,r_ecef,v_ecef,init_gps_weeknum):
     """Returns a tuple of position and velocity in ECI"""
     coord_ecef=ITRS(x=r_ecef[0]*u.m, y=r_ecef[1]*u.m, z=r_ecef[2]*u.m,
@@ -35,3 +62,22 @@ def eci2ecef(time,r_eci,v_eci,init_gps_weeknum):
         obstime=time2astropyTime(time,init_gps_weeknum))
     coord_ecef= coord_eci.transform_to(ITRS(obstime=time2astropyTime(time,init_gps_weeknum)))
     return (coord_ecef.cartesian.xyz.to_value(u.m),coord_ecef.velocity.d_xyz.to_value(u.m/u.s))
+
+if __name__ == '__main__':
+    xs = [[0,0,3],[1,0,0],[0,1,0],[0,0,1],[1,1,1]]
+    xss = [ [[1,2,3],[4,5,6], [4,5,6]], [[4,2,3],[4,5,6],[5,15,16]], [[1,2,3],[4,5,6], [40,15,60]]  ]
+
+    def copy_xs():
+        return [[y for y in x] for x in xs]
+
+    mc_runs = [xss[0], xss[1], xss[2]]
+
+    times = [1,2,3]
+    
+    converted_mc_runs = ecef2eci_mc_runs(times, mc_runs, 2045)
+    covariances = get_covariances(converted_mc_runs)
+    # print(converted_mc_runs.shape)
+    # print(converted_mc_runs)
+    print(covariances.shape)
+    print(covariances)
+    # print(covariances)
