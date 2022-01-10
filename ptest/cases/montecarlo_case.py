@@ -13,12 +13,12 @@ from datetime import datetime
 import os
 
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 2 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 24 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 3
+NUM_MC_RUNS = 10
 DONE_FILE_NAME = 'done_file.done'
 
 class OrbitData(NamedTuple):
@@ -135,9 +135,7 @@ class MonteCarlo(AMCCase):
 
     def batch_convert_to_eci(self, ecef_positions, times):
         # return ecef_positions
-        # TODO verify frames and units
-        # TODO what is weeknum
-
+        print('Converting to ECI coordinates')
         seconds_since_pan_epoch_times = [self.time_since_pan_epoch(t) for t in times]
         eci_positions = [ecef2eci(seconds_since_pan_epoch_times[i], ecef_positions[i], [0,0,0], GPSTime.EPOCH_WN)[0] 
             for i in range(len(ecef_positions))]
@@ -165,6 +163,7 @@ class MonteCarlo(AMCCase):
     
     @staticmethod
     def batch_convert_to_utc_time(times):
+        print('Converting times to UTC')
         times_in_seconds_since_pan_epoch = [MonteCarlo.time_since_pan_epoch(t) for t in times]
         astropy_times = [time2astropyTime(t, GPSTime.EPOCH_WN) for t in times_in_seconds_since_pan_epoch]
         utc_times = [t.utc.to_datetime() for t in astropy_times]
@@ -184,7 +183,8 @@ class MonteCarlo(AMCCase):
         return final_str
                 
     def batch_convert_to_formatted_times(self, utc_times):
-        '''takes in gps times and converts to formatted times'''        
+        '''takes in gps times and converts to formatted times'''
+        print('Formatting times')
         formatted = [MonteCarlo.format_time(t) for t in utc_times]
         return formatted
 
