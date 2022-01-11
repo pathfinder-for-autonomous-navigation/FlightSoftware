@@ -95,7 +95,8 @@ class RendevousOrbitPredictor(object):
       uploaded = self.upload_file(newest_file_name)
     # update the time field in elasticsearch
     print(f'Upload worked: {uploaded}')
-    self.update_time()
+    if uploaded:
+      self.update_time()
     print("Waiting for " + self.epoch_time_to_string(self.times[self.next]) + "...")
 
   def next_day_of_times(self):
