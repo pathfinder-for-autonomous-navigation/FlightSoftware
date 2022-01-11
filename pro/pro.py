@@ -70,7 +70,6 @@ class RendevousOrbitPredictor(object):
 
   def get_name_of_newest_file(self, folder_path):
     list_of_files = glob.glob(folder_path + '/MEME*') # * means all if need specific format then *.csv
-    print(list_of_files)
     latest_file = max(list_of_files, key=os.path.getctime)
     file_name = latest_file.replace(folder_path, '') # remove folder from name
     return file_name
