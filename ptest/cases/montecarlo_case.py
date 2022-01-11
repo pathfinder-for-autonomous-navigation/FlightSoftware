@@ -13,7 +13,7 @@ from datetime import datetime
 import os
 
 HALF = False
-HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
+HARDCODED = False  # TODO CHANGE OUT OF HARDCODED
 RUNTIME = 1000000000 * 60 * 60 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
@@ -51,14 +51,15 @@ class MonteCarlo(AMCCase):
         return [0,0,0], [0,0,0]
 
     def get_sigmas(self):
-        # return self.get_zero_sigmas()
-        if HALF:
-            return self.get_sigmas_half()
-        if HARDCODED:
-            return self.get_sigmas_hardcoded()
-        pos_sigma = str_to_val(self.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
-        vel_sigma = str_to_val(self.read_state("orbit.vel_sigma"))
-        return pos_sigma, vel_sigma
+        return self.get_sigmas_hardcoded() # If orbit estimator performing nominally, should converge to these values or better!
+
+        # if HALF:
+        #     return self.get_sigmas_half()
+        # if HARDCODED:
+        #     return self.get_sigmas_hardcoded()
+        # pos_sigma = str_to_val(self.follower.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
+        # vel_sigma = str_to_val(self.follower.read_state("orbit.vel_sigma"))
+        # return pos_sigma, vel_sigma
 
     def read_downlink_data_leader_hardcoded(self):
         '''Hardcoded version of get pos, vel, time, pulled from first few cycles of SingleSatStanby'''
