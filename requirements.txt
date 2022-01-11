@@ -1,4 +1,4 @@
-astropy==5.0
+astropy
 astroid==2.3.0
 atomicwrites==1.3.0
 attrs==19.2.0
