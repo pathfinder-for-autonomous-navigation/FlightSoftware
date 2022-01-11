@@ -14,12 +14,12 @@ import os
 
 HALF = False
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 24 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 * 24 * 7 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 10
+NUM_MC_RUNS = 100
 DONE_FILE_NAME = 'done_file.done'
 
 
