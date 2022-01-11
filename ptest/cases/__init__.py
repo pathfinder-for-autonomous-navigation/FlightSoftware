@@ -8,6 +8,7 @@ from .empty_case import EmptySimCase, FailingEmptySimCase
 from .dual_empty_case import DualEmptySimCase
 from .piksi_fault_handler import PiksiFaultHandler
 from .autonomous_mission_manager_pure_radio import AutonomousMissionController
+from .montecarlo_case import MonteCarlo
 
 # Testcases intended for use with mission rehearsals and general telemetry
 # testing.
