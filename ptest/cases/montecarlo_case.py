@@ -14,14 +14,14 @@ import os
 
 HALF = False
 HARDCODED = True  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 * 24 * 7 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
+RUNTIME = 1000000000 * 60 * 60 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
 # RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
 CC_NANOS = 170000000
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 100
+NUM_MC_RUNS = 10
 DONE_FILE_NAME = 'done_file.done'
-
+LOG_PATH = 'pro/mc_runs/'
 
 np.random.seed(123)
 
@@ -165,13 +165,18 @@ class MonteCarlo(AMCCase):
         data_type = "MEME"
         sat_num = "12345" # TODO
         common_name = "PANF"
-        day_time_group = start_time # TODO of form DOYHHMM in utc
+        
+        doy = start_time.timetuple().tm_yday
+        hour = start_time.hour
+        minute = start_time.minute
+        time_str = f"{doy:03d}{hour:02d}{minute:02d}"        
+        
         oper_spec = "operational" 
         meta_data = "" 
         classification = "unclassified"
         file_ext = "txt"
 
-        return f"{data_type}_{sat_num}_{common_name}_{day_time_group}_{oper_spec}_{meta_data}_{classification}.{file_ext}"
+        return f"{data_type}_{sat_num}_{common_name}_{time_str}_{oper_spec}_{meta_data}_{classification}.{file_ext}"
     
     @staticmethod
     def time_since_pan_epoch(time):
@@ -209,7 +214,7 @@ class MonteCarlo(AMCCase):
         return formatted
 
     def write_done_file(self, filename):
-        done_file = open(DONE_FILE_NAME, "w")
+        done_file = open(LOG_PATH + filename, "w")
         done_file.write("done")
         done_file.close()
         print('done file written')
@@ -221,10 +226,11 @@ class MonteCarlo(AMCCase):
         '''
         utc_times = self.batch_convert_to_utc_time(times)
         first_utc_time = utc_times[0]
+        print(first_utc_time)
 
-        # file_name = self.get_file_name(first_utc_time) # TODO UNCOMMENT
-        file_name = 'Ephemeris.txt'
-        eph_file = open(file_name, "w")
+        file_name = self.get_file_name(first_utc_time) # TODO UNCOMMENT
+        # file_name = 'Ephemeris.txt'
+        eph_file = open(LOG_PATH + file_name, "w")
 
         formatted_times = self.batch_convert_to_formatted_times(utc_times)
 
@@ -258,8 +264,6 @@ class MonteCarlo(AMCCase):
     def run(self):
         print("Running Monte Carlo")
 
-        if os.path.exists(DONE_FILE_NAME):
-            os.remove(DONE_FILE_NAME)
         # Setup
         self.leader = self.radio_leader
         self.follower = self.radio_follower
