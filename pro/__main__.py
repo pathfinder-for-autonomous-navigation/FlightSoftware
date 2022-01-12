@@ -1,6 +1,6 @@
 import sys
 import json
-from .pro import RendevousOrbitPredictor
+from .pro import PredictorRendevousOrbit
 from argparse import ArgumentParser
 
 def main(args):
@@ -11,7 +11,7 @@ def main(args):
   args = parser.parse_args(args)
   f = open(args.conf)
   config = json.load(f)
-  pro = RendevousOrbitPredictor(config, args.now)
+  pro = PredictorRendevousOrbit(config, args.now)
   pro.start()
 
 if __name__ == "__main__":

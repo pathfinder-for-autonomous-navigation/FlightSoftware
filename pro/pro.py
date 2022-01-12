@@ -18,45 +18,65 @@ st_logout = '/ajaxauth/logout'
 FOLDER_PATH = 'pro/mc_runs/'
 DONE_FILE_PATH = FOLDER_PATH + 'done_file.done'
 
-class RendevousOrbitPredictor(object):
-  # def __init__(self, amount_per_day, start, imei):
-  def __init__(self, config_dict, now):
+class PredictorRendevousOrbit(object):
+  def __init__(self, config_dict, run_now_option):
+    '''Construct a PRO object.
+    
+    args:
+      config_dict: A dictionary containing the configuration for PRO
+      run_now_option: whether or not to run immeadiately, disregarding the schedule    
+    '''
     self.scheduler = sched.scheduler(time.time, time.sleep)
     self.index = 'statefield_report_' + config_dict['imei']
     self.es = Elasticsearch()
     self.times = self.time_string_to_time(config_dict['times'])
-    self.run_now = now
+    self.run_now = run_now_option
     self.next = 0
     self.username = config_dict['username']
     self.password = config_dict['password']
 
-  def time_string_to_time(self, l):
+  def time_string_to_time(self, list_of_time_strs):
+    '''Convert a list of time strings to time objects.
+    
+    args:
+      local list of time strings
+    returns:
+      list of time objects
+    '''
     time_objs = []
-    for str in l:
+    for str in list_of_time_strs:
       parsed_time = list(time.strptime(str, "%H:%M:%S"))
       current_time = list(time.localtime())
       full_time = time.struct_time(tuple(current_time[0:3] + parsed_time[3:6] + current_time[6:]))
       time_objs.append(time.mktime(full_time))
     return time_objs
 
-
-  # Starts the first run (currently time of starting the script 
-  #  - can be changed to a fixed point in the future)
   def start(self):
+    '''Start PRO.
+    if self.run_now, run immediately, then follow the schedule
+    otherwise, follow the schedule
+    '''
     if self.run_now:
       self.periodic_send()
     else:
-      self.next = self.get_next_time()
-      if self.next>= len(self.times):
-        self.next_day_of_times()
-        self.next = 0
+      self.next = self.get_initial_time_index()
+      self.check_if_times_are_expired()
       self.scheduler.enterabs(self.times[self.next], 1, self.periodic_send)
       print("Waiting for " + self.epoch_time_to_string(self.times[self.next]) + "...")
       
       self.scheduler.run()
-  
 
-  def get_next_time(self):
+  def check_if_times_are_expired(self):
+    '''If now is past all times, update self.times to tomorrow, set self.next to 0'''
+    if self.next >= len(self.times):
+      self.next_day_of_times()
+      self.next = 0
+
+  def get_initial_time_index(self):
+    '''Get the initial time index to start from.
+    
+    returns:
+      index of the initial time within self.times'''
     new_t =time.time()
     i = 0
     for t in self.times:
@@ -77,9 +97,7 @@ class RendevousOrbitPredictor(object):
   def periodic_send(self):
     #Scheduling next run
     self.next = self.next + 1
-    if self.next>= len(self.times):
-      self.next_day_of_times()
-      self.next = 0
+    self.check_if_times_are_expired()
     self.scheduler.enterabs(self.times[self.next], 1, self.periodic_send)
     
     # Call scripts for making calculations and generating files to upload
@@ -93,24 +111,21 @@ class RendevousOrbitPredictor(object):
     while not uploaded and tries < 5:
       tries = tries + 1
       uploaded = self.upload_file(newest_file_name)
+
     # update the time field in elasticsearch
     print(f'Upload worked: {uploaded}')
     if uploaded:
-      self.update_time()
+      self.update_pro_time_in_es()
     print("Waiting for " + self.epoch_time_to_string(self.times[self.next]) + "...")
 
   def next_day_of_times(self):
-    i = 0
-    for t in self.times:
-      self.times[i] = t + (24*60*60)
-      i = i + 1
+    '''Update self.times to the next day.'''
+    self.times = [t + (24*60*60) for t in self.times]
 
-
-  # TODO 1: Call python file that makes calculations/generates file
   def call_scripts(self):
-    # BEGIN HEADER CODE
-    # os.system("python -m ptest runsim -c ptest/configs/amc.json -t MonteCarlo --clean -ni")
-    # runpy.run_module("ptest", ['runsim', '-c', 'ptest/configs/amc.json', '-t', 'MonteCarlo', '--clean', '-ni'])
+    '''Call the montecarlo script.
+    '''
+  
     print(f"Calling MonteCarlo Script at {datetime.now()}")
     
     proc_start_time = time.time()
@@ -121,18 +136,21 @@ class RendevousOrbitPredictor(object):
     process = Popen(['python', '-m', 'ptest', 'runsim', '-c', 'ptest/configs/amc.json', '-t', 'MonteCarlo', '--clean', '-ni'], stdout=PIPE, stderr=PIPE)
     while not os.path.exists(DONE_FILE_PATH):
       time.sleep(1)
-      # stdout, stderr = process.communicate()
-      # print(stdout)
+
     process.kill()
     proc_end_time = time.time()
     print("Script took " + str(proc_end_time - proc_start_time) + " seconds to run")
     
     return
 
-    # END HEADER CODE
-
   def upload_file(self, file_name):
-    # print(f'Uploading {file_name}')
+    '''Upload a file to space-track.
+    
+    args:
+      file_name, the file to upload
+    returns:
+      if the upload succeeded
+    '''
     with requests.Session() as session:
       resp = session.post(st_base + st_login, data = {'identity': self.username, 'password': self.password})
       if resp.status_code != 200:
@@ -146,7 +164,8 @@ class RendevousOrbitPredictor(object):
           return False
       return True
 
-  def update_time(self):
+  def update_pro_time_in_es(self):
+    """Update the pro time field in elasticsearch."""
     
     # Current Time
     val = time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime())
