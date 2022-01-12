@@ -1,27 +1,32 @@
 from .base import AMCCase
 import time
-from psim.sims import DualAttitudeOrbitGnc, DualOrbitGnc, OrbitControllerTest
+from psim.sims import OrbitControllerTest
 from psim import Configuration, Simulation
 import lin
 import numpy as np
 from .utils import str_to_val, Enums
 from typing import NamedTuple
 from ..gpstime import GPSTime
-from astropy.time import Time
 from .conversions import ecef2eci_mc_runs, ecef2eci, get_covariances, time2astropyTime
 from datetime import datetime
-import os
+
+
+FLIGHT_MC_RUNS = 100
+FLIGHT_RUN_TIME = 1000000000 * 60 * 60 * 24 * 7 # 7 day sim time measured in nanos
+
+RUNTIME = FLIGHT_RUN_TIME
+NUM_MC_RUNS = FLIGHT_MC_RUNS
 
 HALF = False
-HARDCODED = False  # TODO CHANGE OUT OF HARDCODED
-RUNTIME = 1000000000 * 60 * 60 # 2 hr # TODO INCREASE TIME BACK TO 7 Days
-# RUNTIME = 1000000000 * 60 * 60 * 24 * 7, # 7 days 
-CC_NANOS = 170000000
+HARDCODED = False
+
+CC_NANOS = 170000000 # number of nanoseconds in a cycle
 STEPS_PER_MIN = int(1000000000 * 60 / CC_NANOS) # Number of simulation steps in one minute 
 STEPS_PER_LOG_ENTRY = STEPS_PER_MIN # How often to log positions and time
-NUM_MC_RUNS = 10
+PAN_FOLLOWER_ID = '12345'
 DONE_FILE_NAME = 'done_file.done'
 LOG_PATH = 'pro/mc_runs/'
+
 
 np.random.seed(123)
 
@@ -32,6 +37,7 @@ class OrbitData(NamedTuple):
     time: list
 
 class MonteCarlo(AMCCase):
+    '''A special PTest Case for Running MonteCarlos for NASA'''
 
     def get_sigmas_hardcoded(self):
         '''Hardcoded version of sigmas pos, vel, pulled from first few cycles of SingleSatStanby'''
@@ -39,27 +45,24 @@ class MonteCarlo(AMCCase):
         vel_sigma = [0.363415, 0.363415, 0.363415]
         return pos_sigma, vel_sigma
 
-
     def get_sigmas_half(self):
         '''Hardcoded version of sigmas pos, vel, pulled from first few cycles of SingleSatStanby'''
         pos_sigma = [1.369557, 1.369557, 1.369559]
         vel_sigma = [0.183415, 0.183415, 0.183415]
         return pos_sigma, vel_sigma
-    
 
     def get_zero_sigmas(self):
         return [0,0,0], [0,0,0]
 
     def get_sigmas(self):
-        return self.get_sigmas_hardcoded() # If orbit estimator performing nominally, should converge to these values or better!
-
-        # if HALF:
-        #     return self.get_sigmas_half()
-        # if HARDCODED:
-        #     return self.get_sigmas_hardcoded()
-        # pos_sigma = str_to_val(self.follower.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
-        # vel_sigma = str_to_val(self.follower.read_state("orbit.vel_sigma"))
-        # return pos_sigma, vel_sigma
+        '''Return the sigmas for seeding the montecarlo cases'''
+        if HALF:
+            return self.get_sigmas_half()
+        if HARDCODED:
+            return self.get_sigmas_hardcoded()
+        pos_sigma = str_to_val(self.follower.read_state("orbit.pos_sigma")) # TODO should specify which sat here?
+        vel_sigma = str_to_val(self.follower.read_state("orbit.vel_sigma"))
+        return pos_sigma, vel_sigma
 
     def read_downlink_data_leader_hardcoded(self):
         '''Hardcoded version of get pos, vel, time, pulled from first few cycles of SingleSatStanby'''
@@ -105,12 +108,6 @@ class MonteCarlo(AMCCase):
         # update values to current 
         config["truth.leader.orbit.r"] = lin.Vector3(leader_orbit.pos)
         config["truth.leader.orbit.v"] = lin.Vector3(leader_orbit.vel)
-
-        # print(follower_r_noise)
-        
-        # print(follower_orbit.pos)
-        # print(lin.Vector3(follower_orbit.pos))
-
         config["truth.follower.orbit.r"] = lin.Vector3(follower_orbit.pos) + follower_r_noise
         config["truth.follower.orbit.v"] = lin.Vector3(follower_orbit.vel) + follower_v_noise
         config["truth.t.ns"] = GPSTime(*(follower_orbit.time)).to_pan_ns() 
@@ -151,10 +148,18 @@ class MonteCarlo(AMCCase):
         return monte_carlo_position_runs
 
     def batch_convert_to_eci(self, ecef_positions, times):
-        # return ecef_positions
+        '''Convert ECEF positions to ECI positions
+        
+        args: 
+            ecef_positions:
+            times: Times are all measured as PAN times.
+            
+        returns:
+            eci_positions
+        '''
         print('Converting to ECI coordinates')
         eci_start_time = time.time()
-        seconds_since_pan_epoch_times = [self.time_since_pan_epoch(t) for t in times]
+        seconds_since_pan_epoch_times = [MonteCarlo.time_since_pan_epoch(t) for t in times]
         eci_positions = [ecef2eci(seconds_since_pan_epoch_times[i], ecef_positions[i], [0,0,0], GPSTime.EPOCH_WN)[0] 
             for i in range(len(ecef_positions))]
         eci_finish_time = time.time()
@@ -164,7 +169,7 @@ class MonteCarlo(AMCCase):
 
     def get_file_name(self, start_time):
         data_type = "MEME"
-        sat_num = "12345" # TODO
+        sat_num = PAN_FOLLOWER_ID
         common_name = "PANF"
         
         doy = start_time.timetuple().tm_yday
@@ -181,11 +186,15 @@ class MonteCarlo(AMCCase):
     
     @staticmethod
     def time_since_pan_epoch(time):
-        pan_epoch = GPSTime.EPOCH_WN
+        '''time is a GPS time since the GPS epoch
+        args:
+            time: GPSTime list since the GPS epoch
+        returns:
+            seconds since the PAN epoch'''
         pan_gps_time = GPSTime(*time)
         time_in_seconds_since_pan_epoch = pan_gps_time.to_pan_seconds()
-        return time_in_seconds_since_pan_epoch
 
+        return time_in_seconds_since_pan_epoch
     
     @staticmethod
     def batch_convert_to_utc_time(times):
