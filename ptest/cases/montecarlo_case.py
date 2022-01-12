@@ -13,11 +13,13 @@ from datetime import datetime
 
 FLIGHT_MC_RUNS = 100
 FLIGHT_RUN_TIME = 1000000000 * 60 * 60 * 24 * 7 # 7 day sim time measured in nanos
+ONE_HOUR = 1000000000 * 60 * 60 * 1
 
 RUNTIME = FLIGHT_RUN_TIME
 NUM_MC_RUNS = FLIGHT_MC_RUNS
 
 HALF = False
+HARDCODED_SIGMAS = True # setting to true since by default sigmas are not downlinked.
 HARDCODED = False
 
 CC_NANOS = 170000000 # number of nanoseconds in a cycle
@@ -59,7 +61,7 @@ class MonteCarlo(AMCCase):
         '''Return the sigmas for seeding the montecarlo cases'''
         if HALF:
             return self.get_sigmas_half()
-        if HARDCODED:
+        if HARDCODED_SIGMAS:
             return self.get_sigmas_hardcoded()
         pos_sigma = str_to_val(self.follower.read_state("orbit.pos_sigma"))
         vel_sigma = str_to_val(self.follower.read_state("orbit.vel_sigma"))
