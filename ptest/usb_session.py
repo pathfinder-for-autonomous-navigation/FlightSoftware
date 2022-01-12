@@ -447,11 +447,11 @@ class USBSession(object):
         if telem_json_data is not None:
             try:
                 data = telem_json_data['data']
-                print(data)
                 return data
             except:
-                pass
-            # print("Printing meta data" + str(telem_json_data['metadata']))
+                print("Error parsing telemetry data")
+                # print("Printing meta data" + str(telem_json_data['metadata']))
+                return None
 
     def dbtelem(self):
         '''
