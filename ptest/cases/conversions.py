@@ -19,8 +19,12 @@ def time2astropyTime(time,init_gps_weeknum):
 def ecef2eci_mc_runs(times, mc_runs, init_gps_weeknum):
     '''
     Times and mc_runs have the same length.
-    args: mc_runs, a list of all mc_runs, each of which is a list of positions across the duration of the run
-    returns: a list of all the mc_runs, each of which is a list of positions in ECI
+    args: 
+        mc_runs, a list of all mc_runs, each of which is a list of positions across the duration of the run
+        times, a list of times, measured in seconds since the pan_epoch
+        init_gps_weeknum, the GPS week number of the pan epoch
+    returns:
+        a list of all the mc_runs, each of which is a list of positions in ECI
     '''
     num_times = len(times)
     list_of_mc_snapshots = np.array(mc_runs).transpose((1,0,2))
@@ -28,6 +32,12 @@ def ecef2eci_mc_runs(times, mc_runs, init_gps_weeknum):
     return list_of_mc_snapshots_eci
 
 def get_covariances(mc_snapshots_eci):
+    '''Return a list of the covariances of the position vectors in ECI
+
+    args:
+        a list over mc runs, then over time of the position vectors
+    returns:
+        a list of 3 x 3 matricies over time'''
     return np.array([np.cov(x.T) for x in mc_snapshots_eci])
 
 def ecef2eci_same_time_batch(time, vectors, init_gps_weeknum):
@@ -35,8 +45,8 @@ def ecef2eci_same_time_batch(time, vectors, init_gps_weeknum):
     
     args:
         vectors: a list of 3-element numpy arrays, each representing a position vector in ECEF
-        time: a single time in seconds since the GPS week number
-        init_gps_weeknum: the GPS week number
+        time: a single time in seconds since the pan epoch
+        init_gps_weeknum: the pan epoch
     returns:
         a list of 3-element numpy arrays representing the position in ECI coordinates, as a 2d numpy matrix
     '''
