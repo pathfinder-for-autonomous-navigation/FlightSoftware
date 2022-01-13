@@ -234,7 +234,7 @@ class RadioSession(object):
 
         if success:
             # Send the uplink to Iridium
-            to = "pan.ssds.qlocate@gmail.com"
+            to = "data.sbd@iridium.com"
             sender = "pan.ssds.qlocate@gmail.com"
             subject = self.imei
             msgHtml = ""

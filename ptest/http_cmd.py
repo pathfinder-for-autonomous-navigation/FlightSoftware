@@ -139,17 +139,17 @@ def create_radio_session_endpoint(radio_session, queue):
 
          # Send the uplink immediately to Iridium
         ### CHANGE BACK FOR #FLIGHT
-        # to = "data@sbd.iridium.com"
+        to = "data@sbd.iridium.com"
 
-        to = "pan.ssds.qlocate@gmail.com"
+        # to = "pan.ssds.qlocate@gmail.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
 
         SendMessage(sender, to, subject, "", "", http_uplink_sbd_name)
 
-        #### FOR AMC TESTING ONLY!!! #####
-        if radio_session.username!="":
-            radio_session.mark_message_unseen()
+        # #### FOR AMC TESTING ONLY!!! #####
+        # if radio_session.username!="":
+        #     radio_session.mark_message_unseen()
 
          # Remove uplink files/cleanup
         os.remove(http_uplink_sbd_name)
