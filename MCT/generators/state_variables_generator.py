@@ -157,6 +157,7 @@ def createDict(l):
             if (telemState in telem) == False: # finally it adds the state to the empty dictionary using the value initialized earlier
                 telem[telemState] = telemValue
     # returns the dictionary
+    telem["pro"] = {"last": 0}
     return telem
 
 def initialTelemValue(state):
@@ -301,6 +302,8 @@ def writeStateVariables(d):
     sv = open(stateVariablesPath, 'a')
     sv.write('module.exports = ')
     sv.write(line)
+
+    
 
 
 def actionAtIndex(s1, s2, i, action):

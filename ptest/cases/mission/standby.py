@@ -52,3 +52,20 @@ class DualSatStandbyCase(DualSatCase, PSimCase):
         log_fc_data(self.flight_controller_leader)
         log_fc_data(self.flight_controller_follower)
         log_psim_data(self, "leader", "follower")
+        
+    def special_function(self):
+        print("LEADER")
+        
+        self.leader.print_rs('orbit.pos')
+        self.leader.print_rs('orbit.vel')
+        self.leader.print_rs('orbit.pos_sigma')
+        self.leader.print_rs('orbit.vel_sigma')
+        self.leader.print_rs('time.gps')
+        
+        print("FOLLOWER")
+        
+        self.follower.print_rs('orbit.pos')
+        self.follower.print_rs('orbit.vel')
+        self.follower.print_rs('orbit.pos_sigma')
+        self.follower.print_rs('orbit.vel_sigma')
+        self.follower.print_rs('time.gps')

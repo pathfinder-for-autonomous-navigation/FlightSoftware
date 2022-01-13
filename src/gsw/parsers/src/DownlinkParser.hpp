@@ -46,6 +46,8 @@ class DownlinkParser {
      */
     const std::vector<DownlinkProducer::Flow>& flow_data;
 
+    bool check_is_first_packet(const std::vector<char>& packet, nlohmann::json& json_packet);
+
     /**
      * @brief Processes the most recent downlink packet.
      * 

@@ -27,16 +27,21 @@ valve2: 0,
 valve3: 0,
 valve4: 0,
 J_ecef: 0.0,
-alpha: 0.0}},
+alpha: 0.0,
+num_near_field_nodes: 0}},
+cursed: false,
 
 attitude_estimator: {
 valid: false,
+ignore_sun_vectors: false,
 q_body_eci: '',
 L_body: 0.0,
 w_bias_body: 0.0,
 p_body_eci_sigma_f: 0.0,
 w_bias_sigma_body: 0.0,
 mag_flag: false,
+b_valid: false,
+b_body: 0.0,
 
 fault: {
 base: false}},
@@ -52,6 +57,9 @@ rel_vel_sigma: 0.0},
 
 adcs_monitor: {
 functional_fault: {
+base: false},
+
+wheel1_fault: {
 base: false},
 
 wheel2_fault: {
@@ -414,4 +422,6 @@ docking: 0.0},
 downlink: {
 shift_id1: 0,
 shift_id2: 0,
-toggle_id: 0}}
+toggle_id: 0},
+pro: {
+last: 0}}
