@@ -246,7 +246,33 @@ def createJSON(satellite):
             sat['measurements'].append(containerObject)
             # add this to the container satellite + '_' + object
             sat['measurements'] = sat['measurements'] + makeValues(satellite, k)
-
+    
+    
+    protime = [{
+        "name": satellite + "_pro.last",
+        "key": satellite + "_pro.last",
+        "values": [
+            {
+                "type": "time",
+                "name": "pro.last",
+                "key": "value",
+                "hints": {
+                    "range": 1
+                }
+            },
+            {
+                "key": "utc",
+                "source": "timestamp",
+                "name": "Timestamp",
+                "format": "utc",
+                "hints": {
+                    "domain": 1
+                }
+            }
+        ]
+    }]
+    sat['measurements'] = sat['measurements'] + protime
+    
     # creates a json file called miscellaneous,json in .\MCT\public\subsystems folder and dumps json for subsystem object into it.
     satelliteJSON = open(os.path.join(FlightSoftwareDirectory, 'MCT', 'public', 'satellites', satellite + '.json'), 'w')
     json.dump(sat, satelliteJSON, indent=4)
