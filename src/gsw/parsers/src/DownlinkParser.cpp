@@ -199,7 +199,10 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
 
     const bool is_first_packet_in_frame = DownlinkParser::check_is_first_packet(packet, ret);
     // return ret.dump();
-    if (!is_first_packet_in_frame || most_recent_frame.size() == 0) {
+
+    bool immeadiate_parse = true; // fix due to low telemetry rate.
+
+    if (!immeadiate_parse && (!is_first_packet_in_frame || most_recent_frame.size() == 0)) {
         // The downlink frame isn't done coming down yet; add the
         // packet to the downlink frame that's currently being
         // collected
@@ -208,8 +211,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
     else {
         // The packet is the start of a new downlink frame.
         // Process the most recently collected frame.
-        const std::vector<char> frame_to_process = most_recent_frame;
-        most_recent_frame = packet;
+        const std::vector<char> frame_to_process = packet;
 
         std::string log_str;
         log_str += "New frame!";

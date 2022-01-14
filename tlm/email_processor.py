@@ -86,10 +86,15 @@ class IridiumEmailProcessor(object):
             f.close()
 
             self.console.write(("data.sbd\n").encode())
-            data = json.loads(self.console.readline().rstrip())
+            console_read = self.console.readline().rstrip()
+            data = json.loads(console_read)
             if data is not None:
-                data=data["data"]
-                data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
+                try:
+                    data = data["data"]
+                    data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
+                except:
+                    # take the except branch when attachment is a first packet
+                    data = None
             os.remove("data.sbd")
 
         return data
@@ -105,7 +110,7 @@ class IridiumEmailProcessor(object):
         '''
         #look for all new emails from iridium
         self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
 
@@ -155,6 +160,9 @@ class IridiumEmailProcessor(object):
                     if email_subject.find("SBD Msg From Unit:")==0:
                         # Get imei number of the radio that sent the downlink
                         self.imei=int(email_subject[19:])
+
+                        walk_contents = msg.walk()
+                        print(walk_contents)
 
                         # Go through the email contents
                         for part in msg.walk():
@@ -248,7 +256,7 @@ class IridiumEmailProcessor(object):
                 # Record that we have not recently recieved any uplinks as we just indexed the most recent one
                 self.recieved_uplink_confirmation=False
 
-            time.sleep(10)
+            time.sleep(1)
 
     def disconnect(self):
         '''
