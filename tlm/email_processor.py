@@ -4,6 +4,7 @@ import json
 import imaplib
 import os
 import email
+import email.utils
 import time
 import subprocess
 import pty
@@ -66,19 +67,29 @@ class IridiumEmailProcessor(object):
             return False
         return True
 
-    def process_downlink_packet(self, payload):
+    def process_downlink_packet(self, payload, downlink_time = None):
         '''
         Converts the email attachment payload into a 
         JSON object. This is because elasticsearch
         only takes in JSON data. If the payload doesn't 
         already contain a valid JSON string, then it runs 
         DownlinkParser
+        
+        args
+            payload
+            downlink_time:
+                optional time to specify when the downlink was recieved.
+                formatted utc z time.
         '''
+        
+        if downlink_time is None:
+            downlink_time = str(datetime.utcnow().isoformat())[:-3]+'Z'
+
         if self.is_json(payload):
             # If the attachment is a json string, then return the json
             # as a python dictionary
             data=json.loads(str(payload.decode('utf8').rstrip("\x00")))
-            data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
+            data["time.downlink_received"] = downlink_time
         else:
             # Run downlink parser and return json
             f=open("data.sbd", "wb")
@@ -91,7 +102,7 @@ class IridiumEmailProcessor(object):
             if data is not None:
                 try:
                     data = data["data"]
-                    data["time.downlink_received"]=str(datetime.utcnow().isoformat())[:-3]+'Z'
+                    data["time.downlink_received"] = downlink_time
                 except:
                     # take the except branch when attachment is a first packet
                     data = None
@@ -111,6 +122,8 @@ class IridiumEmailProcessor(object):
         #look for all new emails from iridium
         self.mail.select('Inbox')
         _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        # _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)') # for testing
+
         mail_ids = data[0]
         id_list = mail_ids.split()
 
@@ -126,6 +139,16 @@ class IridiumEmailProcessor(object):
                     # converts message from byte literal to string removing b''
                     msg = email.message_from_string(response_part[1].decode('utf-8'))
                     email_subject = msg['subject']
+                    msg_str = str(msg)
+                    date_line = msg_str.split('\n')[1][6:]
+                    # print(date_line)
+                    time_tuple = email.utils.parsedate_tz(date_line)
+                    time_stamp = email.utils.mktime_tz(time_tuple)
+                    # print(time_stamp)
+                    email_time = datetime.utcfromtimestamp(time_stamp)
+                    # print(email_time)
+                    formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
+                    # print(formatted_email_time)
 
                     #handles uplink confirmations
                     if email_subject.find("SBD Mobile Terminated Message Queued for Unit: ")==0:
@@ -161,9 +184,6 @@ class IridiumEmailProcessor(object):
                         # Get imei number of the radio that sent the downlink
                         self.imei=int(email_subject[19:])
 
-                        walk_contents = msg.walk()
-                        print(walk_contents)
-
                         # Go through the email contents
                         for part in msg.walk():
                                         
@@ -189,7 +209,8 @@ class IridiumEmailProcessor(object):
                             # Check if there is an email attachment
                             if part.get_filename() is not None:
                                 # Get data from email attachment
-                                statefield_report=self.process_downlink_packet(part.get_payload(decode=True))
+                                attachment_payload = part.get_payload(decode=True)
+                                statefield_report=self.process_downlink_packet(attachment_payload, downlink_time = formatted_email_time)
                                 return statefield_report
                         
                     #if we have not recieved a downlink, return None
