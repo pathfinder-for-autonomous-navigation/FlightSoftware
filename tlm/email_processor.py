@@ -110,7 +110,7 @@ class IridiumEmailProcessor(object):
         '''
         #look for all new emails from iridium
         self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
+        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
 
