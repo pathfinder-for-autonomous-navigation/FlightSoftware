@@ -103,9 +103,20 @@ class IridiumEmailProcessor(object):
         If either a downlink or an uplink is recieved, the function will update the most recent MOMSN 
         and MTMSN numbers and check whether or not radioSession can send uplinks.
         '''
+
+
+        #look for all new emails from iridium
+
+        self.mail.select('"[Gmail]/Inbox"')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+
+
+
         #look for all new emails from iridium
         self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
 
