@@ -139,15 +139,16 @@ class IridiumEmailProcessor(object):
                     # converts message from byte literal to string removing b''
                     msg = email.message_from_string(response_part[1].decode('utf-8'))
                     email_subject = msg['subject']
-                    msg_str = str(msg)
-                    date_line = msg_str.split('\n')[1][6:]
+                    # msg_str = str(msg)
+                    # print(msg_str)
+                    # date_line = msg_str.split('\n')[1][6:]
                     # print(date_line)
-                    time_tuple = email.utils.parsedate_tz(date_line)
-                    time_stamp = email.utils.mktime_tz(time_tuple)
+                    # time_tuple = email.utils.parsedate_tz(date_line)
+                    # time_stamp = email.utils.mktime_tz(time_tuple)
                     # print(time_stamp)
-                    email_time = datetime.utcfromtimestamp(time_stamp)
+                    # email_time = datetime.utcfromtimestamp(time_stamp)
                     # print(email_time)
-                    formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
+                    # formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
                     # print(formatted_email_time)
 
                     #handles uplink confirmations
@@ -203,6 +204,21 @@ class IridiumEmailProcessor(object):
                                         mtmsn = int(line[7:])
                                         if mtmsn != 0:
                                             self.confirmation_mtmsn = mtmsn
+                                    session_time_idx = line.find("Time of Session (UTC)")
+                                    if session_time_idx!=-1:
+                                        time_of_session = line[session_time_idx+23:]
+                                        # print(time_of_session)
+                                        time_tuple = email.utils.parsedate(time_of_session)
+                                        utc_time_tuple = tuple(list(time_tuple) + [0]) 
+                                        time_stamp = email.utils.mktime_tz(utc_time_tuple)
+                                        # print(time_stamp)
+                                        email_time = datetime.utcfromtimestamp(time_stamp)
+                                        # print(email_time)
+                                        # print(email_time)
+                                        formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
+                                        # print(formatted_email_time)
+
+                                        self.formatted_email_time = formatted_email_time
 
                             self.set_send_uplinks()
 
@@ -210,7 +226,7 @@ class IridiumEmailProcessor(object):
                             if part.get_filename() is not None:
                                 # Get data from email attachment
                                 attachment_payload = part.get_payload(decode=True)
-                                statefield_report=self.process_downlink_packet(attachment_payload, downlink_time = formatted_email_time)
+                                statefield_report=self.process_downlink_packet(attachment_payload, downlink_time = self.formatted_email_time)
                                 return statefield_report
                         
                     #if we have not recieved a downlink, return None
@@ -230,19 +246,19 @@ class IridiumEmailProcessor(object):
         '''
         Creates and indexes an Iridium Report
         '''
-        # Create an iridium report 
-        ir_report=json.dumps({
-            "momsn":self.momsn,
-            "mtmsn":self.mtmsn, 
-            "confirmation-mtmsn": self.confirmation_mtmsn,
-            "send-uplinks": self.send_uplinks,
-            "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
-        })
+        # # Create an iridium report 
+        # ir_report=json.dumps({
+        #     "momsn":self.momsn,
+        #     "mtmsn":self.mtmsn, 
+        #     "confirmation-mtmsn": self.confirmation_mtmsn,
+        #     "send-uplinks": self.send_uplinks,
+        #     "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
+        # })
 
-        # Index iridium report in elasticsearch
-        iridium_res = self.es.index(index='iridium_report_'+str(self.imei), doc_type='report', body=ir_report)
-        # Print whether or not indexing was successful
-        print("Iridium Report Status: "+iridium_res['result']+"\n\n")
+        # # Index iridium report in elasticsearch
+        # iridium_res = self.es.index(index='iridium_report_'+str(self.imei), doc_type='report', body=ir_report)
+        # # Print whether or not indexing was successful
+        # print("Iridium Report Status: "+iridium_res['result']+"\n\n")
 
     def post_to_es(self):
         '''
