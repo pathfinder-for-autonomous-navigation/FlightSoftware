@@ -246,19 +246,19 @@ class IridiumEmailProcessor(object):
         '''
         Creates and indexes an Iridium Report
         '''
-        # # Create an iridium report 
-        # ir_report=json.dumps({
-        #     "momsn":self.momsn,
-        #     "mtmsn":self.mtmsn, 
-        #     "confirmation-mtmsn": self.confirmation_mtmsn,
-        #     "send-uplinks": self.send_uplinks,
-        #     "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
-        # })
+        # Create an iridium report 
+        ir_report=json.dumps({
+            "momsn":self.momsn,
+            "mtmsn":self.mtmsn, 
+            "confirmation-mtmsn": self.confirmation_mtmsn,
+            "send-uplinks": self.send_uplinks,
+            "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
+        })
 
-        # # Index iridium report in elasticsearch
-        # iridium_res = self.es.index(index='iridium_report_'+str(self.imei), doc_type='report', body=ir_report)
-        # # Print whether or not indexing was successful
-        # print("Iridium Report Status: "+iridium_res['result']+"\n\n")
+        # Index iridium report in elasticsearch
+        iridium_res = self.es.index(index='iridium_report_'+str(self.imei), doc_type='report', body=ir_report)
+        # Print whether or not indexing was successful
+        print("Iridium Report Status: "+iridium_res['result']+"\n\n")
 
     def post_to_es(self):
         '''
