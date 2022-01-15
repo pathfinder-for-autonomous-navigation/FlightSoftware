@@ -226,7 +226,8 @@ class IridiumEmailProcessor(object):
                                 return (imei, statefield_report)
                         
                     #if we have not recieved a downlink, return None
-                    return (imei, None)
+                    return imei, None
+        return None, None
 
     def set_send_uplinks(self):
         #Set whether or not radioSession can send uplinks
