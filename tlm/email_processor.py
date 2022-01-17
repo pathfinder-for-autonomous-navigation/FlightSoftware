@@ -166,7 +166,10 @@ class IridiumEmailProcessor(object):
                                 email_body = part.get_payload(decode=True).decode('utf8')
                                 for line in email_body.splitlines():
                                     if line.find("MTMSN")!=-1:
-                                        self.mtmsn=int(line[line.find("MTMSN")+9:line.find("MTMSN")+11])
+                                        rest_of_mtmsn_line = line[line.find("MTMSN")+9:]
+                                        mtmsn_str = rest_of_mtmsn_line.split(",")[0]
+                                        self.mtmsn=int(mtmsn_str)
+                                        print(self.mtmsn)
 
                             self.set_send_uplinks()
 
@@ -212,7 +215,7 @@ class IridiumEmailProcessor(object):
                                         email_time = datetime.utcfromtimestamp(time_stamp)
                                         # print(email_time)
                                         # print(email_time)
-                                        formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
+                                        formatted_email_time = str(email_time.isoformat())+'Z'
                                         # print(formatted_email_time)
 
                                         self.formatted_email_time = formatted_email_time
