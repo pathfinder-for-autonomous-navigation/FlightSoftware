@@ -1,0 +1,10 @@
+[
+    {
+      "field": "attitude_estimator.ignore_sun_vectors",
+      "value": true
+    },
+    {
+      "field": "gomspace.gs_reset_cmd",
+      "value": True
+    }
+]
