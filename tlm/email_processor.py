@@ -52,6 +52,7 @@ class IridiumEmailProcessor(object):
         self.check_email_thread = threading.Thread(target=self.post_to_es)
         self.run_email_thread = True
         self.check_email_thread.start()
+        print("Monitoring GMAIL for Iridium Messages...")
 
     def is_json(self, payload):
         '''

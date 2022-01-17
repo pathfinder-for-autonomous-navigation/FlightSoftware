@@ -1,0 +1,19 @@
+summary: "Return the most recent value of a given field from the given index"
+tags: 
+  - "Search ElasticSearch"
+description: "This is used for searching for the most recent value of a given field."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - name: index
+    in: query
+    type: string
+    required: true
+    description: The index from which data is requested
+  - name: field
+    in: query
+    type: string
+    required: true
+    description: The field requested

@@ -4,7 +4,7 @@ import json
 import sys
 
 from .email_processor import IridiumEmailProcessor
-from .webservice import app
+# from .webservice import app
 
 def main(args):
     parser = ArgumentParser(description='''Webservice for accessing and updating PAN telemetry.''', prog="tlm.py")
@@ -35,14 +35,17 @@ def main(args):
 
     # Open a connection to elasticsearch
     es = Elasticsearch([{'host':'127.0.0.1','port':args.elasticsearch_port}])
-
+    
     # Create a read_iridium object
     readIr = IridiumEmailProcessor(radio_keys_config, es, args.downlink_parser_path)
+    
+    print("Starting Iridium Email Processor...")
     # Start checking emails and posting reports
     readIr.connect()
-
-    app.config["es"] = es
-    app.run(debug=True, host='0.0.0.0')
+    
+    # MOVED TO /groundsoftware/es_routing
+    # app.config["es"] = es
+    # app.run(debug=True, host='0.0.0.0')
 
 if __name__ == "__main__":
     main(sys.argv[1:])

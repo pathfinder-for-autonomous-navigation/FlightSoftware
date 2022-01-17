@@ -68,6 +68,20 @@
                             }
                         },
                         {
+                            label: 'Last 3 Days',
+                            bounds: {
+                                start: () => Date.now() - (3* ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 2 Days',
+                            bounds: {
+                                start: () => Date.now() - (2*ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
                             label: 'Last Day',
                             bounds: {
                                 start: () => Date.now() - ONE_DAY,
