@@ -91,11 +91,11 @@ class IridiumEmailProcessor(object):
             f=open("data.sbd", "wb")
             f.write(payload)
             f.close()
-            print("Before console: " + os.path.exists("data.sbd"))
+            #print("Before console: " + os.path.exists("data.sbd"))
             self.console.write(("data.sbd\n").encode())
             console_read = self.console.readline().rstrip()
             data = json.loads(console_read)
-            print("After console: " +os.path.exists("data.sbd"))
+            #print("After console: " +os.path.exists("data.sbd"))
             if data is not None:
                 try:
                     data = data["data"]
