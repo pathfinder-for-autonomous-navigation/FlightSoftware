@@ -29,9 +29,6 @@ class IridiumEmailProcessor(object):
         self.send_uplinks=True
         self.recieved_uplink_confirmation=False
 
-        #imei number of the radio that sent the most recent email
-        self.imei=-1
-
         #connect to email
         self.authentication = authenticate()
         self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
@@ -52,7 +49,6 @@ class IridiumEmailProcessor(object):
         check the PAN email and post reports to 
         elasticsearch 
         '''
-        self.create_iridium_report()
         self.check_email_thread = threading.Thread(target=self.post_to_es)
         self.run_email_thread = True
         self.check_email_thread.start()
@@ -95,10 +91,11 @@ class IridiumEmailProcessor(object):
             f=open("data.sbd", "wb")
             f.write(payload)
             f.close()
-
+            #print("Before console: " + os.path.exists("data.sbd"))
             self.console.write(("data.sbd\n").encode())
             console_read = self.console.readline().rstrip()
             data = json.loads(console_read)
+            #print("After console: " +os.path.exists("data.sbd"))
             if data is not None:
                 try:
                     data = data["data"]
@@ -154,7 +151,7 @@ class IridiumEmailProcessor(object):
                     #handles uplink confirmations
                     if email_subject.find("SBD Mobile Terminated Message Queued for Unit: ")==0:
                         # Get imei number of the radio that recieved the uplink
-                        self.imei=int(email_subject[47:])
+                        imei=int(email_subject[47:])
 
                         for part in msg.walk():
                                             
@@ -169,7 +166,10 @@ class IridiumEmailProcessor(object):
                                 email_body = part.get_payload(decode=True).decode('utf8')
                                 for line in email_body.splitlines():
                                     if line.find("MTMSN")!=-1:
-                                        self.mtmsn=int(line[line.find("MTMSN")+9:line.find("MTMSN")+11])
+                                        rest_of_mtmsn_line = line[line.find("MTMSN")+9:]
+                                        mtmsn_str = rest_of_mtmsn_line.split(",")[0]
+                                        self.mtmsn=int(mtmsn_str)
+                                        print(self.mtmsn)
 
                             self.set_send_uplinks()
 
@@ -183,7 +183,7 @@ class IridiumEmailProcessor(object):
                     # Handles downlinks
                     if email_subject.find("SBD Msg From Unit:")==0:
                         # Get imei number of the radio that sent the downlink
-                        self.imei=int(email_subject[19:])
+                        imei=int(email_subject[19:])
 
                         # Go through the email contents
                         for part in msg.walk():
@@ -215,7 +215,7 @@ class IridiumEmailProcessor(object):
                                         email_time = datetime.utcfromtimestamp(time_stamp)
                                         # print(email_time)
                                         # print(email_time)
-                                        formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
+                                        formatted_email_time = str(email_time.isoformat())+'Z'
                                         # print(formatted_email_time)
 
                                         self.formatted_email_time = formatted_email_time
@@ -227,10 +227,11 @@ class IridiumEmailProcessor(object):
                                 # Get data from email attachment
                                 attachment_payload = part.get_payload(decode=True)
                                 statefield_report=self.process_downlink_packet(attachment_payload, downlink_time = self.formatted_email_time)
-                                return statefield_report
+                                return (imei, statefield_report)
                         
                     #if we have not recieved a downlink, return None
-                    return None
+                    return imei, None
+        return None, None
 
     def set_send_uplinks(self):
         #Set whether or not radioSession can send uplinks
@@ -242,23 +243,23 @@ class IridiumEmailProcessor(object):
             #allow radio session to send more uplinks
             self.send_uplinks=True
 
-    def create_iridium_report(self):
+    def create_iridium_report(self, imei):
         '''
         Creates and indexes an Iridium Report
         '''
-        # # Create an iridium report 
-        # ir_report=json.dumps({
-        #     "momsn":self.momsn,
-        #     "mtmsn":self.mtmsn, 
-        #     "confirmation-mtmsn": self.confirmation_mtmsn,
-        #     "send-uplinks": self.send_uplinks,
-        #     "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
-        # })
+        # Create an iridium report 
+        ir_report=json.dumps({
+            "momsn":self.momsn,
+            "mtmsn":self.mtmsn, 
+            "confirmation-mtmsn": self.confirmation_mtmsn,
+            "send-uplinks": self.send_uplinks,
+            "time.downlink_received": str(datetime.utcnow().isoformat())[:-3]+'Z'
+        })
 
-        # # Index iridium report in elasticsearch
-        # iridium_res = self.es.index(index='iridium_report_'+str(self.imei), doc_type='report', body=ir_report)
-        # # Print whether or not indexing was successful
-        # print("Iridium Report Status: "+iridium_res['result']+"\n\n")
+        # Index iridium report in elasticsearch
+        iridium_res = self.es.index(index='iridium_report_'+str(imei), doc_type='report', body=ir_report)
+        # Print whether or not indexing was successful
+        print("Iridium Report Status: "+iridium_res['result']+"\n\n")
 
     def post_to_es(self):
         '''
@@ -274,22 +275,22 @@ class IridiumEmailProcessor(object):
 
         while self.run_email_thread==True:
             #get the most recent statefield report
-            sf_report=self.check_for_email()
+            imei, sf_report=self.check_for_email()
 
             if sf_report is not None:
                 # Print the statefield report recieved
                 print("Got report: "+str(sf_report)+"\n")
 
                 # Index statefield report in elasticsearch
-                statefield_res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=sf_report)
+                statefield_res = self.es.index(index='statefield_report_'+str(imei), doc_type='report', body=sf_report)
                 # Print whether or not indexing was successful
                 print("Statefield Report Status: "+statefield_res['result'])
 
-                self.create_iridium_report()
+                self.create_iridium_report(imei)
 
             elif self.recieved_uplink_confirmation:
                 # Create an iridium report and add that to the iridium_report index in elasticsearch. 
-                self.create_iridium_report()
+                self.create_iridium_report(imei)
                 # Record that we have not recently recieved any uplinks as we just indexed the most recent one
                 self.recieved_uplink_confirmation=False
 
