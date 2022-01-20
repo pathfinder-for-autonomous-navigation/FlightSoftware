@@ -119,9 +119,7 @@ def display_downlinks(momsn, downlink_dir):
         if data is None:
             return "No data in file."
         else:
-            res = "MOMSN: " + get_momsn_number(filenames[0]) + "\nMTMSN: " + get_mtmsn_number(filenames[0]) + "\n" + json.dumps(data, indent = 4)
-            res = res.replace("\n", "<br/>")
-            return res
+            return data
 
 # Endpoint for getting data from ElasticSearch
 @app.route("/search-es", methods=["GET"])
