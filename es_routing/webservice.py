@@ -54,7 +54,7 @@ def endpoint_info():
     description = description + "\n/follower - Optional parameter momsn"
     description = description + "\n/leader - Optional parameter momsn"
     description = description + "\n/search-es - Mandatory paramaters index and field"
-    description = description + "\n/time-search-es - Mandatory paramaters index, field, start time, and end time"
+    description = description + "\n/time-search-es - Mandatory paramaters index, field, start , and end"
     
     return description.replace("\n", "<br/>")
 
