@@ -1,0 +1,14 @@
+summary: "Returns either all or one of the downlinks in a json form"
+tags: 
+  - "Display Telemetry Data"
+description: "This is used to display all the raw telemetry downlink data or a specified downlink packet."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - name: momsn
+    in: query
+    type: string
+    required: false
+    description: The momsn number of the downlink

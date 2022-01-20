@@ -4,9 +4,14 @@ from flasgger.utils import swag_from
 from datetime import datetime
 from argparse import ArgumentParser
 import json
+import os
+import glob
 
 app = Flask(__name__)
 app.config["SWAGGER"]={"title": "PAN Telemetry Software", "uiversion": 2}
+
+downlink_dir = "es_routing/downlink_jsons/"
+
 
 # Set up the SwaggerUI API
 swagger_config={
@@ -45,6 +50,78 @@ def index_sf_report():
         "Index": 'statefield_report_'+str(imei)
     }
     return res
+
+
+def get_momsn_number(filename):
+    rest_of_filename = filename[filename.find("MOMSN")+5:]
+    return rest_of_filename.split("_")[0]
+    
+
+def get_mtmsn_number(filename):
+    rest_of_filename = filename[filename.find("MTMSN")+5:]
+    return rest_of_filename.split(".")[0]
+
+@app.route("/leader", methods=["GET"])
+@swag_from("endpoint_configs/display_downlinks.yml")
+def display_leader_downlinks():
+    momsn = None
+    try:
+        momsn = int(request.args.get('momsn'))
+    except:
+        pass
+    return display_downlinks(request.args.get('momsn'), "es_routing/leader_jsons/")
+
+@app.route("/follower", methods=["GET"])
+@swag_from("endpoint_configs/display_downlinks.yml")
+def display_follower_downlinks():
+    momsn = None
+    try:
+        momsn = int(request.args.get('momsn'))
+    except:
+        pass
+    return display_downlinks(momsn, "es_routing/follower_jsons/")
+
+
+def display_downlinks(momsn, downlink_dir):
+    files = list(filter(os.path.isfile, glob.glob(downlink_dir + "*")))
+    files.sort(key=lambda x: os.path.getmtime(x))
+
+    #comment out for oldest-newest
+    files.reverse()
+
+    if momsn is None:
+        data = [json.load(open(f)) for f in files]
+        res = ""
+        i = 0
+
+        for d in data:
+            res = res + "MOMSN: " + get_momsn_number(files[i]) + " MTMSN: " + get_mtmsn_number(files[i]) + "\n\n" 
+            if data is None:
+                res = res + "No data in file."
+            else:
+                res = res + json.dumps(data[i], indent = 4)
+            
+            res = res + "\n\n\n\n"
+            i = i + 1
+        res = res.replace("\n", "<br/>")
+
+        if res == "":
+            return "No Downlinks yet"
+        else:
+            return res
+
+    else:
+        filenames = [s for s in files if "MOMSN" + str(momsn) + "_" in s]
+        try:
+            data = json.load(open(filenames[0]))
+        except:
+            return "No file matching MOMSN number " + str(momsn) + "."
+        if data is None:
+            return "No data in file."
+        else:
+            res = "MOMSN: " + get_momsn_number(filenames[0]) + "\nMTMSN: " + get_mtmsn_number(filenames[0]) + "\n" + json.dumps(data, indent = 4)
+            res = res.replace("\n", "<br/>")
+            return res
 
 # Endpoint for getting data from ElasticSearch
 @app.route("/search-es", methods=["GET"])

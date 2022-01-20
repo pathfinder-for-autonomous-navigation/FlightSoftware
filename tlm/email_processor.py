@@ -20,6 +20,9 @@ class IridiumEmailProcessor(object):
         self.username=radio_keys_config["email_username"]
         self.password=radio_keys_config["email_password"]
 
+        self.leader_imei=radio_keys_config["leader"]
+        self.follower_imei=radio_keys_config["follower"]
+
         #updates MOMSN and MTMSN numbers sent/recieved
         self.momsn=-1
         self.mtmsn=-1
@@ -205,6 +208,7 @@ class IridiumEmailProcessor(object):
                                         mtmsn = int(line[7:])
                                         if mtmsn != 0:
                                             self.confirmation_mtmsn = mtmsn
+                                        self.mtmsn_down = mtmsn
                                     session_time_idx = line.find("Time of Session (UTC)")
                                     if session_time_idx!=-1:
                                         time_of_session = line[session_time_idx+23:]
@@ -279,6 +283,17 @@ class IridiumEmailProcessor(object):
             imei, sf_report=self.check_for_email()
 
             if sf_report is not None:
+                if str(imei) == self.leader_imei:
+                    downlink_path = 'es_routing/leader_jsons/DOWNLINK_MOMSN' + str(self.momsn) + '_MTMSN' + str(self.mtmsn_down) +'.json'
+                    if not os.path.exists(downlink_path):
+                        with open(downlink_path, 'x') as f:
+                            json.dump(sf_report, f)
+                elif str(imei) == self.follower_imei:
+                    downlink_path = 'es_routing/follower_jsons/DOWNLINK_MOMSN' + str(self.momsn) + '_MTMSN' + str(self.mtmsn_down) +'.json'
+                    if not os.path.exists(downlink_path):
+                        with open(downlink_path, 'x') as f:
+                            json.dump(sf_report, f)
+
                 # Print the statefield report recieved
                 print("Got report: "+str(sf_report)+"\n")
 
