@@ -10,9 +10,6 @@ import glob
 app = Flask(__name__)
 app.config["SWAGGER"]={"title": "PAN Telemetry Software", "uiversion": 2}
 
-downlink_dir = "es_routing/downlink_jsons/"
-
-
 # Set up the SwaggerUI API
 swagger_config={
     "headers":[],
@@ -50,6 +47,16 @@ def index_sf_report():
         "Index": 'statefield_report_'+str(imei)
     }
     return res
+
+@app.route("/", methods=["GET"])
+def endpoint_info():
+    description = "Endpoints:\n"
+    description = description + "\n/follower - Optional parameter momsn"
+    description = description + "\n/leader - Optional parameter momsn"
+    description = description + "\n/search-es - Mandatory paramaters index and field"
+    description = description + "\n/time-search-es - Mandatory paramaters index, field, start time, and end time"
+    
+    return description.replace("\n", "<br/>")
 
 
 def get_momsn_number(filename):
