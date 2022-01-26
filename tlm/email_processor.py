@@ -346,7 +346,10 @@ class IridiumEmailProcessor(object):
         self.clean_up_sbd_file(sbd_file_name)
 
     def is_goto_command_enabled(self, role):
-        '''Returns whether or not goto commands are enabled for the given role'''
+        '''Returns whether or not goto commands are enabled for the given role
+        
+        TODO CONTROL FROM END POINTS
+        '''
         if role == LEADER:
             return self.enable_leader_goto
         if role == FOLLOWER:

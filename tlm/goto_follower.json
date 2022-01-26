@@ -1,0 +1,30 @@
+[
+    {
+    "field": "radio.max_wait",
+    "value": 10420
+    },
+    {
+    "field": "radio.max_transceive",
+    "value": 10
+    },
+    {
+    "field": "adcs_cmd.havt_disable18",
+    "value": true
+    },
+    {
+    "field": "adcs.state",
+    "value": 1
+    },
+    {
+    "field": "gomspace.piksi_off",
+    "value": true
+    },
+    {
+    "field": "dcdc.disable_cmd",
+    "value": true
+    },
+    {
+    "field": "gomspace.power_cycle_output4_cmd",
+    "value": true
+    }
+]
