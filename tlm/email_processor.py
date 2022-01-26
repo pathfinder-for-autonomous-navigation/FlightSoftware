@@ -15,6 +15,7 @@ from ptest.uplink_console import UplinkConsole
 
 LEADER = 0
 FOLLOWER = 1
+TLM_RUN_DIR = 'tlm/'
 
 
 class IridiumEmailProcessor(object):
@@ -285,15 +286,13 @@ class IridiumEmailProcessor(object):
         if role == FOLLOWER:
             return "goto_follower" + file_ending
 
-    def get_go_to_command_data(self, role):
+    def get_go_to_command_data(self, role, file_path):
         '''Load the go to command from local file directory. tlm/
         
         returns:
             json of the command'''
             
-        fn = self.get_go_to_command_name(role)
-
-        with open(fn) as json_file:
+        with open(file_path) as json_file:
             data = json.load(json_file)
         return data
    
@@ -336,14 +335,15 @@ class IridiumEmailProcessor(object):
     def queue_go_to_command(self, role):
         '''With the given role, automatically queue the corresponding go to command for that satellite'''
         json_command_file_name = self.get_go_to_command_name(role)
-        json_command_data = self.get_go_to_command_data(role)
+        json_command_file_path = TLM_RUN_DIR + json_command_file_name
+        json_command_data = self.get_go_to_command_data(role, json_command_file_path)
         fields, vals = zip(*json_command_data)
         print(fields)
         print(vals)
 
         sbd_file_name = self.get_sbd_file_name(role)
 
-        success = self.uplink_console.create_uplink(fields, vals, sbd_file_name, json_command_file_name) and os.path.exists(self.uplink_sbd_name)
+        success = self.uplink_console.create_uplink(fields, vals, sbd_file_name, json_command_file_path) and os.path.exists(sbd_file_name)
 
         if success:
             self.send_sbd_file(role, sbd_file_name)
@@ -351,6 +351,9 @@ class IridiumEmailProcessor(object):
                 self.comment_to_github(role, json_command_data)
             except:
                 print("Comment to github failed")
+
+        else:
+            print('Failed to generate uplink file')
 
         # attempt cleanup regardless
         self.clean_up_sbd_file(sbd_file_name)
