@@ -9,6 +9,7 @@ import time
 import subprocess
 import pty
 import serial
+import shutil
 from .oauth2 import *
 from ptest.uplink_console import UplinkConsole
 
@@ -286,13 +287,13 @@ class IridiumEmailProcessor(object):
         if role == FOLLOWER:
             return "goto_follower" + file_ending
 
-    def get_go_to_command_data(self, role, file_path):
+    def get_go_to_command_data(self, file_path):
         '''Load the go to command from local file directory. tlm/
         
         returns:
             json of the command'''
             
-        with open(file_path) as json_file:
+        with open(file_path, 'r') as json_file:
             data = json.load(json_file)
         return data
    
@@ -319,12 +320,20 @@ class IridiumEmailProcessor(object):
         subject = target_imei
         msgHtml = ""
         msgPlain = ""
+
+        # ### TEST CODE SECTION ###
+        # to = "pan.ssds.qlocate@gmail.com"
+        # sender = "pan.ssds.qlocate@gmail.com"
+        # subject = "TESTING"
+        # ### END TEST CODE SECTION ###
+
         SendMessage(sender, to, subject, msgHtml, msgPlain, sbd_file_name)
 
-    def clean_up_sbd_file(self, sbd_file_name):
+    def clean_up_files(self, files):
         # Remove uplink files/cleanup
-        if os.path.exists(sbd_file_name):
-            os.remove(sbd_file_name)
+        for file in files:
+            if os.path.exists(file):
+                os.remove(file)
 
     def comment_to_github(self, role, json_command_data):
         '''
@@ -336,17 +345,22 @@ class IridiumEmailProcessor(object):
         '''With the given role, automatically queue the corresponding go to command for that satellite'''
         json_command_file_name = self.get_go_to_command_name(role)
         json_command_file_path = TLM_RUN_DIR + json_command_file_name
-        json_command_data = self.get_go_to_command_data(role, json_command_file_path)
-        fields, vals = zip(*json_command_data)
-        print(fields)
-        print(vals)
+        json_command_data = self.get_go_to_command_data(json_command_file_path)
+        list_of_fv_dicts = json_command_data
+        fields = [x['field'] for x in list_of_fv_dicts]
+        vals = [x['value'] for x in list_of_fv_dicts]
 
+        temp_json_name = "automatic_command.json"
         sbd_file_name = self.get_sbd_file_name(role)
 
-        success = self.uplink_console.create_uplink(fields, vals, sbd_file_name, json_command_file_path) and os.path.exists(sbd_file_name)
+        success = self.uplink_console.create_uplink(fields, vals, sbd_file_name, temp_json_name) and os.path.exists(sbd_file_name)
 
         if success:
+            print("Sending message: ")
             self.send_sbd_file(role, sbd_file_name)
+            print(json_command_data)
+            print("Successfully Sent Message")
+
             try:
                 self.comment_to_github(role, json_command_data)
             except:
@@ -356,7 +370,8 @@ class IridiumEmailProcessor(object):
             print('Failed to generate uplink file')
 
         # attempt cleanup regardless
-        self.clean_up_sbd_file(sbd_file_name)
+        files_to_delete = [sbd_file_name, temp_json_name]
+        self.clean_up_files(files_to_delete)
 
     def is_goto_command_enabled(self, role):
         '''Returns whether or not goto commands are enabled for the given role
