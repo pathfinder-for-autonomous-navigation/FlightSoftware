@@ -10,6 +10,12 @@ import subprocess
 import pty
 import serial
 from .oauth2 import *
+from ptest.uplink_console import UplinkConsole
+
+
+LEADER = 0
+FOLLOWER = 1
+
 
 class IridiumEmailProcessor(object):
     def __init__(self, radio_keys_config, elasticsearch, downlink_parser_path):
@@ -45,6 +51,10 @@ class IridiumEmailProcessor(object):
         master_fd, slave_fd = pty.openpty()
         self.downlink_parser = subprocess.Popen([downlink_parser_path], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+
+        self.uplink_console = UplinkConsole('.') # open a new uplink console in the current directory\
+        self.enable_leader_goto = True
+        self.enable_follower_goto = False
 
     def connect(self):
         '''
@@ -266,6 +276,87 @@ class IridiumEmailProcessor(object):
         # Print whether or not indexing was successful
         print("Iridium Report Status: "+iridium_res['result']+"\n\n")
 
+    def get_go_to_command_name(self, role):
+        '''Returns the string name of the proper go to command name'''
+        file_ending = ".json"
+    
+        if role == LEADER:
+            return "goto_leader" + file_ending
+        if role == FOLLOWER:
+            return "goto_follower" + file_ending
+
+    def get_go_to_command_data(self, role):
+        '''Load the go to command from local file directory. tlm/
+        
+        returns:
+            json of the command'''
+            
+        fn = self.get_go_to_command_name(role)
+
+        with open(fn) as json_file:
+            data = json.load(json_file)
+        return data
+   
+    def get_sbd_file_name(self, role):
+        '''Get the name of the sbd file that should be created for the given role'''
+        if role == LEADER:
+            target_sbd_file_name = "goto_leader.sbd"
+        else:
+            target_sbd_file_name = "goto_follower.sbd"
+    
+        return target_sbd_file_name
+    
+    def send_sbd_file(self, role, sbd_file_name):
+        '''Sends the sbd file to the iridium email'''
+        
+        if role == LEADER:
+            target_imei = self.leader_imei
+        else:
+            target_imei = self.follower_imei
+        
+        # Send the uplink to Iridium
+        to = "data.sbd@iridium.com"
+        sender = "pan.ssds.qlocate@gmail.com"
+        subject = target_imei
+        msgHtml = ""
+        msgPlain = ""
+        SendMessage(sender, to, subject, msgHtml, msgPlain, sbd_file_name)
+
+    def clean_up_sbd_file(self, sbd_file_name):
+        # Remove uplink files/cleanup
+        if os.path.exists(sbd_file_name):
+            os.remove(sbd_file_name)
+
+    def queue_go_to_command(self, role):
+        '''With the given role, automatically queue the corresponding go to command for that satellite'''
+        json_command_file_name = self.get_go_to_command_name(role)
+        json_command_data = self.get_go_to_command_data(role)
+        fields, vals = zip(*json_command_data)
+        print(fields)
+        print(vals)
+
+        sbd_file_name = self.get_sbd_file_name(role)
+
+        success = self.uplink_console.create_uplink(fields, vals, sbd_file_name, json_command_file_name) and os.path.exists(self.uplink_sbd_name)
+
+        if success:
+            self.send_sbd_file(role, sbd_file_name)
+
+        # attempt cleanup regardless
+        self.clean_up_sbd_file(sbd_file_name)
+
+    def is_goto_command_enabled(self, role):
+        '''Returns whether or not goto commands are enabled for the given role'''
+        if role == LEADER:
+            return self.enable_leader_goto
+        if role == FOLLOWER:
+            return self.enable_follower_goto
+
+    def handle_downlink_event_for_goto_commands(self, role):
+        '''Handles the event for a downlink for goto commands'''
+        if self.is_goto_command_enabled(role):
+            self.queue_go_to_command(role)
+
     def post_to_es(self):
         '''
         Check for the most recent email from iridium. 
@@ -288,11 +379,20 @@ class IridiumEmailProcessor(object):
                     if not os.path.exists(downlink_path):
                         with open(downlink_path, 'x') as f:
                             json.dump(sf_report, f)
+
                 elif str(imei) == self.follower_imei:
                     downlink_path = 'es_routing/follower_jsons/DOWNLINK_MOMSN' + str(self.momsn) + '_MTMSN' + str(self.mtmsn_down) +'.json'
                     if not os.path.exists(downlink_path):
                         with open(downlink_path, 'x') as f:
                             json.dump(sf_report, f)
+
+                if str(imei) == self.leader_imei:
+                    role = LEADER
+                    self.handle_downlink_event_for_goto_commands(role)
+
+                elif str(imei) == self.follower_imei:
+                    role = FOLLOWER
+                    self.handle_downlink_event_for_goto_commands(role)
 
                 # Print the statefield report recieved
                 print("Got report: "+str(sf_report)+"\n")
@@ -319,3 +419,4 @@ class IridiumEmailProcessor(object):
         '''
         self.run_email_thread=False
         self.check_email_thread.join()
+
