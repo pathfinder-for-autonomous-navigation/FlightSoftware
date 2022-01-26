@@ -116,9 +116,13 @@ class AutonomousMissionController(AMCCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60 * 5  # currently 5 minutes for testing
 
+
+        while 1:
+            pass
+
         # Pass telemetry between spacecraft
         #while(self.continue_mission()):    #for running mission
-        while 1: #for testing purposes
+        while 0: #for testing purposes
             # wait for data from both spacecrafts to come down from Iridium
             while "Unable to find" in self.leader.read_state(
                 "time.valid"
