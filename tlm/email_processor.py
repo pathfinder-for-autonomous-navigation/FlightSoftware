@@ -327,6 +327,12 @@ class IridiumEmailProcessor(object):
         if os.path.exists(sbd_file_name):
             os.remove(sbd_file_name)
 
+    def comment_to_github(self, role, json_command_data):
+        '''
+        TODO
+        '''
+        pass
+
     def queue_go_to_command(self, role):
         '''With the given role, automatically queue the corresponding go to command for that satellite'''
         json_command_file_name = self.get_go_to_command_name(role)
@@ -341,6 +347,10 @@ class IridiumEmailProcessor(object):
 
         if success:
             self.send_sbd_file(role, sbd_file_name)
+            try:
+                self.comment_to_github(role, json_command_data)
+            except:
+                print("Comment to github failed")
 
         # attempt cleanup regardless
         self.clean_up_sbd_file(sbd_file_name)
