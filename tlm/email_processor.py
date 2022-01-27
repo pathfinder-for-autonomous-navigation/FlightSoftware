@@ -315,7 +315,7 @@ class IridiumEmailProcessor(object):
             target_imei = self.follower_imei
         
         # Send the uplink to Iridium
-        to = "data.sbd@iridium.com"
+        to = "data@sbd.iridium.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = target_imei
         msgHtml = ""
