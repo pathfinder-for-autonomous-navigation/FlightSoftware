@@ -8,6 +8,10 @@ from typing import NamedTuple
 from ..gpstime import GPSTime
 
 
+RUN_AUTONOMOUS_MISSION_CONTROLLER = False
+'''If this variable is False, do not run the AMC, only host endpoints.'''
+
+
 class OrbitData(NamedTuple):
     pos: list
     vel: list
@@ -116,13 +120,13 @@ class AutonomousMissionController(AMCCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60 * 5  # currently 5 minutes for testing
 
-
-        while 1:
-            pass
+        # Pin the run function here, just to keep the radio_session endpoints alive.
+        # Prevent it from moving forward to queueing AMC uplinks.
+        while not RUN_AUTONOMOUS_MISSION_CONTROLLER:
+            time.sleep(1)
 
         # Pass telemetry between spacecraft
-        #while(self.continue_mission()):    #for running mission
-        while 0: #for testing purposes
+        while(self.continue_mission()):    #for running mission
             # wait for data from both spacecrafts to come down from Iridium
             while "Unable to find" in self.leader.read_state(
                 "time.valid"
