@@ -133,8 +133,13 @@ class IridiumEmailProcessor(object):
         and MTMSN numbers and check whether or not radioSession can send uplinks.
         '''
         #look for all new emails from iridium
-        self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        try:
+            self.mail.select('Inbox')
+            _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        except Exception as e:
+            # catch exception and try again shortly.
+            print(e)
+
         # _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)') # for testing
 
         mail_ids = data[0]
