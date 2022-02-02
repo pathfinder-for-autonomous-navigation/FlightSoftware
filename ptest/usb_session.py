@@ -447,6 +447,13 @@ class USBSession(object):
         if telem_json_data is not None:
             try:
                 data = telem_json_data['data']
+                ### Attempt to extract metadata if it exists
+                try:
+                    metadata = telem_json_data['metadata']
+                    print(metadata)
+                except:
+                    pass
+                
                 return data
             except:
                 print("Error parsing telemetry data")

@@ -180,21 +180,21 @@ bool DownlinkParser::check_is_first_packet(const std::vector<char>& packet, nloh
 
     const std::vector<unsigned char> first_packet_flow_ids{1,2,7,8,13,14}; // default first packet flows
     const std::vector<unsigned char> second_packet_flow_ids{15,17,18,19,25,26}; // default second packet flows
-    const std::vector<unsigned char> critical_first_packet_flow_ids{1,2,8}; // flows that must always be enabled in the first packet.
+    const std::vector<unsigned char> critical_first_packet_flow_ids{1,2}; // flows that must always be enabled in the first packet.
 
     // const std::vector<unsigned char> all_flow_ids{1,2,7,8,13,14,15,17,18,19,25,26};
 
     const std::vector<unsigned char> ret_flow_ids = ret["metadata"]["check_flow_ids"];
 
-    bool is_first_flow = true;
+    bool is_first_packet = true;
     for(unsigned char critical_flow_id : critical_first_packet_flow_ids){
         bool found_in_flow_ids = ret_flow_ids.end() != find(ret_flow_ids.begin(), ret_flow_ids.end(), critical_flow_id);
-        is_first_flow = is_first_flow && found_in_flow_ids;
+        is_first_packet = is_first_packet && found_in_flow_ids;
     }
-    ret["metadata"]["is_first_flow"] = std::to_string(is_first_flow);
+    ret["metadata"]["is_first_packet"] = std::to_string(is_first_packet);
 
     // const bool matching = (first_packet_flow_ids == ret_flow_ids);
-    const bool matching = is_first_flow;
+    const bool matching = is_first_packet;
 
     return matching;
 }
