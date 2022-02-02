@@ -107,11 +107,9 @@ class IridiumEmailProcessor(object):
             f=open("data.sbd", "wb")
             f.write(payload)
             f.close()
-            #print("Before console: " + os.path.exists("data.sbd"))
             self.console.write(("data.sbd\n").encode())
             console_read = self.console.readline().rstrip()
             data = json.loads(console_read)
-            #print("After console: " +os.path.exists("data.sbd"))
             if data is not None:
                 try:
                     data = data["data"]
@@ -157,17 +155,6 @@ class IridiumEmailProcessor(object):
                     # converts message from byte literal to string removing b''
                     msg = email.message_from_string(response_part[1].decode('utf-8'))
                     email_subject = msg['subject']
-                    # msg_str = str(msg)
-                    # print(msg_str)
-                    # date_line = msg_str.split('\n')[1][6:]
-                    # print(date_line)
-                    # time_tuple = email.utils.parsedate_tz(date_line)
-                    # time_stamp = email.utils.mktime_tz(time_tuple)
-                    # print(time_stamp)
-                    # email_time = datetime.utcfromtimestamp(time_stamp)
-                    # print(email_time)
-                    # formatted_email_time = str(email_time.isoformat())[:-3]+'Z'
-                    # print(formatted_email_time)
 
                     #handles uplink confirmations
                     if email_subject.find("SBD Mobile Terminated Message Queued for Unit: ")==0:
@@ -229,16 +216,11 @@ class IridiumEmailProcessor(object):
                                     session_time_idx = line.find("Time of Session (UTC)")
                                     if session_time_idx!=-1:
                                         time_of_session = line[session_time_idx+23:]
-                                        # print(time_of_session)
                                         time_tuple = email.utils.parsedate(time_of_session)
                                         utc_time_tuple = tuple(list(time_tuple) + [0]) 
                                         time_stamp = email.utils.mktime_tz(utc_time_tuple)
-                                        # print(time_stamp)
                                         email_time = datetime.utcfromtimestamp(time_stamp)
-                                        # print(email_time)
-                                        # print(email_time)
                                         formatted_email_time = str(email_time.isoformat())+'Z'
-                                        # print(formatted_email_time)
 
                                         self.formatted_email_time = formatted_email_time
 
