@@ -56,7 +56,7 @@ class IridiumEmailProcessor(object):
 
         self.uplink_console = UplinkConsole('.') # open a new uplink console in the current directory\
         self.enable_leader_goto = True
-        self.enable_follower_goto = True
+        self.enable_follower_goto = False
 
     def connect(self):
         '''
@@ -137,6 +137,7 @@ class IridiumEmailProcessor(object):
         except Exception as e:
             # catch exception and try again shortly.
             print(e)
+            return None, None # return None, None to signal error and try again
 
         # _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)') # for testing
 
