@@ -56,7 +56,7 @@ class IridiumEmailProcessor(object):
 
         self.uplink_console = UplinkConsole('.') # open a new uplink console in the current directory\
         self.enable_leader_goto = True
-        self.enable_follower_goto = False
+        self.enable_follower_goto = True
 
     def connect(self):
         '''
