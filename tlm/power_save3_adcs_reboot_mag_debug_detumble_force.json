@@ -1,0 +1,58 @@
+[
+    {
+    "field": "radio.max_wait",
+    "value": 10420
+    },
+    {
+    "field": "radio.max_transceive",
+    "value": 10
+    },
+    {
+    "field": "adcs_cmd.havt_disable18",
+    "value": true
+    },
+    {
+    "field": "gomspace.piksi_off",
+    "value": true
+    },
+    {
+    "field": "dcdc.disable_cmd",
+    "value": true
+    },
+    {
+    "field": "gomspace.power_cycle_output4_cmd",
+    "value": true
+    },
+    {
+    "field": "downlink.shift_id1",
+    "value": 19
+    },
+    {
+    "field": "downlink.shift_id2",
+    "value": 2
+    },
+    {
+    "field": "pan.state",
+    "value": 1  
+    },
+    {
+    "field": "adcs.state",
+    "value": 5
+    },
+    {
+    "field": "adcs_monitor.wheel1_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel2_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel3_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel_pot_fault.suppress",
+    "value": true
+    }
+]

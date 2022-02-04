@@ -16,3 +16,33 @@
 .App-link {
   color: #61dafb;
 }
+
+.Commander{
+  display: inline;
+  padding-right: 30px;
+}
+
+.ResponsiveImage{
+  width: 75%;
+  height: auto;
+}
+
+.Log{
+  display: inline;
+  padding-left: 30px;
+}
+
+.Notice{
+  color: red;
+}
+
+.Module{
+  display: inline-block;
+  padding: 2rem 2rem;
+  vertical-align: top;
+}
+
+.ModuleName{
+  font-weight: bolder;
+  font-size: 4em;
+}

@@ -72,6 +72,12 @@ class DownlinkParser {
      * unprocessed.
      */
     std::vector<char> most_recent_frame;
+
+    /**
+     * @brief What we believe the packet number to be within the frame, 1 indexed
+     * 
+     */
+    unsigned int packet_num;
 };
 
 #endif

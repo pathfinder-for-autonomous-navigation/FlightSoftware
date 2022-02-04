@@ -61,9 +61,30 @@
                     //Preset Fixed Views
                     presets: [
                         {
+                            label: 'All Time',
+                            bounds: {
+                                start: () => new Date('January 13, 2022 12:00:00').getTime(),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
                             label: 'Last Week',
                             bounds: {
                                 start: () => Date.now() - (7 * ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 3 Days',
+                            bounds: {
+                                start: () => Date.now() - (3* ONE_DAY),
+                                end: () => Date.now()
+                            }
+                        },
+                        {
+                            label: 'Last 2 Days',
+                            bounds: {
+                                start: () => Date.now() - (2*ONE_DAY),
                                 end: () => Date.now()
                             }
                         },
