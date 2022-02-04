@@ -40,11 +40,7 @@ class IridiumEmailProcessor(object):
         self.send_uplinks=True
         self.recieved_uplink_confirmation=False
 
-        #connect to email
-        self.authentication = authenticate()
-        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
-        self.mail.login(self.username, self.password)
-        self.mail.select('Inbox')
+        self.connect_to_email()
 
         #thread
         self.run_email_thread = False
@@ -57,6 +53,13 @@ class IridiumEmailProcessor(object):
         self.uplink_console = UplinkConsole('.') # open a new uplink console in the current directory\
         self.enable_leader_goto = True
         self.enable_follower_goto = True
+
+    def connect_to_email(self):
+        #connect to email
+        self.authentication = authenticate()
+        self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        self.mail.login(self.username, self.password)
+        self.mail.select('Inbox')
 
     def connect(self):
         '''
@@ -137,6 +140,9 @@ class IridiumEmailProcessor(object):
         except Exception as e:
             # catch exception and try again shortly.
             print(e)
+            print("Error reading email. Attempting to reconnect.")
+            #try connecting to email again
+            self.connect_to_email()
             return None, None # return None, None to signal error and try again
 
         # _, data = self.mail.search(None, '(FROM "pan.ssds.qlocate@gmail.com")', '(UNSEEN)') # for testing
