@@ -20,10 +20,6 @@
     "value": true
     },
     {
-    "field": "dcdc.disable_cmd",
-    "value": true
-    },
-    {
     "field": "gomspace.power_cycle_output4_cmd",
     "value": true
     },
