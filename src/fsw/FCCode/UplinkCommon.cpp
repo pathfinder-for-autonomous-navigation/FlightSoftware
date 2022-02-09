@@ -1,4 +1,5 @@
 #include "UplinkCommon.h"
+#include <common/debug_console.hpp>
 
 Uplink::Uplink(StateFieldRegistry& r) : registry(r), index_size(0)
 {
@@ -16,6 +17,8 @@ bool Uplink::_validate_packet(bitstream& bs)
     // Start validation at beginning of bs
     bs.reset();
     size_t packet_bytes = bs.max_len;
+    debug_console::printf(debug_severity::error, "packet bytes in validate: %d\n", packet_bytes);
+
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_consumed = 0;
     // Keep a bit map to prevent updating the same field twice
     static std::vector<bool> is_field_updated(registry.writable_fields.size(), 0);
@@ -66,12 +69,18 @@ void Uplink::_update_fields(bitstream& bs)
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
     // Start updates at beginning of bs
     bs.reset();
+    debug_console::printf(debug_severity::error, "packet bytes(size) in _update: %d\n", packet_size);
+
     while (bits_consumed < packet_size)
     {
+        debug_console::printf(debug_severity::error, "bits consumed: %d\n", bits_consumed);
+
         // Get index from the bitstream
         bits_consumed += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
-        if (field_index == 0) // reached end of the packet
+        if (field_index == 0){ // reached end of the packet
+            debug_console::printf(debug_severity::error, "end of packet\n");
             return;
+        }
         --field_index;
 
         // Get field length from the index
@@ -82,11 +91,13 @@ void Uplink::_update_fields(bitstream& bs)
         // Clear field's bit array
         for (size_t i = 0; i < field_len; ++i)
           field_bit_arr[i] = 0;
+        debug_console::printf(debug_severity::error, "post packet clearing\n");
 
         // Dump into bit_array
         bits_consumed += bs.nextN(field_len, field_bit_arr);
         field_p->set_bit_array(field_bit_arr);
         field_p->deserialize();
+        debug_console::printf(debug_severity::error, "post deserialize\n");
     }
 }
 

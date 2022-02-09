@@ -10,6 +10,8 @@ class SingleSatDetumbleCase(SingleSatCase, PSimCase):
         self.psim_configs += ["truth/detumble"]
         self.initial_state = "detumble"
         self.skip_deployment_wait = True
+        self.suppress_faults = False
+        self.debug_to_console = True
 
     def run(self):
         self.cycle()

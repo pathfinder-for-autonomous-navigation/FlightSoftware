@@ -205,8 +205,11 @@ void MissionManager::dispatch_startup()
     {
         set(radio_state_t::config);
     }
+    printf(debug_severity::error, "ccno: %d\n", control_cycle_count);
+
     if (check_adcs_hardware_faults())
     {
+        printf(debug_severity::error, "ADCS HARDWARE FAULT");
         transition_to(mission_state_t::initialization_hold,
                       adcs_state_t::detumble,
                       prop_state_t::idle);

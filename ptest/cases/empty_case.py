@@ -11,6 +11,10 @@ class EmptyCase(SingleSatCase):
     def run(self):
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
         self.finish()
+        
+    def special(self):
+        self.ws('telem.dump', True)
+        self.cycle()
 
 class FailingEmptyCase(SingleSatCase):
     def run(self):
