@@ -150,18 +150,41 @@ void MainControlLoop::execute() {
     debug_task.execute_on_time(debug_duration);
 
     uplink_consumer.execute_on_time(uplink_duration);
+    debug_console::printf(debug_severity::error, "A0\n");
+
     estimators.execute_on_time(attitude_estimator_duration);
+        debug_console::printf(debug_severity::error, "A1\n");
+
     mission_manager.execute_on_time(mission_duration);
+        debug_console::printf(debug_severity::error, "A2\n");
+
     dcdc_controller.execute_on_time(dcdc_duration);
+        debug_console::printf(debug_severity::error, "A3\n");
+
     attitude_controller.execute_on_time(attitude_controller_duration);
+        debug_console::printf(debug_severity::error, "A4\n");
+
     adcs_commander.execute_on_time(adcs_commander_duration);
+        debug_console::printf(debug_severity::error, "A5\n");
+
     adcs_box_controller.execute_on_time(adcs_box_controller_duration);
+        debug_console::printf(debug_severity::error, "A6\n");
+
     orbit_controller.execute_on_time(orbit_duration);
+        debug_console::printf(debug_severity::error, "A7\n");
+
     prop_controller.execute_on_time(prop_duration);
+        debug_console::printf(debug_severity::error, "A8\n");
+
     downlink_producer.execute_on_time(downlink_duration);
+        debug_console::printf(debug_severity::error, "A9\n");
+
     quake_manager.execute_on_time(quake_duration);
+        debug_console::printf(debug_severity::error, "A10\n");
+
     docking_controller.execute_on_time(docking_duration);
-    
+    debug_console::printf(debug_severity::error, "A11\n");
+
     #ifdef DESKTOP
         eeprom_controller.execute_on_time(eeprom_duration);
     #else
