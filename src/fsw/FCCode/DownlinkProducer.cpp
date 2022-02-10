@@ -134,8 +134,6 @@ void DownlinkProducer::execute() {
     add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
-    printf(debug_severity::error, "DP pre flows");
-
     for(auto const& flow : flows) {
         if (!flow.is_active) continue;
 
@@ -172,6 +170,9 @@ void DownlinkProducer::execute() {
     }
 
     // Shift flow priorities
+    printf(debug_severity::error, "shift_flow_ids1_f.get() = %d", shift_flows_id1_fp->get());
+    printf(debug_severity::error, "shift_flow_ids2_f.get() = %d", shift_flows_id2_fp->get());
+
     if (shift_flows_id1_fp->get()>0 && shift_flows_id2_fp->get()>0) {
         shift_flow_priorities(shift_flows_id1_fp->get(), shift_flows_id2_fp->get());
         shift_flows_id1_fp->set(0);
