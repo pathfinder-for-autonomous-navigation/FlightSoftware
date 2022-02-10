@@ -296,14 +296,25 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     }
     
     printf(debug_severity::error, "B2");
-    printf(debug_severity::error, "idx1 %d, idx2 %d");
+    printf(debug_severity::error, "idx1 %d, idx2 %d", idx1, idx2);
 
     if (idx1>idx2) {
         printf(debug_severity::error, "loop1");
 
         for (size_t i = idx1; i > idx2; i--) {
-            printf(debug_severity::error, "i: %d, i - 1 %d", i, i + 1);
+            printf(debug_severity::error, "i: %d, i-1: %d", i, i - 1);
+
+            unsigned char i_id, i2_id;
+            flows[i].id_sr.deserialize(&i_id);
+            flows[i-1].id_sr.deserialize(&i2_id);      
+
+            printf(debug_severity::error, "pre_swap sr i: %d, i-1 %d", i_id, i2_id);
             std::swap(flows[i], flows[i-1]);
+            
+            flows[i].id_sr.deserialize(&i_id);
+            flows[i-1].id_sr.deserialize(&i2_id);
+            printf(debug_severity::error, "post_swap sr i: %d, i-1 %d", i_id, i2_id);
+
         }
     }
     else if (idx2>idx1) {

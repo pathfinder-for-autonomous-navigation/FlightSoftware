@@ -127,11 +127,24 @@ class DownlinkProducer : public TimedControlTask<void> {
         * @brief Copy assignment operator.
         */
         Flow& operator=(const Flow& rhs) {
+
+            printf(debug_severity::error, "Copy operator called.");
             unsigned char flow_id;
+            printf(debug_severity::error, "Attempting deserialize");
+
             rhs.id_sr.deserialize(&flow_id);
+            printf(debug_severity::error, "Assign is_active");
+
             is_active = rhs.is_active;
+
+            printf(debug_severity::error, "Assign with std::move");
             id_sr = std::move(rhs.id_sr);
+
+            printf(debug_severity::error, "Assign field_list ");
+
             field_list = rhs.field_list;
+            printf(debug_severity::error, "Copy operator finished.");
+
             return *this;
         }
     };
