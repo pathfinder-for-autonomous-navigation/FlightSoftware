@@ -109,6 +109,9 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
+
+    printf(debug_severity::error, "DP pre execute");
+
     // Set the snapshot size in order to let the Quake Manager know about
     // the size of the current downlink.
     snapshot_size_bytes_f.set(compute_downlink_size());
@@ -130,6 +133,8 @@ void DownlinkProducer::execute() {
     const bit_array& cycle_count_bits = cycle_count_fp->get_bit_array();
     add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
+
+    printf(debug_severity::error, "DP pre flows");
 
     for(auto const& flow : flows) {
         if (!flow.is_active) continue;
@@ -177,6 +182,9 @@ void DownlinkProducer::execute() {
         toggle_flow(toggle_flow_id_fp->get());
         toggle_flow_id_fp->set(0);
     }
+
+    printf(debug_severity::error, "DP post execute");
+
 }
 
 DownlinkProducer::~DownlinkProducer() {
@@ -260,6 +268,8 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
 }
 
 void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
+    printf(debug_severity::error, "Pre shift flows");
+
     if(id1 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
                                       "trying to shift with flow ID %d.", id1, id2);
@@ -270,6 +280,8 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
                                       "trying to shift with flow ID %d.", id2, id1);
         assert(false);
     }
+
+    printf(debug_severity::error, "B1");
 
     size_t idx1 = 0, idx2 = 0;
     for(size_t idx = 0; idx < flows.size(); idx++) {
@@ -283,14 +295,25 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
         }
     }
     
+    printf(debug_severity::error, "B2");
+    printf(debug_severity::error, "idx1 %d, idx2 %d");
+
     if (idx1>idx2) {
+        printf(debug_severity::error, "loop1");
+
         for (size_t i = idx1; i > idx2; i--) {
+            printf(debug_severity::error, "i: %d, i - 1 %d", i, i + 1);
             std::swap(flows[i], flows[i-1]);
         }
     }
     else if (idx2>idx1) {
+        printf(debug_severity::error, "loop2");
+
         for (size_t i = idx1; i < idx2; i++) {
+            printf(debug_severity::error, "i: %d, i - 1 %d", i, i + 1);
             std::swap(flows[i],flows[i+1]);
         }
     }
+
+    printf(debug_severity::error, "Post shift flows");
 }
