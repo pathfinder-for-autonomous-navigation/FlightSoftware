@@ -310,7 +310,10 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
             flows[i-1].id_sr.deserialize(&i2_id);      
 
             printf(debug_severity::error, "pre_swap sr i: %d, i-1 %d", i_id, i2_id);
-            std::swap(flows[i], flows[i-1]);
+            Flow tmp = flows[i];
+            flows[i] = flows[i-1];
+            flows[i-1] = tmp;
+            // std::swap(flows[i], flows[i-1]);
             
             flows[i].id_sr.deserialize(&i_id);
             flows[i-1].id_sr.deserialize(&i2_id);
@@ -323,7 +326,11 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
 
         for (size_t i = idx1; i < idx2; i++) {
             printf(debug_severity::error, "i: %d, i - 1 %d", i, i + 1);
-            std::swap(flows[i],flows[i+1]);
+            
+            Flow tmp = flows[i];
+            flows[i] = flows[i-1];
+            flows[i-1] = tmp;
+            // std::swap(flows[i],flows[i+1]);
         }
     }
 

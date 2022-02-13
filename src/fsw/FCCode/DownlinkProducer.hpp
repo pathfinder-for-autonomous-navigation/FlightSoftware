@@ -108,11 +108,21 @@ class DownlinkProducer : public TimedControlTask<void> {
         * @brief Move assignment operator.
         */
         Flow& operator=(Flow&& rhs) {
+            printf(debug_severity::error, "Move operator call.");
             is_active = std::move(rhs.is_active);
+            printf(debug_severity::error, "Move operator rhs id_sr std move called.");
+
             id_sr = std::move(rhs.id_sr);
+            
+            unsigned char flow_id;
+            id_sr.deserialize(&flow_id);
+            printf(debug_severity::error, "Move operator flow_id %d", flow_id);
+
             for (size_t i = 0; i<rhs.field_list.size(); i++) {
                 field_list[i] = rhs.field_list[i];
             }
+            printf(debug_severity::error, "Move operator finished.");
+
             return *this;
         }
 
@@ -120,6 +130,7 @@ class DownlinkProducer : public TimedControlTask<void> {
         * @brief Copy constructor.
         */
         Flow(const Flow& other) {
+            printf(debug_severity::error, "Copy constructor call.");
             *this = other;
         }
 
@@ -129,16 +140,22 @@ class DownlinkProducer : public TimedControlTask<void> {
         Flow& operator=(const Flow& rhs) {
 
             printf(debug_severity::error, "Copy operator called.");
-            unsigned char flow_id;
             printf(debug_severity::error, "Attempting deserialize");
 
-            rhs.id_sr.deserialize(&flow_id);
+            // rhs.id_sr.deserialize(&flow_id);
             printf(debug_severity::error, "Assign is_active");
 
             is_active = rhs.is_active;
+            printf(debug_severity::error, "rhs field 0: %s", rhs.field_list[0]->name().c_str());
+            printf(debug_severity::error, "rhs id sr: %d", rhs.id_sr.max());
 
             printf(debug_severity::error, "Assign with std::move");
-            id_sr = std::move(rhs.id_sr);
+
+            id_sr = rhs.id_sr;
+            printf(debug_severity::error, "Post std::move");
+            unsigned char flow_id;
+            id_sr.deserialize(&flow_id);
+            printf(debug_severity::error, "Copy assignment flow_id %d", flow_id);
 
             printf(debug_severity::error, "Assign field_list ");
 
