@@ -1,0 +1,70 @@
+[
+    {
+    "field": "adcs_cmd.havt_disable9",
+    "value": true
+    },
+    {
+    "field": "pan.state",
+    "value": 1  
+    },
+    {
+    "field": "adcs.state",
+    "value": 5
+    },
+    {
+    "field": "prop.state",
+    "value": 2
+    },
+    {
+    "field": "gomspace.low_batt.suppress",
+    "value": true
+    },
+    {
+    "field": "attitude_estimator.fault.base",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel1_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel2_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel3_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "adcs_monitor.wheel_pot_fault.suppress",
+    "value": true
+    },
+    {
+    "field": "dcdc.SpikeDock_cmd",
+    "value": true
+    },
+    {
+    "field": "orbit.control.valve1",
+    "value": 100
+    },
+    {
+    "field": "prop.cycles_until_firing",
+    "value": 20
+    },
+    {
+    "field": "prop.overpressured.suppress",
+    "value": true
+    },
+    {
+    "field": "prop.pressurize_fail.suppress",
+    "value": true
+    },
+    {
+    "field": "prop.tank2_temp_high.suppress",
+    "value": true
+    },
+    {
+    "field": "prop.tank1_temp_high.suppress",
+    "value": true
+    }
+]
