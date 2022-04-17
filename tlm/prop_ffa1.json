@@ -1,9 +1,5 @@
 [
     {
-    "field": "adcs_cmd.havt_disable9",
-    "value": true
-    },
-    {
     "field": "pan.state",
     "value": 1  
     },
