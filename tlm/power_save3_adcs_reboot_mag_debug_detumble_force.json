@@ -54,5 +54,13 @@
     {
     "field": "adcs_monitor.wheel_pot_fault.suppress",
     "value": true
+    },
+    {
+    "field": "gomspace.low_batt.suppress",
+    "value": true
+    },
+    {
+    "field": "attitude_estimator.fault.suppress",
+    "value": true      
     }
 ]
