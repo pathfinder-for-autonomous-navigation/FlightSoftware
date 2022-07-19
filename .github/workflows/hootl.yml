@@ -56,6 +56,7 @@ jobs:
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptyCase -ni)
         !(python -m ptest runsim -c ptest/configs/hootl_speedup.json -t FailingEmptySimCase -ni)
         python -m ptest runsim -c ptest/configs/hootl.json -t AttitudeNoSunVectorsInitializationCase -ni
+        python -m ptest runsim -c ptest/configs/hootl.json -t AttitudePersistanceExceededCase
 
     - name: Mission Rehearsal Cases
       run: |
