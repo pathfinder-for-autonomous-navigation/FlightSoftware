@@ -15,7 +15,7 @@
   },
   "author": "Kirin Kambon, Tanishq Aggarwal, and Duncan McDonald",
   "dependencies": {
-    "express": "^4.14.1",
+    "express": "^4.17.3",
     "express-ws": "^3.0.0",
     "openmct": "https://github.com/nasa/openmct.git",
     "request": "^2.88.2",
