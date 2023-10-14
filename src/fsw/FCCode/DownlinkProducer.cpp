@@ -285,12 +285,14 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     
     if (idx1>idx2) {
         for (size_t i = idx1; i > idx2; i--) {
-            std::swap(flows[i], flows[i-1]);
-        }
+            Flow tmp = flows[i];
+            flows[i] = flows[i-1];
+            flows[i-1] = tmp;        }
     }
     else if (idx2>idx1) {
         for (size_t i = idx1; i < idx2; i++) {
-            std::swap(flows[i],flows[i+1]);
-        }
+            Flow tmp = flows[i];
+            flows[i] = flows[i-1];
+            flows[i-1] = tmp;        }
     }
 }
