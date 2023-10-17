@@ -68,7 +68,7 @@ semantic-version==2.8.2
 six==1.12.0
 tabulate==0.8.5
 uritemplate==3.0.1
-urllib3==1.25.7
+urllib3==1.26.18
 virtualenv==16.6.0
 wcwidth==0.1.7
 websocket-client==0.56.0
